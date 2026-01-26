@@ -1,0 +1,13 @@
+{
+  "status": "success",
+  "result": {
+    "active": true,
+    "deleted": false
+  },
+  "errors": null,
+  "meta": {
+    "path": "/ping",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}
