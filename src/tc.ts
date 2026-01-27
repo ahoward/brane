@@ -3,18 +3,18 @@
 // tc.ts - tc-compatible test runner
 //
 // Runs tests from tests/{handler}/data/{case}/ directories
-// Each case has input.json and expected.json
+// Each case has params.json and result.json
 // Supports nested cases, skip files, placeholder matching, parallel execution
 //
 // Structure:
-//   tests/{handler}/run                           # executable
-//   tests/{handler}/skip                          # optional skip marker
-//   tests/{handler}/data/{NN-case}/input.json     # input
-//   tests/{handler}/data/{NN-case}/expected.json  # expected output
+//   tests/{handler}/run                          # executable
+//   tests/{handler}/skip                         # optional skip marker
+//   tests/{handler}/data/{NN-case}/params.json   # input params
+//   tests/{handler}/data/{NN-case}/result.json   # expected result
 //
 // Nested cases supported:
-//   tests/{handler}/data/{NN-group}/{NN-case}/input.json
-//   tests/{handler}/data/{NN-group}/{NN-case}/expected.json
+//   tests/{handler}/data/{NN-group}/{NN-case}/params.json
+//   tests/{handler}/data/{NN-group}/{NN-case}/result.json
 //
 // Flags:
 //   -v, --verbose     show failure details inline
@@ -34,12 +34,12 @@ const DEFAULT_CONCURRENCY = 8
 //
 
 interface TestCase {
-  handler:   string
-  name:      string
-  input:     string
-  expected:  string
-  run:       string
-  skip:      boolean
+  handler:  string
+  name:     string
+  params:   string
+  result:   string
+  run:      string
+  skip:     boolean
 }
 
 interface TestResult {
@@ -144,7 +144,7 @@ async function is_directory(path: string): Promise<boolean> {
   }
 }
 
-// recursively find all directories containing input.json + expected.json
+// recursively find all directories containing params.json + result.json
 async function find_case_dirs(
   dir:      string,
   handler:  string,
@@ -153,18 +153,18 @@ async function find_case_dirs(
   prefix:   string,
   cases:    TestCase[]
 ): Promise<void> {
-  const input_path    = join(dir, "input.json")
-  const expected_path = join(dir, "expected.json")
+  const params_path = join(dir, "params.json")
+  const result_path = join(dir, "result.json")
 
-  // if this directory has input.json + expected.json, it's a case
-  if (await exists(input_path) && await exists(expected_path)) {
+  // if this directory has params.json + result.json, it's a case
+  if (await exists(params_path) && await exists(result_path)) {
     cases.push({
-      handler:  handler,
-      name:     prefix,
-      input:    input_path,
-      expected: expected_path,
-      run:      run_path,
-      skip:     skip
+      handler: handler,
+      name:    prefix,
+      params:  params_path,
+      result:  result_path,
+      run:     run_path,
+      skip:    skip
     })
     return
   }
@@ -261,11 +261,11 @@ async function run_test_case(tc: TestCase): Promise<TestResult> {
     }
   }
 
-  // read expected
+  // read result (expected output)
   let expected: unknown
   try {
-    const expected_text = await Bun.file(tc.expected).text()
-    expected = JSON.parse(expected_text)
+    const result_text = await Bun.file(tc.result).text()
+    expected = JSON.parse(result_text)
   } catch (err) {
     return {
       case:     tc,
@@ -273,14 +273,14 @@ async function run_test_case(tc: TestCase): Promise<TestResult> {
       skipped:  false,
       actual:   null,
       expected: null,
-      error:    `failed to read expected.json: ${err}`
+      error:    `failed to read result.json: ${err}`
     }
   }
 
-  // read input
-  let input_text: string
+  // read params (input)
+  let params_text: string
   try {
-    input_text = await Bun.file(tc.input).text()
+    params_text = await Bun.file(tc.params).text()
   } catch (err) {
     return {
       case:     tc,
@@ -288,7 +288,7 @@ async function run_test_case(tc: TestCase): Promise<TestResult> {
       skipped:  false,
       actual:   null,
       expected: expected,
-      error:    `failed to read input.json: ${err}`
+      error:    `failed to read params.json: ${err}`
     }
   }
 
@@ -316,8 +316,8 @@ async function run_test_case(tc: TestCase): Promise<TestResult> {
     proc.stdout.on("data", (data) => { stdout += data.toString() })
     proc.stderr.on("data", (data) => { stderr += data.toString() })
 
-    // send input
-    proc.stdin.write(input_text)
+    // send params
+    proc.stdin.write(params_text)
     proc.stdin.end()
 
     proc.on("close", () => {

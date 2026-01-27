@@ -1,2 +1,9 @@
 #!/usr/bin/env bash
-exec bun run src/cli.ts /ping
+#
+# Test runner for /ping
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+
+cat | bun run "$BRANE_ROOT/src/cli.ts" /ping

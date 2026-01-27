@@ -2,50 +2,33 @@
 #
 # Test runner for /body/files/hash
 #
-# Each test case runs in an isolated temp directory.
-# TC_CASE_NAME environment variable determines setup.
-#
-
 set -e
 
-# Get the original directory (where brane source lives)
 BRANE_ROOT="$(cd "$(dirname "$0")/../../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
 
-# Read input from stdin
 INPUT=$(cat)
+workspace
 
-# Create isolated temp directory
-WORKDIR=$(mktemp -d)
-trap "rm -rf $WORKDIR" EXIT
-
-cd "$WORKDIR"
-
-# Setup based on test case name
 case "$TC_CASE_NAME" in
   00-success-single-file)
-    # Create file with known content (sha256 of "hello world\n" = a948904f...)
     echo "hello world" > test.txt
     ;;
 
   01-success-multiple-files)
-    # Create multiple files
     echo "content a" > a.txt
     echo "content b" > b.txt
     ;;
 
   02-success-empty-file)
-    # Create empty file (sha256 of empty = e3b0c44...)
     touch empty.txt
     ;;
 
   03-error-not-found)
-    # Don't create the file
     ;;
 
   04-error-no-path)
-    # No setup needed, testing missing parameter
     ;;
 esac
 
-# Run the handler
 echo "$INPUT" | bun run "$BRANE_ROOT/src/cli.ts" /body/files/hash
