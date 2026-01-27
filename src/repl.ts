@@ -5,20 +5,42 @@
 import * as readline from "readline"
 import { sys } from "./index.ts"
 
-const PROMPT = "🤖—🧠 > "
+//
+// robot emoji variants for prompt
+//
+const ROBOTS = [
+  "🤖",  // classic robot
+  "🦾",  // mechanical arm
+  "🦿",  // mechanical leg
+  "⚙️",   // gear
+  "🔧",  // wrench
+  "🔩",  // bolt
+  "💻",  // laptop
+  "🖥️",   // desktop
+  "📡",  // satellite
+  "🛸",  // ufo
+]
+
+function random_robot(): string {
+  return ROBOTS[Math.floor(Math.random() * ROBOTS.length)]
+}
+
+function make_prompt(): string {
+  return `${random_robot()} — 🧠 > `
+}
 
 export async function start_repl(): Promise<void> {
   const rl = readline.createInterface({
     input:  process.stdin,
     output: process.stdout,
-    prompt: PROMPT
+    prompt: make_prompt()
   })
 
   console.log("brane repl v0.0.1")
   console.log("type .help for commands, .exit to quit")
   console.log("")
 
-  rl.prompt()
+  rl.setPrompt(make_prompt()); rl.prompt()
 
   rl.on("line", async (line: string) => {
     const input = line.trim()
@@ -37,7 +59,7 @@ export async function start_repl(): Promise<void> {
       console.log("  .help                    - show this help")
       console.log("  .exit                    - quit")
       console.log("")
-      rl.prompt()
+      rl.setPrompt(make_prompt()); rl.prompt()
       return
     }
 
@@ -48,13 +70,13 @@ export async function start_repl(): Promise<void> {
         console.log(`  ${path}`)
       }
       console.log("")
-      rl.prompt()
+      rl.setPrompt(make_prompt()); rl.prompt()
       return
     }
 
     // empty line
     if (input === "") {
-      rl.prompt()
+      rl.setPrompt(make_prompt()); rl.prompt()
       return
     }
 
@@ -76,20 +98,20 @@ export async function start_repl(): Promise<void> {
 
       if (parse_result.status === "error") {
         console.log(JSON.stringify(parse_result, null, 2))
-        rl.prompt()
+        rl.setPrompt(make_prompt()); rl.prompt()
         return
       }
 
       const result = await sys.call(path, parse_result.result)
       console.log(JSON.stringify(result, null, 2))
-      rl.prompt()
+      rl.setPrompt(make_prompt()); rl.prompt()
       return
     }
 
     // unknown command
     console.log(`unknown command: ${input}`)
     console.log("type .help for commands")
-    rl.prompt()
+    rl.setPrompt(make_prompt()); rl.prompt()
   })
 
   rl.on("close", () => {
