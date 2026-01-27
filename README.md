@@ -176,9 +176,20 @@ dna/                  # project knowledge
 
 NAMING
 ------
-  **brane** — from M-theory. the surface strings attach to.
+  **brane** — from M-theory physics. in string theory, a brane is a
+  membrane-like surface that strings must attach to. without a brane,
+  strings have no reference frame—they drift in eleven-dimensional
+  chaos. witten called it M-theory: M for membrane, mother, mystery.
 
-  **calabi** — the extraction engine. projects structure from chaos.
+  the metaphor runs deeper. in [bernardo kastrup's analytical idealism](https://www.bernardokastrup.com/),
+  consciousness is the fundamental substrate—reality is experiential,
+  not material. individual minds are dissociated alters of universal
+  mind. code, too, needs a surface to attach meaning to. without
+  structure, it's just entropy.
+
+  **calabi** — from calabi-yau manifolds, the hidden dimensions where
+  strings vibrate. our extraction engine projects structure from chaos,
+  collapsing high-dimensional meaning onto the graph.
 
   goal: if it doesn't have a `.brane` folder, the agent can't work on it.
   become the git of context.
