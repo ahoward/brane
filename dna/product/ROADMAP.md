@@ -1,0 +1,112 @@
+# Brane Roadmap
+
+**Driving Document** — All development flows from this roadmap.
+
+## How This Works
+
+```
+ROADMAP.md (this file)
+    ↓ pick "Next" item
+specs/{NN-feature}/spec.md      ← /speckit.specify → PR for human review
+    ↓ approved
+specs/{NN-feature}/plan.md      ← /speckit.plan
+specs/{NN-feature}/tasks.md     ← /speckit.tasks
+    ↓
+Gemini review                   ← Antagonistic test review (tc tests)
+    ↓
+Implementation                  ← /speckit.implement
+    ↓
+If stuck → Human checkpoint     ← Cannot make tests pass
+    ↓
+✅ Complete → Update ROADMAP.md
+```
+
+**Human Checkpoints:**
+1. **Before work begins** — Review spec PR, salt to taste
+2. **If stuck** — Tests cannot pass after good-faith effort
+
+---
+
+## Current: Phase 1 — The Skeleton
+
+**Goal:** A working CLI that creates `.brane/` and populates `body.db`.
+
+### Next
+
+- [ ] `001-body-init` — Create `.brane/` directory structure and initialize empty `body.db`
+
+### Backlog (Phase 1)
+
+- [ ] `002-body-files-add` — Add files to body.db (path, hash, size, mtime)
+- [ ] `003-body-files-list` — List tracked files from body.db
+- [ ] `004-body-files-status` — Show changed/new/deleted files vs body.db
+- [ ] `005-body-files-hash` — Compute SHA-256 hash for a file
+- [ ] `006-body-scan` — Full directory scan: hash all files, update body.db
+- [ ] `007-body-fts-index` — Build FTS5 index from file contents
+- [ ] `008-body-fts-search` — Full-text search across indexed files
+
+---
+
+## Phase 2 — The Mind
+
+**Goal:** Connect `mind.db` (CozoDB) and the Calabi extraction engine.
+
+*Locked until Phase 1 complete.*
+
+### Backlog (Phase 2)
+
+- [ ] `009-mind-init` — Initialize CozoDB mind.db with schema
+- [ ] `010-mind-concepts` — CRUD for concepts (entities in the graph)
+- [ ] `011-mind-edges` — CRUD for edges (relationships between concepts)
+- [ ] `012-mind-provenance` — Link concepts to body files
+- [ ] `013-calabi-extract` — LLM extraction: file → concepts + edges
+- [ ] `014-calabi-scan` — Scan dirty files, extract to mind.db
+- [ ] `015-context-query` — Vector search + graph expansion for context retrieval
+
+---
+
+## Phase 3 — The Shield
+
+**Goal:** Logic enforcement and governance.
+
+*Locked until Phase 2 complete.*
+
+### Backlog (Phase 3)
+
+- [ ] `016-rules-define` — Define Datalog rules (cycles, orphans, etc.)
+- [ ] `017-verify-check` — Run rules against mind.db, report violations
+- [ ] `018-annotate` — Manual annotations with infinite authority
+- [ ] `019-pr-verify` — Simulate PR changes and verify against rules
+
+---
+
+## Phase 4 — The Network
+
+**Goal:** Decentralized verification protocol.
+
+*Locked until Phase 3 complete.*
+
+### Backlog (Phase 4)
+
+- [ ] `020-verifier-node` — Headless verification node
+- [ ] `021-protocol-spec` — CTX token integration spec
+
+---
+
+## Completed
+
+*Features move here when done.*
+
+| Feature | PR | Date |
+|---------|-----|------|
+| `000-harness` | — | 2026-01-27 |
+
+---
+
+## Notes
+
+- Feature IDs are `NNN-kebab-name` format
+- Each feature gets a `specs/{NNN-feature}/` directory
+- Branch names match feature IDs
+- Never skip a feature without updating this roadmap
+- Phase transitions require all prior features complete

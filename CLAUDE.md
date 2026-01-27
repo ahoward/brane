@@ -24,11 +24,12 @@ const result = await sys.call("/namespace/method", data)
 
 ## Key Files
 
-- `./dna/product/prd.md` - Full PRD (Split-Brain architecture, roadmap)
-- `./dna/technical/coding-conventions.md` - Detailed coding conventions
+- `./dna/product/ROADMAP.md` - **START HERE** — Driving task list for all development
+- `./dna/product/prd.md` - Full PRD (Split-Brain architecture)
+- `./.specify/memory/constitution.md` - Project principles (6 core rules)
 - `./dna/technical/development-loop.md` - Antagonistic Testing process
-- `./ai/CODE.md` - Quick reference for code style
-- `./ai/MEMORY.md` - AI's long-term memory (READ THIS)
+- `./ai/MEMORY.md` - AI's long-term memory
+- `./specs/` - Feature specifications (created by /speckit.specify)
 
 ## Development Process: Antagonistic Testing
 
@@ -66,9 +67,22 @@ src/
 ├── handlers/         # by path: /body/files/hash → handlers/body/files/hash.ts
 └── lib/              # shared utilities
 tests/                # tc test suites
+specs/                # feature specs (from /speckit.specify)
 dna/                  # project knowledge
 ai/                   # AI agent resources
+.specify/             # spec-kit templates and memory
 ```
+
+## Workflow: Picking Up Work
+
+1. Read `dna/product/ROADMAP.md` — find "Next" item
+2. Run `/speckit.specify` — creates `specs/{feature}/spec.md`
+3. Open PR for human review
+4. After approval: `/speckit.plan` → `/speckit.tasks`
+5. Review tests with Gemini (antagonist)
+6. Implement via `/speckit.implement`
+7. If stuck (tests won't pass) → Human checkpoint
+8. On completion → Update ROADMAP.md, mark feature complete
 
 ## Don't
 
