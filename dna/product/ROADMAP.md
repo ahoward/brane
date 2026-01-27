@@ -33,10 +33,9 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 ### Next
 
-- [ ] `009-mind-init` — Initialize CozoDB mind.db with schema
+- [ ] `010-mind-concepts` — CRUD for concepts (entities in the graph)
 
 ### Backlog (Phase 2)
-- [ ] `010-mind-concepts` — CRUD for concepts (entities in the graph)
 - [ ] `011-mind-edges` — CRUD for edges (relationships between concepts)
 - [ ] `012-mind-provenance` — Link concepts to body files
 - [ ] `013-calabi-extract` — LLM extraction: file → concepts + edges
@@ -79,6 +78,7 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 | Feature | PR | Date |
 |---------|-----|------|
+| `009-mind-init` | #10 | 2026-01-27 |
 | `008-body-fts-search` | #9 | 2026-01-27 |
 | `007-body-fts-index` | #8 | 2026-01-27 |
 | `006-body-scan` | #7 | 2026-01-27 |
