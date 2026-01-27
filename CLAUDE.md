@@ -32,14 +32,13 @@ const result = await sys.call("/namespace/method", data)
 
 ## Development Process: Antagonistic Testing
 
-**See:** `./dna/technical/development-loop.md`
+**See:** `./dna/technical/development-loop.md` and `.specify/memory/constitution.md`
 
-1. Design interface → 2. Design tests (Claude) → 3. Review tests (Ali/Gemini)
-4. Create skip tests → **⛔ HUMAN CHECKPOINT** → 5. Implement → 6. Loop until green
+1. Design interface → 2. Design tests (Claude) → 3. Review tests (Gemini)
+4. Implement → 5. Loop until green → 6. **⛔ HUMAN CHECKPOINT** (only if stuck)
 
-**Critical:** Never proceed past test boundary without human approval.
-
-**Ali** = Gemini (antagonist agent). Reviews tests, finds blind spots.
+**Gemini** = antagonist agent. Reviews tests, finds blind spots.
+Human checkpoint is for failure resolution, not pre-approval.
 
 ## Coding Conventions Summary
 
@@ -78,5 +77,5 @@ ai/                   # AI agent resources
 - Return different shapes from handlers
 - Skip the Result envelope
 - Implement without tests
-- Skip Ali review
-- Proceed past test boundary without human approval
+- Skip Gemini review
+- Change tests after review without human approval
