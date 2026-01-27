@@ -33,10 +33,9 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 ### Next
 
-- [ ] `004-body-files-status` — Show changed/new/deleted files vs body.db
+- [ ] `005-body-files-hash` — Compute SHA-256 hash for a file
 
 ### Backlog (Phase 1)
-- [ ] `005-body-files-hash` — Compute SHA-256 hash for a file
 - [ ] `006-body-scan` — Full directory scan: hash all files, update body.db
 - [ ] `007-body-fts-index` — Build FTS5 index from file contents
 - [ ] `008-body-fts-search` — Full-text search across indexed files
@@ -95,6 +94,7 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 | Feature | PR | Date |
 |---------|-----|------|
+| `004-body-files-status` | #5 | 2026-01-27 |
 | `003-body-files-list` | #4 | 2026-01-27 |
 | `002-body-files-add` | #3 | 2026-01-27 |
 | `001-body-init` | #2 | 2026-01-27 |
