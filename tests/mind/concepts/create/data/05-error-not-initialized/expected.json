@@ -1,0 +1,12 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "mind": [{"code": "not_initialized", "message": "<string>"}]
+  },
+  "meta": {
+    "path": "/mind/concepts/create",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

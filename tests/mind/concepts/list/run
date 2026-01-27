@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+#
+# Test runner for /mind/concepts/list
+#
+
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../../.." && pwd)"
+INPUT=$(cat)
+WORKDIR=$(mktemp -d)
+trap "rm -rf $WORKDIR" EXIT
+cd "$WORKDIR"
+
+init_mind() {
+  mkdir -p .brane
+  sqlite3 .brane/body.db "CREATE TABLE IF NOT EXISTS files (id INTEGER PRIMARY KEY, url TEXT NOT NULL UNIQUE, hash TEXT NOT NULL, size INTEGER NOT NULL, mtime INTEGER NOT NULL);"
+  echo '{}' | bun run "$BRANE_ROOT/src/cli.ts" /mind/init > /dev/null 2>&1
+}
+
+create_concept() {
+  echo "$1" | bun run "$BRANE_ROOT/src/cli.ts" /mind/concepts/create > /dev/null 2>&1
+}
+
+case "$TC_CASE_NAME" in
+  00-success-list-all)
+    init_mind
+    create_concept '{"name": "AuthService", "type": "Entity"}'
+    create_concept '{"name": "Do not modify", "type": "Caveat"}'
+    ;;
+  01-success-list-empty)
+    init_mind
+    ;;
+  02-success-filter-type)
+    init_mind
+    create_concept '{"name": "AuthService", "type": "Entity"}'
+    create_concept '{"name": "UserService", "type": "Entity"}'
+    create_concept '{"name": "Do not modify", "type": "Caveat"}'
+    ;;
+esac
+
+echo "$INPUT" | bun run "$BRANE_ROOT/src/cli.ts" /mind/concepts/list
