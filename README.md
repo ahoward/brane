@@ -191,4 +191,4 @@ LICENSE
 
 AUTHOR
 ------
-  ara.t" howard <ara@dojo4.com>
+  ara.t" howard <drawohara@drawohara.io>
