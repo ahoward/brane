@@ -264,8 +264,7 @@ sys.call("/body/files/add", { paths: ["src/"], hidden: true })
 
 ## CLI Interface
 
-The CLI provides a clean, Unix-style interface. Internal `sys.call` paths are
-never exposed to users.
+The CLI provides a clean, Unix-style interface for everyday use.
 
 ```bash
 # Add files (like git add)
@@ -282,6 +281,20 @@ brane ls                    # → /body/files/list (future)
 brane scan                  # → /body/scan (future)
 ```
 
+**Raw Mode:**
+
+For scripting, debugging, or direct access to any handler:
+
+```bash
+# Raw sys.call access
+brane call /body/files/add '{"paths": ["src/"]}'
+brane call /body/init
+brane call /body/init '{"path": "/tmp/foo"}'
+
+# Pipe JSON input
+echo '{"paths": ["a.txt", "b.txt"]}' | brane call /body/files/add
+```
+
 **CLI → sys.call Mapping:**
 
 | CLI Command | sys.call Path |
@@ -291,3 +304,4 @@ brane scan                  # → /body/scan (future)
 | `brane status` | `/body/files/status` |
 | `brane ls` | `/body/files/list` |
 | `brane scan` | `/body/scan` |
+| `brane call <path>` | `<path>` (raw) |
