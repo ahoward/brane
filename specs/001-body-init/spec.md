@@ -99,7 +99,7 @@ init in cwd.
 - **FR-002**: System MUST create `body.db` SQLite database in WAL mode
 - **FR-003**: System MUST create `files` table with schema:
   - `id` INTEGER PRIMARY KEY
-  - `path` TEXT NOT NULL UNIQUE
+  - `url` TEXT NOT NULL UNIQUE (file:// URI, extensible to s3://, gs://, etc.)
   - `hash` TEXT NOT NULL
   - `size` INTEGER NOT NULL
   - `mtime` INTEGER NOT NULL (unix timestamp)
@@ -112,7 +112,9 @@ init in cwd.
 
 - **BraneDir**: The `.brane/` directory, container for all brane state
 - **BodyDB**: SQLite database (`body.db`) storing file physical reality
-- **FileRecord**: Row in `files` table representing a tracked file
+- **FileRecord**: Row in `files` table representing a tracked file/blob
+  - Uses `file://` URLs for local files (e.g., `file:///abs/path/to/file.ts`)
+  - Schema designed to support `s3://`, `gs://`, `http://` etc. in future
 
 ## Success Criteria
 
