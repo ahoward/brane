@@ -35,7 +35,7 @@ All responses follow the standard envelope:
 
 ## REPL Prompt
 
-🧠>
+🤖—🧠 >
 
 ## Reviewed By
 
