@@ -33,11 +33,9 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 ### Next
 
-- [ ] `001-body-init` — Create `.brane/` directory structure and initialize empty `body.db`
+- [ ] `002-body-files-add` — Add files to body.db (url, hash, size, mtime)
 
 ### Backlog (Phase 1)
-
-- [ ] `002-body-files-add` — Add files to body.db (path, hash, size, mtime)
 - [ ] `003-body-files-list` — List tracked files from body.db
 - [ ] `004-body-files-status` — Show changed/new/deleted files vs body.db
 - [ ] `005-body-files-hash` — Compute SHA-256 hash for a file
@@ -99,6 +97,7 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 | Feature | PR | Date |
 |---------|-----|------|
+| `001-body-init` | #2 | 2026-01-27 |
 | `000-harness` | — | 2026-01-27 |
 
 ---
