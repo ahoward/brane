@@ -27,27 +27,15 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 ---
 
-## Current: Phase 1 — The Skeleton
-
-**Goal:** A working CLI that creates `.brane/` and populates `body.db`.
-
-### Next
-
-- [ ] `008-body-fts-search` — Full-text search across indexed files
-
-### Backlog (Phase 1)
-
----
-
-## Phase 2 — The Mind
+## Current: Phase 2 — The Mind
 
 **Goal:** Connect `mind.db` (CozoDB) and the Calabi extraction engine.
 
-*Locked until Phase 1 complete.*
-
-### Backlog (Phase 2)
+### Next
 
 - [ ] `009-mind-init` — Initialize CozoDB mind.db with schema
+
+### Backlog (Phase 2)
 - [ ] `010-mind-concepts` — CRUD for concepts (entities in the graph)
 - [ ] `011-mind-edges` — CRUD for edges (relationships between concepts)
 - [ ] `012-mind-provenance` — Link concepts to body files
@@ -91,6 +79,7 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 | Feature | PR | Date |
 |---------|-----|------|
+| `008-body-fts-search` | #9 | 2026-01-27 |
 | `007-body-fts-index` | #8 | 2026-01-27 |
 | `006-body-scan` | #7 | 2026-01-27 |
 | `005-body-files-hash` | #6 | 2026-01-27 |
