@@ -1,0 +1,13 @@
+{
+  "status": "success",
+  "result": {
+    "matches": "<any>",
+    "total": 5
+  },
+  "errors": null,
+  "meta": {
+    "path": "/body/fts/search",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}
