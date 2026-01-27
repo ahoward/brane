@@ -5,10 +5,10 @@ NAME
 
 SYNOPSIS
 --------
-  the semantic nervous system for software projects.
+  the git of context.
 
-  a local-first knowledge graph CLI that bridges raw code (entropy) and
-  architectural intent (order) using a split-brain architecture.
+  a local-first knowledge graph CLI that gives AI agents structured memory
+  instead of disposable context windows.
 
 
 THESIS
@@ -180,7 +180,8 @@ NAMING
 
   **calabi** — the extraction engine. projects structure from chaos.
 
-  if your code doesn't have a `.brane` folder, the agent can't work on it.
+  goal: if it doesn't have a `.brane` folder, the agent can't work on it.
+  become the git of context.
 
 
 LICENSE
