@@ -33,10 +33,9 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 ### Next
 
-- [ ] `007-body-fts-index` — Build FTS5 index from file contents
+- [ ] `008-body-fts-search` — Full-text search across indexed files
 
 ### Backlog (Phase 1)
-- [ ] `008-body-fts-search` — Full-text search across indexed files
 
 ---
 
@@ -92,6 +91,7 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 | Feature | PR | Date |
 |---------|-----|------|
+| `007-body-fts-index` | #8 | 2026-01-27 |
 | `006-body-scan` | #7 | 2026-01-27 |
 | `005-body-files-hash` | #6 | 2026-01-27 |
 | `004-body-files-status` | #5 | 2026-01-27 |
