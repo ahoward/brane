@@ -189,27 +189,52 @@ async function find_case_dirs(
   }
 }
 
+// recursively find handler directories (directories containing 'run' and 'data/')
+async function find_handler_dirs(
+  dir:     string,
+  prefix:  string,
+  results: { path: string; handler: string }[]
+): Promise<void> {
+  const run_path  = join(dir, "run")
+  const data_dir  = join(dir, "data")
+
+  // if this directory has run + data/, it's a handler
+  if (await exists(run_path) && await is_directory(data_dir)) {
+    results.push({ path: dir, handler: prefix })
+    return
+  }
+
+  // otherwise recurse into subdirectories
+  let entries: string[]
+  try {
+    entries = await readdir(dir)
+  } catch {
+    return
+  }
+
+  entries.sort()
+
+  for (const entry of entries) {
+    const entry_path = join(dir, entry)
+    if (await is_directory(entry_path)) {
+      const new_prefix = prefix ? `${prefix}/${entry}` : entry
+      await find_handler_dirs(entry_path, new_prefix, results)
+    }
+  }
+}
+
 async function find_test_cases(tests_dir: string): Promise<TestCase[]> {
   const cases: TestCase[] = []
 
-  // find all handler directories
-  let handlers: string[]
-  try {
-    handlers = await readdir(tests_dir)
-  } catch {
-    return cases
-  }
+  // find all handler directories (may be nested like body/init)
+  const handler_dirs: { path: string; handler: string }[] = []
+  await find_handler_dirs(tests_dir, "", handler_dirs)
 
-  // sort handlers for deterministic order
-  handlers.sort()
+  // sort for deterministic order
+  handler_dirs.sort((a, b) => a.handler.localeCompare(b.handler))
 
-  for (const handler of handlers) {
-    const handler_dir = join(tests_dir, handler)
-    if (!await is_directory(handler_dir)) continue
-
+  for (const { path: handler_dir, handler } of handler_dirs) {
     const run_path = join(handler_dir, "run")
-    if (!await exists(run_path)) continue
-
     const skip_path = join(handler_dir, "skip")
     const has_skip  = await exists(skip_path)
     const data_dir  = join(handler_dir, "data")
@@ -269,9 +294,20 @@ async function run_test_case(tc: TestCase): Promise<TestResult> {
 
   // run the test
   return new Promise((resolve) => {
+    // ensure bun is in PATH for subprocesses
+    const bun_bin = join(process.env.HOME ?? "", ".bun", "bin")
+    const path_env = process.env.PATH ?? ""
+    const new_path = path_env.includes(bun_bin) ? path_env : `${bun_bin}:${path_env}`
+
     const proc = spawn(tc.run, [], {
       stdio: ["pipe", "pipe", "pipe"],
-      shell: true
+      shell: true,
+      env: {
+        ...process.env,
+        PATH:         new_path,
+        TC_CASE_NAME: tc.name,
+        TC_HANDLER:   tc.handler
+      }
     })
 
     let stdout = ""
