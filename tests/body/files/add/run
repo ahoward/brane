@@ -1,0 +1,111 @@
+#!/usr/bin/env bash
+#
+# Test runner for /body/files/add
+#
+# Each test case runs in an isolated temp directory.
+# TC_CASE_NAME environment variable determines setup.
+#
+
+set -e
+
+# Get the original directory (where brane source lives)
+BRANE_ROOT="$(cd "$(dirname "$0")/../../../.." && pwd)"
+
+# Read input from stdin
+INPUT=$(cat)
+
+# Create isolated temp directory
+WORKDIR=$(mktemp -d)
+trap "rm -rf $WORKDIR" EXIT
+
+cd "$WORKDIR"
+
+# Setup based on test case name
+case "$TC_CASE_NAME" in
+  00-success-single-file)
+    # Initialize brane and create test file
+    mkdir -p .brane
+    sqlite3 .brane/body.db "CREATE TABLE IF NOT EXISTS files (id INTEGER PRIMARY KEY, url TEXT NOT NULL UNIQUE, hash TEXT NOT NULL, size INTEGER NOT NULL, mtime INTEGER NOT NULL);"
+    echo "hello world" > test.txt
+    ;;
+
+  01-success-multiple-files)
+    # Initialize brane and create multiple test files
+    mkdir -p .brane
+    sqlite3 .brane/body.db "CREATE TABLE IF NOT EXISTS files (id INTEGER PRIMARY KEY, url TEXT NOT NULL UNIQUE, hash TEXT NOT NULL, size INTEGER NOT NULL, mtime INTEGER NOT NULL);"
+    echo "file a" > a.txt
+    echo "file b" > b.txt
+    echo "file c" > c.txt
+    ;;
+
+  02-success-update-file)
+    # Initialize brane, create file, add it, then modify it
+    mkdir -p .brane
+    sqlite3 .brane/body.db "CREATE TABLE IF NOT EXISTS files (id INTEGER PRIMARY KEY, url TEXT NOT NULL UNIQUE, hash TEXT NOT NULL, size INTEGER NOT NULL, mtime INTEGER NOT NULL);"
+    echo "original content" > test.txt
+    # Add the file first
+    echo '{"path": "test.txt"}' | bun run "$BRANE_ROOT/src/cli.ts" /body/files/add > /dev/null
+    # Now modify it
+    sleep 0.1
+    echo "modified content" > test.txt
+    ;;
+
+  03-success-directory)
+    # Initialize brane and create directory with files
+    mkdir -p .brane
+    sqlite3 .brane/body.db "CREATE TABLE IF NOT EXISTS files (id INTEGER PRIMARY KEY, url TEXT NOT NULL UNIQUE, hash TEXT NOT NULL, size INTEGER NOT NULL, mtime INTEGER NOT NULL);"
+    mkdir -p subdir
+    echo "file 1" > subdir/one.txt
+    echo "file 2" > subdir/two.txt
+    ;;
+
+  04-error-not-found)
+    # Initialize brane but don't create the file
+    mkdir -p .brane
+    sqlite3 .brane/body.db "CREATE TABLE IF NOT EXISTS files (id INTEGER PRIMARY KEY, url TEXT NOT NULL UNIQUE, hash TEXT NOT NULL, size INTEGER NOT NULL, mtime INTEGER NOT NULL);"
+    ;;
+
+  05-error-not-initialized)
+    # Don't initialize brane, but create the file
+    echo "test content" > test.txt
+    ;;
+
+  06-success-gitignore)
+    # Initialize brane, create directory with gitignore
+    mkdir -p .brane
+    sqlite3 .brane/body.db "CREATE TABLE IF NOT EXISTS files (id INTEGER PRIMARY KEY, url TEXT NOT NULL UNIQUE, hash TEXT NOT NULL, size INTEGER NOT NULL, mtime INTEGER NOT NULL);"
+    mkdir -p ignored
+    echo "keep this" > ignored/keep.txt
+    echo "ignore this" > ignored/skip.log
+    echo "*.log" > .gitignore
+    ;;
+
+  07-success-hidden-excluded)
+    # Initialize brane, create directory with hidden file
+    mkdir -p .brane
+    sqlite3 .brane/body.db "CREATE TABLE IF NOT EXISTS files (id INTEGER PRIMARY KEY, url TEXT NOT NULL UNIQUE, hash TEXT NOT NULL, size INTEGER NOT NULL, mtime INTEGER NOT NULL);"
+    mkdir -p with_hidden
+    echo "visible" > with_hidden/visible.txt
+    echo "hidden" > with_hidden/.hidden
+    ;;
+
+  08-success-hidden-included)
+    # Initialize brane, create directory with hidden file
+    mkdir -p .brane
+    sqlite3 .brane/body.db "CREATE TABLE IF NOT EXISTS files (id INTEGER PRIMARY KEY, url TEXT NOT NULL UNIQUE, hash TEXT NOT NULL, size INTEGER NOT NULL, mtime INTEGER NOT NULL);"
+    mkdir -p with_hidden
+    echo "visible" > with_hidden/visible.txt
+    echo "hidden" > with_hidden/.hidden
+    ;;
+
+  09-partial-success)
+    # Initialize brane, create one file but not the other
+    mkdir -p .brane
+    sqlite3 .brane/body.db "CREATE TABLE IF NOT EXISTS files (id INTEGER PRIMARY KEY, url TEXT NOT NULL UNIQUE, hash TEXT NOT NULL, size INTEGER NOT NULL, mtime INTEGER NOT NULL);"
+    echo "exists" > exists.txt
+    # missing.txt intentionally not created
+    ;;
+esac
+
+# Run the handler
+echo "$INPUT" | bun run "$BRANE_ROOT/src/cli.ts" /body/files/add
