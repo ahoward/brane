@@ -1,0 +1,23 @@
+{
+  "status": "success",
+  "result": {
+    "files": [
+      {
+        "path": "a.txt",
+        "hash": "<string>",
+        "size": "<number>"
+      },
+      {
+        "path": "b.txt",
+        "hash": "<string>",
+        "size": "<number>"
+      }
+    ]
+  },
+  "errors": null,
+  "meta": {
+    "path": "/body/files/hash",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}
