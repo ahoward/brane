@@ -1,0 +1,20 @@
+{
+  "status": "success",
+  "result": {
+    "modified": [],
+    "deleted": [],
+    "new": "<any>",
+    "summary": {
+      "modified": 0,
+      "deleted": 0,
+      "new": 1,
+      "clean": false
+    }
+  },
+  "errors": null,
+  "meta": {
+    "path": "/body/files/status",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

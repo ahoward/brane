@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+#
+# Test runner for /body/files/status
+#
+# Each test case runs in an isolated temp directory.
+# TC_CASE_NAME environment variable determines setup.
+#
+
+set -e
+
+# Get the original directory (where brane source lives)
+BRANE_ROOT="$(cd "$(dirname "$0")/../../../.." && pwd)"
+
+# Read input from stdin
+INPUT=$(cat)
+
+# Create isolated temp directory
+WORKDIR=$(mktemp -d)
+trap "rm -rf $WORKDIR" EXIT
+
+cd "$WORKDIR"
+
+# Helper to add files to body.db
+add_file() {
+  local url="$1"
+  local hash="$2"
+  local size="$3"
+  local mtime="$4"
+  sqlite3 .brane/body.db "INSERT INTO files (url, hash, size, mtime) VALUES ('$url', '$hash', $size, $mtime);"
+}
+
+# Setup based on test case name
+case "$TC_CASE_NAME" in
+  00-success-clean)
+    # Initialize brane, add file, file unchanged
+    mkdir -p .brane
+    sqlite3 .brane/body.db "CREATE TABLE IF NOT EXISTS files (id INTEGER PRIMARY KEY, url TEXT NOT NULL UNIQUE, hash TEXT NOT NULL, size INTEGER NOT NULL, mtime INTEGER NOT NULL);"
+    echo "hello" > test.txt
+    HASH=$(sha256sum test.txt | cut -d' ' -f1)
+    SIZE=$(stat -c%s test.txt)
+    MTIME=$(stat -c%Y test.txt)
+    add_file "file://$WORKDIR/test.txt" "$HASH" "$SIZE" "$MTIME"
+    ;;
+
+  01-success-modified)
+    # Initialize brane, add file, then modify it
+    mkdir -p .brane
+    sqlite3 .brane/body.db "CREATE TABLE IF NOT EXISTS files (id INTEGER PRIMARY KEY, url TEXT NOT NULL UNIQUE, hash TEXT NOT NULL, size INTEGER NOT NULL, mtime INTEGER NOT NULL);"
+    echo "original" > test.txt
+    add_file "file://$WORKDIR/test.txt" "oldhash123" 8 1234567890
+    # Modify the file
+    echo "modified content" > test.txt
+    ;;
+
+  02-success-deleted)
+    # Initialize brane, add file that doesn't exist
+    mkdir -p .brane
+    sqlite3 .brane/body.db "CREATE TABLE IF NOT EXISTS files (id INTEGER PRIMARY KEY, url TEXT NOT NULL UNIQUE, hash TEXT NOT NULL, size INTEGER NOT NULL, mtime INTEGER NOT NULL);"
+    add_file "file://$WORKDIR/deleted.txt" "somehash" 100 1234567890
+    # File doesn't exist on filesystem
+    ;;
+
+  03-success-new)
+    # Initialize brane with empty db, create untracked file
+    mkdir -p .brane
+    sqlite3 .brane/body.db "CREATE TABLE IF NOT EXISTS files (id INTEGER PRIMARY KEY, url TEXT NOT NULL UNIQUE, hash TEXT NOT NULL, size INTEGER NOT NULL, mtime INTEGER NOT NULL);"
+    echo "new file" > untracked.txt
+    ;;
+
+  04-success-quick-mode)
+    # Initialize brane, add tracked file (modified), create untracked file
+    # Quick mode should find modified but NOT new
+    mkdir -p .brane
+    sqlite3 .brane/body.db "CREATE TABLE IF NOT EXISTS files (id INTEGER PRIMARY KEY, url TEXT NOT NULL UNIQUE, hash TEXT NOT NULL, size INTEGER NOT NULL, mtime INTEGER NOT NULL);"
+    echo "original" > tracked.txt
+    add_file "file://$WORKDIR/tracked.txt" "oldhash" 8 1234567890
+    echo "modified" > tracked.txt
+    echo "new file" > untracked.txt
+    ;;
+
+  05-success-filter-path)
+    # Initialize brane with files in different directories, modify one in src/
+    mkdir -p .brane src tests
+    sqlite3 .brane/body.db "CREATE TABLE IF NOT EXISTS files (id INTEGER PRIMARY KEY, url TEXT NOT NULL UNIQUE, hash TEXT NOT NULL, size INTEGER NOT NULL, mtime INTEGER NOT NULL);"
+    echo "src file" > src/index.ts
+    echo "test file" > tests/main.test.ts
+    add_file "file://$WORKDIR/src/index.ts" "oldhash1" 8 1234567890
+    add_file "file://$WORKDIR/tests/main.test.ts" "oldhash2" 9 1234567890
+    # Modify both files
+    echo "src modified" > src/index.ts
+    echo "test modified" > tests/main.test.ts
+    ;;
+
+  06-error-not-initialized)
+    # Don't initialize brane
+    ;;
+esac
+
+# Run the handler
+echo "$INPUT" | bun run "$BRANE_ROOT/src/cli.ts" /body/files/status
