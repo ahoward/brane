@@ -1,0 +1,13 @@
+{
+  "status": "success",
+  "result": {
+    "path": "/tmp/brane-test-custom/.brane",
+    "created": "<any>"
+  },
+  "errors": null,
+  "meta": {
+    "path": "/body/init",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}
