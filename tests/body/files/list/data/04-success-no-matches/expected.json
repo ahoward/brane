@@ -1,0 +1,15 @@
+{
+  "status": "success",
+  "result": {
+    "files": [],
+    "summary": {
+      "count": 0
+    }
+  },
+  "errors": null,
+  "meta": {
+    "path": "/body/files/list",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}
