@@ -1,0 +1,10 @@
+{
+  "init": "body_fts",
+  "files": {
+    "hello.txt": "hello world\n",
+    "code.js": "function foo() { return 42; }\n"
+  },
+  "calls": [
+    {"path": "/body/files/add", "input": {"paths": ["hello.txt", "code.js"]}}
+  ]
+}

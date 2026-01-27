@@ -1,0 +1,9 @@
+{
+  "init": "body_fts",
+  "body_files": [
+    {"url": "$WORKDIR/test.txt", "hash": "hash1", "size": 100, "mtime": 1234567890}
+  ],
+  "fts": [
+    {"url": "$WORKDIR/test.txt", "content": "test content", "hash": "hash1"}
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "init": "body_fts",
+  "files": {
+    "indexed.txt": "already indexed",
+    "new.txt": "new file"
+  },
+  "body_files": [
+    {"url": "$WORKDIR/indexed.txt", "hash": "indexed_hash", "size": 16, "mtime": 1234567890},
+    {"url": "$WORKDIR/new.txt", "hash": "new_hash", "size": 9, "mtime": 1234567890}
+  ],
+  "fts": [
+    {"url": "$WORKDIR/indexed.txt", "content": "already indexed", "hash": "indexed_hash"}
+  ]
+}

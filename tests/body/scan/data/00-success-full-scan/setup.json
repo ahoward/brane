@@ -1,0 +1,8 @@
+{
+  "init": "body",
+  "files": {
+    "a.txt": "file a\n",
+    "b.txt": "file b\n",
+    "c.txt": "file c\n"
+  }
+}

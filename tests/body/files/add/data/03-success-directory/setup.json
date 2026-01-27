@@ -1,0 +1,7 @@
+{
+  "init": "body",
+  "files": {
+    "subdir/one.txt": "file 1",
+    "subdir/two.txt": "file 2"
+  }
+}

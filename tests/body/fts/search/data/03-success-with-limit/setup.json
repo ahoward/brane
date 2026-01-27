@@ -1,0 +1,17 @@
+{
+  "init": "body_fts",
+  "body_files": [
+    {"url": "$WORKDIR/file1.txt", "hash": "hash1", "size": 100, "mtime": 1234567890},
+    {"url": "$WORKDIR/file2.txt", "hash": "hash2", "size": 100, "mtime": 1234567890},
+    {"url": "$WORKDIR/file3.txt", "hash": "hash3", "size": 100, "mtime": 1234567890},
+    {"url": "$WORKDIR/file4.txt", "hash": "hash4", "size": 100, "mtime": 1234567890},
+    {"url": "$WORKDIR/file5.txt", "hash": "hash5", "size": 100, "mtime": 1234567890}
+  ],
+  "fts": [
+    {"url": "$WORKDIR/file1.txt", "content": "This file contains the word apple", "hash": "hash1"},
+    {"url": "$WORKDIR/file2.txt", "content": "This file contains the word apple", "hash": "hash2"},
+    {"url": "$WORKDIR/file3.txt", "content": "This file contains the word apple", "hash": "hash3"},
+    {"url": "$WORKDIR/file4.txt", "content": "This file contains the word apple", "hash": "hash4"},
+    {"url": "$WORKDIR/file5.txt", "content": "This file contains the word apple", "hash": "hash5"}
+  ]
+}

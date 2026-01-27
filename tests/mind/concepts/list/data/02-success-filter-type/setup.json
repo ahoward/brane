@@ -1,0 +1,8 @@
+{
+  "init": "mind",
+  "concepts": [
+    {"name": "AuthService", "type": "Entity"},
+    {"name": "UserService", "type": "Entity"},
+    {"name": "Do not modify", "type": "Caveat"}
+  ]
+}

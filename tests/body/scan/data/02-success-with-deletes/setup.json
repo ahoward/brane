@@ -1,0 +1,12 @@
+{
+  "init": "body",
+  "files": {
+    "keep.txt": "keep this\n"
+  },
+  "calls": [
+    {"path": "/body/files/add", "input": {"path": "keep.txt"}}
+  ],
+  "body_files": [
+    {"url": "$WORKDIR/deleted.txt", "hash": "fakehash", "size": 100, "mtime": 1234567890}
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "init": "body",
+  "body_files": [
+    {"url": "$WORKDIR/README.md", "hash": "abc123", "size": 100, "mtime": 1234567890},
+    {"url": "$WORKDIR/src/index.ts", "hash": "def456", "size": 200, "mtime": 1234567891},
+    {"url": "$WORKDIR/src/util.ts", "hash": "ghi789", "size": 300, "mtime": 1234567892},
+    {"url": "$WORKDIR/tests/main.test.ts", "hash": "jkl012", "size": 400, "mtime": 1234567893}
+  ]
+}

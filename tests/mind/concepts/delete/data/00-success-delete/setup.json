@@ -1,0 +1,6 @@
+{
+  "init": "mind",
+  "concepts": [
+    {"name": "ToDelete", "type": "Entity"}
+  ]
+}

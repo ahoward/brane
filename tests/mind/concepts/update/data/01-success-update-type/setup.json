@@ -1,0 +1,6 @@
+{
+  "init": "mind",
+  "concepts": [
+    {"name": "Warning", "type": "Entity"}
+  ]
+}

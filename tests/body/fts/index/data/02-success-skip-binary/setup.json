@@ -1,0 +1,12 @@
+{
+  "init": "body_fts",
+  "files": {
+    "text.txt": "text file\n"
+  },
+  "binary_files": {
+    "binary.bin": "00010203"
+  },
+  "calls": [
+    {"path": "/body/files/add", "input": {"paths": ["text.txt", "binary.bin"]}}
+  ]
+}

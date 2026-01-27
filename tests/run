@@ -1,0 +1,178 @@
+#!/usr/bin/env bash
+#
+# Unified test runner for all handlers
+#
+# Derives handler path from directory structure:
+#   tests/body/init/data/00-case → /body/init
+#   tests/mind/concepts/create/data/00-case → /mind/concepts/create
+#
+# Each test case can have an optional setup.json:
+# {
+#   "init": "body" | "mind" | null,
+#   "files": { "path": "content", ... },
+#   "body_files": [{ "url": "...", "hash": "...", "size": N, "mtime": N }],
+#   "fts": [{ "url": "...", "content": "..." }],
+#   "concepts": [{ "name": "...", "type": "..." }],
+#   "calls": [{ "path": "/handler", "input": {} }, ...]
+# }
+#
+# Environment:
+#   TC_CASE_NAME - test case name (e.g., "00-success-create")
+#   TC_HANDLER   - handler path (e.g., "mind/concepts/create")
+#
+
+set -e
+
+# Ensure bun is in PATH
+export PATH="$HOME/.bun/bin:$PATH"
+
+# Get brane root (parent of tests/)
+BRANE_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+
+# Read input from stdin
+INPUT=$(cat)
+
+# Create isolated temp directory
+WORKDIR=$(mktemp -d)
+trap "rm -rf $WORKDIR" EXIT
+cd "$WORKDIR"
+
+# Derive handler path from TC_HANDLER (converts body/init → /body/init)
+HANDLER_PATH="/${TC_HANDLER}"
+
+# Look for setup.json in the test case directory
+# TC_CASE_DIR is passed by tc.ts or we construct it
+if [ -n "$TC_CASE_DIR" ] && [ -f "$TC_CASE_DIR/setup.json" ]; then
+  SETUP_JSON="$TC_CASE_DIR/setup.json"
+elif [ -f "$BRANE_ROOT/tests/$TC_HANDLER/data/$TC_CASE_NAME/setup.json" ]; then
+  SETUP_JSON="$BRANE_ROOT/tests/$TC_HANDLER/data/$TC_CASE_NAME/setup.json"
+else
+  SETUP_JSON=""
+fi
+
+# Helper: initialize body.db
+init_body() {
+  mkdir -p .brane
+  sqlite3 .brane/body.db "PRAGMA journal_mode=WAL;" > /dev/null
+  sqlite3 .brane/body.db "CREATE TABLE IF NOT EXISTS files (id INTEGER PRIMARY KEY, url TEXT NOT NULL UNIQUE, hash TEXT NOT NULL, size INTEGER NOT NULL, mtime INTEGER NOT NULL);"
+}
+
+# Helper: initialize mind.db (requires body.db first)
+init_mind() {
+  init_body
+  echo '{}' | bun run "$BRANE_ROOT/src/cli.ts" /mind/init > /dev/null 2>&1
+}
+
+# Helper: add file to body.db
+add_body_file() {
+  local url="$1"
+  local hash="$2"
+  local size="$3"
+  local mtime="$4"
+  sqlite3 .brane/body.db "INSERT INTO files (url, hash, size, mtime) VALUES ('$url', '$hash', $size, $mtime);"
+}
+
+# Helper: add FTS content
+add_fts_content() {
+  local url="$1"
+  local content="$2"
+  local hash="${3:-setup}"
+  sqlite3 .brane/body.db "INSERT INTO files_fts (url, content) VALUES ('$url', '$content');"
+  sqlite3 .brane/body.db "INSERT INTO files_fts_status (url, indexed_hash) VALUES ('$url', '$hash');"
+}
+
+# Helper: create FTS tables if needed
+init_fts() {
+  sqlite3 .brane/body.db "CREATE VIRTUAL TABLE IF NOT EXISTS files_fts USING fts5(url, content);"
+  sqlite3 .brane/body.db "CREATE TABLE IF NOT EXISTS files_fts_status (url TEXT PRIMARY KEY, indexed_hash TEXT NOT NULL);"
+}
+
+# Process setup.json if it exists
+if [ -n "$SETUP_JSON" ]; then
+  # Read init type
+  INIT_TYPE=$(jq -r '.init // empty' "$SETUP_JSON" 2>/dev/null || echo "")
+
+  case "$INIT_TYPE" in
+    body)
+      init_body
+      ;;
+    body_fts)
+      init_body
+      init_fts
+      ;;
+    mind)
+      init_mind
+      ;;
+    *)
+      # No init or unknown - skip
+      ;;
+  esac
+
+  # Create files from "files" object (uses echo to add trailing newline, touch for empty)
+  jq -r '.files // {} | to_entries[] | "\(.key)\t\(.value)"' "$SETUP_JSON" 2>/dev/null | while IFS=$'\t' read -r path content; do
+    if [ -n "$path" ]; then
+      mkdir -p "$(dirname "$path")"
+      if [ -z "$content" ]; then
+        touch "$path"  # Empty file
+      else
+        echo "$content" > "$path"
+      fi
+    fi
+  done
+
+  # Create binary files from "binary_files" object (hex encoded)
+  jq -r '.binary_files // {} | to_entries[] | "\(.key)\t\(.value)"' "$SETUP_JSON" 2>/dev/null | while IFS=$'\t' read -r path hex; do
+    if [ -n "$path" ]; then
+      mkdir -p "$(dirname "$path")"
+      echo "$hex" | xxd -r -p > "$path"
+    fi
+  done
+
+  # Add body_files to database
+  jq -c '.body_files // [] | .[]' "$SETUP_JSON" 2>/dev/null | while read -r row; do
+    url=$(echo "$row" | jq -r '.url')
+    hash=$(echo "$row" | jq -r '.hash')
+    size=$(echo "$row" | jq -r '.size')
+    mtime=$(echo "$row" | jq -r '.mtime')
+    # Replace $WORKDIR placeholder and ensure file:// prefix
+    url="${url//\$WORKDIR/$WORKDIR}"
+    [[ "$url" != file://* ]] && url="file://$url"
+    add_body_file "$url" "$hash" "$size" "$mtime"
+  done
+
+  # Initialize FTS if fts entries exist
+  if jq -e '.fts | length > 0' "$SETUP_JSON" > /dev/null 2>&1; then
+    init_fts
+    jq -c '.fts // [] | .[]' "$SETUP_JSON" 2>/dev/null | while read -r row; do
+      url=$(echo "$row" | jq -r '.url')
+      content=$(echo "$row" | jq -r '.content')
+      hash=$(echo "$row" | jq -r '.hash // "setup"')
+      url="${url//\$WORKDIR/$WORKDIR}"
+      [[ "$url" != file://* ]] && url="file://$url"
+      add_fts_content "$url" "$content" "$hash"
+    done
+  fi
+
+  # Create concepts via API calls
+  jq -c '.concepts // [] | .[]' "$SETUP_JSON" 2>/dev/null | while read -r row; do
+    echo "$row" | bun run "$BRANE_ROOT/src/cli.ts" /mind/concepts/create > /dev/null 2>&1
+  done
+
+  # Run additional setup calls
+  jq -c '.calls // [] | .[]' "$SETUP_JSON" 2>/dev/null | while read -r call; do
+    call_path=$(echo "$call" | jq -r '.path')
+    call_input=$(echo "$call" | jq -c '.input // {}')
+    echo "$call_input" | bun run "$BRANE_ROOT/src/cli.ts" "$call_path" > /dev/null 2>&1
+  done
+
+  # Create/modify files after setup calls (for update scenarios)
+  jq -r '.post_files // {} | to_entries[] | "\(.key)\t\(.value)"' "$SETUP_JSON" 2>/dev/null | while IFS=$'\t' read -r path content; do
+    if [ -n "$path" ]; then
+      mkdir -p "$(dirname "$path")"
+      echo "$content" > "$path"
+    fi
+  done
+fi
+
+# Run the handler under test
+echo "$INPUT" | bun run "$BRANE_ROOT/src/cli.ts" "$HANDLER_PATH"

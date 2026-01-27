@@ -1,0 +1,6 @@
+{
+  "init": "body",
+  "files": {
+    "untracked.txt": "new file\n"
+  }
+}

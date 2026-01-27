@@ -1,0 +1,6 @@
+{
+  "init": "body",
+  "body_files": [
+    {"url": "$WORKDIR/deleted.txt", "hash": "somehash", "size": 100, "mtime": 1234567890}
+  ]
+}

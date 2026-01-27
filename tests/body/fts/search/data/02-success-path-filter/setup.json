@@ -1,0 +1,11 @@
+{
+  "init": "body_fts",
+  "body_files": [
+    {"url": "$WORKDIR/src/main.ts", "hash": "hash1", "size": 100, "mtime": 1234567890},
+    {"url": "$WORKDIR/tests/main.test.ts", "hash": "hash2", "size": 200, "mtime": 1234567890}
+  ],
+  "fts": [
+    {"url": "$WORKDIR/src/main.ts", "content": "function main returns hello world", "hash": "hash1"},
+    {"url": "$WORKDIR/tests/main.test.ts", "content": "function test expects main to return hello", "hash": "hash2"}
+  ]
+}

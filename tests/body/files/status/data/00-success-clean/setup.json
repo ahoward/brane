@@ -1,0 +1,9 @@
+{
+  "init": "body",
+  "files": {
+    "test.txt": "hello\n"
+  },
+  "calls": [
+    {"path": "/body/files/add", "input": {"path": "test.txt"}}
+  ]
+}

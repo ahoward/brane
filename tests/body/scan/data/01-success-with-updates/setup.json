@@ -1,0 +1,14 @@
+{
+  "init": "body",
+  "files": {
+    "unchanged.txt": "unchanged\n",
+    "modified.txt": "will modify\n"
+  },
+  "calls": [
+    {"path": "/body/files/add", "input": {"paths": ["unchanged.txt", "modified.txt"]}}
+  ],
+  "post_files": {
+    "modified.txt": "modified content\n",
+    "new.txt": "new file\n"
+  }
+}

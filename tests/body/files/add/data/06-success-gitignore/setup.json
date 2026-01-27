@@ -1,0 +1,8 @@
+{
+  "init": "body",
+  "files": {
+    "ignored/keep.txt": "keep this",
+    "ignored/skip.log": "ignore this",
+    ".gitignore": "*.log"
+  }
+}

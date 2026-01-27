@@ -1,0 +1,11 @@
+{
+  "init": "body_fts",
+  "files": {
+    "src/main.ts": "source code\n",
+    "tests/main.test.ts": "test code\n",
+    "root.txt": "root file\n"
+  },
+  "calls": [
+    {"path": "/body/files/add", "input": {"paths": ["src/main.ts", "tests/main.test.ts", "root.txt"]}}
+  ]
+}

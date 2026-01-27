@@ -1,0 +1,12 @@
+{
+  "init": "body_fts",
+  "files": {
+    "file.txt": "will be reindexed\n"
+  },
+  "body_files": [
+    {"url": "$WORKDIR/file.txt", "hash": "testhash123", "size": 18, "mtime": 1234567890}
+  ],
+  "fts": [
+    {"url": "$WORKDIR/file.txt", "content": "will be reindexed", "hash": "testhash123"}
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "init": "body",
+  "files": {
+    "test.txt": "original\n"
+  },
+  "body_files": [
+    {"url": "$WORKDIR/test.txt", "hash": "oldhash123", "size": 8, "mtime": 1234567890}
+  ],
+  "post_files": {
+    "test.txt": "modified content\n"
+  }
+}

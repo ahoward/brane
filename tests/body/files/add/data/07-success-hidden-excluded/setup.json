@@ -1,0 +1,7 @@
+{
+  "init": "body",
+  "files": {
+    "with_hidden/visible.txt": "visible",
+    "with_hidden/.hidden": "hidden"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "init": "body_fts",
+  "body_files": [
+    {"url": "$WORKDIR/todo.txt", "hash": "hash1", "size": 100, "mtime": 1234567890},
+    {"url": "$WORKDIR/readme.md", "hash": "hash2", "size": 200, "mtime": 1234567890}
+  ],
+  "fts": [
+    {"url": "$WORKDIR/todo.txt", "content": "This file has a TODO item that needs attention", "hash": "hash1"},
+    {"url": "$WORKDIR/readme.md", "content": "This is a readme file with no tasks", "hash": "hash2"}
+  ]
+}

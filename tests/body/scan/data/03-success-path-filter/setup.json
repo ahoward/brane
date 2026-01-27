@@ -1,0 +1,9 @@
+{
+  "init": "body",
+  "files": {
+    "src/index.ts": "src file 1\n",
+    "src/util.ts": "src file 2\n",
+    "tests/main.test.ts": "test file\n",
+    "root.txt": "root file\n"
+  }
+}

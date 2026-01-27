@@ -1,0 +1,12 @@
+{
+  "init": "body_fts",
+  "files": {
+    "current.txt": "still tracked\n"
+  },
+  "calls": [
+    {"path": "/body/files/add", "input": {"path": "current.txt"}}
+  ],
+  "fts": [
+    {"url": "$WORKDIR/deleted.txt", "content": "old content", "hash": "oldhash"}
+  ]
+}

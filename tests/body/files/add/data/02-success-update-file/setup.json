@@ -1,0 +1,12 @@
+{
+  "init": "body",
+  "files": {
+    "test.txt": "original content"
+  },
+  "calls": [
+    {"path": "/body/files/add", "input": {"path": "test.txt"}}
+  ],
+  "post_files": {
+    "test.txt": "modified content"
+  }
+}
