@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+#
+# Test runner for /mind/init
+#
+# Each test case runs in an isolated temp directory.
+# TC_CASE_NAME environment variable determines setup.
+#
+
+set -e
+
+# Get the original directory (where brane source lives)
+BRANE_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+
+# Read input from stdin
+INPUT=$(cat)
+
+# Create isolated temp directory
+WORKDIR=$(mktemp -d)
+trap "rm -rf $WORKDIR" EXIT
+
+cd "$WORKDIR"
+
+# Initialize body.db (required for mind init)
+init_body() {
+  mkdir -p .brane
+  sqlite3 .brane/body.db "CREATE TABLE IF NOT EXISTS files (id INTEGER PRIMARY KEY, url TEXT NOT NULL UNIQUE, hash TEXT NOT NULL, size INTEGER NOT NULL, mtime INTEGER NOT NULL);"
+}
+
+# Setup based on test case name
+case "$TC_CASE_NAME" in
+  00-success-new-init)
+    # Initialize body.db only, no mind.db
+    init_body
+    ;;
+
+  01-success-idempotent)
+    # Initialize body.db and run mind init first
+    init_body
+    echo '{}' | bun run "$BRANE_ROOT/src/cli.ts" /mind/init > /dev/null 2>&1
+    ;;
+
+  02-success-force-reinit)
+    # Initialize body.db and create mind.db with some data
+    init_body
+    echo '{}' | bun run "$BRANE_ROOT/src/cli.ts" /mind/init > /dev/null 2>&1
+    ;;
+
+  03-error-not-initialized)
+    # Don't initialize anything
+    echo "some file" > test.txt
+    ;;
+esac
+
+# Run the handler
+echo "$INPUT" | bun run "$BRANE_ROOT/src/cli.ts" /mind/init
