@@ -8,7 +8,9 @@
   },
   "scripts": {
     "repl": "bun run src/cli.ts repl",
-    "test": "bun test",
+    "test": "bun run src/tc.ts",
+    "test:v": "bun run src/tc.ts -v",
+    "test:s": "bun run src/tc.ts -s",
     "cli": "bun run src/cli.ts"
   },
   "devDependencies": {

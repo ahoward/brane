@@ -45,6 +45,29 @@ sys.call("/path/to/method", params) => {
 5. Handlers by path (`src/handlers/body/files/hash.ts` → `/body/files/hash`)
 6. tc tests (JSON in/out, language-agnostic)
 
+### Architecture: sys.call Scope (IMPORTANT)
+
+**sys.call is for PUBLIC API only** - the hexagonal ports.
+
+```
+┌─────────────────────────────────────────────┐
+│  sys.call("/path", params)  ← PUBLIC API    │
+│  ─────────────────────────────────────────  │
+│  Handlers (thin adapters)                   │
+│  ─────────────────────────────────────────  │
+│  Functional/procedural code  ← INTERNAL     │
+│  (KISS, no sys.call here)                   │
+│  ─────────────────────────────────────────  │
+│  State/IO adapters  ← HEXAGONAL PORTS       │
+└─────────────────────────────────────────────┘
+```
+
+- **Handlers**: Thin wrappers that call internal functions
+- **Internal code**: Normal functions, procedural when KISS
+- **Adapters**: State, DB, filesystem at the edges
+
+NOT everything is sys.call. Only the public interface.
+
 ---
 
 ## User: ara (ara.t.howard)
@@ -124,13 +147,18 @@ This creates tension that produces better specifications.
 
 ### Running Gemini
 
-Claude runs Gemini directly via CLI with continuation flags:
+Claude runs Gemini directly via CLI with `--resume` for session continuity:
 
 ```bash
-gemini --continue ...
+gemini --resume latest "review prompt here"
 ```
 
-This allows Gemini to build memory across review sessions within the project.
+**Context to include in review prompts:**
+- Relevant conventions from `ai/MEMORY.md`
+- The specific test files being reviewed
+- What kind of feedback is wanted (edge cases, consistency, etc.)
+
+This allows Gemini to build memory of project conventions across reviews.
 
 ### Gemini (Antagonist) - IMPORTANT
 
@@ -154,24 +182,28 @@ Gemini reviews test designs and suggests:
 See: `dna/technical/development-loop.md`
 
 ```
-Design Interface → Design Tests (Claude) → Review Tests (Ali)
-    → Create Skip Tests → ⛔ HUMAN CHECKPOINT → Implement → Loop Until Green
+Design Interface → Design Tests (Claude) → Review Tests (Gemini)
+    → Implement → Loop Until Green → ⛔ HUMAN CHECKPOINT (only if stuck)
 ```
 
-### Test Boundary Rule
+### Test Boundary Rule (CORRECTED)
 
-After tests are designed and reviewed by both agents:
-1. Tests exist as skip tests
-2. **STOP** - Do not implement
-3. Wait for human approval
-4. Only proceed when human gives go-ahead
+The human checkpoint is for **failure resolution**, not pre-approval:
+
+1. Design tests (Claude)
+2. Review tests (Gemini antagonist)
+3. Implement code
+4. Run tests, loop until green
+5. **ONLY IF STUCK** (can't make tests pass) → Human decides: fix tests or fix code
+
+Tests are the spec. Claude implements against them. Human intervenes only when there's a conflict that can't be resolved.
 
 ### Never
 
-- Implement without tests
-- Skip Ali review
-- Proceed past boundary without human
+- Alter tests after Gemini review without human approval
+- Skip Gemini review
 - Move to next task with failing tests
+- Treat test failure as "change the tests" (ask human first)
 
 ---
 
