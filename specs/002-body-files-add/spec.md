@@ -264,22 +264,30 @@ sys.call("/body/files/add", { paths: ["src/"], hidden: true })
 
 ## CLI Interface
 
+The CLI provides a clean, Unix-style interface. Internal `sys.call` paths are
+never exposed to users.
+
 ```bash
-# Single file
-brane /body/files/add foo.txt
+# Add files (like git add)
+brane add foo.txt
+brane add foo.txt bar.js src/
+brane add .
+brane add --hidden src/
 
-# Multiple files
-brane /body/files/add foo.txt bar.js lib/util.ts
-
-# Directory (recursively adds all files)
-brane /body/files/add src/
-
-# Mixed (files + directories)
-brane /body/files/add README.md src/ package.json tests/
-
-# Include hidden files
-brane /body/files/add '{"paths": ["src/"], "hidden": true}'
-
-# Via JSON params
-brane /body/files/add '{"paths": ["README.md", "src/", "tests/"]}'
+# Other commands (for reference)
+brane init                  # → /body/init
+brane init /path/to/project
+brane status                # → /body/files/status (future)
+brane ls                    # → /body/files/list (future)
+brane scan                  # → /body/scan (future)
 ```
+
+**CLI → sys.call Mapping:**
+
+| CLI Command | sys.call Path |
+|-------------|---------------|
+| `brane init` | `/body/init` |
+| `brane add` | `/body/files/add` |
+| `brane status` | `/body/files/status` |
+| `brane ls` | `/body/files/list` |
+| `brane scan` | `/body/scan` |
