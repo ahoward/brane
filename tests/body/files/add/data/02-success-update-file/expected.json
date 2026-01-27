@@ -1,0 +1,26 @@
+{
+  "status": "success",
+  "result": {
+    "files": [
+      {
+        "id": "<number>",
+        "url": "<string>",
+        "hash": "<string>",
+        "size": "<number>",
+        "mtime": "<number>",
+        "updated": true
+      }
+    ],
+    "summary": {
+      "added": 0,
+      "updated": 1,
+      "errors": 0
+    }
+  },
+  "errors": null,
+  "meta": {
+    "path": "/body/files/add",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

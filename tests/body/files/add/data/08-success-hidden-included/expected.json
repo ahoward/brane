@@ -1,0 +1,17 @@
+{
+  "status": "success",
+  "result": {
+    "files": "<any>",
+    "summary": {
+      "added": 2,
+      "updated": 0,
+      "errors": 0
+    }
+  },
+  "errors": null,
+  "meta": {
+    "path": "/body/files/add",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}
