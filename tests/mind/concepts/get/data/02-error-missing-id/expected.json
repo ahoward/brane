@@ -1,0 +1,12 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "id": [{"code": "required", "message": "id is required"}]
+  },
+  "meta": {
+    "path": "/mind/concepts/get",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

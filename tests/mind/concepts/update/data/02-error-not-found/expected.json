@@ -1,0 +1,12 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "id": [{"code": "not_found", "message": "concept not found"}]
+  },
+  "meta": {
+    "path": "/mind/concepts/update",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

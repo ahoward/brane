@@ -1,0 +1,12 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "type": [{"code": "required", "message": "type is required"}]
+  },
+  "meta": {
+    "path": "/mind/concepts/create",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}
