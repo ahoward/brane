@@ -21,37 +21,54 @@ THESIS
 INSTALL
 -------
 ```bash
-# clone it
+# download the binary (when released)
+curl -fsSL https://brane.dev/install.sh | bash
+
+# or build from source
 git clone https://github.com/ahoward/brane.git
 cd brane
-
-# bun is required
-curl -fsSL https://bun.sh/install | bash
-
-# install deps
 bun install
-
-# run it
-bun run repl
+bun build src/cli.ts --compile --outfile brane
+mv brane /usr/local/bin/
 ```
 
 
 USAGE
 -----
 ```bash
-# repl
-bun run repl
+# initialize a project
+brane init
 
-# call a handler directly
-bun run cli /ping '{"echo": "hello"}'
+# scan files into body.db
+brane scan
 
-# pipe json
-echo '{"echo": "hello"}' | bun run cli /ping
+# get context for a query
+brane context "why is auth failing?"
+
+# verify structural integrity
+brane verify
+
+# repl for exploration
+brane repl
+```
+
+```bash
+# call handlers directly (json in/out)
+brane /body/init
+brane /body/files/add '{"path": "src/foo.ts"}'
+echo '{"path": "src/"}' | brane /body/scan
 
 # from file
-bun run cli /ping @input.json
+brane /body/scan @params.json
+```
 
-# run tests
+
+DEVELOPMENT
+-----------
+```bash
+# during development, use bun directly
+bun run repl
+bun run cli /ping '{"echo": "hello"}'
 bun run test
 ```
 
@@ -119,9 +136,10 @@ tests/{handler}/
 ```
 
 ```bash
-bun run test          # parallel (8 workers)
-bun run test:s        # sequential
-bun run test:v        # verbose
+brane test            # parallel (8 workers)
+brane test -s         # sequential
+brane test -v         # verbose
+brane test -r         # randomize order
 ```
 
 
@@ -138,8 +156,8 @@ ROADMAP
   **phase 4** — the network (decentralized verification protocol)
 
 
-DEVELOPMENT
------------
+PROCESS
+-------
   antagonistic testing. claude designs tests, gemini challenges them.
 
 ```
