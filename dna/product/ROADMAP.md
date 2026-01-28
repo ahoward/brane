@@ -33,10 +33,10 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 ### Next
 
-- [ ] `014-calabi-scan` — Scan dirty files, extract to mind.db
+- [ ] `015-context-query` — Vector search + graph expansion for context retrieval
 
 ### Backlog (Phase 2)
-- [ ] `015-context-query` — Vector search + graph expansion for context retrieval
+*Phase 2 complete once 015-context-query is done.*
 
 ---
 
@@ -74,6 +74,7 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 | Feature | PR | Date |
 |---------|-----|------|
+| `014-calabi-scan` | #17 | 2026-01-28 |
 | `013-calabi-extract` | #16 | 2026-01-28 |
 | `012-mind-provenance` | #15 | 2026-01-28 |
 | `011-mind-edges` | #14 | 2026-01-28 |
