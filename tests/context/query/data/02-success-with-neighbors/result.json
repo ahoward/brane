@@ -1,0 +1,22 @@
+{
+  "status": "success",
+  "result": {
+    "concepts": [
+      {"id": 1, "name": "AuthService", "type": "Entity", "relevance": "direct"},
+      {"id": 2, "name": "LoginHandler", "type": "Entity", "relevance": "neighbor"}
+    ],
+    "files": [],
+    "graph": {
+      "nodes": [1, 2],
+      "edges": [
+        {"source": 2, "target": 1, "relation": "DEPENDS_ON"}
+      ]
+    }
+  },
+  "errors": null,
+  "meta": {
+    "path": "/context/query",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

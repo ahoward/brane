@@ -1,0 +1,17 @@
+{
+  "status": "success",
+  "result": {
+    "concepts": [],
+    "files": [],
+    "graph": {
+      "nodes": [],
+      "edges": []
+    }
+  },
+  "errors": null,
+  "meta": {
+    "path": "/context/query",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}
