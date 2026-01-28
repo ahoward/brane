@@ -97,6 +97,14 @@ async function main(): Promise<void> {
   if (result.status === "error") {
     process.exit(1)
   }
+
+  // Special handling for /mind/verify - exit 1 if violations found
+  if (path === "/mind/verify" && result.status === "success") {
+    const verify_result = result.result as { passed?: boolean } | null
+    if (verify_result && verify_result.passed === false) {
+      process.exit(1)
+    }
+  }
 }
 
 main().catch((err) => {

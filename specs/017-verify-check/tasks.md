@@ -19,8 +19,8 @@
 
 **Purpose**: Create handler file and register route
 
-- [ ] T001 Create handler file at src/handlers/mind/verify.ts
-- [ ] T002 Register /mind/verify route in src/index.ts
+- [X] T001 Create handler file at src/handlers/mind/verify.ts
+- [X] T002 Register /mind/verify route in src/index.ts
 
 ---
 
@@ -32,16 +32,16 @@
 
 ### Tests for US1
 
-- [ ] T003 [P] [US1] Create tc test for no violations at tests/mind/verify/data/00-success-no-violations/
-- [ ] T004 [P] [US1] Create tc test for with violations at tests/mind/verify/data/01-success-with-violations/
-- [ ] T005 [P] [US1] Create tc test for not initialized at tests/mind/verify/data/04-error-not-initialized/
+- [X] T003 [P] [US1] Create tc test for no violations at tests/mind/verify/data/00-success-no-violations/
+- [X] T004 [P] [US1] Create tc test for with violations at tests/mind/verify/data/01-success-with-violations/
+- [X] T005 [P] [US1] Create tc test for not initialized at tests/mind/verify/data/04-error-not-initialized/
 
 ### Implementation for US1
 
-- [ ] T006 [US1] Implement /mind/verify handler core logic in src/handlers/mind/verify.ts
-- [ ] T007 [US1] Add list all rules functionality (reuse /mind/rules/list logic)
-- [ ] T008 [US1] Add execute rule functionality (reuse /mind/rules/query logic)
-- [ ] T009 [US1] Add summary statistics computation (rules_passed, rules_failed, total_violations)
+- [X] T006 [US1] Implement /mind/verify handler core logic in src/handlers/mind/verify.ts
+- [X] T007 [US1] Add list all rules functionality (reuse /mind/rules/list logic)
+- [X] T008 [US1] Add execute rule functionality (reuse /mind/rules/query logic)
+- [X] T009 [US1] Add summary statistics computation (rules_passed, rules_failed, total_violations)
 
 **Checkpoint**: Can verify graph with all rules - MVP complete
 
@@ -55,14 +55,14 @@
 
 ### Tests for US2
 
-- [ ] T010 [P] [US2] Create tc test for specific rules at tests/mind/verify/data/02-success-specific-rules/
-- [ ] T011 [P] [US2] Create tc test for rule not found at tests/mind/verify/data/05-error-rule-not-found/
+- [X] T010 [P] [US2] Create tc test for specific rules at tests/mind/verify/data/02-success-specific-rules/
+- [X] T011 [P] [US2] Create tc test for rule not found at tests/mind/verify/data/05-error-rule-not-found/
 
 ### Implementation for US2
 
-- [ ] T012 [US2] Add rules parameter parsing in src/handlers/mind/verify.ts
-- [ ] T013 [US2] Add rule existence validation before execution
-- [ ] T014 [US2] Filter rules to execute based on parameter
+- [X] T012 [US2] Add rules parameter parsing in src/handlers/mind/verify.ts
+- [X] T013 [US2] Add rule existence validation before execution
+- [X] T014 [US2] Filter rules to execute based on parameter
 
 **Checkpoint**: Can verify with specific rules
 
@@ -76,8 +76,8 @@
 
 ### Implementation for US3
 
-- [ ] T015 [US3] Update src/cli.ts to check result.passed and set exit code
-- [ ] T016 [US3] Ensure error responses also return non-zero exit code
+- [X] T015 [US3] Update src/cli.ts to check result.passed and set exit code
+- [X] T016 [US3] Ensure error responses also return non-zero exit code
 
 **Checkpoint**: Can integrate into CI/CD pipelines
 
@@ -91,13 +91,13 @@
 
 ### Tests for US4
 
-- [ ] T017 [P] [US4] Create tc test for no rules defined at tests/mind/verify/data/03-success-no-rules/
-- [ ] T018 [P] [US4] Create tc test for rule execution error at tests/mind/verify/data/06-success-rule-execution-error/
+- [X] T017 [P] [US4] Create tc test for no rules defined at tests/mind/verify/data/03-success-no-rules/
+- [X] T018 [P] [US4] Create tc test for rule execution error at tests/mind/verify/data/06-success-rule-execution-error/
 
 ### Implementation for US4
 
-- [ ] T019 [US4] Handle empty rules table gracefully (passed: true, rules: [])
-- [ ] T020 [US4] Handle rule execution errors without stopping other rules
+- [X] T019 [US4] Handle empty rules table gracefully (passed: true, rules: [])
+- [X] T020 [US4] Handle rule execution errors without stopping other rules
 
 **Checkpoint**: Can handle all edge cases
 
@@ -107,7 +107,7 @@
 
 **Purpose**: Final validation and cleanup
 
-- [ ] T021 Run full test suite to verify all tests pass
+- [X] T021 Run full test suite to verify all tests pass (200 passed, 0 failed)
 - [ ] T022 Run quickstart.md validation manually
 
 ---

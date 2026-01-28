@@ -1,0 +1,37 @@
+{
+  "status": "success",
+  "result": {
+    "passed": false,
+    "summary": {
+      "rules_passed": 0,
+      "rules_failed": 2,
+      "total_violations": 4
+    },
+    "rules": [
+      {
+        "name": "cycles",
+        "passed": false,
+        "violations": [
+          {"id": 1, "name": "A"},
+          {"id": 2, "name": "B"},
+          {"id": 3, "name": "C"}
+        ],
+        "error": null
+      },
+      {
+        "name": "orphans",
+        "passed": false,
+        "violations": [
+          {"id": 4, "name": "Orphan"}
+        ],
+        "error": null
+      }
+    ]
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/verify",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}
