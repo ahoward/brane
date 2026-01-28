@@ -1,0 +1,15 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "text": [{
+      "code": "required",
+      "message": "text is required"
+    }]
+  },
+  "meta": {
+    "path": "/mind/annotations/create",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

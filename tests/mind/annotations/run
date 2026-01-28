@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+#
+# Test runner for /mind/annotations/*
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+# Helper to create an annotation
+create_annotation() {
+  echo "$1" | bun run "$BRANE_ROOT/src/cli.ts" /mind/annotations/create > /dev/null 2>&1
+}
+
+case "$TC_CASE_NAME" in
+  00-success-create)
+    init_mind
+    create_concept '{"name": "Auth", "type": "Entity"}'
+    echo "$INPUT" | bun run "$BRANE_ROOT/src/cli.ts" /mind/annotations/create
+    ;;
+  01-error-not-initialized)
+    init_body  # body but not mind
+    echo "$INPUT" | bun run "$BRANE_ROOT/src/cli.ts" /mind/annotations/create
+    ;;
+  02-error-concept-not-found)
+    init_mind
+    echo "$INPUT" | bun run "$BRANE_ROOT/src/cli.ts" /mind/annotations/create
+    ;;
+  03-error-text-required)
+    init_mind
+    create_concept '{"name": "Auth", "type": "Entity"}'
+    echo "$INPUT" | bun run "$BRANE_ROOT/src/cli.ts" /mind/annotations/create
+    ;;
+  04-success-list)
+    init_mind
+    create_concept '{"name": "Auth", "type": "Entity"}'
+    create_annotation '{"target": 1, "text": "First note", "type": "note"}'
+    create_annotation '{"target": 1, "text": "Do not touch", "type": "caveat"}'
+    echo "$INPUT" | bun run "$BRANE_ROOT/src/cli.ts" /mind/annotations/list
+    ;;
+  05-success-get)
+    init_mind
+    create_concept '{"name": "Auth", "type": "Entity"}'
+    create_annotation '{"target": 1, "text": "Do not touch", "type": "caveat"}'
+    echo "$INPUT" | bun run "$BRANE_ROOT/src/cli.ts" /mind/annotations/get
+    ;;
+  06-error-annotation-not-found)
+    init_mind
+    echo "$INPUT" | bun run "$BRANE_ROOT/src/cli.ts" /mind/annotations/get
+    ;;
+  07-success-delete)
+    init_mind
+    create_concept '{"name": "Auth", "type": "Entity"}'
+    create_annotation '{"target": 1, "text": "To be deleted", "type": "todo"}'
+    echo "$INPUT" | bun run "$BRANE_ROOT/src/cli.ts" /mind/annotations/delete
+    ;;
+  08-error-delete-not-found)
+    init_mind
+    echo "$INPUT" | bun run "$BRANE_ROOT/src/cli.ts" /mind/annotations/delete
+    ;;
+  09-success-filter-target)
+    init_mind
+    create_concept '{"name": "Auth", "type": "Entity"}'
+    create_concept '{"name": "DB", "type": "Entity"}'
+    create_annotation '{"target": 1, "text": "Auth note", "type": "note"}'
+    create_annotation '{"target": 2, "text": "DB note", "type": "note"}'
+    echo "$INPUT" | bun run "$BRANE_ROOT/src/cli.ts" /mind/annotations/list
+    ;;
+  10-success-filter-type)
+    init_mind
+    create_concept '{"name": "Auth", "type": "Entity"}'
+    create_annotation '{"target": 1, "text": "Note 1", "type": "note"}'
+    create_annotation '{"target": 1, "text": "Caveat 1", "type": "caveat"}'
+    create_annotation '{"target": 1, "text": "Todo 1", "type": "todo"}'
+    echo "$INPUT" | bun run "$BRANE_ROOT/src/cli.ts" /mind/annotations/list
+    ;;
+  11-error-invalid-type)
+    init_mind
+    create_concept '{"name": "Auth", "type": "Entity"}'
+    echo "$INPUT" | bun run "$BRANE_ROOT/src/cli.ts" /mind/annotations/create
+    ;;
+  12-error-text-too-long)
+    init_mind
+    create_concept '{"name": "Auth", "type": "Entity"}'
+    echo "$INPUT" | bun run "$BRANE_ROOT/src/cli.ts" /mind/annotations/create
+    ;;
+esac

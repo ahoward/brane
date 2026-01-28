@@ -99,6 +99,8 @@ ai/                   # AI agent resources
 - CozoDB mind.db (new `rules` relation) (016-rules-define)
 - TypeScript (Bun runtime) + CozoDB (mind.db), existing `/mind/rules/*` handlers from 016-rules-define (017-verify-check)
 - mind.db (CozoDB with RocksDB backend) (017-verify-check)
+- TypeScript (Bun runtime) + CozoDB (cozo-node), existing mind.ts utilities (018-annotate)
+- CozoDB `.brane/mind.db` (RocksDB backend) (018-annotate)
 
 ## Recent Changes
 - 016-rules-define: Added TypeScript (Bun 1.x) + CozoDB (Datalog), existing mind.ts utilities

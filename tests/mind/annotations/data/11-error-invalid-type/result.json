@@ -1,0 +1,15 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "type": [{
+      "code": "invalid",
+      "message": "type must be one of: caveat, note, todo"
+    }]
+  },
+  "meta": {
+    "path": "/mind/annotations/create",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}
