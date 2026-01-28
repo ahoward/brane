@@ -93,3 +93,10 @@ ai/                   # AI agent resources
 - Implement without tests
 - Skip Gemini review
 - Change tests after review without human approval
+
+## Active Technologies
+- TypeScript (Bun 1.x) + CozoDB (Datalog), existing mind.ts utilities (016-rules-define)
+- CozoDB mind.db (new `rules` relation) (016-rules-define)
+
+## Recent Changes
+- 016-rules-define: Added TypeScript (Bun 1.x) + CozoDB (Datalog), existing mind.ts utilities
