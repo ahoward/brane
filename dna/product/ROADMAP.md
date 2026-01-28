@@ -33,10 +33,9 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 ### Next
 
-- [ ] `012-mind-provenance` — Link concepts to body files
+- [ ] `013-calabi-extract` — LLM extraction: file → concepts + edges
 
 ### Backlog (Phase 2)
-- [ ] `013-calabi-extract` — LLM extraction: file → concepts + edges
 - [ ] `014-calabi-scan` — Scan dirty files, extract to mind.db
 - [ ] `015-context-query` — Vector search + graph expansion for context retrieval
 
@@ -76,6 +75,7 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 | Feature | PR | Date |
 |---------|-----|------|
+| `012-mind-provenance` | #15 | 2026-01-28 |
 | `011-mind-edges` | #14 | 2026-01-28 |
 | `010-mind-concepts` | #11 | 2026-01-27 |
 | `009-mind-init` | #10 | 2026-01-27 |
