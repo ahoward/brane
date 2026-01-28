@@ -62,6 +62,7 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 | Feature | PR | Date |
 |---------|-----|------|
+| `tc-refactor` | — | 2026-01-28 |
 | `015-context-query` | #18 | 2026-01-28 |
 | `014-calabi-scan` | #17 | 2026-01-28 |
 | `013-calabi-extract` | #16 | 2026-01-28 |
@@ -89,3 +90,4 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 - Never skip a feature without updating this roadmap
 - Phase transitions require all prior features complete
 - **Phase 2 complete!** — Mind and Calabi extraction now operational
+- **tc refactor complete!** — Hybrid TypeScript + shell test infrastructure with hooks and default runner
