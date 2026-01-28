@@ -2,20 +2,13 @@
 #
 # Test runner for /mind/concepts/create
 #
-
 set -e
 
 BRANE_ROOT="$(cd "$(dirname "$0")/../../../.." && pwd)"
-INPUT=$(cat)
-WORKDIR=$(mktemp -d)
-trap "rm -rf $WORKDIR" EXIT
-cd "$WORKDIR"
+source "$BRANE_ROOT/tests/lib.sh"
 
-init_mind() {
-  mkdir -p .brane
-  sqlite3 .brane/body.db "CREATE TABLE IF NOT EXISTS files (id INTEGER PRIMARY KEY, url TEXT NOT NULL UNIQUE, hash TEXT NOT NULL, size INTEGER NOT NULL, mtime INTEGER NOT NULL);"
-  echo '{}' | bun run "$BRANE_ROOT/src/cli.ts" /mind/init > /dev/null 2>&1
-}
+INPUT=$(cat)
+workspace
 
 case "$TC_CASE_NAME" in
   00-success-create)

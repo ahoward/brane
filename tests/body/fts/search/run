@@ -2,137 +2,73 @@
 #
 # Test runner for /body/fts/search
 #
-# Each test case runs in an isolated temp directory.
-# TC_CASE_NAME environment variable determines setup.
-#
-
 set -e
 
-# Get the original directory (where brane source lives)
 BRANE_ROOT="$(cd "$(dirname "$0")/../../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
 
-# Read input from stdin
 INPUT=$(cat)
+workspace
 
-# Create isolated temp directory
-WORKDIR=$(mktemp -d)
-trap "rm -rf $WORKDIR" EXIT
-
-cd "$WORKDIR"
-
-# Helper to add files to body.db
-add_file() {
-  local url="$1"
-  local hash="$2"
-  local size="$3"
-  local mtime="$4"
-  sqlite3 .brane/body.db "INSERT INTO files (url, hash, size, mtime) VALUES ('$url', '$hash', $size, $mtime);"
-}
-
-# Helper to add FTS content
-add_fts_content() {
-  local url="$1"
-  local content="$2"
-  sqlite3 .brane/body.db "INSERT INTO files_fts (url, content) VALUES ('$url', '$content');"
-}
-
-# Helper to add FTS status
-add_fts_status() {
-  local url="$1"
-  local hash="$2"
-  sqlite3 .brane/body.db "INSERT INTO files_fts_status (url, indexed_hash) VALUES ('$url', '$hash');"
-}
-
-# Initialize brane with FTS tables
-init_brane() {
-  mkdir -p .brane
-  sqlite3 .brane/body.db "CREATE TABLE IF NOT EXISTS files (id INTEGER PRIMARY KEY, url TEXT NOT NULL UNIQUE, hash TEXT NOT NULL, size INTEGER NOT NULL, mtime INTEGER NOT NULL);"
-  sqlite3 .brane/body.db "CREATE VIRTUAL TABLE IF NOT EXISTS files_fts USING fts5(url, content);"
-  sqlite3 .brane/body.db "CREATE TABLE IF NOT EXISTS files_fts_status (url TEXT PRIMARY KEY, indexed_hash TEXT NOT NULL);"
-}
-
-# Setup based on test case name
 case "$TC_CASE_NAME" in
   00-success-basic-search)
-    # Create and index files with searchable content
-    init_brane
-    add_file "file://$WORKDIR/todo.txt" "hash1" 100 1234567890
-    add_fts_content "file://$WORKDIR/todo.txt" "This file has a TODO item that needs attention"
-    add_fts_status "file://$WORKDIR/todo.txt" "hash1"
-    add_file "file://$WORKDIR/readme.md" "hash2" 200 1234567890
-    add_fts_content "file://$WORKDIR/readme.md" "This is a readme file with no tasks"
-    add_fts_status "file://$WORKDIR/readme.md" "hash2"
+    init_body_fts
+    add_body_file "file://$WORKDIR/todo.txt" "hash1" 100 1234567890
+    add_fts "file://$WORKDIR/todo.txt" "This file has a TODO item that needs attention" "hash1"
+    add_body_file "file://$WORKDIR/readme.md" "hash2" 200 1234567890
+    add_fts "file://$WORKDIR/readme.md" "This is a readme file with no tasks" "hash2"
     ;;
 
   01-success-no-matches)
-    # Create indexed files that don't match search
-    init_brane
-    add_file "file://$WORKDIR/hello.txt" "hash1" 100 1234567890
-    add_fts_content "file://$WORKDIR/hello.txt" "Hello world this is a test file"
-    add_fts_status "file://$WORKDIR/hello.txt" "hash1"
+    init_body_fts
+    add_body_file "file://$WORKDIR/hello.txt" "hash1" 100 1234567890
+    add_fts "file://$WORKDIR/hello.txt" "Hello world this is a test file" "hash1"
     ;;
 
   02-success-path-filter)
-    # Create files in different directories
-    init_brane
-    mkdir -p src tests
-    add_file "file://$WORKDIR/src/main.ts" "hash1" 100 1234567890
-    add_fts_content "file://$WORKDIR/src/main.ts" "function main returns hello world"
-    add_fts_status "file://$WORKDIR/src/main.ts" "hash1"
-    add_file "file://$WORKDIR/tests/main.test.ts" "hash2" 200 1234567890
-    add_fts_content "file://$WORKDIR/tests/main.test.ts" "function test expects main to return hello"
-    add_fts_status "file://$WORKDIR/tests/main.test.ts" "hash2"
+    init_body_fts
+    add_body_file "file://$WORKDIR/src/main.ts" "hash1" 100 1234567890
+    add_fts "file://$WORKDIR/src/main.ts" "function main returns hello world" "hash1"
+    add_body_file "file://$WORKDIR/tests/main.test.ts" "hash2" 200 1234567890
+    add_fts "file://$WORKDIR/tests/main.test.ts" "function test expects main to return hello" "hash2"
     ;;
 
   03-success-with-limit)
-    # Create many matching files
-    init_brane
+    init_body_fts
     for i in 1 2 3 4 5; do
-      add_file "file://$WORKDIR/file$i.txt" "hash$i" 100 1234567890
-      add_fts_content "file://$WORKDIR/file$i.txt" "This file contains the word apple"
-      add_fts_status "file://$WORKDIR/file$i.txt" "hash$i"
+      add_body_file "file://$WORKDIR/file$i.txt" "hash$i" 100 1234567890
+      add_fts "file://$WORKDIR/file$i.txt" "This file contains the word apple" "hash$i"
     done
     ;;
 
   04-success-fts-syntax)
-    # Create files for FTS5 syntax testing
-    init_brane
-    add_file "file://$WORKDIR/errors.log" "hash1" 100 1234567890
-    add_fts_content "file://$WORKDIR/errors.log" "error: something went wrong"
-    add_fts_status "file://$WORKDIR/errors.log" "hash1"
-    add_file "file://$WORKDIR/warnings.log" "hash2" 200 1234567890
-    add_fts_content "file://$WORKDIR/warnings.log" "warning: this might be a problem"
-    add_fts_status "file://$WORKDIR/warnings.log" "hash2"
-    add_file "file://$WORKDIR/mixed.log" "hash3" 300 1234567890
-    add_fts_content "file://$WORKDIR/mixed.log" "error: critical and warning: minor"
-    add_fts_status "file://$WORKDIR/mixed.log" "hash3"
+    init_body_fts
+    add_body_file "file://$WORKDIR/errors.log" "hash1" 100 1234567890
+    add_fts "file://$WORKDIR/errors.log" "error: something went wrong" "hash1"
+    add_body_file "file://$WORKDIR/warnings.log" "hash2" 200 1234567890
+    add_fts "file://$WORKDIR/warnings.log" "warning: this might be a problem" "hash2"
+    add_body_file "file://$WORKDIR/mixed.log" "hash3" 300 1234567890
+    add_fts "file://$WORKDIR/mixed.log" "error: critical and warning: minor" "hash3"
     ;;
 
   05-success-not-indexed)
-    # Initialize brane but no FTS table (or empty)
-    init_brane
-    # Files exist but not indexed
-    add_file "file://$WORKDIR/unindexed.txt" "hash1" 100 1234567890
+    init_body_fts
+    add_body_file "file://$WORKDIR/unindexed.txt" "hash1" 100 1234567890
     ;;
 
   06-error-not-initialized)
-    # Don't initialize brane
     echo "some file" > test.txt
     ;;
 
   07-error-empty-query)
-    # Initialize brane
-    init_brane
+    init_body_fts
     ;;
 
   08-error-invalid-query)
-    # Initialize brane with FTS table
-    init_brane
-    add_file "file://$WORKDIR/test.txt" "hash1" 100 1234567890
-    add_fts_content "file://$WORKDIR/test.txt" "test content"
-    add_fts_status "file://$WORKDIR/test.txt" "hash1"
+    init_body_fts
+    add_body_file "file://$WORKDIR/test.txt" "hash1" 100 1234567890
+    add_fts "file://$WORKDIR/test.txt" "test content" "hash1"
     ;;
 esac
 
-# Run the handler
 echo "$INPUT" | bun run "$BRANE_ROOT/src/cli.ts" /body/fts/search

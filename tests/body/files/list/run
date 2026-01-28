@@ -2,82 +2,50 @@
 #
 # Test runner for /body/files/list
 #
-# Each test case runs in an isolated temp directory.
-# TC_CASE_NAME environment variable determines setup.
-#
-
 set -e
 
-# Get the original directory (where brane source lives)
 BRANE_ROOT="$(cd "$(dirname "$0")/../../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
 
-# Read input from stdin
 INPUT=$(cat)
+workspace
 
-# Create isolated temp directory
-WORKDIR=$(mktemp -d)
-trap "rm -rf $WORKDIR" EXIT
-
-cd "$WORKDIR"
-
-# Helper to add files to body.db
-add_file() {
-  local url="$1"
-  local hash="$2"
-  local size="$3"
-  local mtime="$4"
-  sqlite3 .brane/body.db "INSERT INTO files (url, hash, size, mtime) VALUES ('$url', '$hash', $size, $mtime);"
-}
-
-# Setup based on test case name
 case "$TC_CASE_NAME" in
   00-success-list-all)
-    # Initialize brane and add some files
-    mkdir -p .brane
-    sqlite3 .brane/body.db "CREATE TABLE IF NOT EXISTS files (id INTEGER PRIMARY KEY, url TEXT NOT NULL UNIQUE, hash TEXT NOT NULL, size INTEGER NOT NULL, mtime INTEGER NOT NULL);"
-    add_file "file://$WORKDIR/README.md" "abc123" 100 1234567890
-    add_file "file://$WORKDIR/src/index.ts" "def456" 200 1234567891
-    add_file "file://$WORKDIR/src/util.ts" "ghi789" 300 1234567892
+    init_body
+    add_body_file "file://$WORKDIR/README.md" "abc123" 100 1234567890
+    add_body_file "file://$WORKDIR/src/index.ts" "def456" 200 1234567891
+    add_body_file "file://$WORKDIR/src/util.ts" "ghi789" 300 1234567892
     ;;
 
   01-success-empty)
-    # Initialize brane with empty db
-    mkdir -p .brane
-    sqlite3 .brane/body.db "CREATE TABLE IF NOT EXISTS files (id INTEGER PRIMARY KEY, url TEXT NOT NULL UNIQUE, hash TEXT NOT NULL, size INTEGER NOT NULL, mtime INTEGER NOT NULL);"
+    init_body
     ;;
 
   02-success-filter-path)
-    # Initialize brane with files in different directories
-    mkdir -p .brane
-    sqlite3 .brane/body.db "CREATE TABLE IF NOT EXISTS files (id INTEGER PRIMARY KEY, url TEXT NOT NULL UNIQUE, hash TEXT NOT NULL, size INTEGER NOT NULL, mtime INTEGER NOT NULL);"
-    add_file "file://$WORKDIR/README.md" "abc123" 100 1234567890
-    add_file "file://$WORKDIR/src/index.ts" "def456" 200 1234567891
-    add_file "file://$WORKDIR/src/util.ts" "ghi789" 300 1234567892
-    add_file "file://$WORKDIR/tests/main.test.ts" "jkl012" 400 1234567893
+    init_body
+    add_body_file "file://$WORKDIR/README.md" "abc123" 100 1234567890
+    add_body_file "file://$WORKDIR/src/index.ts" "def456" 200 1234567891
+    add_body_file "file://$WORKDIR/src/util.ts" "ghi789" 300 1234567892
+    add_body_file "file://$WORKDIR/tests/main.test.ts" "jkl012" 400 1234567893
     ;;
 
   03-success-filter-pattern)
-    # Initialize brane with mixed file types
-    mkdir -p .brane
-    sqlite3 .brane/body.db "CREATE TABLE IF NOT EXISTS files (id INTEGER PRIMARY KEY, url TEXT NOT NULL UNIQUE, hash TEXT NOT NULL, size INTEGER NOT NULL, mtime INTEGER NOT NULL);"
-    add_file "file://$WORKDIR/README.md" "abc123" 100 1234567890
-    add_file "file://$WORKDIR/index.ts" "def456" 200 1234567891
-    add_file "file://$WORKDIR/util.ts" "ghi789" 300 1234567892
-    add_file "file://$WORKDIR/style.css" "jkl012" 400 1234567893
+    init_body
+    add_body_file "file://$WORKDIR/README.md" "abc123" 100 1234567890
+    add_body_file "file://$WORKDIR/index.ts" "def456" 200 1234567891
+    add_body_file "file://$WORKDIR/util.ts" "ghi789" 300 1234567892
+    add_body_file "file://$WORKDIR/style.css" "jkl012" 400 1234567893
     ;;
 
   04-success-no-matches)
-    # Initialize brane with files that won't match filter
-    mkdir -p .brane
-    sqlite3 .brane/body.db "CREATE TABLE IF NOT EXISTS files (id INTEGER PRIMARY KEY, url TEXT NOT NULL UNIQUE, hash TEXT NOT NULL, size INTEGER NOT NULL, mtime INTEGER NOT NULL);"
-    add_file "file://$WORKDIR/README.md" "abc123" 100 1234567890
-    add_file "file://$WORKDIR/src/index.ts" "def456" 200 1234567891
+    init_body
+    add_body_file "file://$WORKDIR/README.md" "abc123" 100 1234567890
+    add_body_file "file://$WORKDIR/src/index.ts" "def456" 200 1234567891
     ;;
 
   05-error-not-initialized)
-    # Don't initialize brane
     ;;
 esac
 
-# Run the handler
 echo "$INPUT" | bun run "$BRANE_ROOT/src/cli.ts" /body/files/list
