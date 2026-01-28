@@ -1,0 +1,9 @@
+{
+  "file_url": "file:///test/auth.ts",
+  "concepts": [
+    {"name": "AuthService", "type": "Entity"}
+  ],
+  "edges": [
+    {"source_name": "UnknownConcept", "target_name": "AuthService", "relation": "DEPENDS_ON"}
+  ]
+}

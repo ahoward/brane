@@ -28,6 +28,7 @@ import { handler as mind_edges_delete_handler } from "./handlers/mind/edges/dele
 import { handler as mind_provenance_create_handler } from "./handlers/mind/provenance/create.ts"
 import { handler as mind_provenance_list_handler } from "./handlers/mind/provenance/list.ts"
 import { handler as mind_provenance_delete_handler } from "./handlers/mind/provenance/delete.ts"
+import { handler as calabi_extract_handler } from "./handlers/calabi/extract.ts"
 
 sys.register("/ping", ping_handler)
 sys.register("/body/init", body_init_handler)
@@ -52,6 +53,7 @@ sys.register("/mind/edges/delete", mind_edges_delete_handler)
 sys.register("/mind/provenance/create", mind_provenance_create_handler)
 sys.register("/mind/provenance/list", mind_provenance_list_handler)
 sys.register("/mind/provenance/delete", mind_provenance_delete_handler)
+sys.register("/calabi/extract", calabi_extract_handler)
 
 // export
 export { sys }
