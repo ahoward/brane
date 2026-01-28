@@ -19,9 +19,9 @@
 
 **Purpose**: Add annotations relation to mind.db schema and helper functions
 
-- [ ] T001 Add annotations relation schema to src/handlers/mind/init.ts
-- [ ] T002 Add annotation helpers to src/lib/mind.ts (types, validators, ID counter)
-- [ ] T003 Create handler directory structure at src/handlers/mind/annotations/
+- [X] T001 Add annotations relation schema to src/handlers/mind/init.ts
+- [X] T002 Add annotation helpers to src/lib/mind.ts (types, validators, ID counter)
+- [X] T003 Create handler directory structure at src/handlers/mind/annotations/
 
 ---
 
@@ -33,21 +33,21 @@
 
 ### Tests for US1 & US2
 
-- [ ] T004 [P] [US1] Create tc test for successful create at tests/mind/annotations/data/00-success-create/
-- [ ] T005 [P] [US1] Create tc test for error not initialized at tests/mind/annotations/data/01-error-not-initialized/
-- [ ] T006 [P] [US1] Create tc test for error concept not found at tests/mind/annotations/data/02-error-concept-not-found/
-- [ ] T007 [P] [US1] Create tc test for error text required at tests/mind/annotations/data/03-error-text-required/
-- [ ] T008 [P] [US2] Create tc test for successful list at tests/mind/annotations/data/04-success-list/
-- [ ] T009 [P] [US2] Create tc test for successful get at tests/mind/annotations/data/05-success-get/
-- [ ] T010 [P] [US2] Create tc test for error annotation not found at tests/mind/annotations/data/06-error-annotation-not-found/
+- [X] T004 [P] [US1] Create tc test for successful create at tests/mind/annotations/data/00-success-create/
+- [X] T005 [P] [US1] Create tc test for error not initialized at tests/mind/annotations/data/01-error-not-initialized/
+- [X] T006 [P] [US1] Create tc test for error concept not found at tests/mind/annotations/data/02-error-concept-not-found/
+- [X] T007 [P] [US1] Create tc test for error text required at tests/mind/annotations/data/03-error-text-required/
+- [X] T008 [P] [US2] Create tc test for successful list at tests/mind/annotations/data/04-success-list/
+- [X] T009 [P] [US2] Create tc test for successful get at tests/mind/annotations/data/05-success-get/
+- [X] T010 [P] [US2] Create tc test for error annotation not found at tests/mind/annotations/data/06-error-annotation-not-found/
 
 ### Implementation for US1 & US2
 
-- [ ] T011 [US1] Implement /mind/annotations/create handler in src/handlers/mind/annotations/create.ts
-- [ ] T012 [US2] Implement /mind/annotations/list handler in src/handlers/mind/annotations/list.ts
-- [ ] T013 [US2] Implement /mind/annotations/get handler in src/handlers/mind/annotations/get.ts
-- [ ] T014 [US1] Register annotation routes in src/index.ts
-- [ ] T015 [US1] Create test runner at tests/mind/annotations/run
+- [X] T011 [US1] Implement /mind/annotations/create handler in src/handlers/mind/annotations/create.ts
+- [X] T012 [US2] Implement /mind/annotations/list handler in src/handlers/mind/annotations/list.ts
+- [X] T013 [US2] Implement /mind/annotations/get handler in src/handlers/mind/annotations/get.ts
+- [X] T014 [US1] Register annotation routes in src/index.ts
+- [X] T015 [US1] Create test runner at tests/mind/annotations/run
 
 **Checkpoint**: Can create and retrieve annotations - MVP complete
 
@@ -61,13 +61,13 @@
 
 ### Tests for US3
 
-- [ ] T016 [P] [US3] Create tc test for successful delete at tests/mind/annotations/data/07-success-delete/
-- [ ] T017 [P] [US3] Create tc test for delete not found at tests/mind/annotations/data/08-error-delete-not-found/
+- [X] T016 [P] [US3] Create tc test for successful delete at tests/mind/annotations/data/07-success-delete/
+- [X] T017 [P] [US3] Create tc test for delete not found at tests/mind/annotations/data/08-error-delete-not-found/
 
 ### Implementation for US3
 
-- [ ] T018 [US3] Implement /mind/annotations/delete handler in src/handlers/mind/annotations/delete.ts
-- [ ] T019 [US3] Register delete route in src/index.ts
+- [X] T018 [US3] Implement /mind/annotations/delete handler in src/handlers/mind/annotations/delete.ts
+- [X] T019 [US3] Register delete route in src/index.ts
 
 **Checkpoint**: Can delete annotations
 
@@ -81,16 +81,16 @@
 
 ### Tests for US4
 
-- [ ] T020 [P] [US4] Create tc test for filter by target at tests/mind/annotations/data/09-success-filter-target/
-- [ ] T021 [P] [US4] Create tc test for filter by type at tests/mind/annotations/data/10-success-filter-type/
-- [ ] T022 [P] [US4] Create tc test for invalid type error at tests/mind/annotations/data/11-error-invalid-type/
-- [ ] T023 [P] [US4] Create tc test for text too long at tests/mind/annotations/data/12-error-text-too-long/
+- [X] T020 [P] [US4] Create tc test for filter by target at tests/mind/annotations/data/09-success-filter-target/
+- [X] T021 [P] [US4] Create tc test for filter by type at tests/mind/annotations/data/10-success-filter-type/
+- [X] T022 [P] [US4] Create tc test for invalid type error at tests/mind/annotations/data/11-error-invalid-type/
+- [X] T023 [P] [US4] Create tc test for text too long at tests/mind/annotations/data/12-error-text-too-long/
 
 ### Implementation for US4
 
-- [ ] T024 [US4] Add type validation to create handler
-- [ ] T025 [US4] Add target and type filter parameters to list handler
-- [ ] T026 [US4] Add text length validation (4096 char limit) to create handler
+- [X] T024 [US4] Add type validation to create handler
+- [X] T025 [US4] Add target and type filter parameters to list handler
+- [X] T026 [US4] Add text length validation (4096 char limit) to create handler
 
 **Checkpoint**: Full annotation functionality complete
 
@@ -100,7 +100,7 @@
 
 **Purpose**: Final validation and cleanup
 
-- [ ] T027 Run full test suite to verify all tests pass
+- [X] T027 Run full test suite to verify all tests pass (213 passed, 0 failed)
 - [ ] T028 Run quickstart.md validation manually
 
 ---

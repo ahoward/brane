@@ -1,0 +1,15 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "text": [{
+      "code": "invalid",
+      "message": "text must be 4096 characters or less"
+    }]
+  },
+  "meta": {
+    "path": "/mind/annotations/create",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

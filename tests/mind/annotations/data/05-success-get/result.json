@@ -1,0 +1,17 @@
+{
+  "status": "success",
+  "result": {
+    "id": 1,
+    "target": 1,
+    "text": "Do not touch",
+    "type": "caveat",
+    "authority": "infinity",
+    "created_at": "<timestamp>"
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/annotations/get",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

@@ -18,7 +18,7 @@ interface InitResult {
   schema_version: string
 }
 
-const SCHEMA_VERSION = "1.2.0"
+const SCHEMA_VERSION = "1.3.0"
 
 //
 // Built-in rules for graph integrity checks
@@ -90,6 +90,22 @@ const SCHEMA_QUERIES = [
     description: String,
     body: String,
     builtin: Bool default false
+  }`,
+
+  // Annotations - manual notes with infinite authority
+  // id: unique identifier
+  // target: concept ID this annotation applies to
+  // text: annotation content
+  // type: caveat, note, or todo
+  // authority: always "infinity" for manual annotations
+  // created_at: ISO timestamp
+  `:create annotations {
+    id: Int,
+    target: Int,
+    text: String,
+    type: String,
+    authority: String,
+    created_at: String
   }`
 ]
 

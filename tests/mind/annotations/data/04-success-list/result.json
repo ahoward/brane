@@ -1,0 +1,30 @@
+{
+  "status": "success",
+  "result": {
+    "annotations": [
+      {
+        "id": 2,
+        "target": 1,
+        "text": "Do not touch",
+        "type": "caveat",
+        "authority": "infinity",
+        "created_at": "<timestamp>"
+      },
+      {
+        "id": 1,
+        "target": 1,
+        "text": "First note",
+        "type": "note",
+        "authority": "infinity",
+        "created_at": "<timestamp>"
+      }
+    ],
+    "count": 2
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/annotations/list",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

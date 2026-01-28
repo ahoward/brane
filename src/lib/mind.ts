@@ -201,3 +201,88 @@ export async function validate_rule_syntax(db: CozoDb, body: string): Promise<{ 
     return { valid: false, error: message }
   }
 }
+
+//
+// Annotation types
+//
+
+export const ANNOTATION_TYPES = ["caveat", "note", "todo"] as const
+export type AnnotationType = typeof ANNOTATION_TYPES[number]
+
+export function is_valid_annotation_type(type: string): type is AnnotationType {
+  return ANNOTATION_TYPES.includes(type as AnnotationType)
+}
+
+// Authority is always "infinity" for manual annotations
+export const ANNOTATION_AUTHORITY = "infinity"
+
+// Max text length for annotations
+export const ANNOTATION_MAX_TEXT_LENGTH = 4096
+
+//
+// Get next annotation ID (auto-increment)
+//
+
+export async function get_next_annotation_id(db: CozoDb): Promise<number> {
+  // Try to get current counter
+  const result = await db.run(`
+    ?[value] := *schema_meta['annotation_next_id', value]
+  `)
+
+  const rows = result.rows as string[][]
+  let next_id = 1
+
+  if (rows.length > 0) {
+    next_id = parseInt(rows[0][0], 10)
+  }
+
+  // Increment counter
+  const new_id = next_id + 1
+  await db.run(`
+    ?[key, value] <- [['annotation_next_id', '${new_id}']]
+    :put schema_meta { key => value }
+  `)
+
+  return next_id
+}
+
+//
+// Check if annotation exists
+//
+
+export async function annotation_exists(db: CozoDb, id: number): Promise<boolean> {
+  const result = await db.run(`
+    ?[id] := *annotations[id, _, _, _, _, _], id = ${id}
+  `)
+  const rows = result.rows as unknown[][]
+  return rows.length > 0
+}
+
+//
+// Ensure annotations relation exists (for schema migration)
+//
+
+export async function ensure_annotations_relation(db: CozoDb): Promise<void> {
+  try {
+    // Check if annotations relation exists
+    const result = await db.run("::relations")
+    const rows = result.rows as string[][]
+    const relation_names = rows.map(r => r[0])
+
+    if (!relation_names.includes("annotations")) {
+      // Create annotations relation
+      await db.run(`
+        :create annotations {
+          id: Int,
+          target: Int,
+          text: String,
+          type: String,
+          authority: String,
+          created_at: String
+        }
+      `)
+    }
+  } catch {
+    // Relation may already exist, ignore error
+  }
+}

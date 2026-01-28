@@ -34,6 +34,10 @@ import { handler as mind_rules_delete_handler } from "./handlers/mind/rules/dele
 import { handler as mind_rules_list_handler } from "./handlers/mind/rules/list.ts"
 import { handler as mind_rules_get_handler } from "./handlers/mind/rules/get.ts"
 import { handler as mind_verify_handler } from "./handlers/mind/verify.ts"
+import { handler as mind_annotations_create_handler } from "./handlers/mind/annotations/create.ts"
+import { handler as mind_annotations_list_handler } from "./handlers/mind/annotations/list.ts"
+import { handler as mind_annotations_get_handler } from "./handlers/mind/annotations/get.ts"
+import { handler as mind_annotations_delete_handler } from "./handlers/mind/annotations/delete.ts"
 import { handler as calabi_extract_handler } from "./handlers/calabi/extract.ts"
 import { handler as calabi_scan_handler } from "./handlers/calabi/scan.ts"
 import { handler as context_query_handler } from "./handlers/context/query.ts"
@@ -67,6 +71,10 @@ sys.register("/mind/rules/delete", mind_rules_delete_handler)
 sys.register("/mind/rules/list", mind_rules_list_handler)
 sys.register("/mind/rules/get", mind_rules_get_handler)
 sys.register("/mind/verify", mind_verify_handler)
+sys.register("/mind/annotations/create", mind_annotations_create_handler)
+sys.register("/mind/annotations/list", mind_annotations_list_handler)
+sys.register("/mind/annotations/get", mind_annotations_get_handler)
+sys.register("/mind/annotations/delete", mind_annotations_delete_handler)
 sys.register("/calabi/extract", calabi_extract_handler)
 sys.register("/calabi/scan", calabi_scan_handler)
 sys.register("/context/query", context_query_handler)
