@@ -33,10 +33,9 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 ### Next
 
-- [ ] `018-annotate` — Manual annotations with infinite authority
+- [ ] `019-pr-verify` — Simulate PR changes and verify against rules
 
 ### Backlog (Phase 3)
-- [ ] `019-pr-verify` — Simulate PR changes and verify against rules
 
 ---
 
@@ -59,6 +58,7 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 | Feature | PR | Date |
 |---------|-----|------|
+| `018-annotate` | #22 | 2026-01-28 |
 | `017-verify-check` | #21 | 2026-01-28 |
 | `016-rules-define` | #20 | 2026-01-28 |
 | `tc-refactor` | — | 2026-01-28 |
