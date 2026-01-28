@@ -237,9 +237,88 @@ Tests are the spec. Claude implements against them. Human intervenes only when t
 
 ---
 
+## Technical Decisions
+
+### CozoDB: Keep It, Fix the Bundler Issue (2026-01-28)
+
+**Decision:** Stay with CozoDB for the Mind component. Do NOT switch to alternatives.
+
+**Context:** Explored options for enabling `bun build --compile` to create standalone binaries.
+
+**Alternatives Evaluated:**
+
+| Option | Verdict | Reason |
+|--------|---------|--------|
+| Rust rewrite | ❌ No | 3-6 months, kills velocity, premature |
+| GraphQLite (SQLite+Cypher) | ❌ No | Cypher lacks Datalog's rule/inference capabilities needed for `016-rules-define` |
+| Kuzu | ❌ No | Trades known problems for unknown; Cypher same limitation |
+| Pure SQLite + CTEs | ❌ No | Loses declarative Datalog, reimplements graph DB badly |
+| cozo-lib-wasm | ❌ No | No persistence (memory-only), requires export/import |
+
+**Root Cause:** CozoDB's `cozo-node` package uses `node-pre-gyp` for dynamic path resolution, which bundlers can't trace.
+
+**Solution:** Add a bundler-friendly entry point with static `require()` path.
+
+```javascript
+// Current (breaks bundlers)
+const binding_path = binary.find(...);  // dynamic
+const native = require(binding_path);
+
+// Fix (works with bundlers)
+const native = require('./native/6/cozo_node_prebuilt.node');  // static
+```
+
+**Implementation (Completed 2026-01-28):**
+
+1. **`src/lib/cozo.ts`** - Local bundler-friendly CozoDB wrapper with static require path
+2. **Updated imports** in `src/lib/mind.ts` and `src/handlers/mind/init.ts` to use `./cozo`
+3. **Multi-platform build scripts:**
+   - `scripts/build-release.sh` - Local multi-platform build
+   - `.github/workflows/release.yml` - CI/CD for all 5 platforms
+
+**Supported Platforms:**
+| Platform | Bun Target | Binary |
+|----------|------------|--------|
+| Linux x64 | `bun-linux-x64` | `brane-linux-x64` |
+| Linux ARM64 | `bun-linux-arm64` | `brane-linux-arm64` |
+| macOS x64 | `bun-darwin-x64` | `brane-darwin-x64` |
+| macOS ARM64 | `bun-darwin-arm64` | `brane-darwin-arm64` |
+| Windows x64 | `bun-windows-x64` | `brane-windows-x64.exe` |
+
+**How it works:**
+1. Download platform-specific `.node` from CozoDB releases
+2. Place in `node_modules/cozo-node/native/6/`
+3. `bun build --compile --target=<target>` embeds it via `$bunfs`
+
+**Binary sizes:** ~80-132MB depending on platform
+
+**PR for upstream:** `~/gh/ahoward/cozo/cozo-lib-nodejs/` contains:
+- `bundler.js` - Static require entry point
+- `bundler.d.ts` - TypeScript declarations
+- Updated `package.json` with exports field
+- Updated `README.md` with bundler docs
+
+**Key Insight from Gemini Review:**
+> "You're building a Semantic Nervous System. The 'semantic' requires Datalog's rule system, inference, and stratified negation. Cypher doesn't have these. Don't amputate the Mind to simplify the Body."
+
+**Why Not GraphQLite (despite working prototype):**
+1. Runtime .so extraction is security red flag (AV false positives, macOS notarization fails)
+2. 6-month-old project vs CozoDB's 3+ years
+3. Cypher can't express Datalog rules: `cycle[x] := *edges[_, x, y, _], cycle[y]`
+4. Next roadmap item (`016-rules-define`) requires Datalog
+
+**Compilation Status:**
+- Dev mode: ~60ms startup
+- Compiled binary: ~110ms startup
+- Cross-compilation: ✅ Works from any platform to any platform
+
+---
+
 ## Version History
 
 | Date | Change |
 |------|--------|
 | 2026-01-26 | Initial memory created. Project setup complete. |
 | 2026-01-26 | Added multi-agent system (Ali/Gemini). Development loop defined. |
+| 2026-01-28 | CozoDB decision: Keep it, fix bundler via PR to upstream. |
+| 2026-01-28 | Multi-platform compilation working. src/lib/cozo.ts + CI workflow. |

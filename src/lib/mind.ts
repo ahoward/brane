@@ -4,7 +4,7 @@
 
 import { resolve } from "node:path"
 import { existsSync } from "node:fs"
-import { CozoDb } from "cozo-node"
+import { CozoDb } from "./cozo"
 
 export interface MindDb {
   db:   CozoDb

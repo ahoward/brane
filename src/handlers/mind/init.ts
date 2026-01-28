@@ -6,7 +6,7 @@ import type { Params, Result } from "../../lib/types.ts"
 import { success, error } from "../../lib/result.ts"
 import { resolve } from "node:path"
 import { existsSync, rmSync } from "node:fs"
-import { CozoDb } from "cozo-node"
+import { CozoDb } from "../../lib/cozo"
 
 interface InitParams {
   force?: boolean

@@ -7,7 +7,7 @@
     "brane": "src/cli.ts"
   },
   "scripts": {
-    "setup": "bun install && cd node_modules/cozo-node && npm run install",
+    "setup": "bun install && cd node_modules/cozo-node/cozo-lib-nodejs && npm run install",
     "repl": "bun run src/cli.ts repl",
     "test": "bun run src/tc.ts",
     "test:v": "bun run src/tc.ts -v",
@@ -19,6 +19,6 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "cozo-node": "^0.7.6"
+    "cozo-node": "github:ahoward/cozo#feat/bundler-entry-point"
   }
 }
