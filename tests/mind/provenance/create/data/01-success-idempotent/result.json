@@ -1,0 +1,13 @@
+{
+  "status": "success",
+  "result": {
+    "concept_id": 1,
+    "file_url": "file:///test/auth.ts"
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/provenance/create",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

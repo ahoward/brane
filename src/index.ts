@@ -25,6 +25,9 @@ import { handler as mind_edges_get_handler } from "./handlers/mind/edges/get.ts"
 import { handler as mind_edges_list_handler } from "./handlers/mind/edges/list.ts"
 import { handler as mind_edges_update_handler } from "./handlers/mind/edges/update.ts"
 import { handler as mind_edges_delete_handler } from "./handlers/mind/edges/delete.ts"
+import { handler as mind_provenance_create_handler } from "./handlers/mind/provenance/create.ts"
+import { handler as mind_provenance_list_handler } from "./handlers/mind/provenance/list.ts"
+import { handler as mind_provenance_delete_handler } from "./handlers/mind/provenance/delete.ts"
 
 sys.register("/ping", ping_handler)
 sys.register("/body/init", body_init_handler)
@@ -46,6 +49,9 @@ sys.register("/mind/edges/get", mind_edges_get_handler)
 sys.register("/mind/edges/list", mind_edges_list_handler)
 sys.register("/mind/edges/update", mind_edges_update_handler)
 sys.register("/mind/edges/delete", mind_edges_delete_handler)
+sys.register("/mind/provenance/create", mind_provenance_create_handler)
+sys.register("/mind/provenance/list", mind_provenance_list_handler)
+sys.register("/mind/provenance/delete", mind_provenance_delete_handler)
 
 // export
 export { sys }

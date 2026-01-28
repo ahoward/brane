@@ -1,0 +1,12 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "file_url": [{"code": "not_found", "message": "file not found in body.db"}]
+  },
+  "meta": {
+    "path": "/mind/provenance/create",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

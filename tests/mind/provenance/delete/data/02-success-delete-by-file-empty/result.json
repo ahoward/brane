@@ -1,0 +1,13 @@
+{
+  "status": "success",
+  "result": {
+    "deleted": 0,
+    "file_url": "file:///test/nonexistent.ts"
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/provenance/delete",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

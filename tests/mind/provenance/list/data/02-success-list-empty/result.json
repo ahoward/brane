@@ -1,0 +1,13 @@
+{
+  "status": "success",
+  "result": {
+    "links": [],
+    "total": 0
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/provenance/list",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

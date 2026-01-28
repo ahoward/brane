@@ -1,0 +1,12 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "file_url": [{"code": "required", "message": "file_url is required"}]
+  },
+  "meta": {
+    "path": "/mind/provenance/create",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}
