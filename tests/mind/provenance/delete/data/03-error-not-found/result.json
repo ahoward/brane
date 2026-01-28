@@ -1,0 +1,12 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "provenance": [{"code": "not_found", "message": "provenance link not found"}]
+  },
+  "meta": {
+    "path": "/mind/provenance/delete",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

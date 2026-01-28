@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+#
+# Test runner for /mind/provenance/delete
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+# Use fixed file URLs for tests
+FILE_URL1="file:///test/auth.ts"
+FILE_URL2="file:///test/user.ts"
+
+case "$TC_CASE_NAME" in
+  00-success-delete-single)
+    init_mind
+    create_concept '{"name": "AuthService", "type": "Entity"}'
+    add_body_file "$FILE_URL1" "hash1" 100 1234567890
+    create_provenance "{\"concept_id\": 1, \"file_url\": \"$FILE_URL1\"}"
+    ;;
+  01-success-delete-by-file)
+    init_mind
+    create_concept '{"name": "AuthService", "type": "Entity"}'
+    create_concept '{"name": "UserService", "type": "Entity"}'
+    create_concept '{"name": "DataService", "type": "Entity"}'
+    add_body_file "$FILE_URL1" "hash1" 100 1234567890
+    create_provenance "{\"concept_id\": 1, \"file_url\": \"$FILE_URL1\"}"
+    create_provenance "{\"concept_id\": 2, \"file_url\": \"$FILE_URL1\"}"
+    create_provenance "{\"concept_id\": 3, \"file_url\": \"$FILE_URL1\"}"
+    ;;
+  02-success-delete-by-file-empty)
+    init_mind
+    ;;
+  03-error-not-found)
+    init_mind
+    ;;
+  04-error-missing-file-url)
+    init_mind
+    ;;
+esac
+
+echo "$INPUT" | bun run "$BRANE_ROOT/src/cli.ts" /mind/provenance/delete
