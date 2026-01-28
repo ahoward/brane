@@ -1,5 +1,10 @@
 # tests/lib.sh - shared test helpers (sourced, not executed)
 
+# Support both TC_ROOT (new) and BRANE_ROOT (legacy) for backward compatibility
+# TC_ROOT is set by tc.ts hook system
+# BRANE_ROOT is calculated by legacy run scripts
+_ROOT="${TC_ROOT:-$BRANE_ROOT}"
+
 # Initialize body.db in current directory
 init_body() {
   mkdir -p .brane
@@ -17,7 +22,7 @@ init_body_fts() {
 # Initialize mind.db (requires body.db first)
 init_mind() {
   init_body
-  echo '{}' | bun run "$BRANE_ROOT/src/cli.ts" /mind/init > /dev/null 2>&1
+  echo '{}' | bun run "$_ROOT/src/cli.ts" /mind/init > /dev/null 2>&1
 }
 
 # Add file to body.db
@@ -35,17 +40,17 @@ add_fts() {
 
 # Create a concept in mind.db
 create_concept() {
-  echo "$1" | bun run "$BRANE_ROOT/src/cli.ts" /mind/concepts/create > /dev/null 2>&1
+  echo "$1" | bun run "$_ROOT/src/cli.ts" /mind/concepts/create > /dev/null 2>&1
 }
 
 # Create an edge in mind.db
 create_edge() {
-  echo "$1" | bun run "$BRANE_ROOT/src/cli.ts" /mind/edges/create > /dev/null 2>&1
+  echo "$1" | bun run "$_ROOT/src/cli.ts" /mind/edges/create > /dev/null 2>&1
 }
 
 # Create a provenance link in mind.db
 create_provenance() {
-  echo "$1" | bun run "$BRANE_ROOT/src/cli.ts" /mind/provenance/create > /dev/null 2>&1
+  echo "$1" | bun run "$_ROOT/src/cli.ts" /mind/provenance/create > /dev/null 2>&1
 }
 
 # Create isolated workspace, run cleanup on exit
