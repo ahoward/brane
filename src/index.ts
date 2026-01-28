@@ -30,6 +30,7 @@ import { handler as mind_provenance_list_handler } from "./handlers/mind/provena
 import { handler as mind_provenance_delete_handler } from "./handlers/mind/provenance/delete.ts"
 import { handler as calabi_extract_handler } from "./handlers/calabi/extract.ts"
 import { handler as calabi_scan_handler } from "./handlers/calabi/scan.ts"
+import { handler as context_query_handler } from "./handlers/context/query.ts"
 
 sys.register("/ping", ping_handler)
 sys.register("/body/init", body_init_handler)
@@ -56,6 +57,7 @@ sys.register("/mind/provenance/list", mind_provenance_list_handler)
 sys.register("/mind/provenance/delete", mind_provenance_delete_handler)
 sys.register("/calabi/extract", calabi_extract_handler)
 sys.register("/calabi/scan", calabi_scan_handler)
+sys.register("/context/query", context_query_handler)
 
 // export
 export { sys }
