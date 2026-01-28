@@ -17,12 +17,18 @@
 //   tests/{handler}/data/{NN-group}/{NN-case}/result.json
 //
 // Hook system:
+//   tests/before_all.sh                          # runs ONCE before all tests (creates seeds)
 //   tests/before_each.sh                         # runs before each test (root level)
 //   tests/{namespace}/before_each.sh             # runs before tests in namespace
 //   tests/{handler}/data/{case}/setup.sh         # per-case setup
 //   tests/{handler}/data/{case}/teardown.sh      # per-case teardown
 //   tests/{namespace}/after_each.sh              # runs after tests in namespace
 //   tests/after_each.sh                          # runs after each test (root level)
+//   tests/after_all.sh                           # runs ONCE after all tests (cleanup)
+//
+// Seed databases:
+//   tests/.seeds/                                # created by before_all.sh
+//   Hooks can copy from TC_SEEDS_DIR instead of re-initializing DBs
 //
 // Configuration:
 //   tc.config.ts (or tc.config.json) in project root
@@ -34,12 +40,12 @@
 //   -j N              set concurrency limit (default: 8)
 //
 
-import { readdir, stat, access, mkdtemp, rm } from "fs/promises"
+import { readdir, stat, access, mkdtemp, rm, mkdir, cp } from "fs/promises"
 import { join, dirname, resolve, relative } from "path"
 import { spawn } from "child_process"
 import { tmpdir } from "os"
 
-const DEFAULT_CONCURRENCY = 8
+const DEFAULT_CONCURRENCY = 16
 
 //
 // configuration
@@ -166,7 +172,7 @@ async function run_hook(
   hook_path: string,
   env:       Record<string, string>,
   cwd:       string
-): Promise<{ ok: boolean; error?: string }> {
+): Promise<{ ok: boolean; error?: string; stdout?: string }> {
   return new Promise((resolve) => {
     const proc = spawn(hook_path, [], {
       stdio: ["pipe", "pipe", "pipe"],
@@ -175,14 +181,16 @@ async function run_hook(
       cwd:   cwd,
     })
 
+    let stdout = ""
     let stderr = ""
+    proc.stdout.on("data", (data) => { stdout += data.toString() })
     proc.stderr.on("data", (data) => { stderr += data.toString() })
 
     proc.on("close", (code) => {
       if (code === 0) {
-        resolve({ ok: true })
+        resolve({ ok: true, stdout })
       } else {
-        resolve({ ok: false, error: `hook ${hook_path} failed with code ${code}: ${stderr}` })
+        resolve({ ok: false, error: `hook ${hook_path} failed with code ${code}: ${stderr}`, stdout })
       }
     })
 
@@ -453,6 +461,7 @@ interface TestContext {
   root:      string      // project root
   config:    TcConfig    // loaded configuration
   tests_dir: string      // absolute path to tests directory
+  seeds_dir: string      // absolute path to seeds directory (tests/.seeds)
 }
 
 function build_test_env(
@@ -477,6 +486,7 @@ function build_test_env(
     TC_ROOT:      ctx.root,
     TC_ENTRY:     ctx.config.entry,
     TC_TESTS_DIR: ctx.tests_dir,
+    TC_SEEDS_DIR: ctx.seeds_dir,
     TC_CASE_DIR:  tc.case_dir,
     TC_DATA_DIR:  tc.data_dir,
   }
@@ -489,6 +499,22 @@ function build_test_env(
   }
 
   return env
+}
+
+// Build environment for before_all/after_all hooks (no test case context)
+function build_global_env(ctx: TestContext): Record<string, string> {
+  const bun_bin = join(process.env.HOME ?? "", ".bun", "bin")
+  const path_env = process.env.PATH ?? ""
+  const new_path = path_env.includes(bun_bin) ? path_env : `${bun_bin}:${path_env}`
+
+  return {
+    ...process.env as Record<string, string>,
+    PATH:         new_path,
+    TC_ROOT:      ctx.root,
+    TC_ENTRY:     ctx.config.entry,
+    TC_TESTS_DIR: ctx.tests_dir,
+    TC_SEEDS_DIR: ctx.seeds_dir,
+  }
 }
 
 //
@@ -872,17 +898,39 @@ async function main(): Promise<void> {
     ? resolve(opts.tests_dir)  // use explicit arg as-is
     : resolve(root, config.tests_dir)
 
+  // seeds directory for pre-built databases
+  const seeds_dir = join(tests_dir, ".seeds")
+
   // build test context
   const ctx: TestContext = {
     root:      root,
     config:    config,
     tests_dir: tests_dir,
+    seeds_dir: seeds_dir,
+  }
+
+  // Run before_all hook if exists (creates seed databases)
+  const before_all = join(tests_dir, "before_all.sh")
+  if (await exists(before_all)) {
+    // Ensure seeds directory exists
+    await mkdir(seeds_dir, { recursive: true })
+    const env = build_global_env(ctx)
+    const result = await run_hook(before_all, env, tests_dir)
+    if (result.stdout) {
+      process.stdout.write(result.stdout)
+    }
+    if (!result.ok) {
+      console.error(`before_all.sh failed: ${result.error}`)
+      process.exit(1)
+    }
   }
 
   let cases = await find_test_cases(tests_dir)
 
   if (cases.length === 0) {
     console.log("no tests found")
+    // Still run after_all if before_all ran
+    await run_after_all(ctx)
     process.exit(0)
   }
 
@@ -914,10 +962,15 @@ async function main(): Promise<void> {
 
   let results: TestResult[]
 
-  if (opts.sequential) {
-    results = await run_sequential(cases, ctx, on_result)
-  } else {
-    results = await run_parallel(cases, ctx, opts.concurrency, on_result)
+  try {
+    if (opts.sequential) {
+      results = await run_sequential(cases, ctx, on_result)
+    } else {
+      results = await run_parallel(cases, ctx, opts.concurrency, on_result)
+    }
+  } finally {
+    // Always run after_all hook
+    await run_after_all(ctx)
   }
 
   // summary
@@ -941,6 +994,22 @@ async function main(): Promise<void> {
   }
 
   process.exit(failed > 0 ? 1 : 0)
+}
+
+// Run after_all hook and cleanup seeds directory
+async function run_after_all(ctx: TestContext): Promise<void> {
+  const after_all = join(ctx.tests_dir, "after_all.sh")
+  if (await exists(after_all)) {
+    const env = build_global_env(ctx)
+    await run_hook(after_all, env, ctx.tests_dir)
+  }
+
+  // Clean up seeds directory
+  try {
+    await rm(ctx.seeds_dir, { recursive: true, force: true })
+  } catch {
+    // ignore cleanup errors
+  }
 }
 
 main().catch((err) => {

@@ -34,6 +34,7 @@ npm-debug.log*
 
 # test artifacts
 coverage/
+tests/.seeds/
 
 # temp
 tmp/
