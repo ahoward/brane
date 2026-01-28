@@ -1,0 +1,15 @@
+{
+  "status": "success",
+  "result": {
+    "name": "all_entities",
+    "description": "All Entity concepts",
+    "body": "all_entities[id, name] := *concepts[id, name, \"Entity\"]",
+    "builtin": false
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/rules/create",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

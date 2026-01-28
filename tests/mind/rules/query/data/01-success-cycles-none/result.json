@@ -1,13 +1,13 @@
 {
   "status": "success",
   "result": {
-    "path": "<string>",
-    "created": true,
-    "schema_version": "1.2.0"
+    "rule": "cycles",
+    "matches": [],
+    "count": 0
   },
   "errors": null,
   "meta": {
-    "path": "/mind/init",
+    "path": "/mind/rules/query",
     "timestamp": "<timestamp>",
     "duration_ms": "<number>"
   }

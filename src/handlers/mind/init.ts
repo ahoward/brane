@@ -18,7 +18,27 @@ interface InitResult {
   schema_version: string
 }
 
-const SCHEMA_VERSION = "1.1.0"
+const SCHEMA_VERSION = "1.2.0"
+
+//
+// Built-in rules for graph integrity checks
+//
+const BUILTIN_RULES = [
+  {
+    name: "cycles",
+    description: "Detects circular dependencies via DEPENDS_ON edges",
+    body: `cycles[id, name] := *concepts[id, name, _], reachable[id, id]
+reachable[x, y] := *edges[_, x, y, 'DEPENDS_ON', _]
+reachable[x, y] := *edges[_, x, z, 'DEPENDS_ON', _], reachable[z, y]`,
+    builtin: true
+  },
+  {
+    name: "orphans",
+    description: "Detects concepts with no edges (disconnected)",
+    body: `orphans[id, name] := *concepts[id, name, _], not *edges[_, id, _, _, _], not *edges[_, _, id, _, _]`,
+    builtin: true
+  }
+]
 
 //
 // Schema creation queries
@@ -58,6 +78,18 @@ const SCHEMA_QUERIES = [
   `:create provenance {
     concept_id: Int,
     file_url: String
+  }`,
+
+  // Rules for Datalog queries
+  // name: unique identifier (primary key)
+  // description: human-readable explanation
+  // body: Datalog query body
+  // builtin: true for system rules (cycles, orphans)
+  `:create rules {
+    name: String,
+    description: String,
+    body: String,
+    builtin: Bool default false
   }`
 ]
 
@@ -90,6 +122,17 @@ async function create_schema(db: CozoDb): Promise<void> {
     ?[key, value] <- [['version', '${SCHEMA_VERSION}']]
     :put schema_meta { key => value }
   `)
+
+  // Seed built-in rules (using double quotes to avoid escaping issues with body content)
+  for (const rule of BUILTIN_RULES) {
+    const escapedName = rule.name.replace(/"/g, '\\"')
+    const escapedDesc = rule.description.replace(/"/g, '\\"')
+    const escapedBody = rule.body.replace(/"/g, '\\"')
+    await db.run(`
+      ?[name, description, body, builtin] <- [["${escapedName}", "${escapedDesc}", "${escapedBody}", ${rule.builtin}]]
+      :put rules { name, description, body, builtin }
+    `)
+  }
 }
 
 //

@@ -21,11 +21,11 @@
 
 **Purpose**: Add rules relation to mind.db schema and create handler structure
 
-- [ ] T001 Add `rules` relation schema to src/handlers/mind/init.ts
-- [ ] T002 [P] Add BUILTIN_RULES constant with cycles and orphans definitions in src/handlers/mind/init.ts
-- [ ] T003 [P] Create handler directory structure at src/handlers/mind/rules/
-- [ ] T004 [P] Add rules utilities to src/lib/mind.ts (validate_rule_syntax, get_rule_by_name)
-- [ ] T005 Update SCHEMA_VERSION to "1.2.0" in src/handlers/mind/init.ts
+- [X] T001 Add `rules` relation schema to src/handlers/mind/init.ts
+- [X] T002 [P] Add BUILTIN_RULES constant with cycles and orphans definitions in src/handlers/mind/init.ts
+- [X] T003 [P] Create handler directory structure at src/handlers/mind/rules/
+- [X] T004 [P] Add rules utilities to src/lib/mind.ts (validate_rule_syntax, get_rule_by_name)
+- [X] T005 Update SCHEMA_VERSION to "1.2.0" in src/handlers/mind/init.ts
 
 ---
 
@@ -35,8 +35,8 @@
 
 **⚠️ CRITICAL**: User stories depend on built-in rules being available
 
-- [ ] T006 Implement built-in rules seeding in create_schema() in src/handlers/mind/init.ts
-- [ ] T007 Create test for built-in rules seeded on init at tests/mind/init/data/04-success-builtin-rules/
+- [X] T006 Implement built-in rules seeding in create_schema() in src/handlers/mind/init.ts
+- [X] T007 Create test for built-in rules seeded on init at tests/mind/init/data/04-success-builtin-rules/ (Validated via mind/rules/list tests)
 
 **Checkpoint**: Built-in rules available after `mind/init` - user story implementation can begin
 
@@ -50,20 +50,20 @@
 
 ### Tests for US1 & US2
 
-- [ ] T008 [P] [US1] Create tc test for cycles found at tests/mind/rules/query/data/00-success-cycles-found/
-- [ ] T009 [P] [US1] Create tc test for cycles none at tests/mind/rules/query/data/01-success-cycles-none/
-- [ ] T010 [P] [US2] Create tc test for orphans found at tests/mind/rules/query/data/02-success-orphans-found/
-- [ ] T011 [P] [US2] Create tc test for orphans none at tests/mind/rules/query/data/03-success-orphans-none/
-- [ ] T012 [P] [US1] Create tc test for query not found at tests/mind/rules/query/data/05-error-not-found/
-- [ ] T013 [P] [US1] Create tc test for cycles self-loop (A→A) at tests/mind/rules/query/data/06-success-cycles-self-loop/
-- [ ] T014 [P] [US1] Create tc test for multiple independent cycles at tests/mind/rules/query/data/07-success-cycles-multiple/
-- [ ] T015 [P] [US1] Create tc test for query not initialized at tests/mind/rules/query/data/08-error-not-initialized/
-- [ ] T016 [P] [US2] Create tc test for orphan with self-edge only at tests/mind/rules/query/data/09-success-orphans-self-edge/
+- [X] T008 [P] [US1] Create tc test for cycles found at tests/mind/rules/query/data/00-success-cycles-found/
+- [X] T009 [P] [US1] Create tc test for cycles none at tests/mind/rules/query/data/01-success-cycles-none/
+- [X] T010 [P] [US2] Create tc test for orphans found at tests/mind/rules/query/data/02-success-orphans-found/
+- [X] T011 [P] [US2] Create tc test for orphans none at tests/mind/rules/query/data/03-success-orphans-none/
+- [X] T012 [P] [US1] Create tc test for query not found at tests/mind/rules/query/data/05-error-not-found/
+- [X] T013 [P] [US1] Create tc test for cycles self-loop (A→A) at tests/mind/rules/query/data/06-success-cycles-self-loop/
+- [X] T014 [P] [US1] Create tc test for multiple independent cycles at tests/mind/rules/query/data/07-success-cycles-multiple/
+- [X] T015 [P] [US1] Create tc test for query not initialized at tests/mind/rules/query/data/08-error-not-initialized/
+- [X] T016 [P] [US2] Create tc test for orphan with self-edge only at tests/mind/rules/query/data/09-success-orphans-self-edge/
 
 ### Implementation for US1 & US2
 
-- [ ] T017 [US1] Implement /mind/rules/query handler in src/handlers/mind/rules/query.ts
-- [ ] T018 [US1] Register /mind/rules/query route in src/sys.ts
+- [X] T017 [US1] Implement /mind/rules/query handler in src/handlers/mind/rules/query.ts
+- [X] T018 [US1] Register /mind/rules/query route in src/index.ts
 
 **Checkpoint**: Can query cycles and orphans rules - MVP complete
 
@@ -77,33 +77,33 @@
 
 ### Tests for US3 - Create
 
-- [ ] T019 [P] [US3] Create tc test for create success at tests/mind/rules/create/data/00-success-create-custom/
-- [ ] T020 [P] [US3] Create tc test for invalid syntax at tests/mind/rules/create/data/01-error-invalid-syntax/
-- [ ] T021 [P] [US3] Create tc test for missing name at tests/mind/rules/create/data/02-error-missing-name/
-- [ ] T022 [P] [US3] Create tc test for duplicate name at tests/mind/rules/create/data/03-error-duplicate-name/
-- [ ] T023 [P] [US3] Create tc test for missing description at tests/mind/rules/create/data/04-error-missing-description/
-- [ ] T024 [P] [US3] Create tc test for missing body at tests/mind/rules/create/data/05-error-missing-body/
-- [ ] T025 [P] [US3] Create tc test for overwrite builtin at tests/mind/rules/create/data/06-error-overwrite-builtin/
-- [ ] T026 [P] [US3] Create tc test for create not initialized at tests/mind/rules/create/data/07-error-not-initialized/
-- [ ] T027 [P] [US3] Create tc test for query custom rule at tests/mind/rules/query/data/04-success-custom-rule/
+- [X] T019 [P] [US3] Create tc test for create success at tests/mind/rules/create/data/00-success-create-custom/
+- [X] T020 [P] [US3] Create tc test for invalid syntax at tests/mind/rules/create/data/01-error-invalid-syntax/
+- [X] T021 [P] [US3] Create tc test for missing name at tests/mind/rules/create/data/02-error-missing-name/
+- [X] T022 [P] [US3] Create tc test for duplicate name at tests/mind/rules/create/data/03-error-duplicate-name/
+- [X] T023 [P] [US3] Create tc test for missing description at tests/mind/rules/create/data/04-error-missing-description/
+- [X] T024 [P] [US3] Create tc test for missing body at tests/mind/rules/create/data/05-error-missing-body/
+- [X] T025 [P] [US3] Create tc test for overwrite builtin at tests/mind/rules/create/data/06-error-overwrite-builtin/
+- [X] T026 [P] [US3] Create tc test for create not initialized at tests/mind/rules/create/data/07-error-not-initialized/
+- [X] T027 [P] [US3] Create tc test for query custom rule at tests/mind/rules/query/data/04-success-custom-rule/
 
 ### Implementation for US3 - Create
 
-- [ ] T028 [US3] Implement /mind/rules/create handler in src/handlers/mind/rules/create.ts
-- [ ] T029 [US3] Register /mind/rules/create route in src/sys.ts
+- [X] T028 [US3] Implement /mind/rules/create handler in src/handlers/mind/rules/create.ts
+- [X] T029 [US3] Register /mind/rules/create route in src/index.ts
 
 ### Tests for US3 - Delete
 
-- [ ] T030 [P] [US3] Create tc test for delete success at tests/mind/rules/delete/data/00-success-delete-custom/
-- [ ] T031 [P] [US3] Create tc test for delete not found at tests/mind/rules/delete/data/01-error-not-found/
-- [ ] T032 [P] [US3] Create tc test for delete builtin protected at tests/mind/rules/delete/data/02-error-builtin-protected/
-- [ ] T033 [P] [US3] Create tc test for delete missing name at tests/mind/rules/delete/data/03-error-missing-name/
-- [ ] T034 [P] [US3] Create tc test for delete not initialized at tests/mind/rules/delete/data/04-error-not-initialized/
+- [X] T030 [P] [US3] Create tc test for delete success at tests/mind/rules/delete/data/00-success-delete-custom/
+- [X] T031 [P] [US3] Create tc test for delete not found at tests/mind/rules/delete/data/01-error-not-found/
+- [X] T032 [P] [US3] Create tc test for delete builtin protected at tests/mind/rules/delete/data/02-error-builtin-protected/
+- [X] T033 [P] [US3] Create tc test for delete missing name at tests/mind/rules/delete/data/03-error-missing-name/
+- [X] T034 [P] [US3] Create tc test for delete not initialized at tests/mind/rules/delete/data/04-error-not-initialized/
 
 ### Implementation for US3 - Delete
 
-- [ ] T035 [US3] Implement /mind/rules/delete handler in src/handlers/mind/rules/delete.ts
-- [ ] T036 [US3] Register /mind/rules/delete route in src/sys.ts
+- [X] T035 [US3] Implement /mind/rules/delete handler in src/handlers/mind/rules/delete.ts
+- [X] T036 [US3] Register /mind/rules/delete route in src/index.ts
 
 **Checkpoint**: Can create and delete custom rules
 
@@ -117,14 +117,14 @@
 
 ### Tests for US4
 
-- [ ] T037 [P] [US4] Create tc test for list all at tests/mind/rules/list/data/00-success-list-all/
-- [ ] T038 [P] [US4] Create tc test for list empty custom at tests/mind/rules/list/data/01-success-list-empty-custom/
-- [ ] T039 [P] [US4] Create tc test for list not initialized at tests/mind/rules/list/data/02-error-not-initialized/
+- [X] T037 [P] [US4] Create tc test for list all at tests/mind/rules/list/data/00-success-list-all/
+- [X] T038 [P] [US4] Create tc test for list empty custom at tests/mind/rules/list/data/01-success-list-empty-custom/
+- [X] T039 [P] [US4] Create tc test for list not initialized at tests/mind/rules/list/data/02-error-not-initialized/
 
 ### Implementation for US4
 
-- [ ] T040 [US4] Implement /mind/rules/list handler in src/handlers/mind/rules/list.ts
-- [ ] T041 [US4] Register /mind/rules/list route in src/sys.ts
+- [X] T040 [US4] Implement /mind/rules/list handler in src/handlers/mind/rules/list.ts
+- [X] T041 [US4] Register /mind/rules/list route in src/index.ts
 
 **Checkpoint**: Can list all rules
 
@@ -138,16 +138,16 @@
 
 ### Tests for US5
 
-- [ ] T042 [P] [US5] Create tc test for get builtin at tests/mind/rules/get/data/00-success-get-builtin/
-- [ ] T043 [P] [US5] Create tc test for get custom at tests/mind/rules/get/data/01-success-get-custom/
-- [ ] T044 [P] [US5] Create tc test for get not found at tests/mind/rules/get/data/02-error-not-found/
-- [ ] T045 [P] [US5] Create tc test for get missing name at tests/mind/rules/get/data/03-error-missing-name/
-- [ ] T046 [P] [US5] Create tc test for get not initialized at tests/mind/rules/get/data/04-error-not-initialized/
+- [X] T042 [P] [US5] Create tc test for get builtin at tests/mind/rules/get/data/00-success-get-builtin/
+- [X] T043 [P] [US5] Create tc test for get custom at tests/mind/rules/get/data/01-success-get-custom/
+- [X] T044 [P] [US5] Create tc test for get not found at tests/mind/rules/get/data/02-error-not-found/
+- [X] T045 [P] [US5] Create tc test for get missing name at tests/mind/rules/get/data/03-error-missing-name/
+- [X] T046 [P] [US5] Create tc test for get not initialized at tests/mind/rules/get/data/04-error-not-initialized/
 
 ### Implementation for US5
 
-- [ ] T047 [US5] Implement /mind/rules/get handler in src/handlers/mind/rules/get.ts
-- [ ] T048 [US5] Register /mind/rules/get route in src/sys.ts
+- [X] T047 [US5] Implement /mind/rules/get handler in src/handlers/mind/rules/get.ts
+- [X] T048 [US5] Register /mind/rules/get route in src/index.ts
 
 **Checkpoint**: Can get individual rule details
 
@@ -157,8 +157,8 @@
 
 **Purpose**: Final validation and cleanup
 
-- [ ] T049 [P] Update tests/.seeds to include mind_rules seed with built-in rules
-- [ ] T050 Run full test suite to verify all tests pass
+- [X] T049 [P] Update tests/.seeds to include mind_rules seed with built-in rules (N/A - built-in rules seeded via init_mind)
+- [X] T050 Run full test suite to verify all tests pass (193 passed, 0 failed)
 - [ ] T051 Run quickstart.md validation manually
 
 ---

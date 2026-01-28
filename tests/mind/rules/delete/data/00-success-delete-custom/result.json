@@ -1,13 +1,12 @@
 {
   "status": "success",
   "result": {
-    "path": "<string>",
-    "created": true,
-    "schema_version": "1.2.0"
+    "deleted": true,
+    "name": "todelete"
   },
   "errors": null,
   "meta": {
-    "path": "/mind/init",
+    "path": "/mind/rules/delete",
     "timestamp": "<timestamp>",
     "duration_ms": "<number>"
   }

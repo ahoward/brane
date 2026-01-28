@@ -142,3 +142,62 @@ export async function concept_exists(db: CozoDb, id: number): Promise<boolean> {
   const rows = result.rows as unknown[][]
   return rows.length > 0
 }
+
+//
+// Rule types
+//
+
+export interface Rule {
+  name:        string
+  description: string
+  body:        string
+  builtin:     boolean
+}
+
+//
+// Built-in rule names (cannot be deleted or overwritten)
+//
+
+export const BUILTIN_RULE_NAMES = ["cycles", "orphans"] as const
+
+export function is_builtin_rule(name: string): boolean {
+  return BUILTIN_RULE_NAMES.includes(name as typeof BUILTIN_RULE_NAMES[number])
+}
+
+//
+// Get rule by name
+//
+
+export async function get_rule_by_name(db: CozoDb, name: string): Promise<Rule | null> {
+  try {
+    const result = await db.run(`
+      ?[name, description, body, builtin] := *rules[name, description, body, builtin], name = '${name.replace(/'/g, "''")}'
+    `)
+    const rows = result.rows as [string, string, string, boolean][]
+    if (rows.length === 0) {
+      return null
+    }
+    return {
+      name:        rows[0][0],
+      description: rows[0][1],
+      body:        rows[0][2],
+      builtin:     rows[0][3]
+    }
+  } catch {
+    return null
+  }
+}
+
+//
+// Validate rule syntax using CozoDB's ::explain
+//
+
+export async function validate_rule_syntax(db: CozoDb, body: string): Promise<{ valid: boolean; error?: string }> {
+  try {
+    await db.run(`::explain { ${body} }`)
+    return { valid: true }
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err)
+    return { valid: false, error: message }
+  }
+}
