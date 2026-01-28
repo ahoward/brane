@@ -38,6 +38,11 @@ create_concept() {
   echo "$1" | bun run "$BRANE_ROOT/src/cli.ts" /mind/concepts/create > /dev/null 2>&1
 }
 
+# Create an edge in mind.db
+create_edge() {
+  echo "$1" | bun run "$BRANE_ROOT/src/cli.ts" /mind/edges/create > /dev/null 2>&1
+}
+
 # Create isolated workspace, run cleanup on exit
 workspace() {
   WORKDIR=$(mktemp -d)

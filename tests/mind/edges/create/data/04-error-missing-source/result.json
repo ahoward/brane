@@ -1,0 +1,12 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "source": [{"code": "required", "message": "source is required"}]
+  },
+  "meta": {
+    "path": "/mind/edges/create",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

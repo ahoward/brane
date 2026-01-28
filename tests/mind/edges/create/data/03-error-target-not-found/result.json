@@ -1,0 +1,12 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "target": [{"code": "not_found", "message": "target concept not found"}]
+  },
+  "meta": {
+    "path": "/mind/edges/create",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

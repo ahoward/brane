@@ -18,7 +18,7 @@ interface InitResult {
   schema_version: string
 }
 
-const SCHEMA_VERSION = "1.0.0"
+const SCHEMA_VERSION = "1.1.0"
 
 //
 // Schema creation queries
@@ -40,14 +40,15 @@ const SCHEMA_QUERIES = [
   }`,
 
   // Edges between concepts
+  // id: unique identifier
   // source/target: concept IDs
   // relation: DEPENDS_ON, CONFLICTS_WITH, DEFINED_IN, etc.
   // weight: relationship strength (default 1.0)
   `:create edges {
+    id: Int,
     source: Int,
     target: Int,
     relation: String,
-    =>
     weight: Float default 1.0
   }`,
 
