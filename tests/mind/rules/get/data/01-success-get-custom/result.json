@@ -1,0 +1,15 @@
+{
+  "status": "success",
+  "result": {
+    "name": "my_rule",
+    "description": "My custom rule",
+    "body": "my_rule[id, name] := *concepts[id, name, _]",
+    "builtin": false
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/rules/get",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

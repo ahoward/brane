@@ -1,0 +1,14 @@
+{
+  "status": "success",
+  "result": {
+    "rule": "orphans",
+    "matches": [],
+    "count": 0
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/rules/query",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

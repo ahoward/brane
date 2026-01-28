@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+#
+# Test runner for /mind/rules/query
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+case "$TC_CASE_NAME" in
+  00-success-cycles-found)
+    init_mind
+    # Create cycle A -> B -> C -> A
+    create_concept '{"name": "A", "type": "Entity"}'
+    create_concept '{"name": "B", "type": "Entity"}'
+    create_concept '{"name": "C", "type": "Entity"}'
+    create_edge '{"source": 1, "target": 2, "relation": "DEPENDS_ON"}'
+    create_edge '{"source": 2, "target": 3, "relation": "DEPENDS_ON"}'
+    create_edge '{"source": 3, "target": 1, "relation": "DEPENDS_ON"}'
+    ;;
+  01-success-cycles-none)
+    init_mind
+    # Create chain without cycle A -> B -> C
+    create_concept '{"name": "A", "type": "Entity"}'
+    create_concept '{"name": "B", "type": "Entity"}'
+    create_concept '{"name": "C", "type": "Entity"}'
+    create_edge '{"source": 1, "target": 2, "relation": "DEPENDS_ON"}'
+    create_edge '{"source": 2, "target": 3, "relation": "DEPENDS_ON"}'
+    ;;
+  02-success-orphans-found)
+    init_mind
+    # Create connected and orphan concepts
+    create_concept '{"name": "Connected", "type": "Entity"}'
+    create_concept '{"name": "Orphan", "type": "Entity"}'
+    create_edge '{"source": 1, "target": 1, "relation": "DEPENDS_ON"}'
+    ;;
+  03-success-orphans-none)
+    init_mind
+    # All concepts connected
+    create_concept '{"name": "A", "type": "Entity"}'
+    create_concept '{"name": "B", "type": "Entity"}'
+    create_edge '{"source": 1, "target": 2, "relation": "DEPENDS_ON"}'
+    ;;
+  04-success-custom-rule)
+    init_mind
+    # Create a custom rule and query it
+    echo '{"name": "all_entities", "description": "All Entity concepts", "body": "all_entities[id, name] := *concepts[id, name, \"Entity\"]"}' | bun run "$BRANE_ROOT/src/cli.ts" /mind/rules/create > /dev/null 2>&1
+    create_concept '{"name": "Service", "type": "Entity"}'
+    create_concept '{"name": "Warning", "type": "Caveat"}'
+    ;;
+  05-error-not-found)
+    init_mind
+    ;;
+  06-success-cycles-self-loop)
+    init_mind
+    # Self-loop: A -> A
+    create_concept '{"name": "SelfRef", "type": "Entity"}'
+    create_edge '{"source": 1, "target": 1, "relation": "DEPENDS_ON"}'
+    ;;
+  07-success-cycles-multiple)
+    init_mind
+    # Two independent cycles: A -> B -> A, C -> D -> C
+    create_concept '{"name": "A", "type": "Entity"}'
+    create_concept '{"name": "B", "type": "Entity"}'
+    create_concept '{"name": "C", "type": "Entity"}'
+    create_concept '{"name": "D", "type": "Entity"}'
+    create_edge '{"source": 1, "target": 2, "relation": "DEPENDS_ON"}'
+    create_edge '{"source": 2, "target": 1, "relation": "DEPENDS_ON"}'
+    create_edge '{"source": 3, "target": 4, "relation": "DEPENDS_ON"}'
+    create_edge '{"source": 4, "target": 3, "relation": "DEPENDS_ON"}'
+    ;;
+  08-error-not-initialized)
+    # Initialize body but not mind
+    init_body
+    ;;
+  09-success-orphans-self-edge)
+    init_mind
+    # Concept with only self-edge (not an orphan)
+    create_concept '{"name": "SelfOnly", "type": "Entity"}'
+    create_concept '{"name": "RealOrphan", "type": "Entity"}'
+    create_edge '{"source": 1, "target": 1, "relation": "DEPENDS_ON"}'
+    ;;
+esac
+
+echo "$INPUT" | bun run "$BRANE_ROOT/src/cli.ts" /mind/rules/query

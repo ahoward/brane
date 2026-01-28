@@ -1,0 +1,17 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "name": [
+      {
+        "code": "protected",
+        "message": "cannot overwrite built-in rule"
+      }
+    ]
+  },
+  "meta": {
+    "path": "/mind/rules/create",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

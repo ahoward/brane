@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+#
+# Test runner for /mind/rules/create
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+case "$TC_CASE_NAME" in
+  00-success-create-custom)
+    init_mind
+    ;;
+  01-error-invalid-syntax)
+    init_mind
+    ;;
+  02-error-missing-name)
+    init_mind
+    ;;
+  03-error-duplicate-name)
+    init_mind
+    # Create rule first
+    echo '{"name": "myrule", "description": "test", "body": "myrule[id, name] := *concepts[id, name, _]"}' | bun run "$BRANE_ROOT/src/cli.ts" /mind/rules/create > /dev/null 2>&1
+    ;;
+  04-error-missing-description)
+    init_mind
+    ;;
+  05-error-missing-body)
+    init_mind
+    ;;
+  06-error-overwrite-builtin)
+    init_mind
+    ;;
+  07-error-not-initialized)
+    # Initialize body but not mind
+    init_body
+    ;;
+esac
+
+echo "$INPUT" | bun run "$BRANE_ROOT/src/cli.ts" /mind/rules/create
