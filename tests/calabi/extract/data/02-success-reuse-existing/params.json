@@ -1,0 +1,8 @@
+{
+  "file_url": "file:///test/auth.ts",
+  "concepts": [
+    {"name": "AuthService", "type": "Entity"},
+    {"name": "LoginHandler", "type": "Entity"}
+  ],
+  "edges": []
+}

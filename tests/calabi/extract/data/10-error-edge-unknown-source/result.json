@@ -1,0 +1,16 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "edges": {
+      "0": {
+        "source_name": [{"code": "not_found", "message": "concept 'UnknownConcept' not found in patch or mind.db"}]
+      }
+    }
+  },
+  "meta": {
+    "path": "/calabi/extract",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

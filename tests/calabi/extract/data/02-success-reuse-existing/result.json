@@ -1,0 +1,16 @@
+{
+  "status": "success",
+  "result": {
+    "file_url": "file:///test/auth.ts",
+    "concepts_created": 1,
+    "concepts_reused": 1,
+    "edges_created": 0,
+    "provenance_created": 2
+  },
+  "errors": null,
+  "meta": {
+    "path": "/calabi/extract",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

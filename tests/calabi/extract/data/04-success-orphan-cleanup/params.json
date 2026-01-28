@@ -1,0 +1,7 @@
+{
+  "file_url": "file:///test/auth.ts",
+  "concepts": [
+    {"name": "ReplacementConcept", "type": "Entity"}
+  ],
+  "edges": []
+}
