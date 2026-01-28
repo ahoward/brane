@@ -27,28 +27,16 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 ---
 
-## Current: Phase 2 — The Mind
-
-**Goal:** Connect `mind.db` (CozoDB) and the Calabi extraction engine.
-
-### Next
-
-- [ ] `015-context-query` — Vector search + graph expansion for context retrieval
-
-### Backlog (Phase 2)
-*Phase 2 complete once 015-context-query is done.*
-
----
-
-## Phase 3 — The Shield
+## Current: Phase 3 — The Shield
 
 **Goal:** Logic enforcement and governance.
 
-*Locked until Phase 2 complete.*
+### Next
+
+- [ ] `016-rules-define` — Define Datalog rules (cycles, orphans, etc.)
 
 ### Backlog (Phase 3)
 
-- [ ] `016-rules-define` — Define Datalog rules (cycles, orphans, etc.)
 - [ ] `017-verify-check` — Run rules against mind.db, report violations
 - [ ] `018-annotate` — Manual annotations with infinite authority
 - [ ] `019-pr-verify` — Simulate PR changes and verify against rules
@@ -74,6 +62,7 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 | Feature | PR | Date |
 |---------|-----|------|
+| `015-context-query` | #18 | 2026-01-28 |
 | `014-calabi-scan` | #17 | 2026-01-28 |
 | `013-calabi-extract` | #16 | 2026-01-28 |
 | `012-mind-provenance` | #15 | 2026-01-28 |
@@ -99,3 +88,4 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 - Branch names match feature IDs
 - Never skip a feature without updating this roadmap
 - Phase transitions require all prior features complete
+- **Phase 2 complete!** — Mind and Calabi extraction now operational
