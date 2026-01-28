@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+#
+# Test runner for /mind/edges/update
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+case "$TC_CASE_NAME" in
+  00-success-update-relation)
+    init_mind
+    create_concept '{"name": "A", "type": "Entity"}'
+    create_concept '{"name": "B", "type": "Entity"}'
+    create_edge '{"source": 1, "target": 2, "relation": "DEPENDS_ON"}'
+    ;;
+  01-success-update-weight)
+    init_mind
+    create_concept '{"name": "A", "type": "Entity"}'
+    create_concept '{"name": "B", "type": "Entity"}'
+    create_edge '{"source": 1, "target": 2, "relation": "DEPENDS_ON"}'
+    ;;
+  02-error-not-found)
+    init_mind
+    ;;
+  03-error-missing-id)
+    init_mind
+    ;;
+  04-error-invalid-relation)
+    init_mind
+    create_concept '{"name": "A", "type": "Entity"}'
+    create_concept '{"name": "B", "type": "Entity"}'
+    create_edge '{"source": 1, "target": 2, "relation": "DEPENDS_ON"}'
+    ;;
+esac
+
+echo "$INPUT" | bun run "$BRANE_ROOT/src/cli.ts" /mind/edges/update

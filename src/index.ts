@@ -20,6 +20,11 @@ import { handler as mind_concepts_get_handler } from "./handlers/mind/concepts/g
 import { handler as mind_concepts_list_handler } from "./handlers/mind/concepts/list.ts"
 import { handler as mind_concepts_update_handler } from "./handlers/mind/concepts/update.ts"
 import { handler as mind_concepts_delete_handler } from "./handlers/mind/concepts/delete.ts"
+import { handler as mind_edges_create_handler } from "./handlers/mind/edges/create.ts"
+import { handler as mind_edges_get_handler } from "./handlers/mind/edges/get.ts"
+import { handler as mind_edges_list_handler } from "./handlers/mind/edges/list.ts"
+import { handler as mind_edges_update_handler } from "./handlers/mind/edges/update.ts"
+import { handler as mind_edges_delete_handler } from "./handlers/mind/edges/delete.ts"
 
 sys.register("/ping", ping_handler)
 sys.register("/body/init", body_init_handler)
@@ -36,6 +41,11 @@ sys.register("/mind/concepts/get", mind_concepts_get_handler)
 sys.register("/mind/concepts/list", mind_concepts_list_handler)
 sys.register("/mind/concepts/update", mind_concepts_update_handler)
 sys.register("/mind/concepts/delete", mind_concepts_delete_handler)
+sys.register("/mind/edges/create", mind_edges_create_handler)
+sys.register("/mind/edges/get", mind_edges_get_handler)
+sys.register("/mind/edges/list", mind_edges_list_handler)
+sys.register("/mind/edges/update", mind_edges_update_handler)
+sys.register("/mind/edges/delete", mind_edges_delete_handler)
 
 // export
 export { sys }

@@ -1,0 +1,16 @@
+{
+  "status": "success",
+  "result": {
+    "edges": [
+      {"id": 1, "source": 1, "target": 2, "relation": "DEPENDS_ON", "weight": 1},
+      {"id": 2, "source": 2, "target": 3, "relation": "DEPENDS_ON", "weight": 1}
+    ],
+    "total": 2
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/edges/list",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "id": [{"code": "not_found", "message": "edge not found"}]
+  },
+  "meta": {
+    "path": "/mind/edges/update",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+#
+# Test runner for /mind/edges/create
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+case "$TC_CASE_NAME" in
+  00-success-create)
+    init_mind
+    create_concept '{"name": "AuthService", "type": "Entity"}'
+    create_concept '{"name": "UserService", "type": "Entity"}'
+    ;;
+  01-success-create-with-weight)
+    init_mind
+    create_concept '{"name": "ModuleA", "type": "Entity"}'
+    create_concept '{"name": "ModuleB", "type": "Entity"}'
+    ;;
+  02-error-source-not-found)
+    init_mind
+    create_concept '{"name": "Target", "type": "Entity"}'
+    ;;
+  03-error-target-not-found)
+    init_mind
+    create_concept '{"name": "Source", "type": "Entity"}'
+    ;;
+  04-error-missing-source)
+    init_mind
+    ;;
+  05-error-missing-target)
+    init_mind
+    ;;
+  06-error-missing-relation)
+    init_mind
+    create_concept '{"name": "A", "type": "Entity"}'
+    create_concept '{"name": "B", "type": "Entity"}'
+    ;;
+  07-error-invalid-relation)
+    init_mind
+    create_concept '{"name": "A", "type": "Entity"}'
+    create_concept '{"name": "B", "type": "Entity"}'
+    ;;
+  08-error-not-initialized)
+    # Don't initialize
+    ;;
+esac
+
+echo "$INPUT" | bun run "$BRANE_ROOT/src/cli.ts" /mind/edges/create

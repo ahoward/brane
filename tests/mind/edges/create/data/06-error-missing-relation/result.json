@@ -1,0 +1,12 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "relation": [{"code": "required", "message": "relation is required"}]
+  },
+  "meta": {
+    "path": "/mind/edges/create",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

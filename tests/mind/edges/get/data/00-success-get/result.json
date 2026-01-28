@@ -1,13 +1,15 @@
 {
   "status": "success",
   "result": {
-    "path": "<string>",
-    "created": false,
-    "schema_version": "1.1.0"
+    "id": 1,
+    "source": 1,
+    "target": 2,
+    "relation": "DEPENDS_ON",
+    "weight": 1
   },
   "errors": null,
   "meta": {
-    "path": "/mind/init",
+    "path": "/mind/edges/get",
     "timestamp": "<timestamp>",
     "duration_ms": "<number>"
   }
