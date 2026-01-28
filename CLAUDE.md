@@ -97,6 +97,8 @@ ai/                   # AI agent resources
 ## Active Technologies
 - TypeScript (Bun 1.x) + CozoDB (Datalog), existing mind.ts utilities (016-rules-define)
 - CozoDB mind.db (new `rules` relation) (016-rules-define)
+- TypeScript (Bun runtime) + CozoDB (mind.db), existing `/mind/rules/*` handlers from 016-rules-define (017-verify-check)
+- mind.db (CozoDB with RocksDB backend) (017-verify-check)
 
 ## Recent Changes
 - 016-rules-define: Added TypeScript (Bun 1.x) + CozoDB (Datalog), existing mind.ts utilities

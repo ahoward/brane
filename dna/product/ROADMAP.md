@@ -33,10 +33,9 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 ### Next
 
-- [ ] `017-verify-check` — Run rules against mind.db, report violations
+- [ ] `018-annotate` — Manual annotations with infinite authority
 
 ### Backlog (Phase 3)
-- [ ] `018-annotate` — Manual annotations with infinite authority
 - [ ] `019-pr-verify` — Simulate PR changes and verify against rules
 
 ---
@@ -60,6 +59,7 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 | Feature | PR | Date |
 |---------|-----|------|
+| `017-verify-check` | #21 | 2026-01-28 |
 | `016-rules-define` | #20 | 2026-01-28 |
 | `tc-refactor` | — | 2026-01-28 |
 | `015-context-query` | #18 | 2026-01-28 |

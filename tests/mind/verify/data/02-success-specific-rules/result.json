@@ -1,0 +1,28 @@
+{
+  "status": "success",
+  "result": {
+    "passed": false,
+    "summary": {
+      "rules_passed": 0,
+      "rules_failed": 1,
+      "total_violations": 2
+    },
+    "rules": [
+      {
+        "name": "cycles",
+        "passed": false,
+        "violations": [
+          {"id": 1, "name": "A"},
+          {"id": 2, "name": "B"}
+        ],
+        "error": null
+      }
+    ]
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/verify",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}
