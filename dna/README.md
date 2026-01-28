@@ -11,7 +11,7 @@ This directory contains organized company and product knowledge for humans and A
 <!-- AUTO-GENERATED START - Do not edit below this line -->
 ## Directory Structure
 
-Last updated: 2026-01-26 22:50
+Last updated: 2026-01-28
 
 ### Categories
 
@@ -24,6 +24,8 @@ Last updated: 2026-01-26 22:50
 
 - **research/** - Research, analysis, and exploration
   - `gemini-architecture-conversation.md` - Original architecture discussion (weighted graphs, Split-Brain, CozoDB)
+  - `graphrag-survey-2501.00309.md` - GraphRAG survey: 5-component framework (query processor, retriever, organizer, generator, data source)
+  - `graphrag-microsoft-2404.16130.md` - Microsoft GraphRAG: local-to-global query-focused summarization via community detection
 
 ### Quick Navigation
 
@@ -38,6 +40,9 @@ Last updated: 2026-01-26 22:50
 | Roadmap | `./dna/product/prd.md` (Section 5) |
 | Calabi projection | `./dna/research/gemini-architecture-conversation.md` |
 | CozoDB vs SQLite | `./dna/research/gemini-architecture-conversation.md` |
+| GraphRAG architecture | `./dna/research/graphrag-survey-2501.00309.md` |
+| Community detection | `./dna/research/graphrag-microsoft-2404.16130.md` |
+| Global sensemaking | `./dna/research/graphrag-microsoft-2404.16130.md` |
 
 <!-- AUTO-GENERATED END - Do not edit above this line -->
 
