@@ -1,0 +1,13 @@
+{
+  "status": "success",
+  "result": {
+    "files_to_scan": ["file:///test/auth.ts"],
+    "dry_run": true
+  },
+  "errors": null,
+  "meta": {
+    "path": "/calabi/scan",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

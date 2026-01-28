@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+#
+# Test runner for /calabi/scan
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+# Use fixed file URLs for tests
+FILE_URL1="file:///test/auth.ts"
+FILE_URL2="file:///test/login.ts"
+FILE_URL3="file:///src/util.ts"
+
+case "$TC_CASE_NAME" in
+  00-success-scan-new-files)
+    init_mind
+    add_body_file "$FILE_URL1" "hash1" 100 1234567890
+    add_body_file "$FILE_URL2" "hash2" 200 1234567891
+    ;;
+  01-success-path-filter)
+    init_mind
+    add_body_file "$FILE_URL1" "hash1" 100 1234567890
+    add_body_file "$FILE_URL2" "hash2" 200 1234567891
+    add_body_file "$FILE_URL3" "hash3" 150 1234567892
+    ;;
+  02-success-dry-run)
+    init_mind
+    add_body_file "$FILE_URL1" "hash1" 100 1234567890
+    ;;
+  03-success-no-dirty-files)
+    init_mind
+    # No files in body.db
+    ;;
+  04-success-already-extracted)
+    init_mind
+    add_body_file "$FILE_URL1" "hash1" 100 1234567890
+    # Create concept and provenance (simulate prior extraction)
+    create_concept '{"name": "auth", "type": "Entity"}'
+    create_provenance "{\"concept_id\": 1, \"file_url\": \"$FILE_URL1\"}"
+    ;;
+  05-error-mind-not-initialized)
+    init_body
+    add_body_file "$FILE_URL1" "hash1" 100 1234567890
+    # Don't init mind
+    ;;
+  06-error-body-not-initialized)
+    # Don't init anything
+    ;;
+esac
+
+echo "$INPUT" | bun run "$BRANE_ROOT/src/cli.ts" /calabi/scan
