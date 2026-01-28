@@ -118,12 +118,19 @@ interface HookChain {
   after_each:  string[]   // paths, leaf→root order
 }
 
+// Cache for hook chains (keyed by handler_dir)
+const hook_cache = new Map<string, HookChain>()
+
 // Collect hooks from tests_dir down to handler_dir
-// Returns paths in execution order
+// Returns paths in execution order (cached)
 async function collect_hooks(
   tests_dir:   string,
   handler_dir: string
 ): Promise<HookChain> {
+  // Check cache first
+  const cached = hook_cache.get(handler_dir)
+  if (cached) return cached
+
   const before_each: string[] = []
   const after_each:  string[] = []
 
@@ -149,7 +156,9 @@ async function collect_hooks(
     if (await exists(level_after))  after_each.unshift(level_after)
   }
 
-  return { before_each, after_each }
+  const result = { before_each, after_each }
+  hook_cache.set(handler_dir, result)
+  return result
 }
 
 // Run a shell hook script with environment
@@ -205,15 +214,17 @@ async function cleanup_workspace(workspace: string): Promise<void> {
 //
 
 interface TestCase {
-  handler:      string           // e.g., "body/files/add"
-  name:         string           // e.g., "00-success-single-file"
-  params:       string           // absolute path to params.json
-  result:       string           // absolute path to result.json
-  run:          string | null    // absolute path to run script, or null for default runner
-  skip:         boolean          // has skip marker
-  handler_dir:  string           // absolute path to handler directory
-  case_dir:     string           // absolute path to case data directory
-  data_dir:     string           // absolute path to handler's data/ directory
+  handler:       string           // e.g., "body/files/add"
+  name:          string           // e.g., "00-success-single-file"
+  params:        string           // absolute path to params.json
+  result:        string           // absolute path to result.json
+  run:           string | null    // absolute path to run script, or null for default runner
+  skip:          boolean          // has skip marker
+  handler_dir:   string           // absolute path to handler directory
+  case_dir:      string           // absolute path to case data directory
+  data_dir:      string           // absolute path to handler's data/ directory
+  has_setup:     boolean          // has setup.sh in case_dir
+  has_teardown:  boolean          // has teardown.sh in case_dir
 }
 
 interface TestResult {
@@ -334,16 +345,22 @@ async function find_case_dirs(
 
   // if this directory has params.json + result.json, it's a case
   if (await exists(params_path) && await exists(result_path)) {
+    // Check for setup.sh/teardown.sh at discovery time
+    const setup_path    = join(dir, "setup.sh")
+    const teardown_path = join(dir, "teardown.sh")
+
     cases.push({
-      handler:     handler,
-      name:        prefix,
-      params:      params_path,
-      result:      result_path,
-      run:         run_path,
-      skip:        skip,
-      handler_dir: handler_dir,
-      case_dir:    dir,
-      data_dir:    data_dir,
+      handler:      handler,
+      name:         prefix,
+      params:       params_path,
+      result:       result_path,
+      run:          run_path,
+      skip:         skip,
+      handler_dir:  handler_dir,
+      case_dir:     dir,
+      data_dir:     data_dir,
+      has_setup:    await exists(setup_path),
+      has_teardown: await exists(teardown_path),
     })
     return
   }
@@ -575,21 +592,19 @@ async function run_test_case(tc: TestCase, ctx: TestContext): Promise<TestResult
     }
   }
 
-  // Collect hooks from tests_dir to handler_dir
+  // Collect hooks from tests_dir to handler_dir (cached)
   const hooks = await collect_hooks(ctx.tests_dir, tc.handler_dir)
   const has_hooks = hooks.before_each.length > 0 || hooks.after_each.length > 0
 
-  // Check for per-case setup/teardown
+  // Per-case setup/teardown paths (existence cached in tc at discovery time)
   const case_setup    = join(tc.case_dir, "setup.sh")
   const case_teardown = join(tc.case_dir, "teardown.sh")
-  const has_case_setup    = await exists(case_setup)
-  const has_case_teardown = await exists(case_teardown)
 
   // Decide whether to use hook-based execution or legacy run script
   // Use hooks if:
   // 1. There are before_each or after_each hooks, OR
   // 2. There is a per-case setup.sh or teardown.sh
-  const use_hooks = has_hooks || has_case_setup || has_case_teardown
+  const use_hooks = has_hooks || tc.has_setup || tc.has_teardown
 
   let workspace: string | undefined
   let cwd: string = ctx.root
@@ -619,7 +634,7 @@ async function run_test_case(tc: TestCase, ctx: TestContext): Promise<TestResult
       }
 
       // Run per-case setup.sh if exists
-      if (has_case_setup) {
+      if (tc.has_setup) {
         const result = await run_hook(case_setup, env, workspace)
         if (!result.ok) {
           return {
@@ -638,7 +653,7 @@ async function run_test_case(tc: TestCase, ctx: TestContext): Promise<TestResult
       const test_result = await run_command(cmd, args, params_text, env, workspace)
 
       // Run per-case teardown.sh if exists (even if test failed)
-      if (has_case_teardown) {
+      if (tc.has_teardown) {
         await run_hook(case_teardown, env, workspace)
       }
 
