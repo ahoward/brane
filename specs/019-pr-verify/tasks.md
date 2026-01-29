@@ -15,8 +15,8 @@
 
 **Purpose**: Project initialization - minimal since we're adding to existing codebase
 
-- [ ] T001 Create test directory structure at tests/calabi/pr-verify/
-- [ ] T002 Create test runner at tests/calabi/pr-verify/run
+- [X] T001 Create test directory structure at tests/calabi/pr-verify/
+- [X] T002 Create test runner at tests/calabi/pr-verify/run
 
 ---
 
@@ -36,15 +36,15 @@
 
 ### Implementation for User Story 1
 
-- [ ] T003 [US1] Create handler skeleton at src/handlers/calabi/pr-verify.ts
-- [ ] T004 [US1] Implement file change detection (reuse status.ts patterns) in src/handlers/calabi/pr-verify.ts
-- [ ] T005 [US1] Implement rule verification (reuse verify.ts internals) in src/handlers/calabi/pr-verify.ts
-- [ ] T006 [US1] Register route /calabi/pr-verify in src/index.ts
-- [ ] T007 [P] [US1] Create test case 00-success-no-violations in tests/calabi/pr-verify/data/
-- [ ] T008 [P] [US1] Create test case 01-success-with-violations in tests/calabi/pr-verify/data/
-- [ ] T009 [P] [US1] Create test case 02-success-no-changes in tests/calabi/pr-verify/data/
+- [X] T003 [US1] Create handler skeleton at src/handlers/calabi/pr-verify.ts
+- [X] T004 [US1] Implement file change detection (reuse status.ts patterns) in src/handlers/calabi/pr-verify.ts
+- [X] T005 [US1] Implement rule verification (reuse verify.ts internals) in src/handlers/calabi/pr-verify.ts
+- [X] T006 [US1] Register route /calabi/pr-verify in src/index.ts
+- [X] T007 [P] [US1] Create test case 00-success-no-violations in tests/calabi/pr-verify/data/
+- [X] T008 [P] [US1] Create test case 01-success-with-violations in tests/calabi/pr-verify/data/
+- [X] T009 [P] [US1] Create test case 02-success-no-changes in tests/calabi/pr-verify/data/
 
-**Checkpoint**: Basic pr-verify working - returns changes + verification results
+**Checkpoint**: Basic pr-verify working - returns changes + verification results ✅
 
 ---
 
@@ -56,12 +56,12 @@
 
 ### Implementation for User Story 2
 
-- [ ] T010 [US2] Ensure changes structure includes modified/deleted/new arrays in src/handlers/calabi/pr-verify.ts
-- [ ] T011 [P] [US2] Add test case verifying changes context is returned in tests/calabi/pr-verify/data/
+- [X] T010 [US2] Ensure changes structure includes modified/deleted/new arrays in src/handlers/calabi/pr-verify.ts
+- [X] T011 [P] [US2] Add test case verifying changes context is returned in tests/calabi/pr-verify/data/
 
 **Note**: US2 is largely satisfied by US1 implementation since changes are included by design. T010 validates the structure.
 
-**Checkpoint**: Changes context clearly shown in output
+**Checkpoint**: Changes context clearly shown in output ✅
 
 ---
 
@@ -73,11 +73,11 @@
 
 ### Implementation for User Story 3
 
-- [ ] T012 [US3] Add rules parameter handling in src/handlers/calabi/pr-verify.ts
-- [ ] T013 [P] [US3] Create test case 03-success-specific-rules in tests/calabi/pr-verify/data/
-- [ ] T014 [P] [US3] Create test case 07-error-rule-not-found in tests/calabi/pr-verify/data/
+- [X] T012 [US3] Add rules parameter handling in src/handlers/calabi/pr-verify.ts
+- [X] T013 [P] [US3] Create test case 03-success-specific-rules in tests/calabi/pr-verify/data/
+- [X] T014 [P] [US3] Create test case 07-error-rule-not-found in tests/calabi/pr-verify/data/
 
-**Checkpoint**: Selective rule execution working
+**Checkpoint**: Selective rule execution working ✅
 
 ---
 
@@ -89,10 +89,10 @@
 
 ### Implementation for User Story 4
 
-- [ ] T015 [US4] Add dry_run parameter handling in src/handlers/calabi/pr-verify.ts
-- [ ] T016 [P] [US4] Create test case 04-success-dry-run in tests/calabi/pr-verify/data/
+- [X] T015 [US4] Add dry_run parameter handling in src/handlers/calabi/pr-verify.ts
+- [X] T016 [P] [US4] Create test case 04-success-dry-run in tests/calabi/pr-verify/data/
 
-**Checkpoint**: Dry run mode working
+**Checkpoint**: Dry run mode working ✅
 
 ---
 
@@ -100,10 +100,10 @@
 
 **Purpose**: Proper error responses for edge cases
 
-- [ ] T017 [P] Create test case 05-error-body-not-initialized in tests/calabi/pr-verify/data/
-- [ ] T018 [P] Create test case 06-error-mind-not-initialized in tests/calabi/pr-verify/data/
+- [X] T017 [P] Create test case 05-error-body-not-initialized in tests/calabi/pr-verify/data/
+- [X] T018 [P] Create test case 06-error-mind-not-initialized in tests/calabi/pr-verify/data/
 
-**Checkpoint**: All error cases handled
+**Checkpoint**: All error cases handled ✅
 
 ---
 
@@ -111,8 +111,8 @@
 
 **Purpose**: Final validation and cleanup
 
-- [ ] T019 Run all tests and verify 100% pass rate
-- [ ] T020 Validate against quickstart.md scenarios
+- [X] T019 Run all tests and verify 100% pass rate
+- [X] T020 Validate against quickstart.md scenarios
 
 ---
 
@@ -171,10 +171,10 @@ After US1 core (T003-T006) is complete:
 ## Summary
 
 - **Total tasks**: 20
+- **Completed**: 20/20 ✅
 - **US1 (P1)**: 7 tasks (core implementation)
 - **US2 (P2)**: 2 tasks (changes context)
 - **US3 (P2)**: 3 tasks (specific rules)
 - **US4 (P3)**: 2 tasks (dry run)
 - **Error handling**: 2 tasks
 - **Polish**: 2 tasks
-- **Parallel opportunities**: 10+ tasks can run in parallel after T006

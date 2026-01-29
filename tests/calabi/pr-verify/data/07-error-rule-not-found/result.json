@@ -1,0 +1,12 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "rules": [{ "code": "not_found", "message": "rule not found: nonexistent" }]
+  },
+  "meta": {
+    "path": "/calabi/pr-verify",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

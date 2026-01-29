@@ -1,0 +1,33 @@
+{
+  "status": "success",
+  "result": {
+    "passed": true,
+    "changes": {
+      "modified": [],
+      "deleted": [],
+      "new": [],
+      "summary": {
+        "modified": 0,
+        "deleted": 0,
+        "new": 0,
+        "clean": true
+      }
+    },
+    "verification": {
+      "summary": {
+        "rules_passed": 1,
+        "rules_failed": 0,
+        "total_violations": 0
+      },
+      "rules": [
+        { "name": "cycles", "passed": true, "violations": [], "error": null }
+      ]
+    }
+  },
+  "errors": null,
+  "meta": {
+    "path": "/calabi/pr-verify",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}
