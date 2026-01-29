@@ -27,17 +27,29 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 ---
 
-## Current: Phase 3 — The Shield
+## Current: Phase 3.5 — The Brain
 
-**Goal:** Logic enforcement and governance.
+**Goal:** Real AI-powered extraction and semantic search.
 
 ### Next
 
-- [ ] `020-verifier-node` — Headless verification node
+- [ ] `020-llm-extract` — Real LLM-powered concept extraction (replace stub)
 
-### Backlog (Phase 3 → Phase 4)
+### Backlog (Phase 3.5)
 
-- [ ] `021-protocol-spec` — CTX token integration spec
+- [ ] `021-vector-search` — Vector embeddings and semantic search
+- [ ] `022-config` — .brane/config.json support (API keys, model selection)
+
+---
+
+## Deferred: Phase 4 — The Network
+
+**Goal:** Distributed verification and protocol.
+
+*Deferred until core functionality is solid.*
+
+- [ ] `023-verifier-node` — Headless verification node
+- [ ] `024-protocol-spec` — CTX token integration spec
 
 ---
 
