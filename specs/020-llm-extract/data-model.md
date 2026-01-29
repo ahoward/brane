@@ -10,35 +10,29 @@ interface BraneConfig {
 }
 
 interface LLMConfig {
-  provider:  "anthropic"           // Only anthropic for MVP
-  model?:    string                // Default: "claude-3-5-sonnet-20241022"
-  api_key?:  string                // Optional if using env var
+  provider?:  "claude" | "gemini"   // Optional - auto-detected if not set
 }
 ```
 
-**Example**:
+**Example** (explicit provider preference):
 ```json
 {
   "llm": {
-    "provider": "anthropic",
-    "model": "claude-3-5-sonnet-20241022",
-    "api_key": "sk-ant-..."
+    "provider": "claude"
   }
 }
 ```
 
-**Minimal Example** (uses env var for API key):
+**Minimal Example** (auto-detect available CLI):
 ```json
-{
-  "llm": {
-    "provider": "anthropic"
-  }
-}
+{}
 ```
+
+Note: API keys are managed by the CLIs themselves (`claude` and `gemini`), not by Brane config.
 
 ## LLM Request/Response
 
-### Extraction Request
+### Extraction Request (internal)
 
 ```typescript
 interface ExtractionRequest {
@@ -48,7 +42,7 @@ interface ExtractionRequest {
 }
 ```
 
-### Extraction Response (from LLM)
+### Extraction Response (from CLI)
 
 ```typescript
 interface ExtractionResponse {
@@ -68,43 +62,21 @@ interface EdgeInput {
 }
 ```
 
-## Tool Definition (for Claude API)
+## CLI Invocation
 
-```typescript
-const extraction_tool = {
-  name: "extract_concepts",
-  description: "Extract domain concepts and relationships from code",
-  input_schema: {
-    type: "object",
-    properties: {
-      concepts: {
-        type: "array",
-        items: {
-          type: "object",
-          properties: {
-            name: { type: "string", description: "Concept name (PascalCase or snake_case)" },
-            type: { type: "string", enum: ["Entity", "Rule", "Caveat"] }
-          },
-          required: ["name", "type"]
-        }
-      },
-      edges: {
-        type: "array",
-        items: {
-          type: "object",
-          properties: {
-            source_name: { type: "string" },
-            target_name: { type: "string" },
-            relation: { type: "string", enum: ["DEPENDS_ON", "CONFLICTS_WITH", "DEFINED_IN"] }
-          },
-          required: ["source_name", "target_name", "relation"]
-        }
-      }
-    },
-    required: ["concepts", "edges"]
-  }
-}
+### Claude CLI
+
+```bash
+echo "$prompt" | claude --print --output-format json
 ```
+
+### Gemini CLI
+
+```bash
+echo "$prompt" | gemini --output-format json
+```
+
+The prompt includes the JSON schema and instructs the LLM to output only valid JSON matching that schema.
 
 ## Existing Types (unchanged)
 
@@ -128,27 +100,31 @@ type EdgeRelation = "DEPENDS_ON" | "CONFLICTS_WITH" | "DEFINED_IN"
 ## State Diagram
 
 ```
-┌─────────────┐
-│   No Config │
-└──────┬──────┘
-       │
-       ▼
+┌─────────────────┐
+│  detect_provider │
+└────────┬────────┘
+         │
+         ▼
 ┌──────────────────────────────────────────┐
-│ Load Config                               │
-│ 1. Check .brane/config.json              │
-│ 2. Fall back to ANTHROPIC_API_KEY env    │
-│ 3. Error if neither found                │
+│ 1. Check .brane/config.json for provider │
+│ 2. If not set, check `which claude`      │
+│ 3. If not found, check `which gemini`    │
+│ 4. Error if neither CLI installed        │
 └──────────────────┬───────────────────────┘
                    │
-       ┌───────────┴───────────┐
-       │                       │
-       ▼                       ▼
-┌─────────────┐         ┌─────────────┐
-│ Config OK   │         │ No API Key  │
-└──────┬──────┘         └──────┬──────┘
-       │                       │
-       ▼                       ▼
-┌─────────────┐         ┌─────────────┐
-│ LLM Ready   │         │   Error     │
-└─────────────┘         └─────────────┘
+       ┌───────────┼───────────┐
+       │           │           │
+       ▼           ▼           ▼
+┌───────────┐ ┌───────────┐ ┌───────────┐
+│  claude   │ │  gemini   │ │   Error   │
+└─────┬─────┘ └─────┬─────┘ └───────────┘
+      │             │
+      └──────┬──────┘
+             │
+             ▼
+┌─────────────────────────────┐
+│      call_cli(provider)     │
+│  stdin: prompt              │
+│  stdout: JSON response      │
+└─────────────────────────────┘
 ```

@@ -2,29 +2,35 @@
 
 ## Prerequisites
 
-1. Anthropic API key (get one at https://console.anthropic.com)
+1. **Claude CLI** or **Gemini CLI** installed and authenticated
+   - Claude: https://docs.anthropic.com/claude-code/getting-started
+   - Gemini: https://ai.google.dev/gemini-api/docs/get-started/cli
 2. Brane initialized in your project (`brane init`)
 
 ## Setup
 
-### Option 1: Environment Variable (Quick)
+### Option 1: Auto-Detection (Recommended)
+
+If you have `claude` or `gemini` CLI installed and authenticated, Brane will auto-detect it. No configuration needed!
 
 ```bash
-export ANTHROPIC_API_KEY="sk-ant-..."
+# Verify CLI is available
+which claude   # or: which gemini
 ```
 
-### Option 2: Config File (Persistent)
+### Option 2: Explicit Provider (Optional)
 
-Create `.brane/config.json`:
+If you have both CLIs installed, you can set a preference in `.brane/config.json`:
 
 ```json
 {
   "llm": {
-    "provider": "anthropic",
-    "api_key": "sk-ant-..."
+    "provider": "claude"
   }
 }
 ```
+
+Valid providers: `"claude"`, `"gemini"`
 
 ## Usage
 
@@ -73,16 +79,14 @@ $ brane mind init
 $ brane body files add src/
 ✓ Added 15 files
 
-# 4. Configure LLM
-$ export ANTHROPIC_API_KEY="sk-ant-..."
-
-# 5. Scan for concepts
+# 4. Scan for concepts (auto-detects claude or gemini CLI)
 $ brane calabi scan
+✓ Using claude CLI
 ✓ Scanned 15 files
 ✓ Created 42 concepts
 ✓ Created 28 edges
 
-# 6. View results
+# 5. View results
 $ brane mind concepts list
 ID  NAME           TYPE
 1   User           Entity
@@ -93,22 +97,35 @@ ID  NAME           TYPE
 
 ## Troubleshooting
 
-### "LLM not configured"
+### "No LLM CLI found"
 
-Make sure you have either:
-- `ANTHROPIC_API_KEY` environment variable set, OR
-- `.brane/config.json` with `llm.api_key`
+Install either the Claude CLI or Gemini CLI:
 
-### "Rate limit exceeded"
+```bash
+# Claude (via npm)
+npm install -g @anthropic-ai/claude-code
 
-The scanner automatically retries with backoff. If persistent:
-- Reduce batch size (scan smaller directories)
-- Wait a few minutes and retry
+# Then authenticate
+claude
+```
 
-### "Invalid API key"
+### "CLI not authenticated"
 
-Verify your key at https://console.anthropic.com/account/keys
+Run the CLI directly to complete authentication:
+
+```bash
+claude    # Follow prompts to authenticate
+# or
+gemini    # Follow prompts to authenticate
+```
 
 ### Binary Files Skipped
 
 Binary files (images, compiled code) are automatically skipped. This is expected behavior.
+
+### Slow Extraction
+
+Large files are truncated to ~8000 tokens. If extraction is still slow:
+- The CLI handles rate limiting automatically
+- Check your network connection
+- Try scanning smaller directories

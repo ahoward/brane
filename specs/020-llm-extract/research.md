@@ -1,30 +1,50 @@
 # Research: LLM-Powered Concept Extraction
 
-## Decision 1: LLM Provider
+## Decision 1: Integration Approach
 
-**Decision**: Anthropic Claude (claude-3-5-sonnet) as primary and only provider for MVP.
+**Decision**: Wrap CLI tools (`claude`, `gemini`) instead of using SDKs.
 
 **Rationale**:
-- Excellent at structured output (JSON)
-- Strong code understanding
-- Reasonable pricing for development
-- Already have SDK experience in the ecosystem
+- **Durability**: CLI is a stable interface, unlikely to break between SDK versions
+- **Portability**: Adding providers = wrap their CLI (no new npm dependencies)
+- **Zero dependencies**: No `@anthropic-ai/sdk` or `openai` to install/maintain/update
+- **Auth handled**: CLIs already know about API keys from their own config
+- **Unix-Clean**: Aligns with Constitution Principle V (stdin/stdout)
+- **Battle-tested**: CLIs handle retries, rate limits, streaming internally
 
 **Alternatives Considered**:
-- **OpenAI GPT-4**: Good alternative, but adds complexity. Can add later if needed.
-- **Local Ollama**: Great for privacy, but quality varies. Future enhancement.
-- **Multiple providers**: Over-engineering for MVP (YAGNI).
+- **Anthropic SDK**: Typed responses, but version churn and dependency management
+- **Multiple SDKs**: Each provider = new dependency, auth management overhead
+- **HTTP direct**: Maximum control, but reimplementing what CLIs already do
 
-## Decision 2: Structured Output Format
+## Decision 2: Provider Support
 
-**Decision**: Use tool_use/function calling for guaranteed JSON schema compliance.
+**Decision**: Support both `claude` and `gemini` CLIs for v1.
 
 **Rationale**:
-- Anthropic's tool_use ensures valid JSON output
-- Schema enforcement at API level
-- No need for manual JSON parsing/retry logic
+- Both are high-quality and widely installed
+- Auto-detect which is available (`which claude`, `which gemini`)
+- User can set preference in config if both are available
 
-**Schema**:
+**Detection Order**:
+1. Check `.brane/config.json` for `llm.provider` preference
+2. If not set, auto-detect: prefer `claude` if available, fall back to `gemini`
+3. Error if neither CLI is installed
+
+## Decision 3: Structured Output Format
+
+**Decision**: Use `--output-format json` flag with explicit JSON schema in prompt.
+
+**CLI Commands**:
+```bash
+# Claude
+echo "$prompt" | claude --print --output-format json
+
+# Gemini
+echo "$prompt" | gemini --output-format json
+```
+
+**Schema** (embedded in prompt):
 ```json
 {
   "concepts": [
@@ -36,30 +56,23 @@
 }
 ```
 
-## Decision 3: Configuration Storage
+## Decision 4: Configuration Storage
 
-**Decision**: `.brane/config.json` with environment variable fallback.
+**Decision**: `.brane/config.json` for provider preference (optional).
 
 **Rationale**:
-- Keeps all Brane data in `.brane/` directory
-- Environment variable fallback for CI/CD and quick setup
-- JSON format consistent with Brane's POD philosophy
+- CLIs handle their own auth (no API keys in brane config)
+- Config only needed to set provider preference if both CLIs installed
+- Keeps config minimal
 
 **Config Schema**:
 ```json
 {
   "llm": {
-    "provider": "anthropic",
-    "model": "claude-3-5-sonnet-20241022",
-    "api_key": "sk-..."
+    "provider": "claude"  // or "gemini" - optional, auto-detected if not set
   }
 }
 ```
-
-**Fallback Order**:
-1. `.brane/config.json` → `llm.api_key`
-2. Environment variable `ANTHROPIC_API_KEY`
-3. Error: "No API key configured"
 
 ## Decision 4: File Content Handling
 
@@ -96,11 +109,13 @@
 **Errors to Handle**:
 | Error | Response |
 |-------|----------|
-| No API key | Error: "LLM not configured (set ANTHROPIC_API_KEY or .brane/config.json)" |
-| Rate limit | Retry with exponential backoff (max 3 attempts) |
-| Invalid response | Error logged, file skipped, continue with others |
-| Network error | Error logged, file skipped, continue with others |
+| No CLI installed | Error: "No LLM CLI found (install claude or gemini)" |
+| CLI auth error | Error: "LLM CLI not authenticated (run `claude` or `gemini` to configure)" |
+| CLI returns non-zero | Error logged, file skipped, continue with others |
+| Invalid JSON response | Error logged, file skipped, continue with others |
 | Binary file | Warning logged, file skipped |
+
+Note: Rate limits and retries are handled by the CLIs themselves.
 
 ## Decision 7: Prompt Engineering
 
@@ -108,7 +123,7 @@
 
 **Key Elements**:
 1. Role: "You are a code analyzer extracting domain concepts"
-2. Output: Strict JSON schema via tool_use
+2. Output: Strict JSON schema (explained in prompt, enforced via `--output-format json`)
 3. Guidance: Focus on domain concepts, not implementation details
 4. Examples: Include 2-3 few-shot examples in prompt
 
@@ -121,3 +136,21 @@
 - **DEPENDS_ON**: Import/require, composition, inheritance
 - **CONFLICTS_WITH**: Mutually exclusive options, incompatible versions
 - **DEFINED_IN**: Where a concept is declared (file provenance handles this mostly)
+
+## Decision 8: CLI Invocation Pattern
+
+**Decision**: Use Bun's shell API (`Bun.spawn`) for subprocess execution.
+
+**Rationale**:
+- Native to Bun, no external dependencies
+- Proper stdin/stdout handling
+- Exit code access for error detection
+
+**Example**:
+```typescript
+const proc = Bun.spawn(["claude", "--print", "--output-format", "json"], {
+  stdin: new TextEncoder().encode(prompt),
+})
+const output = await new Response(proc.stdout).text()
+const exit_code = await proc.exited
+```

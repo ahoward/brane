@@ -9,7 +9,7 @@ Replace the current stub extraction in `/calabi/scan` (which only extracts filen
 ## Technical Context
 
 **Language/Version**: TypeScript / Bun 1.x
-**Primary Dependencies**: Anthropic SDK (`@anthropic-ai/sdk`), existing CozoDB/SQLite libs
+**Primary Dependencies**: None (wraps CLI tools: `claude`, `gemini`), existing CozoDB/SQLite libs
 **Storage**: `.brane/body.db` (SQLite), `.brane/mind.db` (CozoDB), `.brane/config.json` (new)
 **Testing**: tc test framework (JSON in/out)
 **Target Platform**: CLI (macOS/Linux)
@@ -26,8 +26,8 @@ Replace the current stub extraction in `/calabi/scan` (which only extracts filen
 | II. Result Envelope | ✅ | All handlers return standard Result<T> |
 | III. sys.call Public API Only | ✅ | LLM calls are internal lib functions, not sys.call |
 | IV. Antagonistic Testing | ✅ | tc tests with mocked LLM responses |
-| V. Unix-Clean | ✅ | Config from file or env vars |
-| VI. Simplicity (YAGNI) | ✅ | Start with Anthropic only; add providers later if needed |
+| V. Unix-Clean | ✅ | Shell out to CLI tools (stdin/stdout), config from file or env vars |
+| VI. Simplicity (YAGNI) | ✅ | Wrap existing CLIs instead of SDK dependencies; Claude + Gemini for v1 |
 
 ## Project Structure
 
@@ -68,17 +68,21 @@ tests/
 
 ## Key Decisions
 
-1. **Anthropic First**: Start with Claude as the only provider. OpenAI support can be added later if needed (YAGNI).
+1. **CLI Wrapping**: Shell out to `claude` and `gemini` CLIs instead of using SDKs.
+   - Zero npm dependencies for LLM integration
+   - CLIs handle auth, retries, rate limits internally
+   - Adding new providers = wrap their CLI
+   - Aligns with Unix-Clean principle (stdin/stdout)
 
-2. **Config Location**: `.brane/config.json` in the project's .brane directory (same as body.db/mind.db).
+2. **Provider Detection**: Auto-detect available CLIs (`which claude`, `which gemini`).
 
-3. **Fallback to ENV**: If no config file, check `ANTHROPIC_API_KEY` environment variable.
+3. **Config Location**: `.brane/config.json` for provider preference (optional).
 
-4. **Prompt Design**: Use structured output (JSON) with clear schema for concepts/edges.
+4. **Prompt Design**: Use `--print --output-format json` for structured output.
 
 5. **File Truncation**: Limit file content to ~8000 tokens to stay within context limits.
 
-6. **Mock in Tests**: tc tests use a mock LLM that returns deterministic responses based on file content hashes.
+6. **Mock in Tests**: tc tests use `BRANE_LLM_MOCK=1` env var for deterministic responses.
 
 ## Architecture
 
@@ -90,9 +94,9 @@ tests/
 │    │                    ▼                    │          │
 │    │   ┌─────────────────────────────────┐   │          │
 │    │   │         llm.ts                  │   │          │
-│    │   │  - load_config()                │   │          │
+│    │   │  - detect_provider()            │   │          │
 │    │   │  - extract_from_content()       │   │          │
-│    │   │  - call_anthropic()             │   │          │
+│    │   │  - call_cli() (claude/gemini)   │   │          │
 │    │   └─────────────────────────────────┘   │          │
 │    │                    │                    │          │
 │    │                    ▼                    │          │
@@ -109,8 +113,8 @@ tests/
 
 | File | Action | Description |
 |------|--------|-------------|
-| `src/lib/llm.ts` | CREATE | LLM client with config loading and API calls |
-| `src/lib/config.ts` | CREATE | Config file loader (.brane/config.json) |
+| `src/lib/llm.ts` | CREATE | LLM CLI wrapper (detect provider, shell out to claude/gemini) |
+| `src/lib/config.ts` | CREATE | Config file loader (.brane/config.json) - provider preference |
 | `src/lib/prompts.ts` | CREATE | Extraction prompt templates |
 | `src/handlers/calabi/scan.ts` | MODIFY | Use LLM extraction instead of filename stub |
 | `tests/calabi/scan/run` | MODIFY | Add mock LLM support |

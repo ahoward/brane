@@ -26,7 +26,7 @@ Guidelines:
 ## User Message Template
 
 ```text
-Extract domain concepts from this {{language}} file:
+Extract domain concepts from this {{language}} file.
 
 File: {{file_url}}
 
@@ -34,12 +34,16 @@ File: {{file_url}}
 {{content}}
 ```
 
-Use the extract_concepts tool to return your analysis.
+Return ONLY valid JSON matching this exact schema (no markdown, no explanation):
+{
+  "concepts": [{ "name": "string", "type": "Entity|Rule|Caveat" }],
+  "edges": [{ "source_name": "string", "target_name": "string", "relation": "DEPENDS_ON|CONFLICTS_WITH|DEFINED_IN" }]
+}
 ```
 
-## Tool Response Schema
+## Expected JSON Response
 
-The LLM must call the `extract_concepts` tool with this schema:
+The CLI returns JSON matching this schema:
 
 ```json
 {
