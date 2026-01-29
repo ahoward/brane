@@ -1,0 +1,25 @@
+{
+  "status": "success",
+  "result": {
+    "passed": true,
+    "changes": {
+      "modified": [],
+      "deleted": [{ "url": "file:///test/auth.ts" }],
+      "new": [],
+      "summary": {
+        "modified": 0,
+        "deleted": 1,
+        "new": 0,
+        "clean": false
+      }
+    },
+    "verification": null,
+    "dry_run": true
+  },
+  "errors": null,
+  "meta": {
+    "path": "/calabi/pr-verify",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

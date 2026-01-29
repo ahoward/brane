@@ -1,0 +1,34 @@
+{
+  "status": "success",
+  "result": {
+    "passed": false,
+    "changes": {
+      "modified": [],
+      "deleted": [],
+      "new": [],
+      "summary": {
+        "modified": 0,
+        "deleted": 0,
+        "new": 0,
+        "clean": true
+      }
+    },
+    "verification": {
+      "summary": {
+        "rules_passed": 1,
+        "rules_failed": 1,
+        "total_violations": 1
+      },
+      "rules": [
+        { "name": "cycles", "passed": true, "violations": [], "error": null },
+        { "name": "orphans", "passed": false, "violations": [{ "id": 1, "name": "Orphan" }], "error": null }
+      ]
+    }
+  },
+  "errors": null,
+  "meta": {
+    "path": "/calabi/pr-verify",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}
