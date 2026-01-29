@@ -33,21 +33,10 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 ### Next
 
-- [ ] `019-pr-verify` — Simulate PR changes and verify against rules
-
-### Backlog (Phase 3)
-
----
-
-## Phase 4 — The Network
-
-**Goal:** Decentralized verification protocol.
-
-*Locked until Phase 3 complete.*
-
-### Backlog (Phase 4)
-
 - [ ] `020-verifier-node` — Headless verification node
+
+### Backlog (Phase 3 → Phase 4)
+
 - [ ] `021-protocol-spec` — CTX token integration spec
 
 ---
@@ -58,6 +47,7 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 | Feature | PR | Date |
 |---------|-----|------|
+| `019-pr-verify` | #23 | 2026-01-29 |
 | `018-annotate` | #22 | 2026-01-28 |
 | `017-verify-check` | #21 | 2026-01-28 |
 | `016-rules-define` | #20 | 2026-01-28 |
@@ -90,3 +80,4 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 - Phase transitions require all prior features complete
 - **Phase 2 complete!** — Mind and Calabi extraction now operational
 - **tc refactor complete!** — Hybrid TypeScript + shell test infrastructure with hooks and default runner
+- **Phase 3 complete!** — Logic enforcement and governance now operational
