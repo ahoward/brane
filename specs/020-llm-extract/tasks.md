@@ -15,10 +15,10 @@
 
 **Purpose**: Create basic structure (no dependencies to install - we wrap CLIs)
 
-- [ ] T001 [P] Create config loader in src/lib/config.ts
-- [ ] T002 [P] Create extraction prompt templates in src/lib/prompts.ts
+- [X] T001 [P] Create config loader in src/lib/config.ts
+- [X] T002 [P] Create extraction prompt templates in src/lib/prompts.ts
 
-**Checkpoint**: Config and prompt libs created
+**Checkpoint**: Config and prompt libs created ✅
 
 ---
 
@@ -28,14 +28,14 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T003 Create LLM CLI wrapper in src/lib/llm.ts
-- [ ] T004 Implement detect_provider() to find available CLI (claude, gemini) in src/lib/llm.ts
-- [ ] T005 Implement call_cli() to shell out to CLI with stdin/stdout in src/lib/llm.ts
-- [ ] T006 Implement extract_from_content() that builds prompt and calls CLI in src/lib/llm.ts
-- [ ] T007 Add mock mode support (BRANE_LLM_MOCK=1) for deterministic testing in src/lib/llm.ts
-- [ ] T008 Add error handling for missing CLI, auth errors, invalid responses in src/lib/llm.ts
+- [X] T003 Create LLM CLI wrapper in src/lib/llm.ts
+- [X] T004 Implement detect_provider() to find available CLI (claude, gemini) in src/lib/llm.ts
+- [X] T005 Implement call_cli() to shell out to CLI with stdin/stdout in src/lib/llm.ts
+- [X] T006 Implement extract_from_content() that builds prompt and calls CLI in src/lib/llm.ts
+- [X] T007 Add mock mode support (BRANE_LLM_MOCK=1) for deterministic testing in src/lib/llm.ts
+- [X] T008 Add error handling for missing CLI, auth errors, invalid responses in src/lib/llm.ts
 
-**Checkpoint**: LLM wrapper ready - can call claude/gemini CLI and get structured concept extraction
+**Checkpoint**: LLM wrapper ready - can call claude/gemini CLI and get structured concept extraction ✅
 
 ---
 
@@ -47,16 +47,16 @@
 
 ### Implementation for User Story 1
 
-- [ ] T009 [US1] Modify scan.ts to read file content from body.db in src/handlers/calabi/scan.ts
-- [ ] T010 [US1] Add binary file detection and skip logic in src/handlers/calabi/scan.ts
-- [ ] T011 [US1] Add file content truncation for large files in src/handlers/calabi/scan.ts
-- [ ] T012 [US1] Replace extract_concept_name() stub with call to llm.extract_from_content() in src/handlers/calabi/scan.ts
-- [ ] T013 [US1] Update scan tests with mock LLM responses in tests/calabi/scan/run
+- [X] T009 [US1] Modify scan.ts to read file content from body.db in src/handlers/calabi/scan.ts
+- [X] T010 [US1] Add binary file detection and skip logic in src/handlers/calabi/scan.ts
+- [X] T011 [US1] Add file content truncation for large files in src/handlers/calabi/scan.ts
+- [X] T012 [US1] Replace extract_concept_name() stub with call to llm.extract_from_content() in src/handlers/calabi/scan.ts
+- [X] T013 [US1] Update scan tests with mock LLM responses in tests/calabi/scan/run
 - [ ] T014 [P] [US1] Add test case for successful LLM extraction in tests/calabi/scan/data/
 - [ ] T015 [P] [US1] Add test case for binary file skip in tests/calabi/scan/data/
 - [ ] T016 [P] [US1] Add test case for large file truncation in tests/calabi/scan/data/
 
-**Checkpoint**: Scan extracts meaningful concepts from code files using LLM
+**Checkpoint**: Scan extracts meaningful concepts from code files using LLM ✅ (MVP complete)
 
 ---
 

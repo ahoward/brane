@@ -1,13 +1,14 @@
 //
-// scan.ts - scan dirty files and extract to mind.db
+// scan.ts - scan dirty files and extract to mind.db using LLM
 //
 
 import type { Params, Result } from "../../lib/types.ts"
 import { success, error } from "../../lib/result.ts"
 import { open_mind, is_mind_error } from "../../lib/mind.ts"
 import { handler as extract_handler } from "./extract.ts"
+import { extract_from_content, is_binary_content, detect_provider } from "../../lib/llm.ts"
 import { resolve } from "node:path"
-import { existsSync } from "node:fs"
+import { existsSync, readFileSync } from "node:fs"
 import Database from "bun:sqlite"
 
 interface ScanParams {
@@ -20,9 +21,11 @@ interface ScanResult {
   concepts_created?:  number
   concepts_reused?:   number
   edges_created?:     number
+  files_skipped?:     number
   errors?:            { file_url: string; error: string }[]
   files_to_scan?:     string[]
   dry_run?:           boolean
+  provider?:          string
 }
 
 interface FileRecord {
@@ -99,23 +102,59 @@ export async function handler(params: Params): Promise<Result<ScanResult>> {
       })
     }
 
-    // Scan each file
+    // Check LLM provider is available before starting
+    const { provider, error: provider_error } = await detect_provider()
+    if (provider_error || !provider) {
+      return error({
+        llm: [{
+          code:    "not_configured",
+          message: provider_error ?? "no LLM provider available"
+        }]
+      })
+    }
+
+    // Scan each file using LLM extraction
     let total_concepts_created = 0
     let total_concepts_reused = 0
     let total_edges_created = 0
+    let files_skipped = 0
     const errors: { file_url: string; error: string }[] = []
 
     for (const file_url of files_to_scan) {
       try {
-        // Generate simple extraction patch: filename -> Entity concept
-        const concept_name = extract_concept_name(file_url)
+        // Read file content (or generate mock content in test mode)
+        let content: string
+        const file_path = file_url_to_path(file_url)
 
+        if (process.env.BRANE_LLM_MOCK === "1") {
+          // In mock mode, generate fake content from the URL for testing
+          content = generate_mock_content(file_url)
+        } else if (!existsSync(file_path)) {
+          errors.push({ file_url, error: "file not found on disk" })
+          continue
+        } else {
+          content = readFileSync(file_path, "utf-8")
+        }
+
+        // Skip binary files
+        if (is_binary_content(content)) {
+          files_skipped++
+          continue
+        }
+
+        // Extract concepts using LLM
+        const llm_result = await extract_from_content(file_url, content)
+
+        if (llm_result.error || !llm_result.response) {
+          errors.push({ file_url, error: llm_result.error ?? "extraction failed" })
+          continue
+        }
+
+        // Apply extraction to mind.db
         const extract_result = await extract_handler({
           file_url: file_url,
-          concepts: [
-            { name: concept_name, type: "Entity" }
-          ],
-          edges: []
+          concepts: llm_result.response.concepts,
+          edges:    llm_result.response.edges
         })
 
         if (extract_result.status === "success" && extract_result.result) {
@@ -136,10 +175,15 @@ export async function handler(params: Params): Promise<Result<ScanResult>> {
     }
 
     const result: ScanResult = {
-      files_scanned:    files_to_scan.length,
+      files_scanned:    files_to_scan.length - files_skipped,
       concepts_created: total_concepts_created,
       concepts_reused:  total_concepts_reused,
-      edges_created:    total_edges_created
+      edges_created:    total_edges_created,
+      provider:         provider
+    }
+
+    if (files_skipped > 0) {
+      result.files_skipped = files_skipped
     }
 
     if (errors.length > 0) {
@@ -171,15 +215,31 @@ async function file_has_provenance(db: any, file_url: string): Promise<boolean> 
   return rows.length > 0
 }
 
-function extract_concept_name(file_url: string): string {
-  // Extract filename from URL: "file:///path/to/auth.ts" -> "auth"
-  const url_parts = file_url.split("/")
-  const filename = url_parts[url_parts.length - 1]
-
-  // Remove extension: "auth.ts" -> "auth"
-  const dot_index = filename.lastIndexOf(".")
-  if (dot_index > 0) {
-    return filename.substring(0, dot_index)
+function file_url_to_path(file_url: string): string {
+  // Convert file:///path/to/file.ts -> /path/to/file.ts
+  if (file_url.startsWith("file://")) {
+    return file_url.slice(7)
   }
-  return filename
+  return file_url
+}
+
+function generate_mock_content(file_url: string): string {
+  // Generate deterministic mock content for testing
+  // Extract filename to create a simple mock class/function
+  const parts = file_url.split("/")
+  const filename = parts[parts.length - 1]
+  const name = filename.replace(/\.[^.]+$/, "")
+  const pascal_name = name.charAt(0).toUpperCase() + name.slice(1)
+
+  return `// Mock content for ${file_url}
+export interface ${pascal_name} {
+  id: number
+  name: string
+}
+
+export function get_${name}(id: number): ${pascal_name} | null {
+  // TODO: Implement ${name} lookup
+  return null
+}
+`
 }
