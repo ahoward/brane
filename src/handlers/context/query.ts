@@ -96,7 +96,7 @@ export async function handler(params: Params): Promise<Result<ContextResult>> {
     // Step 1: Search concepts by name (case-insensitive via lowercase comparison)
     const query_lower = p.query.toLowerCase()
     const search_result = await mind_db.run(`
-      ?[id, name, type] := *concepts[id, name, type]
+      ?[id, name, type] := *concepts[id, name, type, _]
     `)
 
     const all_concepts = search_result.rows as [number, string, string][]
@@ -251,7 +251,7 @@ async function expand_neighbors(
       ?[id, name, type] :=
         *edges[_, source, target, _, _],
         source = ${cid},
-        *concepts[id, name, type],
+        *concepts[id, name, type, _],
         id = target
     `)
     for (const [id, name, type] of out_result.rows as [number, string, string][]) {
@@ -266,7 +266,7 @@ async function expand_neighbors(
       ?[id, name, type] :=
         *edges[_, source, target, _, _],
         target = ${cid},
-        *concepts[id, name, type],
+        *concepts[id, name, type, _],
         id = source
     `)
     for (const [id, name, type] of in_result.rows as [number, string, string][]) {

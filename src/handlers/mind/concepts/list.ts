@@ -55,9 +55,9 @@ export async function handler(params: Params): Promise<Result<ListResult>> {
     let query: string
 
     if (p.type) {
-      query = `?[id, name, type] := *concepts[id, name, type], type = '${p.type}'`
+      query = `?[id, name, type] := *concepts[id, name, type, _], type = '${p.type}'`
     } else {
-      query = `?[id, name, type] := *concepts[id, name, type]`
+      query = `?[id, name, type] := *concepts[id, name, type, _]`
     }
 
     const result = await db.run(query)

@@ -107,6 +107,9 @@ export async function handler(params: Params): Promise<Result<ScanResult>> {
 
     for (const file_url of files_to_scan) {
       try {
+        // Small delay to ensure RocksDB lock is released between files
+        await new Promise(resolve => setTimeout(resolve, 10))
+
         // Generate simple extraction patch: filename -> Entity concept
         const concept_name = extract_concept_name(file_url)
 

@@ -38,6 +38,7 @@ import { handler as mind_annotations_create_handler } from "./handlers/mind/anno
 import { handler as mind_annotations_list_handler } from "./handlers/mind/annotations/list.ts"
 import { handler as mind_annotations_get_handler } from "./handlers/mind/annotations/get.ts"
 import { handler as mind_annotations_delete_handler } from "./handlers/mind/annotations/delete.ts"
+import { handler as mind_search_handler } from "./handlers/mind/search.ts"
 import { handler as calabi_extract_handler } from "./handlers/calabi/extract.ts"
 import { handler as calabi_scan_handler } from "./handlers/calabi/scan.ts"
 import { handler as calabi_pr_verify_handler } from "./handlers/calabi/pr-verify.ts"
@@ -76,6 +77,7 @@ sys.register("/mind/annotations/create", mind_annotations_create_handler)
 sys.register("/mind/annotations/list", mind_annotations_list_handler)
 sys.register("/mind/annotations/get", mind_annotations_get_handler)
 sys.register("/mind/annotations/delete", mind_annotations_delete_handler)
+sys.register("/mind/search", mind_search_handler)
 sys.register("/calabi/extract", calabi_extract_handler)
 sys.register("/calabi/scan", calabi_scan_handler)
 sys.register("/calabi/pr-verify", calabi_pr_verify_handler)

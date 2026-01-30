@@ -5,6 +5,7 @@
 import type { Params, Result } from "../../../lib/types.ts"
 import { success, error } from "../../../lib/result.ts"
 import { open_mind, is_mind_error, is_valid_concept_type } from "../../../lib/mind.ts"
+import { generate_embedding } from "../../../lib/embed.ts"
 
 interface UpdateParams {
   id?:   number
@@ -58,12 +59,12 @@ export async function handler(params: Params): Promise<Result<Concept>> {
   const { db } = mind
 
   try {
-    // First get the existing concept
+    // First get the existing concept (including vector)
     const existing = await db.run(`
-      ?[id, name, type] := *concepts[id, name, type], id = ${p.id}
+      ?[id, name, type, vector] := *concepts[id, name, type, vector], id = ${p.id}
     `)
 
-    const rows = existing.rows as (number | string)[][]
+    const rows = existing.rows as any[][]
 
     if (rows.length === 0) {
       db.close()
@@ -76,19 +77,30 @@ export async function handler(params: Params): Promise<Result<Concept>> {
     }
 
     const current = {
-      id:   rows[0][0] as number,
-      name: rows[0][1] as string,
-      type: rows[0][2] as string
+      id:     rows[0][0] as number,
+      name:   rows[0][1] as string,
+      type:   rows[0][2] as string,
+      vector: rows[0][3]
     }
 
     // Apply updates
     const new_name = p.name !== undefined && p.name !== null && p.name !== "" ? p.name : current.name
     const new_type = p.type !== undefined && p.type !== null && p.type !== "" ? p.type : current.type
 
+    // Regenerate embedding if name changed
+    let vector_str: string
+    if (new_name !== current.name) {
+      const embedding = await generate_embedding(new_name)
+      vector_str = embedding !== null ? `vec(${JSON.stringify(embedding)})` : "null"
+    } else {
+      // Preserve existing vector
+      vector_str = current.vector !== null ? `vec(${JSON.stringify(current.vector)})` : "null"
+    }
+
     // Update the concept
     await db.run(`
-      ?[id, name, type] <- [[${p.id}, '${new_name.replace(/'/g, "''")}', '${new_type}']]
-      :put concepts { id, name, type }
+      ?[id, name, type, vector] <- [[${p.id}, '${new_name.replace(/'/g, "''")}', '${new_type}', ${vector_str}]]
+      :put concepts { id, name, type, vector }
     `)
 
     db.close()

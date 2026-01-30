@@ -1,13 +1,11 @@
 {
   "status": "success",
   "result": {
-    "path": "<string>",
-    "created": true,
-    "schema_version": "1.5.0"
+    "matches": "<array:2>"
   },
   "errors": null,
   "meta": {
-    "path": "/mind/init",
+    "path": "/mind/search",
     "timestamp": "<timestamp>",
     "duration_ms": "<number>"
   }

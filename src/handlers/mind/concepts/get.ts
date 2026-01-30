@@ -46,7 +46,7 @@ export async function handler(params: Params): Promise<Result<Concept>> {
   try {
     // Query concept by ID
     const result = await db.run(`
-      ?[id, name, type] := *concepts[id, name, type], id = ${p.id}
+      ?[id, name, type] := *concepts[id, name, type, _], id = ${p.id}
     `)
 
     db.close()

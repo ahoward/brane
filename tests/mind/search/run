@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+#
+# Test runner for /mind/search
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+# Enable mock embedding mode for deterministic tests
+export BRANE_EMBED_MOCK=1
+
+case "$TC_CASE_NAME" in
+  00-success-basic-search)
+    init_mind
+    # Create concepts - embeddings are auto-generated now
+    create_concept '{"name": "AuthService", "type": "Entity"}'
+    create_concept '{"name": "LoginHandler", "type": "Entity"}'
+    create_concept '{"name": "DatabasePool", "type": "Entity"}'
+    ;;
+
+  01-success-limit)
+    init_mind
+    # Create multiple concepts
+    create_concept '{"name": "ServiceA", "type": "Entity"}'
+    create_concept '{"name": "ServiceB", "type": "Entity"}'
+    create_concept '{"name": "ServiceC", "type": "Entity"}'
+    create_concept '{"name": "ServiceD", "type": "Entity"}'
+    ;;
+
+  02-success-empty-results)
+    init_mind
+    # Empty mind.db - no concepts
+    ;;
+
+  03-error-mind-not-initialized)
+    init_body
+    # Only body.db, no mind.db
+    ;;
+
+  04-error-query-required)
+    init_mind
+    ;;
+esac
+
+echo "$INPUT" | bun run "$BRANE_ROOT/src/cli.ts" /mind/search
