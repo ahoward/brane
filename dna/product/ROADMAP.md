@@ -27,17 +27,17 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 ---
 
-## Current: Phase 3 — The Shield
+## Current: Phase 4 — Intelligence
 
-**Goal:** Logic enforcement and governance.
+**Goal:** AI-powered search and analysis.
 
 ### Next
 
-- [ ] `020-verifier-node` — Headless verification node
+- [ ] `022-verifier-node` — Headless verification node
 
-### Backlog (Phase 3 → Phase 4)
+### Backlog (Phase 4+)
 
-- [ ] `021-protocol-spec` — CTX token integration spec
+- [ ] `023-protocol-spec` — CTX token integration spec
 
 ---
 
@@ -47,6 +47,7 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 | Feature | PR | Date |
 |---------|-----|------|
+| `021-vector-search` | #26 | 2026-01-30 |
 | `019-pr-verify` | #23 | 2026-01-29 |
 | `018-annotate` | #22 | 2026-01-28 |
 | `017-verify-check` | #21 | 2026-01-28 |
@@ -81,3 +82,4 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 - **Phase 2 complete!** — Mind and Calabi extraction now operational
 - **tc refactor complete!** — Hybrid TypeScript + shell test infrastructure with hooks and default runner
 - **Phase 3 complete!** — Logic enforcement and governance now operational
+- **021-vector-search complete!** — Semantic concept search with local embeddings (fastembed-js)
