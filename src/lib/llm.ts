@@ -2,7 +2,7 @@
 // llm.ts - LLM CLI wrapper for concept extraction
 //
 
-import { get_preferred_provider, is_valid_provider, type LLMProvider } from "./config.ts"
+import { load_config, is_valid_provider, type LLMProvider } from "./config.ts"
 import { build_full_prompt, detect_language, truncate_content } from "./prompts.ts"
 
 //
@@ -110,8 +110,15 @@ async function cli_exists(cmd: string): Promise<boolean> {
  * Priority: config preference > claude > gemini
  */
 export async function detect_provider(): Promise<ProviderResult> {
-  // Check config preference first
-  const preferred = get_preferred_provider()
+  // Check config first - report any config errors
+  const { config, error: config_error } = load_config()
+
+  if (config_error) {
+    return { provider: null, error: config_error }
+  }
+
+  // Check config preference
+  const preferred = config?.llm?.provider
 
   if (preferred) {
     if (!is_valid_provider(preferred)) {

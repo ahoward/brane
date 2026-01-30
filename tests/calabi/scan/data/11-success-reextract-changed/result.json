@@ -1,0 +1,16 @@
+{
+  "status": "success",
+  "result": {
+    "files_scanned": 1,
+    "concepts_created": 3,
+    "concepts_reused": 0,
+    "edges_created": 2,
+    "provider": "claude"
+  },
+  "errors": null,
+  "meta": {
+    "path": "/calabi/scan",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

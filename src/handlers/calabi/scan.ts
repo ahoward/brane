@@ -80,13 +80,16 @@ export async function handler(params: Params): Promise<Result<ScanResult>> {
 
     body_db.close()
 
-    // Find files needing extraction (no provenance links)
-    const files_to_scan: string[] = []
+    // Find files needing extraction
+    // A file needs extraction if:
+    // 1. No provenance exists (never extracted), OR
+    // 2. File hash changed since last extraction (file was modified)
+    const files_to_scan: FileRecord[] = []
 
     for (const file of files) {
-      const has_provenance = await file_has_provenance(mind_db, file.url)
-      if (!has_provenance) {
-        files_to_scan.push(file.url)
+      const needs_extraction = await file_needs_extraction(mind_db, file.url, file.hash)
+      if (needs_extraction) {
+        files_to_scan.push(file)
       }
     }
 
@@ -97,7 +100,7 @@ export async function handler(params: Params): Promise<Result<ScanResult>> {
     // Dry run - just return the list
     if (dry_run) {
       return success({
-        files_to_scan: files_to_scan,
+        files_to_scan: files_to_scan.map(f => f.url),
         dry_run:       true
       })
     }
@@ -120,7 +123,9 @@ export async function handler(params: Params): Promise<Result<ScanResult>> {
     let files_skipped = 0
     const errors: { file_url: string; error: string }[] = []
 
-    for (const file_url of files_to_scan) {
+    for (const file of files_to_scan) {
+      const file_url = file.url
+      const file_hash = file.hash
       try {
         // Read file content (or generate mock content in test mode)
         let content: string
@@ -161,6 +166,8 @@ export async function handler(params: Params): Promise<Result<ScanResult>> {
           total_concepts_created += extract_result.result.concepts_created
           total_concepts_reused += extract_result.result.concepts_reused
           total_edges_created += extract_result.result.edges_created
+          // Update extraction state with current file hash
+          await update_extraction_state(file_url, file_hash)
         } else {
           // Extract failed
           const err_msg = extract_result.errors
@@ -207,12 +214,47 @@ export async function handler(params: Params): Promise<Result<ScanResult>> {
 // Helper functions
 //
 
-async function file_has_provenance(db: any, file_url: string): Promise<boolean> {
+/**
+ * Check if a file needs extraction.
+ * Returns true if:
+ * - File has never been extracted (no extraction_state entry), OR
+ * - File has been modified (current hash != extracted hash)
+ */
+async function file_needs_extraction(db: any, file_url: string, current_hash: string): Promise<boolean> {
+  // Check extraction_state for this file
   const result = await db.run(`
-    ?[concept_id] := *provenance[concept_id, file_url], file_url = '${file_url.replace(/'/g, "''")}'
+    ?[file_hash] := *extraction_state[file_url, file_hash], file_url = '${file_url.replace(/'/g, "''")}'
   `)
-  const rows = result.rows as number[][]
-  return rows.length > 0
+  const rows = result.rows as string[][]
+
+  // No extraction state means never extracted
+  if (rows.length === 0) {
+    return true
+  }
+
+  // Check if hash changed
+  const extracted_hash = rows[0][0]
+  return extracted_hash !== current_hash
+}
+
+/**
+ * Update extraction state after successful extraction.
+ */
+async function update_extraction_state(file_url: string, file_hash: string): Promise<void> {
+  const mind = open_mind()
+  if (is_mind_error(mind)) {
+    return // silently fail - not critical
+  }
+
+  const { db } = mind
+  try {
+    await db.run(`
+      ?[file_url, file_hash] <- [['${file_url.replace(/'/g, "''")}', '${file_hash.replace(/'/g, "''")}']]
+      :put extraction_state { file_url, file_hash }
+    `)
+  } finally {
+    db.close()
+  }
 }
 
 function file_url_to_path(file_url: string): string {
@@ -228,8 +270,30 @@ function generate_mock_content(file_url: string): string {
   // Extract filename to create a simple mock class/function
   const parts = file_url.split("/")
   const filename = parts[parts.length - 1]
+
+  // Check for binary file extensions - return binary-like content
+  const binary_extensions = [".png", ".jpg", ".jpeg", ".gif", ".pdf", ".exe", ".bin", ".so", ".dll"]
+  const ext = filename.substring(filename.lastIndexOf(".")).toLowerCase()
+  if (binary_extensions.includes(ext)) {
+    // Return content with null bytes to trigger binary detection
+    return "BINARY\x00CONTENT\x00WITH\x00NULL\x00BYTES"
+  }
+
   const name = filename.replace(/\.[^.]+$/, "")
   const pascal_name = name.charAt(0).toUpperCase() + name.slice(1)
+
+  // Check for "empty" in filename - return content with no extractable patterns
+  const is_empty = filename.toLowerCase().includes("empty")
+  if (is_empty) {
+    return `// This file has no classes, interfaces, functions, or TODOs
+// It's just comments and plain content
+const x = 42
+`
+  }
+
+  // Check for "large" in filename - generate large content to test truncation
+  const is_large = filename.toLowerCase().includes("large")
+  const padding = is_large ? "\n// " + "x".repeat(35000) : ""
 
   return `// Mock content for ${file_url}
 export interface ${pascal_name} {
@@ -241,5 +305,5 @@ export function get_${name}(id: number): ${pascal_name} | null {
   // TODO: Implement ${name} lookup
   return null
 }
-`
+${padding}`
 }

@@ -52,9 +52,9 @@
 - [X] T011 [US1] Add file content truncation for large files in src/handlers/calabi/scan.ts
 - [X] T012 [US1] Replace extract_concept_name() stub with call to llm.extract_from_content() in src/handlers/calabi/scan.ts
 - [X] T013 [US1] Update scan tests with mock LLM responses in tests/calabi/scan/run
-- [ ] T014 [P] [US1] Add test case for successful LLM extraction in tests/calabi/scan/data/
-- [ ] T015 [P] [US1] Add test case for binary file skip in tests/calabi/scan/data/
-- [ ] T016 [P] [US1] Add test case for large file truncation in tests/calabi/scan/data/
+- [X] T014 [P] [US1] Add test case for successful LLM extraction in tests/calabi/scan/data/
+- [X] T015 [P] [US1] Add test case for binary file skip in tests/calabi/scan/data/
+- [X] T016 [P] [US1] Add test case for large file truncation in tests/calabi/scan/data/
 
 **Checkpoint**: Scan extracts meaningful concepts from code files using LLM ✅ (MVP complete)
 
@@ -68,11 +68,11 @@
 
 ### Implementation for User Story 2
 
-- [ ] T017 [US2] Add config file validation for provider preference in src/lib/config.ts
-- [ ] T018 [US2] Add clear error messages for missing CLI in src/lib/llm.ts
-- [ ] T019 [P] [US2] Add test case for config provider preference in tests/calabi/scan/data/
-- [ ] T020 [P] [US2] Add test case for auto-detection fallback in tests/calabi/scan/data/
-- [ ] T021 [P] [US2] Add test case for no CLI installed error in tests/calabi/scan/data/
+- [X] T017 [US2] Add config file validation for provider preference in src/lib/config.ts
+- [X] T018 [US2] Add clear error messages for missing CLI in src/lib/llm.ts
+- [X] T019 [P] [US2] Add test case for config provider preference in tests/calabi/scan/data/
+- [X] T020 [P] [US2] Add test case for auto-detection fallback in tests/calabi/scan/data/
+- [X] T021 [P] [US2] Add test case for no CLI installed error in tests/calabi/scan/data/
 
 **Checkpoint**: Provider selection works via config or auto-detection with clear error messages
 
@@ -86,10 +86,10 @@
 
 ### Implementation for User Story 3
 
-- [ ] T022 [US3] Track file hash in provenance to detect changes in src/handlers/calabi/scan.ts
-- [ ] T023 [US3] Skip files with unchanged hash and existing provenance in src/handlers/calabi/scan.ts
-- [ ] T024 [P] [US3] Add test case for skipping unchanged files in tests/calabi/scan/data/
-- [ ] T025 [P] [US3] Add test case for re-extracting changed files in tests/calabi/scan/data/
+- [X] T022 [US3] Track file hash in provenance to detect changes in src/handlers/calabi/scan.ts
+- [X] T023 [US3] Skip files with unchanged hash and existing provenance in src/handlers/calabi/scan.ts
+- [X] T024 [P] [US3] Add test case for skipping unchanged files in tests/calabi/scan/data/
+- [X] T025 [P] [US3] Add test case for re-extracting changed files in tests/calabi/scan/data/
 
 **Checkpoint**: Incremental extraction working - only changed files processed
 
@@ -99,10 +99,10 @@
 
 **Purpose**: Handle edge cases and improve robustness
 
-- [ ] T026 [P] Add test case for LLM returning empty concepts in tests/calabi/scan/data/
-- [ ] T027 [P] Add test case for LLM returning malformed response in tests/calabi/scan/data/
-- [ ] T028 Verify all existing calabi/scan tests still pass
-- [ ] T029 Run full test suite to ensure no regressions
+- [X] T026 [P] Add test case for LLM returning empty concepts in tests/calabi/scan/data/
+- [X] T027 [P] Add test case for LLM returning malformed response in tests/calabi/scan/data/
+- [X] T028 Verify all existing calabi/scan tests still pass
+- [X] T029 Run full test suite to ensure no regressions
 
 ---
 
