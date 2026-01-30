@@ -207,7 +207,9 @@ async function get_file_changes(path_filter?: string): Promise<ChangedFiles> {
 
   const root_gitignore = parse_ignore_file(resolve(process.cwd(), ".gitignore"))
   const root_braneignore = parse_ignore_file(resolve(process.cwd(), ".braneignore"))
-  const root_patterns = [...root_gitignore, ...root_braneignore]
+  // Always exclude internal cache directories (fastembed model cache, etc.)
+  const builtin_patterns = ["local_cache", "node_modules", ".brane"]
+  const root_patterns = [...builtin_patterns, ...root_gitignore, ...root_braneignore]
 
   const scan_path = path_filter ? resolve(process.cwd(), path_filter) : process.cwd()
   const discovered = discover_files(scan_path, root_patterns, process.cwd(), tracked_urls)

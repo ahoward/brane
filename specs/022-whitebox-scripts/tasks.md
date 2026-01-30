@@ -15,9 +15,9 @@
 
 **Purpose**: Create directory structure and shared utilities
 
-- [ ] T001 Create examples/ directory structure at repository root
-- [ ] T002 Create examples/lib/common.sh with shared utilities (BRANE_BIN detection, workspace setup, cleanup trap)
-- [ ] T003 Add `bun run build` script to package.json for compiled binary generation
+- [x] T001 Create examples/ directory structure at repository root
+- [x] T002 Create examples/lib/common.sh with shared utilities (BRANE_BIN detection, workspace setup, cleanup trap)
+- [x] T003 Add `bun run build` script to package.json for compiled binary generation
 
 ---
 
@@ -27,8 +27,8 @@
 
 **⚠️ CRITICAL**: No script work can begin until binary builds successfully
 
-- [ ] T004 Verify `bun build src/cli.ts --compile --outfile brane` produces working binary
-- [ ] T005 Test binary with `./brane /ping` returns valid JSON response
+- [x] T004 Verify `bun build src/cli.ts --compile --outfile brane` produces working binary
+- [x] T005 Test binary with `./brane /ping` returns valid JSON response
 
 **Checkpoint**: Compiled binary ready - script development can begin
 
@@ -42,7 +42,7 @@
 
 ### Implementation for User Story 1
 
-- [ ] T006 [US1] Create examples/00-quickstart.sh with full workflow demonstration
+- [x] T006 [US1] Create examples/00-quickstart.sh with full workflow demonstration
   - Source lib/common.sh
   - Create temp workspace with sample TypeScript files
   - Initialize body.db and mind.db
@@ -51,8 +51,8 @@
   - Search for concepts by semantic query
   - Run verify to check rules
   - Clean output with section headers
-- [ ] T007 [US1] Add sample fixture generation (inline heredocs for src/auth.ts, src/db.ts)
-- [ ] T008 [US1] Verify script is idempotent (run twice, same result)
+- [x] T007 [US1] Add sample fixture generation (inline heredocs for src/auth.ts, src/db.ts)
+- [x] T008 [US1] Verify script is idempotent (run twice, same result)
 
 **Checkpoint**: Quick-start script fully functional - users can understand Brane in 2 minutes
 
@@ -66,15 +66,15 @@
 
 ### Implementation for User Story 2
 
-- [ ] T009 [P] [US2] Create examples/01-body-init.sh demonstrating /body/init
-- [ ] T010 [P] [US2] Create examples/02-body-scan.sh demonstrating /body/scan
-- [ ] T011 [P] [US2] Create examples/03-mind-init.sh demonstrating /mind/init
-- [ ] T012 [P] [US2] Create examples/04-mind-concepts.sh demonstrating /mind/concepts/create, /list, /get
-- [ ] T013 [P] [US2] Create examples/05-mind-edges.sh demonstrating /mind/edges/create, /list
-- [ ] T014 [P] [US2] Create examples/06-mind-search.sh demonstrating /mind/search with semantic queries
-- [ ] T015 [P] [US2] Create examples/07-mind-verify.sh demonstrating /mind/verify with rules
-- [ ] T016 [P] [US2] Create examples/08-calabi-extract.sh demonstrating /calabi/extract (mock LLM mode)
-- [ ] T017 [P] [US2] Create examples/09-context-query.sh demonstrating /context/query
+- [x] T009 [P] [US2] Create examples/01-body-init.sh demonstrating /body/init
+- [x] T010 [P] [US2] Create examples/02-body-scan.sh demonstrating /body/scan
+- [x] T011 [P] [US2] Create examples/03-mind-init.sh demonstrating /mind/init
+- [x] T012 [P] [US2] Create examples/04-mind-concepts.sh demonstrating /mind/concepts/create, /list, /get
+- [x] T013 [P] [US2] Create examples/05-mind-edges.sh demonstrating /mind/edges/create, /list
+- [x] T014 [P] [US2] Create examples/06-mind-search.sh demonstrating /mind/search with semantic queries
+- [x] T015 [P] [US2] Create examples/07-mind-verify.sh demonstrating /mind/verify with rules
+- [x] T016 [P] [US2] Create examples/08-calabi-extract.sh demonstrating /calabi/extract (mock LLM mode)
+- [x] T017 [P] [US2] Create examples/09-context-query.sh demonstrating /context/query
 
 **Checkpoint**: All individual command scripts work independently
 
@@ -88,13 +88,13 @@
 
 ### Implementation for User Story 3
 
-- [ ] T018 [US3] Create examples/run-all.sh test runner script
+- [x] T018 [US3] Create examples/run-all.sh test runner script
   - Loop through all numbered scripts (00-*.sh through 09-*.sh)
   - Track pass/fail count
   - Report summary at end
   - Exit with non-zero if any failures
-- [ ] T019 [US3] Add timing output (total execution time)
-- [ ] T020 [US3] Verify all scripts pass when run via test runner
+- [x] T019 [US3] Add timing output (total execution time)
+- [x] T020 [US3] Verify all scripts pass when run via test runner
 
 **Checkpoint**: Test runner executes all scripts and reports results
 
@@ -104,10 +104,10 @@
 
 **Purpose**: Final validation and CI integration
 
-- [ ] T021 [P] Make all scripts executable (chmod +x)
-- [ ] T022 [P] Add script header comments (purpose in 1-3 lines) to all scripts
-- [ ] T023 Verify all scripts complete in under 60 seconds total
-- [ ] T024 Run quickstart.md validation (all documented commands work)
+- [x] T021 [P] Make all scripts executable (chmod +x)
+- [x] T022 [P] Add script header comments (purpose in 1-3 lines) to all scripts
+- [x] T023 Verify all scripts complete in under 60 seconds total (13s actual)
+- [x] T024 Run quickstart.md validation (all documented commands work)
 
 ---
 

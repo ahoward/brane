@@ -4,15 +4,17 @@
 // Uses BGESmallEN model (384 dimensions) for semantic similarity.
 // Supports mock mode for testing via BRANE_EMBED_MOCK=1.
 //
-
-import { EmbeddingModel, FlagEmbedding } from "fastembed"
+// NOTE: fastembed is loaded dynamically to support compiled binaries.
+// The ONNX runtime doesn't work in Bun's single-file compile mode,
+// so we lazy-load it only when actually needed (not in mock mode).
+//
 
 // Embedding dimension for BGESmallEN
 export const EMBED_DIM = 384
 
 // Cached embedding model (lazy loaded)
-let cached_model: FlagEmbedding | null = null
-let model_loading: Promise<FlagEmbedding> | null = null
+let cached_model: any = null
+let model_loading: Promise<any> | null = null
 
 //
 // Check if mock mode is enabled
@@ -50,9 +52,9 @@ function generate_mock_embedding(text: string): number[] {
 }
 
 //
-// Get or initialize the embedding model
+// Get or initialize the embedding model (lazy-loaded)
 //
-async function get_model(): Promise<FlagEmbedding> {
+async function get_model(): Promise<any> {
   if (cached_model) {
     return cached_model
   }
@@ -61,6 +63,10 @@ async function get_model(): Promise<FlagEmbedding> {
   if (model_loading) {
     return model_loading
   }
+
+  // Dynamic import to avoid loading ONNX at module init time
+  // This allows compiled binaries to work (they use mock mode anyway)
+  const { EmbeddingModel, FlagEmbedding } = await import("fastembed")
 
   model_loading = FlagEmbedding.init({
     model: EmbeddingModel.BGESmallENV15
