@@ -2,10 +2,20 @@
 //
 // cli.ts - command line interface
 //
+// Routing:
+//   - No args          → REPL
+//   - argv[1] starts with /  → API mode (existing behavior)
+//   - Otherwise        → CLI mode (citty commands)
+//
 
 import { sys } from "./index.ts"
 import { start_repl } from "./repl.ts"
+import { runMain } from "citty"
+import { main, subCommandAliases } from "./cli/main.ts"
 
+//
+// Read stdin (for API mode)
+//
 async function read_stdin(): Promise<string> {
   const chunks: Buffer[] = []
 
@@ -16,27 +26,19 @@ async function read_stdin(): Promise<string> {
   return Buffer.concat(chunks).toString("utf-8")
 }
 
+//
+// Read file (for API mode)
+//
 async function read_file(path: string): Promise<string> {
   return await Bun.file(path).text()
 }
 
-async function main(): Promise<void> {
-  const args = process.argv.slice(2)
-
-  // no args or repl command
-  if (args.length === 0 || args[0] === "repl") {
-    await start_repl()
-    return
-  }
-
-  // handler call
+//
+// API mode: /path/to/handler '{"params"}'
+// This is the original behavior, preserved for backwards compatibility
+//
+async function api_mode(args: string[]): Promise<void> {
   const path = args[0]
-
-  if (!path.startsWith("/")) {
-    console.error(`error: path must start with /`)
-    console.error(`usage: brane /path/to/handler [params]`)
-    process.exit(1)
-  }
 
   let params_str = ""
 
@@ -51,17 +53,17 @@ async function main(): Promise<void> {
         params_str = await read_file(file_path)
       } catch (err) {
         const result = {
-          status:  "error",
-          result:  null,
-          errors:  {
+          status: "error",
+          result: null,
+          errors: {
             params: [{
-              code:    "file_not_found",
+              code: "file_not_found",
               message: `could not read file: ${file_path}`
             }]
           },
           meta: {
-            path:        path,
-            timestamp:   new Date().toISOString(),
+            path: path,
+            timestamp: new Date().toISOString(),
             duration_ms: 0
           }
         }
@@ -82,8 +84,8 @@ async function main(): Promise<void> {
 
   if (parse_result.status === "error") {
     parse_result.meta = {
-      path:        path,
-      timestamp:   new Date().toISOString(),
+      path: path,
+      timestamp: new Date().toISOString(),
       duration_ms: 0
     }
     console.log(JSON.stringify(parse_result, null, 2))
@@ -107,7 +109,59 @@ async function main(): Promise<void> {
   }
 }
 
-main().catch((err) => {
+//
+// CLI mode: brane command [subcommand] [flags]
+//
+async function cli_mode(args: string[]): Promise<void> {
+  // Expand aliases (c → concept, e → edge, etc.)
+  const expanded = args.map((arg, i) => {
+    if (i === 0 && !arg.startsWith("-") && subCommandAliases[arg]) {
+      return subCommandAliases[arg]
+    }
+    return arg
+  })
+
+  // Run through citty
+  // We need to reconstruct argv for citty
+  const originalArgv = process.argv
+  process.argv = [originalArgv[0], originalArgv[1], ...expanded]
+
+  try {
+    await runMain(main)
+  } finally {
+    process.argv = originalArgv
+  }
+}
+
+//
+// Main entry point
+//
+async function main_entry(): Promise<void> {
+  const args = process.argv.slice(2)
+
+  // No args → REPL
+  if (args.length === 0) {
+    await start_repl()
+    return
+  }
+
+  // "repl" command → REPL
+  if (args[0] === "repl") {
+    await start_repl()
+    return
+  }
+
+  // API mode: first arg starts with /
+  if (args[0].startsWith("/")) {
+    await api_mode(args)
+    return
+  }
+
+  // CLI mode
+  await cli_mode(args)
+}
+
+main_entry().catch((err) => {
   console.error(err)
   process.exit(1)
 })

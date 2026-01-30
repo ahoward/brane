@@ -7,6 +7,8 @@ SYNOPSIS
 --------
   the git of context.
 
+  git gave code history. brane gives code **ontology**.
+
   a local-first knowledge graph CLI that gives AI agents structured memory
   instead of disposable context windows.
 
@@ -15,21 +17,28 @@ THESIS
 ------
   AI agents don't need more context windows. they need **structured memory**.
 
+  the problem with LLMs isn't intelligence—it's ontology. pattern matching
+  on token streams is correlation without causation. throw more context
+  at it and you get higher-fidelity noise.
+
+  brane takes a different approach: **meaning through structure**.
+
+  concepts exist. relationships exist. rules constrain. violations surface.
+  the graph doesn't guess—it reasons over explicit structure, and fails
+  cleanly on what isn't there.
+
   strings of code must attach to a brane, or they are lost in entropy.
 
 
 INSTALL
 -------
 ```bash
-# download the binary (when released)
-curl -fsSL https://brane.dev/install.sh | bash
-
-# or build from source
+# build from source
 git clone https://github.com/ahoward/brane.git
 cd brane
 bun install
-bun build src/cli.ts --compile --outfile brane
-mv brane /usr/local/bin/
+bun run build
+./brane --help
 ```
 
 
@@ -39,37 +48,44 @@ USAGE
 # initialize a project
 brane init
 
-# scan files into body.db
-brane scan
+# scan files into body
+brane scan src/
 
-# get context for a query
-brane context "why is auth failing?"
+# create concepts
+brane concept create --name AuthService --type Entity
+brane concept create --name Database --type Entity
+
+# create relationships
+brane edge create --from 1 --to 2 --rel DEPENDS_ON
+
+# semantic search
+brane search "authentication"
 
 # verify structural integrity
 brane verify
 
-# repl for exploration
-brane repl
+# list what you have
+brane concept list
+brane edge list
+brane rule list
 ```
 
+short aliases for the impatient:
 ```bash
-# call handlers directly (json in/out)
-brane /body/init
-brane /body/files/add '{"path": "src/foo.ts"}'
-echo '{"path": "src/"}' | brane /body/scan
-
-# from file
-brane /body/scan @params.json
+brane c list          # concept
+brane e list          # edge
+brane r list          # rule
 ```
 
-
-DEVELOPMENT
------------
+json output for scripting:
 ```bash
-# during development, use bun directly
-bun run repl
-bun run cli /ping '{"echo": "hello"}'
-bun run test
+brane concept list --json
+```
+
+api mode for machines:
+```bash
+brane /mind/concepts/list '{}'
+echo '{"query":"auth"}' | brane /mind/search
 ```
 
 
@@ -89,6 +105,94 @@ ARCHITECTURE
 
   the CLI is the corpus callosum. it reads body, extracts meaning via LLM,
   writes to mind, queries mind to verify body.
+
+
+WHY NOT EMBEDDINGS
+------------------
+  vector embeddings are the current orthodoxy. we dissent.
+
+  embeddings compress meaning into geometric proximity. two concepts are
+  "similar" if their vectors are close. but proximity isn't relation.
+  "bank" (river) and "bank" (financial) may cluster together in embedding
+  space. in the graph, they're distinct nodes with distinct edges.
+
+  embeddings preserve *distance*. graphs preserve *structure*.
+
+  RAG is duct tape. you're still feeding tokens to a predictor and hoping
+  retrieval picks the right chunks. brane is plumbing—structured,
+  verifiable, queryable.
+
+
+PHILOSOPHY
+----------
+  why "brane"?
+
+  in M-theory, a brane is a membrane-like surface in eleven-dimensional
+  spacetime. open strings must attach to branes—without them, strings
+  have no reference frame. they drift in dimensional chaos, vibrating
+  in every mode, signifying nothing.
+
+  edward witten called it M-theory. M for membrane. M for mother.
+  M for mystery.
+
+  the physics runs deeper than metaphor.
+
+  D-branes are where Dirichlet boundary conditions apply—string endpoints
+  are *fixed*. this is exactly what rules and constraints do. they're not
+  arbitrary walls; they're ontological fixtures that make certain
+  reasonings possible and others impossible. an LLM without structure
+  is a closed string—it propagates freely through embedding space,
+  untethered. brane-attached reasoning is constrained, localized, meaningful.
+
+  [bernardo kastrup's analytical idealism](https://www.bernardokastrup.com/)
+  argues that consciousness is the fundamental substrate of reality—not
+  matter. physics describes the *behavior* of mind, not the existence of
+  stuff. individual minds are dissociated alters of universal mind, like
+  whirlpools in a stream.
+
+  if mind is fundamental, then a codebase isn't just bytes—it's a
+  dissociated alter with its own internal logic, intentions, pathologies.
+  brane doesn't index it. it maps its psyche.
+
+  **meaning precedes mechanism.**
+
+  pattern matching can't see this. an LLM scanning tokens sees
+  statistical regularities, not ontological structure. it predicts
+  the next token, not the purpose of the system.
+
+  brane inverts the paradigm:
+
+  1. **extract meaning explicitly** — LLMs identify concepts, not patterns
+  2. **encode as structure** — concepts and edges in a graph, not vectors
+  3. **verify against rules** — datalog constraints, not vibes
+  4. **ground in provenance** — every concept traces to source
+
+  the LLM is the instrument, not the ontology. we use pattern matching
+  to *extract* structure, but the structure itself is not statistical.
+  once encoded, reasoning proceeds over discrete relations with provable
+  properties. the LLM is a telescope; the stars are still real.
+
+  the result: agents that reason over what's explicit, and fail cleanly
+  on what isn't. graphs that admit refutation, not just retrieval.
+
+
+NAMING
+------
+  **brane** — the surface strings attach to. without it, chaos.
+
+  **body** — sqlite. the physical. files, hashes, content.
+
+  **mind** — cozodb. the semantic. concepts, edges, rules.
+
+  **calabi** — from calabi-yau manifolds. the hidden dimensions where
+  strings vibrate. our extraction engine projects high-dimensional
+  meaning onto the graph. the graph is the holographic boundary;
+  the codebase is the bulk.
+
+  goal: if it doesn't have a `.brane` folder, the agent can't reason
+  about it.
+
+  brane is the git of context.
 
 
 INTERFACE
@@ -113,13 +217,63 @@ const result = await sys.call("/namespace/method", params)
   no surprises. errors are data, not exceptions.
 
 
+COMMANDS
+--------
+```
+brane init                     initialize body + mind
+brane scan <path>              scan files into body
+brane search <query>           semantic concept search
+brane verify                   run all rules
+
+brane concept                  manage concepts
+  create --name --type         Entity | Rule | File
+  list [--type] [--limit]
+  get <id>
+  update <id> [--name] [--type]
+  delete <id>
+
+brane edge                     manage relationships
+  create --from --to --rel     DEPENDS_ON | IMPLEMENTS | CONTAINS
+  list [--from] [--to]
+  get <id>
+  delete <id>
+
+brane rule                     manage verification rules
+  list
+  get <name>
+  query <name>
+
+brane body                     file tracking
+  init
+  scan <path>
+  file list|status|add
+
+brane fts                      full-text search
+  index [--force]
+  search <query>
+
+brane context query <q>        graph-aware context retrieval
+brane extract <path>           LLM concept extraction
+brane pr-verify                verify changes against rules
+```
+
+
+DEVELOPMENT
+-----------
+```bash
+bun run test          # run tests
+bun run repl          # interactive mode
+bun run build         # compile binary
+```
+
+
 CONVENTIONS
 -----------
   - **POD only** — no classes for data structures
   - **result envelope** — every call, same shape
-  - **null over undefined** — unix-clean, not js-clean
-  - **snake_case** — ruby-style, not camelCase
-  - **params/result** — not "data" (too generic)
+  - **null over undefined** — unix-clean
+  - **snake_case** — ruby-style
+  - **errors as data** — not exceptions
 
 
 TESTS
@@ -129,17 +283,9 @@ TESTS
 ```
 tests/{handler}/
 ├── run                           # executable
-├── skip                          # optional skip marker
 └── data/{NN-case}/
     ├── input.json
     └── expected.json
-```
-
-```bash
-brane test            # parallel (8 workers)
-brane test -s         # sequential
-brane test -v         # verbose
-brane test -r         # randomize order
 ```
 
 
@@ -148,69 +294,19 @@ ROADMAP
   see `dna/product/ROADMAP.md`
 
   **phase 1** — the skeleton (body.db, file tracking, FTS)
-
   **phase 2** — the mind (cozodb, concepts, calabi extraction)
-
   **phase 3** — the shield (rules, verification, annotations)
-
   **phase 4** — the network (decentralized verification protocol)
 
 
-PROCESS
--------
-  antagonistic testing. claude designs tests, gemini challenges them.
+---
 
 ```
-ROADMAP.md → /speckit.specify → PR (you review) → approved →
-/speckit.plan → /speckit.tasks → gemini review → implement →
-stuck? → human checkpoint → done → update ROADMAP.md
+$ brane verify
+3 violations found
+
+Good. Now you know something.
 ```
-
-  human checkpoints:
-  1. before work begins (spec PR)
-  2. if stuck (tests won't pass)
-
-
-FILES
------
-```
-src/
-├── index.ts          # entry
-├── repl.ts           # REPL
-├── sys.ts            # sys.call implementation
-├── tc.ts             # test runner
-├── handlers/         # by path: /body/files → handlers/body/files.ts
-└── lib/              # shared utilities
-
-tests/                # tc test suites
-specs/                # feature specifications
-dna/                  # project knowledge
-  ├── product/        # PRD, ROADMAP
-  └── technical/      # conventions, development loop
-.specify/             # spec-kit templates
-  └── memory/         # constitution
-```
-
-
-NAMING
-------
-  **brane** — from M-theory physics. in string theory, a brane is a
-  membrane-like surface that strings must attach to. without a brane,
-  strings have no reference frame—they drift in eleven-dimensional
-  chaos. witten called it M-theory: M for membrane, mother, mystery.
-
-  the metaphor runs deeper. in [bernardo kastrup's analytical idealism](https://www.bernardokastrup.com/),
-  consciousness is the fundamental substrate—reality is experiential,
-  not material. individual minds are dissociated alters of universal
-  mind. code, too, needs a surface to attach meaning to. without
-  structure, it's just entropy.
-
-  **calabi** — from calabi-yau manifolds, the hidden dimensions where
-  strings vibrate. our extraction engine projects structure from chaos,
-  collapsing high-dimensional meaning onto the graph.
-
-  goal: if it doesn't have a `.brane` folder, the agent can't work on it.
-  become the git of context.
 
 
 LICENSE

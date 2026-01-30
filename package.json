@@ -20,6 +20,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "citty": "^0.2.0",
     "cozo-node": "github:ahoward/cozo#feat/bundler-entry-point",
     "fastembed": "^1.14.1"
   }
