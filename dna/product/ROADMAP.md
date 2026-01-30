@@ -33,14 +33,23 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 ### Next
 
-- [ ] *TBD* — Awaiting direction
+- [ ] `022-whitebox-scripts` — Dogfooding scripts for DX validation
+  - Idempotent, hacker-clean shell scripts in `examples/` or `scripts/`
+  - Human-readable TL;DR for getting started
+  - White-box test suite (runs against compiled binary)
+  - Will be integrated into automated test suite
+
+### MVP Backlog
+
+- [ ] `023-context-vector` — Integrate vector search into `/context/query` for anchor concept finding
+- [ ] `024-graph-explore` — CLI graph visualization/exploration commands
 
 ### Post-MVP (Services & Infrastructure)
 
 *Holding off until MVP is complete.*
 
-- [ ] `022-verifier-node` — Headless verification node
-- [ ] `023-protocol-spec` — CTX token integration spec
+- [ ] `025-verifier-node` — Headless verification node
+- [ ] `026-protocol-spec` — CTX token integration spec
 
 ---
 
