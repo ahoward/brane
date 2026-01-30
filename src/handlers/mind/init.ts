@@ -18,7 +18,7 @@ interface InitResult {
   schema_version: string
 }
 
-const SCHEMA_VERSION = "1.3.0"
+const SCHEMA_VERSION = "1.4.0"
 
 //
 // Built-in rules for graph integrity checks
@@ -106,6 +106,15 @@ const SCHEMA_QUERIES = [
     type: String,
     authority: String,
     created_at: String
+  }`,
+
+  // Extraction state - tracks file hash at time of extraction
+  // file_url: file that was extracted (primary key)
+  // file_hash: hash of file content when extracted
+  // This enables incremental extraction by detecting changed files
+  `:create extraction_state {
+    file_url: String,
+    file_hash: String
   }`
 ]
 

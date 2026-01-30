@@ -4,6 +4,9 @@
 #
 set -e
 
+# Enable mock LLM mode for deterministic testing
+export BRANE_LLM_MOCK=1
+
 BRANE_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
 source "$BRANE_ROOT/tests/lib.sh"
 
@@ -41,6 +44,8 @@ case "$TC_CASE_NAME" in
     # Create concept and provenance (simulate prior extraction)
     create_concept '{"name": "auth", "type": "Entity"}'
     create_provenance "{\"concept_id\": 1, \"file_url\": \"$FILE_URL1\"}"
+    # Record extraction state with matching hash (so file is skipped)
+    create_extraction_state "$FILE_URL1" "hash1"
     ;;
   05-error-mind-not-initialized)
     init_body
@@ -49,6 +54,45 @@ case "$TC_CASE_NAME" in
     ;;
   06-error-body-not-initialized)
     # Don't init anything
+    ;;
+  07-success-binary-skip)
+    init_mind
+    # Binary file (will be skipped due to .png extension)
+    add_body_file "file:///test/image.png" "binary_hash" 1024 1234567890
+    # Normal text file (will be processed)
+    add_body_file "file:///test/util.ts" "text_hash" 200 1234567891
+    ;;
+  08-success-large-file-truncation)
+    init_mind
+    # Large file (filename contains "large" which triggers large mock content)
+    add_body_file "file:///test/large-module.ts" "large_hash" 50000 1234567890
+    ;;
+  09-error-invalid-config)
+    init_mind
+    add_body_file "$FILE_URL1" "hash1" 100 1234567890
+    # Create invalid config with bad provider value
+    echo '{"llm": {"provider": "invalid_provider"}}' > .brane/config.json
+    ;;
+  10-success-skip-unchanged)
+    init_mind
+    # File with same hash as extraction_state -> should skip
+    add_body_file "$FILE_URL1" "hash1" 100 1234567890
+    create_concept '{"name": "auth", "type": "Entity"}'
+    create_provenance "{\"concept_id\": 1, \"file_url\": \"$FILE_URL1\"}"
+    create_extraction_state "$FILE_URL1" "hash1"  # Same hash
+    ;;
+  11-success-reextract-changed)
+    init_mind
+    # File with different hash than extraction_state -> should re-extract
+    add_body_file "$FILE_URL1" "new_hash" 100 1234567890
+    create_concept '{"name": "auth", "type": "Entity"}'
+    create_provenance "{\"concept_id\": 1, \"file_url\": \"$FILE_URL1\"}"
+    create_extraction_state "$FILE_URL1" "old_hash"  # Different hash - file changed!
+    ;;
+  12-success-empty-extraction)
+    init_mind
+    # File with "empty" in name generates content with no extractable patterns
+    add_body_file "file:///test/empty-file.ts" "hash1" 100 1234567890
     ;;
 esac
 

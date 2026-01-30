@@ -2,9 +2,10 @@
   "status": "success",
   "result": {
     "files_scanned": 2,
-    "concepts_created": 2,
+    "concepts_created": 6,
     "concepts_reused": 0,
-    "edges_created": 0
+    "edges_created": 4,
+    "provider": "claude"
   },
   "errors": null,
   "meta": {

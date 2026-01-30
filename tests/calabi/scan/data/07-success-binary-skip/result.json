@@ -1,10 +1,11 @@
 {
   "status": "success",
   "result": {
-    "files_scanned": 2,
-    "concepts_created": 6,
+    "files_scanned": 1,
+    "concepts_created": 3,
     "concepts_reused": 0,
-    "edges_created": 4,
+    "edges_created": 2,
+    "files_skipped": 1,
     "provider": "claude"
   },
   "errors": null,

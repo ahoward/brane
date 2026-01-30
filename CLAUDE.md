@@ -103,6 +103,8 @@ ai/                   # AI agent resources
 - CozoDB `.brane/mind.db` (RocksDB backend) (018-annotate)
 - TypeScript 5.x (Bun runtime) + bun:sqlite, cozo-node (existing) (019-pr-verify)
 - SQLite (body.db), CozoDB (mind.db) - both existing (019-pr-verify)
+- TypeScript / Bun 1.x + Anthropic SDK (`@anthropic-ai/sdk`), existing CozoDB/SQLite libs (020-llm-extract)
+- `.brane/body.db` (SQLite), `.brane/mind.db` (CozoDB), `.brane/config.json` (new) (020-llm-extract)
 
 ## Recent Changes
 - 016-rules-define: Added TypeScript (Bun 1.x) + CozoDB (Datalog), existing mind.ts utilities

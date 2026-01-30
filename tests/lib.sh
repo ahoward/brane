@@ -160,6 +160,19 @@ create_provenance() {
   echo "$1" | bun run "$_ROOT/src/cli.ts" /mind/provenance/create > /dev/null 2>&1
 }
 
+# Create an extraction state entry in mind.db (via direct CozoDB query)
+# Usage: create_extraction_state "file_url" "file_hash"
+create_extraction_state() {
+  local file_url="$1" file_hash="$2"
+  # Use a simple bun script to run the CozoDB query
+  bun -e "
+    const { CozoDb } = require('$_ROOT/src/lib/cozo');
+    const db = new CozoDb('rocksdb', '.brane/mind.db');
+    db.run(\`?[file_url, file_hash] <- [['$file_url', '$file_hash']] :put extraction_state { file_url, file_hash }\`);
+    db.close();
+  " > /dev/null 2>&1
+}
+
 # Create isolated workspace, run cleanup on exit
 workspace() {
   WORKDIR=$(mktemp -d)
