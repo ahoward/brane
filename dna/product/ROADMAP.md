@@ -27,16 +27,19 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 ---
 
-## Current: Phase 4 — Intelligence
+## Current: MVP Sprint
 
-**Goal:** AI-powered search and analysis.
+**Goal:** Complete core CLI functionality before any service/infrastructure work.
 
 ### Next
 
+- [ ] *TBD* — Awaiting direction
+
+### Post-MVP (Services & Infrastructure)
+
+*Holding off until MVP is complete.*
+
 - [ ] `022-verifier-node` — Headless verification node
-
-### Backlog (Phase 4+)
-
 - [ ] `023-protocol-spec` — CTX token integration spec
 
 ---
