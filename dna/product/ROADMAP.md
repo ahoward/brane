@@ -33,11 +33,10 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 ### Next
 
-- [ ] `020-llm-extract` — Real LLM-powered concept extraction (replace stub)
+- [ ] `021-vector-search` — Vector embeddings and semantic search
 
 ### Backlog (Phase 3.5)
 
-- [ ] `021-vector-search` — Vector embeddings and semantic search
 - [ ] `022-config` — .brane/config.json support (API keys, model selection)
 
 ---
@@ -59,6 +58,7 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 | Feature | PR | Date |
 |---------|-----|------|
+| `020-llm-extract` | #— | 2026-01-30 |
 | `019-pr-verify` | #23 | 2026-01-29 |
 | `018-annotate` | #22 | 2026-01-28 |
 | `017-verify-check` | #21 | 2026-01-28 |
