@@ -106,4 +106,41 @@ ai/                   # AI agent resources
 - TypeScript (Bun runtime) + fastembed-js (ONNX-based local embeddings), CozoDB (HNSW vector index) (021-vector-search)
 
 ## Recent Changes
+- 021-vector-search: Added semantic search via `/mind/search` endpoint with local embeddings (fastembed-js BGESmallEN, 384 dims)
 - 016-rules-define: Added TypeScript (Bun 1.x) + CozoDB (Datalog), existing mind.ts utilities
+
+## Vector Search (021-vector-search)
+
+Concepts now support semantic similarity search via vector embeddings:
+
+- **Schema v1.5.0**: concepts relation includes `vector: <F32; 384>?` field
+- **HNSW Index**: `concepts:semantic` for fast approximate nearest neighbor search
+- **Auto-embedding**: concepts get embeddings automatically on create/update
+- **Local-first**: fastembed-js (ONNX) runs locally, no API calls needed
+- **Mock mode**: `BRANE_EMBED_MOCK=1` for deterministic test vectors
+
+### Key Files
+- `src/lib/embed.ts` - Embedding generation (fastembed-js wrapper)
+- `src/handlers/mind/search.ts` - `/mind/search` endpoint
+- `src/handlers/mind/init.ts` - Schema v1.5.0 with HNSW index
+
+### Usage
+```bash
+# Create concepts (auto-generates embeddings)
+echo '{"name": "AuthService", "type": "Entity"}' | bun run src/cli.ts /mind/concepts/create
+
+# Search for similar concepts
+echo '{"query": "authentication", "limit": 5}' | bun run src/cli.ts /mind/search
+```
+
+### Search Response
+```json
+{
+  "status": "success",
+  "result": {
+    "matches": [
+      { "id": 1, "name": "AuthService", "type": "Entity", "score": 0.254 }
+    ]
+  }
+}
+```

@@ -255,13 +255,13 @@ export async function handler(params: Params): Promise<Result<ExtractResult>> {
       }
     }
 
-    // Create new concepts
+    // Create new concepts (with null vector - embedding generated separately)
     for (const c of concepts) {
       if (!name_to_id.has(c.name!)) {
         const id = await get_next_concept_id(db)
         await db.run(`
-          ?[id, name, type] <- [[${id}, '${escape_string(c.name!)}', '${c.type}']]
-          :put concepts { id, name, type }
+          ?[id, name, type, vector] <- [[${id}, '${escape_string(c.name!)}', '${c.type}', null]]
+          :put concepts { id, name, type, vector }
         `)
         name_to_id.set(c.name!, id)
         concepts_created++
@@ -350,16 +350,17 @@ export async function handler(params: Params): Promise<Result<ExtractResult>> {
         `)
       }
 
-      // Get concept data for deletion
+      // Get concept data for deletion (including vector)
       const concept_data = await db.run(`
-        ?[id, name, type] := *concepts[id, name, type], id = ${old_id}
+        ?[id, name, type, vector] := *concepts[id, name, type, vector], id = ${old_id}
       `)
-      const concept_rows = concept_data.rows as [number, string, string][]
+      const concept_rows = concept_data.rows as any[][]
       if (concept_rows.length > 0) {
-        const [id, name, type] = concept_rows[0]
+        const [id, name, type, vector] = concept_rows[0]
+        const vector_str = vector !== null ? JSON.stringify(vector) : "null"
         await db.run(`
-          ?[id, name, type] <- [[${id}, '${escape_string(name)}', '${type}']]
-          :rm concepts { id, name, type }
+          ?[id, name, type, vector] <- [[${id}, '${escape_string(name)}', '${type}', ${vector_str}]]
+          :rm concepts { id, name, type, vector }
         `)
       }
 
@@ -403,7 +404,7 @@ function escape_string(s: string): string {
 
 async function find_concept_by_name(db: any, name: string): Promise<number | null> {
   const result = await db.run(`
-    ?[id] := *concepts[id, name, _], name = '${escape_string(name)}'
+    ?[id] := *concepts[id, name, _, _], name = '${escape_string(name)}'
   `)
   const rows = result.rows as number[][]
   if (rows.length > 0) {
@@ -430,7 +431,7 @@ async function concept_has_provenance(db: any, concept_id: number): Promise<bool
 
 async function is_concept_caveat(db: any, concept_id: number): Promise<boolean> {
   const result = await db.run(`
-    ?[type] := *concepts[id, _, type], id = ${concept_id}
+    ?[type] := *concepts[id, _, type, _], id = ${concept_id}
   `)
   const rows = result.rows as string[][]
   if (rows.length > 0) {

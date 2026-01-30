@@ -252,6 +252,8 @@ interface TestResult {
 //   "<number>"     - matches any number
 //   "<string>"     - matches any string
 //   "<any>"        - matches anything
+//   "<array>"      - matches any array (with any length)
+//   "<array:N>"    - matches an array with exactly N elements
 //
 
 function matches_placeholder(expected: unknown, actual: unknown): boolean {
@@ -269,6 +271,19 @@ function matches_placeholder(expected: unknown, actual: unknown): boolean {
 
   if (expected === "<any>") {
     return true
+  }
+
+  if (expected === "<array>") {
+    return Array.isArray(actual)
+  }
+
+  // <array:N> - array with exactly N elements
+  if (typeof expected === "string" && expected.startsWith("<array:")) {
+    const match = expected.match(/^<array:(\d+)>$/)
+    if (match) {
+      const count = parseInt(match[1], 10)
+      return Array.isArray(actual) && actual.length === count
+    }
   }
 
   return false

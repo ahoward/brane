@@ -137,7 +137,7 @@ export async function get_next_edge_id(db: CozoDb): Promise<number> {
 
 export async function concept_exists(db: CozoDb, id: number): Promise<boolean> {
   const result = await db.run(`
-    ?[id] := *concepts[id, _, _], id = ${id}
+    ?[id] := *concepts[id, _, _, _], id = ${id}
   `)
   const rows = result.rows as unknown[][]
   return rows.length > 0

@@ -5,6 +5,7 @@
 import type { Params, Result } from "../../../lib/types.ts"
 import { success, error } from "../../../lib/result.ts"
 import { open_mind, is_mind_error, is_valid_concept_type, get_next_concept_id } from "../../../lib/mind.ts"
+import { generate_embedding } from "../../../lib/embed.ts"
 
 interface CreateParams {
   name?: string
@@ -67,10 +68,14 @@ export async function handler(params: Params): Promise<Result<Concept>> {
     // Get next ID
     const id = await get_next_concept_id(db)
 
-    // Insert concept
+    // Generate embedding for concept name (graceful degradation - null if fails)
+    const embedding = await generate_embedding(p.name)
+    const vector_str = embedding !== null ? `vec(${JSON.stringify(embedding)})` : "null"
+
+    // Insert concept with vector
     await db.run(`
-      ?[id, name, type] <- [[${id}, '${p.name.replace(/'/g, "''")}', '${p.type}']]
-      :put concepts { id, name, type }
+      ?[id, name, type, vector] <- [[${id}, '${p.name.replace(/'/g, "''")}', '${p.type}', ${vector_str}]]
+      :put concepts { id, name, type, vector }
     `)
 
     db.close()

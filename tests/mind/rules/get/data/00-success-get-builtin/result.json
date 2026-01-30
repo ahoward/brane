@@ -3,7 +3,7 @@
   "result": {
     "name": "cycles",
     "description": "Detects circular dependencies via DEPENDS_ON edges",
-    "body": "cycles[id, name] := *concepts[id, name, _], reachable[id, id]\nreachable[x, y] := *edges[_, x, y, 'DEPENDS_ON', _]\nreachable[x, y] := *edges[_, x, z, 'DEPENDS_ON', _], reachable[z, y]",
+    "body": "cycles[id, name] := *concepts[id, name, _, _], reachable[id, id]\nreachable[x, y] := *edges[_, x, y, 'DEPENDS_ON', _]\nreachable[x, y] := *edges[_, x, z, 'DEPENDS_ON', _], reachable[z, y]",
     "builtin": true
   },
   "errors": null,

@@ -18,7 +18,10 @@ interface InitResult {
   schema_version: string
 }
 
-const SCHEMA_VERSION = "1.3.0"
+const SCHEMA_VERSION = "1.5.0"
+
+// Embedding dimension (BGESmallEN model)
+const EMBED_DIM = 384
 
 //
 // Built-in rules for graph integrity checks
@@ -27,7 +30,7 @@ const BUILTIN_RULES = [
   {
     name: "cycles",
     description: "Detects circular dependencies via DEPENDS_ON edges",
-    body: `cycles[id, name] := *concepts[id, name, _], reachable[id, id]
+    body: `cycles[id, name] := *concepts[id, name, _, _], reachable[id, id]
 reachable[x, y] := *edges[_, x, y, 'DEPENDS_ON', _]
 reachable[x, y] := *edges[_, x, z, 'DEPENDS_ON', _], reachable[z, y]`,
     builtin: true
@@ -35,7 +38,7 @@ reachable[x, y] := *edges[_, x, z, 'DEPENDS_ON', _], reachable[z, y]`,
   {
     name: "orphans",
     description: "Detects concepts with no edges (disconnected)",
-    body: `orphans[id, name] := *concepts[id, name, _], not *edges[_, id, _, _, _], not *edges[_, _, id, _, _]`,
+    body: `orphans[id, name] := *concepts[id, name, _, _], not *edges[_, id, _, _, _], not *edges[_, _, id, _, _]`,
     builtin: true
   }
 ]
@@ -52,11 +55,12 @@ const SCHEMA_QUERIES = [
   // id: unique identifier
   // name: human-readable name
   // type: Entity, Caveat, Rule
-  // vector: optional embedding (for future vector search)
+  // vector: embedding for semantic search (nullable for graceful degradation)
   `:create concepts {
     id: Int,
     name: String,
-    type: String
+    type: String,
+    vector: <F32; ${EMBED_DIM}>?
   }`,
 
   // Edges between concepts
@@ -133,10 +137,26 @@ async function create_schema(db: CozoDb): Promise<void> {
     await db.run(query)
   }
 
-  // Insert schema version
+  // Insert schema version and embedding metadata
   await db.run(`
-    ?[key, value] <- [['version', '${SCHEMA_VERSION}']]
+    ?[key, value] <- [
+      ['version', '${SCHEMA_VERSION}'],
+      ['embedding_dim', '${EMBED_DIM}'],
+      ['embedding_model', 'BGESmallENV15']
+    ]
     :put schema_meta { key => value }
+  `)
+
+  // Create HNSW index for vector search
+  await db.run(`
+    ::hnsw create concepts:semantic {
+      dim: ${EMBED_DIM},
+      m: 50,
+      dtype: F32,
+      fields: [vector],
+      distance: Cosine,
+      ef_construction: 100
+    }
   `)
 
   // Seed built-in rules (using double quotes to avoid escaping issues with body content)

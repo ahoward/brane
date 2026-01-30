@@ -19,6 +19,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "cozo-node": "github:ahoward/cozo#feat/bundler-entry-point"
+    "cozo-node": "github:ahoward/cozo#feat/bundler-entry-point",
+    "fastembed": "^1.14.1"
   }
 }
