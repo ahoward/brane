@@ -31,6 +31,7 @@
 
 ## Notes
 
-- Assumptions section documents key technical decisions that need validation during planning phase
-- CozoDB vector support capability should be confirmed during /speckit.plan
-- Embedding dimension (1536) chosen for compatibility but may need adjustment based on actual provider APIs
+- Local embeddings chosen over API-based for zero cost and offline operation
+- 384-dimensional vectors via all-MiniLM-L6-v2 (or similar small model)
+- Transformers.js compatibility with Bun needs validation during /speckit.plan
+- CozoDB HNSW index support confirmed in documentation

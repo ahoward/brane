@@ -39,32 +39,32 @@ When concepts are created or updated, embeddings are automatically generated and
 
 ---
 
-### User Story 3 - Configurable Embedding Provider (Priority: P3)
+### User Story 3 - Local Embedding Generation (Priority: P3)
 
-Users can configure which embedding provider to use (Claude or Gemini) via the existing .brane/config.json, allowing flexibility based on available API access.
+Embeddings are generated locally using a small, quantized model that runs on CPU. No external API calls, no costs, works offline.
 
-**Why this priority**: Flexibility is valuable but not essential for MVP. The system can work with a single provider initially.
+**Why this priority**: Local generation is the implementation choice, but the system works regardless of how embeddings are generated. This story covers the "how" rather than the "what".
 
-**Independent Test**: Can be tested by configuring different providers and verifying the correct API is called.
+**Independent Test**: Can be tested by generating embeddings without network access and verifying they are produced correctly.
 
 **Acceptance Scenarios**:
 
-1. **Given** config.json with llm.provider set to "claude", **When** embeddings are generated, **Then** Claude's embedding API is used.
-2. **Given** config.json with llm.provider set to "gemini", **When** embeddings are generated, **Then** Gemini's embedding API is used.
-3. **Given** no config.json, **When** embeddings are generated, **Then** system auto-detects available provider (same logic as /calabi/scan).
+1. **Given** no network connection, **When** a concept is created, **Then** embeddings are still generated successfully.
+2. **Given** a concept name, **When** embeddings are generated, **Then** the operation completes in under 100ms on typical hardware.
+3. **Given** the same concept name, **When** embeddings are generated multiple times, **Then** identical vectors are produced (deterministic).
 
 ---
 
 ### Edge Cases
 
-- What happens when embedding dimension mismatch occurs between providers?
-  - System stores embedding dimension in schema_meta and validates on generation
-- How does system handle very long concept names exceeding embedding input limits?
-  - Truncate to provider's max input length (document in success message if truncated)
+- How does system handle very long concept names exceeding model input limits?
+  - Truncate to model's max input length (typically 512 tokens, plenty for concept names)
 - What happens during bulk concept imports?
-  - Process embeddings sequentially to avoid rate limiting; batch where provider supports it
-- How does search handle concepts without embeddings (created during provider outage)?
+  - Process embeddings sequentially; local generation is fast enough (~50ms each)
+- How does search handle concepts without embeddings (legacy data or failed generation)?
   - Concepts without embeddings are excluded from vector search results but remain queryable by exact name
+- What if the embedding model fails to load?
+  - Graceful degradation: concepts created without embeddings, warning logged
 
 ## Requirements *(mandatory)*
 
@@ -75,16 +75,18 @@ Users can configure which embedding provider to use (Claude or Gemini) via the e
 - **FR-003**: System MUST regenerate embeddings when concepts are updated via /mind/concepts/update
 - **FR-004**: System MUST provide /mind/search endpoint accepting a query string and returning similar concepts
 - **FR-005**: System MUST return similarity scores (0.0-1.0) with each search result
-- **FR-006**: System MUST support configuring embedding provider via .brane/config.json (llm.provider)
-- **FR-007**: System MUST gracefully handle embedding provider unavailability (create concept without embedding)
+- **FR-006**: System MUST generate embeddings locally without external API calls
+- **FR-007**: System MUST gracefully handle embedding model unavailability (create concept without embedding)
 - **FR-008**: System MUST support limit parameter on /mind/search to control result count
-- **FR-009**: System MUST use the same embedding provider for both concept storage and query embedding
+- **FR-009**: System MUST use the same embedding model for both concept storage and query embedding
+- **FR-010**: System MUST use a small, quantized model suitable for CPU execution (no GPU required)
 
 ### Key Entities
 
-- **Concept (extended)**: Existing concept entity gains a `vector` field storing the embedding (1536-dimensional for consistency with OpenAI/Claude dimensions)
+- **Concept (extended)**: Existing concept entity gains a `vector` field storing the embedding (384-dimensional, matching all-MiniLM-L6-v2 output)
 - **Embedding**: Float array representing semantic meaning, stored inline with concept
 - **Search Result**: Concept plus similarity score, ordered by relevance
+- **HNSW Index**: CozoDB vector index on concepts for fast approximate nearest neighbor search
 
 ## Success Criteria *(mandatory)*
 
@@ -97,8 +99,21 @@ Users can configure which embedding provider to use (Claude or Gemini) via the e
 
 ## Assumptions
 
-- CozoDB supports storing float vectors as a field type (Float arrays)
-- CozoDB supports vector similarity operations (cosine distance) - if not, we implement in application layer
-- Claude and Gemini both provide embedding APIs with similar dimension outputs
-- Embedding dimension is 1536 (standard for many providers; can be configured in schema if needed)
-- Mock mode (BRANE_LLM_MOCK=1) will generate deterministic mock embeddings for testing
+- CozoDB supports storing float vectors and HNSW indexing (confirmed in docs)
+- CozoDB supports cosine distance for similarity search
+- Transformers.js (or similar) can run quantized ONNX models in Bun
+- all-MiniLM-L6-v2 model produces 384-dimensional embeddings
+- Local embedding generation is fast enough (~20-50ms per concept on CPU)
+- Mock mode (BRANE_EMBED_MOCK=1) will generate deterministic mock embeddings for testing
+
+## Design Rationale
+
+**Why local embeddings instead of API-based?**
+
+Vector search in Brane is used to find "entry points" into the knowledge graph. Once anchor concepts are found, Datalog graph traversal expands to related nodes. This means:
+
+1. We need "good enough" semantic similarity, not state-of-the-art
+2. Embedding quality matters less than graph structure for final results
+3. Zero cost and offline operation are more valuable than marginal quality improvements
+
+A small local model (384 dims) is ideal for this use case.
