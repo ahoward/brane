@@ -16,7 +16,7 @@ export const concept = defineCommand({
       meta: { name: "create", description: "Create a new concept" },
       args: {
         name: { type: "string", alias: "n", description: "Concept name", required: true },
-        type: { type: "string", alias: "t", description: "Entity | Rule | File", required: true },
+        type: { type: "string", alias: "t", description: "Concept type (freeform)", required: true },
         json: { type: "boolean", alias: "j", description: "Output as JSON" },
       },
       async run({ args }) {

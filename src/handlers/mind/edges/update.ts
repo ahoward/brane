@@ -39,7 +39,7 @@ export async function handler(params: Params): Promise<Result<Edge>> {
       return error({
         relation: [{
           code:    "invalid",
-          message: "relation must be one of: DEPENDS_ON, CONFLICTS_WITH, DEFINED_IN"
+          message: "relation must be a non-empty string"
         }]
       })
     }

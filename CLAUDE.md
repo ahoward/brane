@@ -104,6 +104,8 @@ ai/                   # AI agent resources
 - TypeScript 5.x (Bun runtime) + bun:sqlite, cozo-node (existing) (019-pr-verify)
 - SQLite (body.db), CozoDB (mind.db) - both existing (019-pr-verify)
 - TypeScript (Bun runtime) + fastembed-js (ONNX-based local embeddings), CozoDB (HNSW vector index) (021-vector-search)
+- Bash (POSIX-compatible where possible) + Brane CLI (compiled binary), standard Unix utilities (echo, cat, mkdir, rm, mktemp) (022-whitebox-scripts)
+- N/A (scripts create temporary directories) (022-whitebox-scripts)
 
 ## Recent Changes
 - 021-vector-search: Added semantic search via `/mind/search` endpoint with local embeddings (fastembed-js BGESmallEN, 384 dims)

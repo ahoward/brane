@@ -17,7 +17,7 @@ export const edge = defineCommand({
       args: {
         from: { type: "string", alias: "f", description: "Source concept ID", required: true },
         to: { type: "string", alias: "t", description: "Target concept ID", required: true },
-        rel: { type: "string", alias: "r", description: "Relation (DEPENDS_ON|IMPLEMENTS|CONTAINS)", required: true },
+        rel: { type: "string", alias: "r", description: "Relationship (freeform)", required: true },
         weight: { type: "string", alias: "w", description: "Edge weight (0-1)" },
         json: { type: "boolean", alias: "j", description: "Output as JSON" },
       },

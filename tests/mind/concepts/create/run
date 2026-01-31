@@ -23,7 +23,7 @@ case "$TC_CASE_NAME" in
   03-error-missing-type)
     init_mind
     ;;
-  04-error-invalid-type)
+  04-success-custom-type)
     init_mind
     ;;
   05-error-not-initialized)

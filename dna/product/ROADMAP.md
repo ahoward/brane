@@ -33,23 +33,19 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 ### Next
 
-- [ ] `022-whitebox-scripts` — Dogfooding scripts for DX validation
-  - Idempotent, hacker-clean shell scripts in `examples/` or `scripts/`
-  - Human-readable TL;DR for getting started
-  - White-box test suite (runs against compiled binary)
-  - Will be integrated into automated test suite
+- [ ] `024-context-vector` — Integrate vector search into `/context/query` for anchor concept finding
+- [ ] `025-graph-explore` — CLI graph visualization/exploration commands
 
 ### MVP Backlog
 
-- [ ] `023-context-vector` — Integrate vector search into `/context/query` for anchor concept finding
-- [ ] `024-graph-explore` — CLI graph visualization/exploration commands
+(empty - above items are final MVP work)
 
 ### Post-MVP (Services & Infrastructure)
 
 *Holding off until MVP is complete.*
 
-- [ ] `025-verifier-node` — Headless verification node
-- [ ] `026-protocol-spec` — CTX token integration spec
+- [ ] `026-verifier-node` — Headless verification node
+- [ ] `027-protocol-spec` — CTX token integration spec
 
 ---
 
@@ -59,6 +55,9 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 | Feature | PR | Date |
 |---------|-----|------|
+| `024-prose-support` | — | 2026-01-31 |
+| `023-cli-dx` | — | 2026-01-30 |
+| `022-whitebox-scripts` | — | 2026-01-30 |
 | `021-vector-search` | #26 | 2026-01-30 |
 | `019-pr-verify` | #23 | 2026-01-29 |
 | `018-annotate` | #22 | 2026-01-28 |
@@ -95,3 +94,4 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 - **tc refactor complete!** — Hybrid TypeScript + shell test infrastructure with hooks and default runner
 - **Phase 3 complete!** — Logic enforcement and governance now operational
 - **021-vector-search complete!** — Semantic concept search with local embeddings (fastembed-js)
+- **024-prose-support complete!** — Freeform concept types and edge relations for prose/creative use

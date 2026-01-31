@@ -38,7 +38,7 @@ export async function handler(params: Params): Promise<Result<Concept>> {
       return error({
         type: [{
           code:    "invalid",
-          message: "type must be one of: Entity, Caveat, Rule"
+          message: "type must be a non-empty string"
         }]
       })
     }

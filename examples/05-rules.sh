@@ -1,52 +1,52 @@
 #!/usr/bin/env bash
 #
-# common.sh — shared utilities for brane examples
+# 05-rules.sh — verification rules
 #
 
 set -e
+source "$(dirname "$0")/lib/common.sh"
+setup_workspace
 
-REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Find the brane binary
-# ─────────────────────────────────────────────────────────────────────────────
-
-if [[ -n "${BRANE_BIN:-}" ]]; then
-  BRANE="$BRANE_BIN"
-elif [[ -x "$REPO_ROOT/brane" ]]; then
-  BRANE="$REPO_ROOT/brane"
-elif command -v brane &>/dev/null; then
-  BRANE="brane"
-else
-  echo "ERROR: brane binary not found"
-  echo ""
-  echo "Build it:"
-  echo "  cd $REPO_ROOT && bun run build"
-  exit 1
-fi
-
-export BRANE_EMBED_MOCK=1
+brane init > /dev/null
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Setup / teardown
+# built-in rules
 # ─────────────────────────────────────────────────────────────────────────────
 
-setup_workspace() {
-  WORKDIR=$(mktemp -d)
-  trap 'rm -rf "$WORKDIR"' EXIT
-  cd "$WORKDIR"
-}
+run brane rule list
+
+# NAME      BUILTIN   DESCRIPTION
+# cycles    yes       Detects circular dependencies via DEPENDS_ON edges
+# orphans   yes       Detects concepts with no edges (disconnected)
+
+run brane rule get cycles
+
+# Name: cycles
+# Description: Detects circular dependencies via DEPENDS_ON edges
+# Body: cycles[id, name] := *concepts[id, name, _, _], reachable[id, id]
+#       reachable[x, y] := *edges[_, x, y, 'DEPENDS_ON', _]
+#       reachable[x, y] := *edges[_, x, z, 'DEPENDS_ON', _], reachable[z, y]
+# Builtin: true
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Run a command with pretty echo
+# query a rule
 # ─────────────────────────────────────────────────────────────────────────────
 
-run() {
-  echo "\$ $*"
-  "$@"
-  echo ""
-}
+# create an orphan concept
+brane concept create --name Orphan --type Entity > /dev/null
 
-brane() {
-  "$BRANE" "$@"
-}
+run brane rule query orphans
+
+# ID    NAME
+# 1     Orphan
+
+# ─────────────────────────────────────────────────────────────────────────────
+# verify all rules
+# ─────────────────────────────────────────────────────────────────────────────
+
+run brane verify || true
+
+# FAILED: 1 violations
+#
+# orphans:
+#   - Orphan (id: 1)

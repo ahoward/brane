@@ -56,14 +56,15 @@ export function is_mind_error(result: MindDb | MindError): result is MindError {
 }
 
 //
-// Valid concept types
+// Concept types (suggestions, not restrictions)
 //
 
 export const CONCEPT_TYPES = ["Entity", "Caveat", "Rule"] as const
 export type ConceptType = typeof CONCEPT_TYPES[number]
 
-export function is_valid_concept_type(type: string): type is ConceptType {
-  return CONCEPT_TYPES.includes(type as ConceptType)
+// Accepts any non-empty string - prose and code both welcome
+export function is_valid_concept_type(type: string): boolean {
+  return typeof type === "string" && type.length > 0
 }
 
 //
@@ -94,14 +95,15 @@ export async function get_next_concept_id(db: CozoDb): Promise<number> {
 }
 
 //
-// Valid edge relation types
+// Edge relations (suggestions, not restrictions)
 //
 
 export const EDGE_RELATIONS = ["DEPENDS_ON", "CONFLICTS_WITH", "DEFINED_IN"] as const
 export type EdgeRelation = typeof EDGE_RELATIONS[number]
 
-export function is_valid_edge_relation(relation: string): relation is EdgeRelation {
-  return EDGE_RELATIONS.includes(relation as EdgeRelation)
+// Accepts any non-empty string - prose and code both welcome
+export function is_valid_edge_relation(relation: string): boolean {
+  return typeof relation === "string" && relation.length > 0
 }
 
 //

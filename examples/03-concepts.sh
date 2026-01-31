@@ -1,86 +1,26 @@
 #!/usr/bin/env bash
 #
-# 00-quickstart.sh — brane in 60 seconds
-#
-# init → scan → concepts → edges → verify
+# 03-concepts.sh — manage concepts
 #
 
 set -e
 source "$(dirname "$0")/lib/common.sh"
 setup_workspace
 
-# ─────────────────────────────────────────────────────────────────────────────
-# sample codebase
-# ─────────────────────────────────────────────────────────────────────────────
-
-mkdir -p src
-
-cat > src/auth.ts << 'EOF'
-export class AuthService {
-  login(user: string, pass: string): boolean { return true }
-}
-EOF
-
-cat > src/database.ts << 'EOF'
-export class DatabasePool {
-  query(sql: string): any[] { return [] }
-}
-EOF
-
-cat > src/api.ts << 'EOF'
-import { AuthService } from "./auth"
-import { DatabasePool } from "./database"
-
-export class ApiRouter {
-  constructor(private auth: AuthService, private db: DatabasePool) {}
-}
-EOF
+brane init > /dev/null
 
 # ─────────────────────────────────────────────────────────────────────────────
-# initialize
+# create
 # ─────────────────────────────────────────────────────────────────────────────
 
-run brane init
-
-# body: created .brane
-# mind: created .brane/mind.db
-
-# ─────────────────────────────────────────────────────────────────────────────
-# scan files
-# ─────────────────────────────────────────────────────────────────────────────
-
-run brane scan src/
-
-# added: 3
-# updated: 0
-# unchanged: 0
-
-# ─────────────────────────────────────────────────────────────────────────────
-# create concepts
-# ─────────────────────────────────────────────────────────────────────────────
-
-run brane concept create --name AuthService --type Entity
+run brane concept create --name UserService --type Entity
 
 # Id: 1
-# Name: AuthService
+# Name: UserService
 # Type: Entity
 
-run brane concept create --name DatabasePool --type Entity
-run brane concept create --name ApiRouter --type Entity
-
-# ─────────────────────────────────────────────────────────────────────────────
-# create edges
-# ─────────────────────────────────────────────────────────────────────────────
-
-run brane edge create --from 3 --to 1 --rel DEPENDS_ON
-
-# Id: 1
-# Source: 3
-# Target: 1
-# Relation: DEPENDS_ON
-# Weight: 1
-
-run brane edge create --from 3 --to 2 --rel DEPENDS_ON
+run brane concept create --name OrderService --type Entity
+run brane concept create --name no-orphans --type Rule
 
 # ─────────────────────────────────────────────────────────────────────────────
 # list
@@ -89,20 +29,40 @@ run brane edge create --from 3 --to 2 --rel DEPENDS_ON
 run brane concept list
 
 # ID    NAME          TYPE
-# 1     AuthService   Entity
-# 2     DatabasePool  Entity
-# 3     ApiRouter     Entity
+# 1     UserService   Entity
+# 2     OrderService  Entity
+# 3     no-orphans    Rule
 
-run brane edge list
+run brane concept list --type Entity
 
-# ID    FROM    TO    RELATION
-# 1     3       1     DEPENDS_ON
-# 2     3       2     DEPENDS_ON
+# ID    NAME          TYPE
+# 1     UserService   Entity
+# 2     OrderService  Entity
 
 # ─────────────────────────────────────────────────────────────────────────────
-# verify
+# get
 # ─────────────────────────────────────────────────────────────────────────────
 
-run brane verify
+run brane concept get 1
 
-# OK: all rules passed
+# Id: 1
+# Name: UserService
+# Type: Entity
+
+# ─────────────────────────────────────────────────────────────────────────────
+# update
+# ─────────────────────────────────────────────────────────────────────────────
+
+run brane concept update 1 --name UserServiceV2
+
+# Id: 1
+# Name: UserServiceV2
+# Type: Entity
+
+# ─────────────────────────────────────────────────────────────────────────────
+# delete
+# ─────────────────────────────────────────────────────────────────────────────
+
+run brane concept delete 3
+
+# deleted: concept 3

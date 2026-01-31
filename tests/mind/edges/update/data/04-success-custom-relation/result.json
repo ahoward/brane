@@ -1,0 +1,16 @@
+{
+  "status": "success",
+  "result": {
+    "id": 1,
+    "source": 1,
+    "target": 2,
+    "relation": "LOVES",
+    "weight": 1
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/edges/update",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

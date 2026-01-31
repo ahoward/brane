@@ -29,7 +29,7 @@ case "$TC_CASE_NAME" in
   03-error-missing-id)
     init_mind
     ;;
-  04-error-invalid-relation)
+  04-success-custom-relation)
     init_mind
     create_concept '{"name": "A", "type": "Entity"}'
     create_concept '{"name": "B", "type": "Entity"}'
