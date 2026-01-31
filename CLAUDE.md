@@ -106,6 +106,8 @@ ai/                   # AI agent resources
 - TypeScript (Bun runtime) + fastembed-js (ONNX-based local embeddings), CozoDB (HNSW vector index) (021-vector-search)
 - Bash (POSIX-compatible where possible) + Brane CLI (compiled binary), standard Unix utilities (echo, cat, mkdir, rm, mktemp) (022-whitebox-scripts)
 - N/A (scripts create temporary directories) (022-whitebox-scripts)
+- TypeScript 5.x (Bun 1.x runtime) + CozoDB (cozo-node), citty (CLI), js-yaml (YAML parsing) (025-lens-config)
+- CozoDB mind.db (RocksDB backend) - new relations for lens data (025-lens-config)
 
 ## Recent Changes
 - 021-vector-search: Added semantic search via `/mind/search` endpoint with local embeddings (fastembed-js BGESmallEN, 384 dims)
