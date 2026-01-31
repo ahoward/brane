@@ -33,8 +33,9 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 ### Next
 
-- [ ] `024-context-vector` — Integrate vector search into `/context/query` for anchor concept finding
-- [ ] `025-graph-explore` — CLI graph visualization/exploration commands
+- [ ] `025-lens-config` — Shareable ontology configs with golden concepts, relations, rules, and consolidation
+- [ ] `026-context-vector` — Integrate vector search into `/context/query` for anchor concept finding
+- [ ] `027-graph-explore` — CLI graph visualization/exploration commands
 
 ### MVP Backlog
 
@@ -44,8 +45,8 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 *Holding off until MVP is complete.*
 
-- [ ] `026-verifier-node` — Headless verification node
-- [ ] `027-protocol-spec` — CTX token integration spec
+- [ ] `028-verifier-node` — Headless verification node
+- [ ] `029-protocol-spec` — CTX token integration spec
 
 ---
 
