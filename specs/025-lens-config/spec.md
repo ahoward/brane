@@ -214,6 +214,29 @@ brane consolidate
 brane consolidate -i
 ```
 
+### Usage Stats
+```bash
+# Show usage stats for types and relations
+brane lens stats
+
+# TYPE                COUNT   GOLDEN   FIRST SEEN    LAST SEEN
+# Entity              42      yes      2026-01-15    2026-01-31
+# Character           18      no       2026-01-20    2026-01-31
+# DEPENDS_ON          35      yes      2026-01-15    2026-01-31
+# LOVES               7       no       2026-01-25    2026-01-30
+
+# Filter to non-golden only (candidates for blessing)
+brane lens stats --candidates
+
+# TYPE                COUNT   FIRST SEEN    LAST SEEN
+# Character           18      2026-01-20    2026-01-31
+# LOVES               7       2026-01-25    2026-01-30
+
+# Bless a detected type as golden
+brane lens bless --type Character --description "A person in the narrative"
+brane lens bless --rel LOVES --description "Romantic or familial affection"
+```
+
 ### Verification with Lens
 ```bash
 # Verify using lens rules
@@ -256,6 +279,23 @@ brane verify --compare /path/to/other/.brane
 :create consolidation_map {
   source_type: String,
   target_type: String  # must exist in golden_types
+}
+
+# Usage tracking (silently observed, never warns)
+:create type_usage {
+  type: String =>
+  count: Int,
+  first_seen: String,
+  last_seen: String,
+  golden: Bool  # true if in golden_types
+}
+
+:create relation_usage {
+  rel: String =>
+  count: Int,
+  first_seen: String,
+  last_seen: String,
+  golden: Bool  # true if in golden_relations
 }
 ```
 
@@ -316,6 +356,38 @@ Returns suggested consolidations based on current graph and lens.
 }
 ```
 
+### `/lens/stats`
+Returns usage statistics for all types and relations.
+```json
+{
+  "types": [
+    { "type": "Entity", "count": 42, "golden": true, "first_seen": "...", "last_seen": "..." },
+    { "type": "Character", "count": 18, "golden": false, "first_seen": "...", "last_seen": "..." }
+  ],
+  "relations": [
+    { "rel": "DEPENDS_ON", "count": 35, "golden": true, "first_seen": "...", "last_seen": "..." },
+    { "rel": "LOVES", "count": 7, "golden": false, "first_seen": "...", "last_seen": "..." }
+  ]
+}
+```
+
+### `/lens/bless`
+Promote a detected type or relation to golden status.
+```json
+{
+  "type": "Character",
+  "description": "A person in the narrative"
+}
+```
+or
+```json
+{
+  "rel": "LOVES",
+  "description": "Romantic or familial affection",
+  "symmetric": true
+}
+```
+
 ## Implementation Phases
 
 ### Phase 1: Lens Storage
@@ -323,10 +395,11 @@ Returns suggested consolidations based on current graph and lens.
 - `/lens/import` and `/lens/export` handlers
 - `brane lens` CLI commands
 
-### Phase 2: Golden Precedence
-- Modify concept/edge creation to check golden types
-- Warning (not error) when using non-golden type
-- `--strict` flag to enforce golden-only
+### Phase 2: Usage Tracking
+- Track all concept types and edge relations with usage stats
+- No warnings, no errors — silently observe
+- `/lens/stats` endpoint to query usage patterns
+- `brane lens stats` CLI to surface candidates for blessing
 
 ### Phase 3: Consolidation
 - `/consolidate/suggest` with fuzzy matching
@@ -359,9 +432,10 @@ Ship with these lenses:
 1. `brane init --lens code-analysis` creates graph with golden types seeded
 2. `brane lens show` displays current lens configuration
 3. `brane lens export > lens.yml` produces valid, re-importable YAML
-4. Non-golden types show warning (not error) on creation
-5. `brane consolidate --dry-run` shows mapping suggestions
-6. Two users with same lens get same `brane verify` output on same code
+4. Non-golden types are silently tracked (no warnings, no errors)
+5. `brane lens stats` surfaces high-frequency non-golden types as blessing candidates
+6. `brane consolidate --dry-run` shows mapping suggestions
+7. Two users with same lens get same `brane verify` output on same code
 
 ## Open Questions
 
