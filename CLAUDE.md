@@ -108,6 +108,8 @@ ai/                   # AI agent resources
 - N/A (scripts create temporary directories) (022-whitebox-scripts)
 - TypeScript 5.x (Bun 1.x runtime) + CozoDB (cozo-node), citty (CLI), js-yaml (YAML parsing) (025-lens-config)
 - CozoDB mind.db (RocksDB backend) - new relations for lens data (025-lens-config)
+- TypeScript 5.x (Bun 1.x runtime) + cozo-node (CozoDB), fastembed-js (embeddings), existing mind.ts utilities (026-context-vector)
+- CozoDB mind.db (RocksDB backend) - existing `concepts:semantic` HNSW index (026-context-vector)
 
 ## Recent Changes
 - 021-vector-search: Added semantic search via `/mind/search` endpoint with local embeddings (fastembed-js BGESmallEN, 384 dims)

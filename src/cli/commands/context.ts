@@ -18,12 +18,14 @@ export const context = defineCommand({
         query: { type: "positional", description: "Query string", required: true },
         depth: { type: "string", alias: "d", description: "Graph traversal depth (0-2)" },
         limit: { type: "string", alias: "l", description: "Max results" },
+        mode: { type: "string", alias: "m", description: "Search mode: exact, semantic, hybrid (default)" },
         json: { type: "boolean", alias: "j", description: "Output as JSON" },
       },
       async run({ args }) {
         const params: any = { query: args.query }
         if (args.depth) params.depth = parseInt(args.depth)
         if (args.limit) params.limit = parseInt(args.limit)
+        if (args.mode) params.mode = args.mode
 
         const result = await sys.call("/context/query", params)
         if (args.json) {
@@ -42,9 +44,10 @@ export const context = defineCommand({
           }
 
           console.log("CONCEPTS:")
-          console.log("ID\tNAME\tTYPE\tRELEVANCE")
+          console.log("ID\tNAME\tTYPE\tRELEVANCE\tSCORE")
           for (const c of concepts) {
-            console.log(`${c.id}\t${c.name}\t${c.type}\t${c.relevance}`)
+            const score = c.score !== undefined ? c.score.toFixed(3) : ""
+            console.log(`${c.id}\t${c.name}\t${c.type}\t${c.relevance}\t${score}`)
           }
 
           if (files.length > 0) {

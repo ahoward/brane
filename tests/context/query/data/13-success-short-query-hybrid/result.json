@@ -1,12 +1,10 @@
 {
   "status": "success",
   "result": {
-    "concepts": [
-      {"id": 1, "name": "AuthService", "type": "Entity", "relevance": "exact"}
-    ],
+    "concepts": [],
     "files": [],
     "graph": {
-      "nodes": [1],
+      "nodes": [],
       "edges": []
     }
   },
