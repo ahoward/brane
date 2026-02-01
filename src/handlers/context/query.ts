@@ -5,21 +5,26 @@
 import type { Params, Result } from "../../lib/types.ts"
 import { success, error } from "../../lib/result.ts"
 import { open_mind, is_mind_error } from "../../lib/mind.ts"
+import { generate_embedding } from "../../lib/embed.ts"
 import { resolve } from "node:path"
 import { existsSync } from "node:fs"
 import Database from "bun:sqlite"
+
+type SearchMode = "semantic" | "exact" | "hybrid"
 
 interface QueryParams {
   query?: string
   depth?: number
   limit?: number
+  mode?:  SearchMode
 }
 
 interface ConceptResult {
   id:        number
   name:      string
   type:      string
-  relevance: "direct" | "neighbor"
+  relevance: "exact" | "semantic" | "both" | "neighbor"
+  score?:    number
 }
 
 interface FileResult {
@@ -92,29 +97,79 @@ export async function handler(params: Params): Promise<Result<ContextResult>> {
 
   const { db: mind_db } = mind
 
+  // Parse mode parameter
+  const mode: SearchMode = p.mode ?? "hybrid"
+  const valid_modes: SearchMode[] = ["semantic", "exact", "hybrid"]
+
+  if (!valid_modes.includes(mode)) {
+    mind_db.close()
+    return error({
+      mode: [{
+        code:    "invalid",
+        message: `mode must be one of: ${valid_modes.join(", ")}`
+      }]
+    })
+  }
+
+  // Validate query length for semantic mode
+  if (mode === "semantic" && p.query.length < 3) {
+    mind_db.close()
+    return error({
+      query: [{
+        code:    "too_short",
+        message: "semantic search requires query length >= 3"
+      }]
+    })
+  }
+
   try {
-    // Step 1: Search concepts by name (case-insensitive via lowercase comparison)
-    const query_lower = p.query.toLowerCase()
-    const search_result = await mind_db.run(`
-      ?[id, name, type] := *concepts[id, name, type, _]
-    `)
+    // Step 1: Search for anchor concepts based on mode
+    let anchor_matches: ConceptResult[] = []
 
-    const all_concepts = search_result.rows as [number, string, string][]
-    const direct_matches: ConceptResult[] = []
+    if (mode === "exact") {
+      // Exact only
+      const exact = await search_exact(mind_db, p.query, limit)
+      anchor_matches = exact.map(m => ({
+        id:        m.id,
+        name:      m.name,
+        type:      m.type,
+        relevance: "exact" as const
+      }))
+    } else if (mode === "semantic") {
+      // Semantic only
+      const semantic = await search_semantic(mind_db, p.query, limit)
+      anchor_matches = semantic.map(m => ({
+        id:        m.id,
+        name:      m.name,
+        type:      m.type,
+        relevance: "semantic" as const,
+        score:     m.score
+      }))
+    } else {
+      // Hybrid mode (default)
+      const exact = await search_exact(mind_db, p.query, limit)
 
-    for (const [id, name, type] of all_concepts) {
-      if (name.toLowerCase().includes(query_lower)) {
-        direct_matches.push({ id, name, type, relevance: "direct" })
-        if (direct_matches.length >= limit) break
+      // Only do semantic search if query is long enough
+      if (p.query.length >= 3) {
+        const semantic = await search_semantic(mind_db, p.query, limit)
+        anchor_matches = merge_results(exact, semantic, limit)
+      } else {
+        // Short query - exact only
+        anchor_matches = exact.map(m => ({
+          id:        m.id,
+          name:      m.name,
+          type:      m.type,
+          relevance: "exact" as const
+        }))
       }
     }
 
     // Track all concept IDs we've seen
-    const concept_ids = new Set<number>(direct_matches.map(c => c.id))
-    const all_concepts_result: ConceptResult[] = [...direct_matches]
+    const concept_ids = new Set<number>(anchor_matches.map(c => c.id))
+    const all_concepts_result: ConceptResult[] = [...anchor_matches]
 
     // Step 2: Graph expansion
-    if (depth >= 1 && direct_matches.length > 0) {
+    if (depth >= 1 && anchor_matches.length > 0) {
       const neighbors_1 = await expand_neighbors(mind_db, [...concept_ids])
       for (const neighbor of neighbors_1) {
         if (!concept_ids.has(neighbor.id) && all_concepts_result.length < limit) {
@@ -236,6 +291,144 @@ interface NeighborConcept {
   id:   number
   name: string
   type: string
+}
+
+interface AnchorMatch {
+  id:    number
+  name:  string
+  type:  string
+  score?: number
+}
+
+//
+// Exact search - case-insensitive substring matching
+//
+async function search_exact(
+  db: any,
+  query: string,
+  limit: number
+): Promise<AnchorMatch[]> {
+  const query_lower = query.toLowerCase()
+  const result = await db.run(`
+    ?[id, name, type] := *concepts[id, name, type, _]
+  `)
+
+  const all_concepts = result.rows as [number, string, string][]
+  const matches: AnchorMatch[] = []
+
+  for (const [id, name, type] of all_concepts) {
+    if (name.toLowerCase().includes(query_lower)) {
+      matches.push({ id, name, type })
+      if (matches.length >= limit) break
+    }
+  }
+
+  return matches
+}
+
+//
+// Semantic search - vector similarity via HNSW index
+//
+async function search_semantic(
+  db: any,
+  query: string,
+  limit: number
+): Promise<AnchorMatch[]> {
+  // Generate embedding for query
+  const query_embedding = await generate_embedding(query)
+
+  if (query_embedding === null) {
+    // Graceful degradation - return empty array
+    return []
+  }
+
+  try {
+    const vector_str = JSON.stringify(query_embedding)
+    const result = await db.run(`
+      ?[id, name, type, distance] := ~concepts:semantic{
+        id, name, type |
+        query: vec(${vector_str}),
+        k: ${limit},
+        ef: 50,
+        bind_distance: distance
+      }
+    `)
+
+    const rows = result.rows as [number, string, string, number][]
+
+    // Convert distance to similarity score (cosine distance -> similarity)
+    return rows.map(([id, name, type, distance]) => ({
+      id,
+      name,
+      type,
+      score: Math.round((1 - distance) * 1000) / 1000
+    }))
+  } catch {
+    // HNSW index may not exist or query failed - graceful degradation
+    return []
+  }
+}
+
+//
+// Merge exact and semantic results
+//
+function merge_results(
+  exact: AnchorMatch[],
+  semantic: AnchorMatch[],
+  limit: number
+): ConceptResult[] {
+  const results: ConceptResult[] = []
+  const seen = new Set<number>()
+
+  // Build a map of semantic results for quick lookup
+  const semantic_map = new Map<number, AnchorMatch>()
+  for (const m of semantic) {
+    semantic_map.set(m.id, m)
+  }
+
+  // First pass: exact matches (mark as "both" if also in semantic)
+  for (const m of exact) {
+    if (results.length >= limit) break
+
+    const sem = semantic_map.get(m.id)
+    if (sem) {
+      results.push({
+        id:        m.id,
+        name:      m.name,
+        type:      m.type,
+        relevance: "both",
+        score:     sem.score
+      })
+    } else {
+      results.push({
+        id:        m.id,
+        name:      m.name,
+        type:      m.type,
+        relevance: "exact"
+      })
+    }
+    seen.add(m.id)
+  }
+
+  // Second pass: semantic-only matches (sorted by score descending)
+  const semantic_only = semantic
+    .filter(m => !seen.has(m.id))
+    .sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
+
+  for (const m of semantic_only) {
+    if (results.length >= limit) break
+
+    results.push({
+      id:        m.id,
+      name:      m.name,
+      type:      m.type,
+      relevance: "semantic",
+      score:     m.score
+    })
+    seen.add(m.id)
+  }
+
+  return results
 }
 
 async function expand_neighbors(

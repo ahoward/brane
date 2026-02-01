@@ -2,7 +2,7 @@
   "status": "success",
   "result": {
     "concepts": [
-      {"id": 1, "name": "AuthService", "type": "Entity", "relevance": "direct"},
+      {"id": 1, "name": "AuthService", "type": "Entity", "relevance": "exact"},
       {"id": 2, "name": "LoginHandler", "type": "Entity", "relevance": "neighbor"}
     ],
     "files": [],

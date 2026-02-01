@@ -56,6 +56,36 @@ case "$TC_CASE_NAME" in
   07-error-not-initialized)
     # Don't initialize
     ;;
+  08-success-semantic-match)
+    init_mind
+    create_concept '{"name": "AuthService", "type": "Entity"}'
+    create_concept '{"name": "LoginController", "type": "Entity"}'
+    create_concept '{"name": "DatabasePool", "type": "Entity"}'
+    ;;
+  09-success-hybrid-both)
+    init_mind
+    create_concept '{"name": "AuthService", "type": "Entity"}'
+    create_concept '{"name": "LoginController", "type": "Entity"}'
+    ;;
+  10-success-mode-exact)
+    init_mind
+    create_concept '{"name": "AuthService", "type": "Entity"}'
+    create_concept '{"name": "LoginController", "type": "Entity"}'
+    ;;
+  11-success-mode-semantic)
+    init_mind
+    create_concept '{"name": "AuthService", "type": "Entity"}'
+    create_concept '{"name": "LoginController", "type": "Entity"}'
+    create_concept '{"name": "SessionManager", "type": "Entity"}'
+    ;;
+  12-error-semantic-too-short)
+    init_mind
+    create_concept '{"name": "AuthService", "type": "Entity"}'
+    ;;
+  13-success-short-query-hybrid)
+    init_mind
+    create_concept '{"name": "AuthService", "type": "Entity"}'
+    ;;
 esac
 
 echo "$INPUT" | bun run "$BRANE_ROOT/src/cli.ts" /context/query
