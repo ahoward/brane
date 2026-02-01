@@ -1,0 +1,12 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "mind": [{ "code": "not_initialized", "message": "brane not initialized (run brane init)" }]
+  },
+  "meta": {
+    "path": "/lens/show",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "status": "success",
+  "result": {
+    "blessed": "type",
+    "name": "Service",
+    "description": "A software service component"
+  },
+  "errors": null,
+  "meta": {
+    "path": "/lens/bless",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

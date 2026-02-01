@@ -1,0 +1,12 @@
+{
+  "status": "success",
+  "result": {
+    "yaml": "<string>"
+  },
+  "errors": null,
+  "meta": {
+    "path": "/lens/export",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

@@ -11,6 +11,8 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 # Find the brane binary
 # ─────────────────────────────────────────────────────────────────────────────
 
+USE_BUN=false
+
 if [[ -n "${BRANE_BIN:-}" ]]; then
   BRANE="$BRANE_BIN"
 elif [[ -x "$REPO_ROOT/brane" ]]; then
@@ -18,11 +20,8 @@ elif [[ -x "$REPO_ROOT/brane" ]]; then
 elif command -v brane &>/dev/null; then
   BRANE="brane"
 else
-  echo "ERROR: brane binary not found"
-  echo ""
-  echo "Build it:"
-  echo "  cd $REPO_ROOT && bun run build"
-  exit 1
+  # Fallback to bun run for development
+  USE_BUN=true
 fi
 
 export BRANE_EMBED_MOCK=1
@@ -48,5 +47,9 @@ run() {
 }
 
 brane() {
-  "$BRANE" "$@"
+  if [[ "$USE_BUN" == "true" ]]; then
+    bun run "$REPO_ROOT/src/cli.ts" "$@"
+  else
+    "$BRANE" "$@"
+  fi
 }

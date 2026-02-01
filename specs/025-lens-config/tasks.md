@@ -19,9 +19,9 @@
 
 **Purpose**: Add js-yaml dependency and create lens module structure
 
-- [ ] T001 Add js-yaml dependency: `bun add js-yaml && bun add -d @types/js-yaml`
-- [ ] T002 [P] Create handler directory structure: `mkdir -p src/handlers/lens`
-- [ ] T003 [P] Create test directory structure: `mkdir -p tests/lens/{show,import,export,stats,bless}`
+- [x] T001 Add js-yaml dependency: `bun add js-yaml && bun add -d @types/js-yaml`
+- [x] T002 [P] Create handler directory structure: `mkdir -p src/handlers/lens`
+- [x] T003 [P] Create test directory structure: `mkdir -p tests/lens/{show,import,export,stats,bless}`
 
 ---
 
@@ -31,19 +31,19 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T004 Add lens relations to schema in `src/handlers/mind/init.ts`:
+- [x] T004 Add lens relations to schema in `src/handlers/mind/init.ts`:
   - `lens_meta` relation (key → value)
   - `golden_types` relation (type → description, authority)
   - `golden_relations` relation (rel → description, symmetric, authority)
   - `consolidation_map` relation (source_type → target_type)
   - `type_usage` relation (type → count, first_seen, last_seen, golden)
   - `relation_usage` relation (rel → count, first_seen, last_seen, golden)
-- [ ] T005 Add default lens seeding to `src/handlers/mind/init.ts`:
+- [x] T005 Add default lens seeding to `src/handlers/mind/init.ts`:
   - Insert default lens_meta (name, version, description)
   - Insert golden_types (Entity, Caveat, Rule)
   - Insert golden_relations (DEPENDS_ON, CONFLICTS_WITH, DEFINED_IN)
-- [ ] T006 Update SCHEMA_VERSION to "1.6.0" in `src/handlers/mind/init.ts`
-- [ ] T007 Create shared lens utilities in `src/lib/lens.ts`:
+- [x] T006 Update SCHEMA_VERSION to "1.6.0" in `src/handlers/mind/init.ts`
+- [x] T007 Create shared lens utilities in `src/lib/lens.ts`:
   - `open_mind()` helper (reuse from mind.ts)
   - `is_golden_type(db, type)` function
   - `is_golden_relation(db, rel)` function
@@ -61,11 +61,11 @@
 
 ### Tests for User Story 1
 
-- [ ] T008 [P] [US1] Create tc tests for `/lens/show` in `tests/lens/show/`:
+- [x] T008 [P] [US1] Create tc tests for `/lens/show` in `tests/lens/show/`:
   - `data/00-success-default-lens/` (params.json, result.json)
   - `data/01-error-not-initialized/` (params.json, result.json)
   - `run` script
-- [ ] T009 [P] [US1] Create tc tests for `/lens/import` in `tests/lens/import/`:
+- [x] T009 [P] [US1] Create tc tests for `/lens/import` in `tests/lens/import/`:
   - `data/00-success-basic/` with sample lens.yml
   - `data/01-success-merge-mode/`
   - `data/02-success-replace-mode/`
@@ -74,41 +74,41 @@
   - `data/05-error-missing-name/`
   - `data/06-error-not-initialized/`
   - `run` script
-- [ ] T010 [P] [US1] Create tc tests for `/lens/export` in `tests/lens/export/`:
+- [x] T010 [P] [US1] Create tc tests for `/lens/export` in `tests/lens/export/`:
   - `data/00-success-basic/`
   - `data/01-error-not-initialized/`
   - `run` script
 
 ### Implementation for User Story 1
 
-- [ ] T011 [US1] Implement `/lens/show` handler in `src/handlers/lens/show.ts`:
+- [x] T011 [US1] Implement `/lens/show` handler in `src/handlers/lens/show.ts`:
   - Query lens_meta for name, version, description
   - Query golden_types for all types
   - Query golden_relations for all relations
   - Query consolidation_map for mappings
   - Return LensConfig POD
-- [ ] T012 [US1] Implement `/lens/import` handler in `src/handlers/lens/import.ts`:
+- [x] T012 [US1] Implement `/lens/import` handler in `src/handlers/lens/import.ts`:
   - Read file from path parameter
   - Parse YAML with js-yaml (safe load)
   - Validate required fields (name, version)
   - Upsert lens_meta, golden_types, golden_relations, consolidation_map
   - Support merge (default) and replace modes
   - Return import summary
-- [ ] T013 [US1] Implement `/lens/export` handler in `src/handlers/lens/export.ts`:
+- [x] T013 [US1] Implement `/lens/export` handler in `src/handlers/lens/export.ts`:
   - Query all lens data from mind.db
   - Build LensConfig object
   - Serialize to YAML with js-yaml
   - Return yaml string
-- [ ] T014 [US1] Register lens handlers in `src/sys.ts`:
+- [x] T014 [US1] Register lens handlers in `src/sys.ts`:
   - `/lens/show` → show handler
   - `/lens/import` → import handler
   - `/lens/export` → export handler
-- [ ] T015 [US1] Create CLI command in `src/cli/commands/lens.ts`:
+- [x] T015 [US1] Create CLI command in `src/cli/commands/lens.ts`:
   - `brane lens show` subcommand (calls /lens/show, pretty prints)
   - `brane lens import <file>` subcommand (calls /lens/import)
   - `brane lens export` subcommand (calls /lens/export, outputs to stdout)
   - Support --json flag for all subcommands
-- [ ] T016 [US1] Register lens command in `src/cli.ts` (add to main command)
+- [x] T016 [US1] Register lens command in `src/cli.ts` (add to main command)
 
 **Checkpoint**: User Story 1 complete - lens show/import/export working
 
@@ -122,13 +122,13 @@
 
 ### Tests for User Story 2
 
-- [ ] T017 [P] [US2] Create tc tests for `/lens/stats` in `tests/lens/stats/`:
+- [x] T017 [P] [US2] Create tc tests for `/lens/stats` in `tests/lens/stats/`:
   - `data/00-success-empty/` (no usage yet)
   - `data/01-success-with-usage/` (mixed golden/non-golden)
   - `data/02-success-candidates-only/` (filter to non-golden)
   - `data/03-error-not-initialized/`
   - `run` script
-- [ ] T018 [P] [US2] Create tc tests for `/lens/bless` in `tests/lens/bless/`:
+- [x] T018 [P] [US2] Create tc tests for `/lens/bless` in `tests/lens/bless/`:
   - `data/00-success-type/`
   - `data/01-success-relation/`
   - `data/02-success-relation-symmetric/`
@@ -139,30 +139,30 @@
 
 ### Implementation for User Story 2
 
-- [ ] T019 [US2] Create usage tracking helpers in `src/lib/lens.ts`:
+- [x] T019 [US2] Create usage tracking helpers in `src/lib/lens.ts`:
   - `update_type_usage(db, type)` - upsert type_usage with increment
   - `update_relation_usage(db, rel)` - upsert relation_usage with increment
-- [ ] T020 [US2] Modify `/mind/concepts/create` in `src/handlers/mind/concepts/create.ts`:
+- [x] T020 [US2] Modify `/mind/concepts/create` in `src/handlers/mind/concepts/create.ts`:
   - After successful insert, call `update_type_usage(db, type)`
-- [ ] T021 [US2] Modify `/mind/concepts/update` in `src/handlers/mind/concepts/update.ts`:
+- [x] T021 [US2] Modify `/mind/concepts/update` in `src/handlers/mind/concepts/update.ts`:
   - If type changed, call `update_type_usage(db, new_type)`
-- [ ] T022 [US2] Modify `/mind/edges/create` in `src/handlers/mind/edges/create.ts`:
+- [x] T022 [US2] Modify `/mind/edges/create` in `src/handlers/mind/edges/create.ts`:
   - After successful insert, call `update_relation_usage(db, relation)`
-- [ ] T023 [US2] Modify `/mind/edges/update` in `src/handlers/mind/edges/update.ts`:
+- [x] T023 [US2] Modify `/mind/edges/update` in `src/handlers/mind/edges/update.ts`:
   - If relation changed, call `update_relation_usage(db, new_relation)`
-- [ ] T024 [US2] Implement `/lens/stats` handler in `src/handlers/lens/stats.ts`:
+- [x] T024 [US2] Implement `/lens/stats` handler in `src/handlers/lens/stats.ts`:
   - Query type_usage for all entries (or filter to golden=false if candidates_only)
   - Query relation_usage similarly
   - Return LensStats POD
-- [ ] T025 [US2] Implement `/lens/bless` handler in `src/handlers/lens/bless.ts`:
+- [x] T025 [US2] Implement `/lens/bless` handler in `src/handlers/lens/bless.ts`:
   - Validate params (type xor rel, description required)
   - Upsert to golden_types or golden_relations with authority="manual"
   - Update type_usage/relation_usage to set golden=true
   - Return blessed entry
-- [ ] T026 [US2] Register stats and bless handlers in `src/sys.ts`:
+- [x] T026 [US2] Register stats and bless handlers in `src/sys.ts`:
   - `/lens/stats` → stats handler
   - `/lens/bless` → bless handler
-- [ ] T027 [US2] Add CLI subcommands in `src/cli/commands/lens.ts`:
+- [x] T027 [US2] Add CLI subcommands in `src/cli/commands/lens.ts`:
   - `brane lens stats` (calls /lens/stats, tabular output)
   - `brane lens stats --candidates` (passes candidates_only=true)
   - `brane lens bless --type <type> --description <desc>`
@@ -176,9 +176,9 @@
 
 **Purpose**: Validation, cleanup, documentation
 
-- [ ] T028 Run all tc tests: `bun run src/tc.ts` - verify 0 failures
-- [ ] T029 Run example scripts: `bash examples/run-all.sh` - verify all pass
-- [ ] T030 [P] Create example script `examples/12-lens.sh`:
+- [x] T028 Run all tc tests: `bun run src/tc.ts` - verify 0 failures (246 passed)
+- [x] T029 Run example scripts: `bash examples/run-all.sh` - verify all pass (13 passed)
+- [x] T030 [P] Create example script `examples/12-lens.sh`:
   - Demonstrate lens show, import, export
   - Demonstrate lens stats, bless workflow
 - [ ] T031 Rebuild brane binary: `bun build src/cli.ts --compile --outfile brane`

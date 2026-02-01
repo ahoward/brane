@@ -5,6 +5,7 @@
 import type { Params, Result } from "../../../lib/types.ts"
 import { success, error } from "../../../lib/result.ts"
 import { open_mind, is_mind_error, is_valid_edge_relation } from "../../../lib/mind.ts"
+import { update_relation_usage } from "../../../lib/lens.ts"
 
 interface UpdateParams {
   id?:       number
@@ -104,6 +105,15 @@ export async function handler(params: Params): Promise<Result<Edge>> {
       ?[id, source, target, relation, weight] <- [[${id}, ${source}, ${target}, '${new_relation}', ${new_weight}]]
       :put edges { id, source, target, relation, weight }
     `)
+
+    // Track relation usage silently if relation changed
+    if (new_relation !== old_relation) {
+      try {
+        await update_relation_usage(db, new_relation)
+      } catch {
+        // Silent tracking failure is acceptable
+      }
+    }
 
     db.close()
 
