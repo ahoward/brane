@@ -19,6 +19,7 @@ import { provenance } from "./commands/provenance.ts"
 import { context } from "./commands/context.ts"
 import { extract } from "./commands/extract.ts"
 import { prVerify } from "./commands/pr-verify.ts"
+import { lens } from "./commands/lens.ts"
 
 export const main = defineCommand({
   meta: {
@@ -48,6 +49,9 @@ export const main = defineCommand({
     // Calabi commands
     extract,
     "pr-verify": prVerify,
+
+    // Lens commands
+    lens,
   },
 })
 
@@ -60,4 +64,5 @@ export const subCommandAliases: Record<string, string> = {
   p: "provenance",
   b: "body",
   f: "fts",
+  l: "lens",
 }

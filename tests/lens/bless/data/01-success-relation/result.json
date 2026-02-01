@@ -1,0 +1,15 @@
+{
+  "status": "success",
+  "result": {
+    "blessed": "relation",
+    "name": "CALLS",
+    "description": "One component calls another",
+    "symmetric": false
+  },
+  "errors": null,
+  "meta": {
+    "path": "/lens/bless",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

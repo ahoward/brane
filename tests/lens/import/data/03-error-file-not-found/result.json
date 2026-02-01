@@ -1,0 +1,12 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "path": [{ "code": "not_found", "message": "file not found: /nonexistent/path/to/lens.yml" }]
+  },
+  "meta": {
+    "path": "/lens/import",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

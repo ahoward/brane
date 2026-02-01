@@ -6,6 +6,7 @@ import type { Params, Result } from "../../../lib/types.ts"
 import { success, error } from "../../../lib/result.ts"
 import { open_mind, is_mind_error, is_valid_concept_type, get_next_concept_id } from "../../../lib/mind.ts"
 import { generate_embedding } from "../../../lib/embed.ts"
+import { update_type_usage } from "../../../lib/lens.ts"
 
 interface CreateParams {
   name?: string
@@ -77,6 +78,13 @@ export async function handler(params: Params): Promise<Result<Concept>> {
       ?[id, name, type, vector] <- [[${id}, '${p.name.replace(/'/g, "''")}', '${p.type}', ${vector_str}]]
       :put concepts { id, name, type, vector }
     `)
+
+    // Track type usage silently (don't fail on tracking errors)
+    try {
+      await update_type_usage(db, p.type)
+    } catch {
+      // Silent tracking failure is acceptable
+    }
 
     db.close()
 

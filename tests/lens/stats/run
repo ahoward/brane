@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+#
+# Test runner for /lens/stats
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+case "$TC_CASE_NAME" in
+  00-success-empty)
+    init_mind
+    ;;
+  01-success-with-usage)
+    init_mind
+    # Create some concepts to generate usage stats
+    create_concept '{"name": "TestEntity", "type": "Entity"}'
+    create_concept '{"name": "CustomThing", "type": "CustomType"}'
+    create_edge '{"source": 1, "target": 2, "relation": "DEPENDS_ON"}'
+    create_edge '{"source": 2, "target": 1, "relation": "CUSTOM_REL"}'
+    ;;
+  02-success-candidates-only)
+    init_mind
+    # Create some concepts to generate usage stats
+    create_concept '{"name": "TestEntity", "type": "Entity"}'
+    create_concept '{"name": "CustomThing", "type": "CustomType"}'
+    create_edge '{"source": 1, "target": 2, "relation": "DEPENDS_ON"}'
+    create_edge '{"source": 2, "target": 1, "relation": "CUSTOM_REL"}'
+    ;;
+  03-error-not-initialized)
+    # Don't initialize
+    ;;
+esac
+
+echo "$INPUT" | bun run "$BRANE_ROOT/src/cli.ts" /lens/stats

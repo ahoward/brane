@@ -1,0 +1,15 @@
+{
+  "status": "success",
+  "result": {
+    "blessed": "relation",
+    "name": "RELATED_TO",
+    "description": "Generic bidirectional relationship",
+    "symmetric": true
+  },
+  "errors": null,
+  "meta": {
+    "path": "/lens/bless",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

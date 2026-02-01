@@ -1,0 +1,16 @@
+{
+  "status": "success",
+  "result": {
+    "name": "replaced",
+    "version": "3.0.0",
+    "concepts_imported": 1,
+    "relations_imported": 0,
+    "consolidation_rules": 0
+  },
+  "errors": null,
+  "meta": {
+    "path": "/lens/import",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

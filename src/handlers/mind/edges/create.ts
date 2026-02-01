@@ -5,6 +5,7 @@
 import type { Params, Result } from "../../../lib/types.ts"
 import { success, error } from "../../../lib/result.ts"
 import { open_mind, is_mind_error, is_valid_edge_relation, get_next_edge_id, concept_exists } from "../../../lib/mind.ts"
+import { update_relation_usage } from "../../../lib/lens.ts"
 
 interface CreateParams {
   source?:   number
@@ -119,6 +120,13 @@ export async function handler(params: Params): Promise<Result<Edge>> {
       ?[id, source, target, relation, weight] <- [[${id}, ${p.source}, ${p.target}, '${p.relation}', ${weight}]]
       :put edges { id, source, target, relation, weight }
     `)
+
+    // Track relation usage silently (don't fail on tracking errors)
+    try {
+      await update_relation_usage(db, p.relation)
+    } catch {
+      // Silent tracking failure is acceptable
+    }
 
     db.close()
 

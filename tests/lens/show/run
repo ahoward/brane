@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+#
+# Test runner for /lens/show
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+case "$TC_CASE_NAME" in
+  00-success-default-lens)
+    init_mind
+    ;;
+  01-error-not-initialized)
+    # Don't initialize
+    ;;
+esac
+
+echo "$INPUT" | bun run "$BRANE_ROOT/src/cli.ts" /lens/show

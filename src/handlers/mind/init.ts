@@ -18,7 +18,7 @@ interface InitResult {
   schema_version: string
 }
 
-const SCHEMA_VERSION = "1.5.0"
+const SCHEMA_VERSION = "1.6.0"
 
 // Embedding dimension (BGESmallEN model)
 const EMBED_DIM = 384
@@ -110,6 +110,51 @@ const SCHEMA_QUERIES = [
     type: String,
     authority: String,
     created_at: String
+  }`,
+
+  // Lens metadata (name, version, description)
+  `:create lens_meta {
+    key: String =>
+    value: String
+  }`,
+
+  // Golden concept types (from lens config)
+  `:create golden_types {
+    type: String =>
+    description: String,
+    authority: String
+  }`,
+
+  // Golden edge relations (from lens config)
+  `:create golden_relations {
+    rel: String =>
+    description: String,
+    symmetric: Bool,
+    authority: String
+  }`,
+
+  // Consolidation mappings (detected → golden)
+  `:create consolidation_map {
+    source_type: String =>
+    target_type: String
+  }`,
+
+  // Usage tracking for concept types
+  `:create type_usage {
+    type: String =>
+    count: Int,
+    first_seen: String,
+    last_seen: String,
+    golden: Bool
+  }`,
+
+  // Usage tracking for edge relations
+  `:create relation_usage {
+    rel: String =>
+    count: Int,
+    first_seen: String,
+    last_seen: String,
+    golden: Bool
   }`
 ]
 
@@ -169,6 +214,36 @@ async function create_schema(db: CozoDb): Promise<void> {
       :put rules { name, description, body, builtin }
     `)
   }
+
+  // Seed default lens
+  await db.run(`
+    ?[key, value] <- [
+      ['name', 'default'],
+      ['version', '1.0.0'],
+      ['description', 'Default lens for code analysis']
+    ]
+    :put lens_meta { key => value }
+  `)
+
+  // Seed default golden types
+  await db.run(`
+    ?[type, description, authority] <- [
+      ['Entity', 'A code component (service, module, class)', 'lens'],
+      ['Caveat', 'A constraint or warning about code behavior', 'lens'],
+      ['Rule', 'A governance rule for verification', 'lens']
+    ]
+    :put golden_types { type => description, authority }
+  `)
+
+  // Seed default golden relations
+  await db.run(`
+    ?[rel, description, symmetric, authority] <- [
+      ['DEPENDS_ON', 'Source requires target to function', false, 'lens'],
+      ['CONFLICTS_WITH', 'Mutual exclusion constraint', true, 'lens'],
+      ['DEFINED_IN', 'Concept is defined in a file', false, 'lens']
+    ]
+    :put golden_relations { rel => description, symmetric, authority }
+  `)
 }
 
 //

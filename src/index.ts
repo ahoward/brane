@@ -43,6 +43,11 @@ import { handler as calabi_extract_handler } from "./handlers/calabi/extract.ts"
 import { handler as calabi_scan_handler } from "./handlers/calabi/scan.ts"
 import { handler as calabi_pr_verify_handler } from "./handlers/calabi/pr-verify.ts"
 import { handler as context_query_handler } from "./handlers/context/query.ts"
+import { handler as lens_show_handler } from "./handlers/lens/show.ts"
+import { handler as lens_import_handler } from "./handlers/lens/import.ts"
+import { handler as lens_export_handler } from "./handlers/lens/export.ts"
+import { handler as lens_stats_handler } from "./handlers/lens/stats.ts"
+import { handler as lens_bless_handler } from "./handlers/lens/bless.ts"
 
 sys.register("/ping", ping_handler)
 sys.register("/body/init", body_init_handler)
@@ -82,6 +87,11 @@ sys.register("/calabi/extract", calabi_extract_handler)
 sys.register("/calabi/scan", calabi_scan_handler)
 sys.register("/calabi/pr-verify", calabi_pr_verify_handler)
 sys.register("/context/query", context_query_handler)
+sys.register("/lens/show", lens_show_handler)
+sys.register("/lens/import", lens_import_handler)
+sys.register("/lens/export", lens_export_handler)
+sys.register("/lens/stats", lens_stats_handler)
+sys.register("/lens/bless", lens_bless_handler)
 
 // export
 export { sys }

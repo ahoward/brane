@@ -3,7 +3,7 @@
   "result": {
     "path": "<string>",
     "created": true,
-    "schema_version": "1.5.0"
+    "schema_version": "1.6.0"
   },
   "errors": null,
   "meta": {
