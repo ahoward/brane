@@ -5,35 +5,68 @@ NAME
 
 SYNOPSIS
 --------
-  the git of context.
+  the subjective linter.
 
-  git gave code history. brane gives code **ontology**.
+  every linter encodes values. ESLint says "semicolons matter." security
+  scanners say "CVEs matter." but they can't answer "does this align with
+  *our* values?"
 
-  a local-first knowledge graph CLI that gives AI agents structured memory
-  instead of disposable context windows.
+  brane checks alignment with human-defined values—ethics, policy,
+  architecture, intent—encoded as a knowledge graph with verifiable rules.
+
+  **the git of ethics.**
 
 
 THESIS
 ------
-  AI agents don't need more context windows. they need **structured memory**.
+  AI ethics documents are PDFs that get filed and ignored.
 
-  the problem with LLMs isn't intelligence—it's ontology. pattern matching
-  on token streams is correlation without causation. throw more context
-  at it and you get higher-fidelity noise.
+  ICD-505. GDPR. Acceptable Use Policies. The NSM-25 AI Framework. They're
+  read once and forgotten. When code ships, nobody checks it against the
+  ethics PDF. When an LLM generates content, nobody verifies it against
+  policy. When an AI makes decisions, the audit trail is logs, not reasoning.
 
-  brane takes a different approach: **meaning through structure**.
+  **ethics without enforcement is theater.**
 
-  concepts exist. relationships exist. rules constrain. violations surface.
-  the graph doesn't guess—it reasons over explicit structure, and fails
-  cleanly on what isn't there.
+  brane makes values machine-readable:
 
-  strings of code must attach to a brane, or they are lost in entropy.
+  ```
+  values (human)
+      ↓ encode as
+  knowledge graph (concepts + edges + rules)
+      ↓ apply to
+  content (code, prose, media, decisions)
+      ↓ produces
+  violations (specific, auditable, actionable)
+      ↓ enables
+  human review (targeted, efficient)
+      ↓ creates
+  attestations (provenance, accountability)
+  ```
+
+  the result: **auditable compliance**, not checkbox compliance.
+
+
+EXAMPLE: IC AI ETHICS
+---------------------
+  the Intelligence Community's six AI ethics principles become Datalog rules:
+
+  ```datalog
+  -- Principle 4: Human-Centered
+  -- Automated decisions on rights need human review
+  violations[id, name, 'missing_human_loop'] :=
+    *concepts[id, name, 'AutomatedDecision', _],
+    *edges[_, id, right_id, 'IMPACTS', _],
+    *concepts[right_id, _, 'ConstitutionalRight', _],
+    not *edges[_, id, _, 'REQUIRES_HUMAN_REVIEW', _]
+  ```
+
+  now `brane verify` checks content against ethics—not vibes.
 
 
 INSTALL
 -------
 ```bash
-# build from source
 git clone https://github.com/ahoward/brane.git
 cd brane
 bun install
@@ -53,28 +86,28 @@ brane scan src/
 
 # create concepts
 brane concept create --name AuthService --type Entity
-brane concept create --name Database --type Entity
+brane concept create --name UserData --type ProtectedRight
 
 # create relationships
-brane edge create --from 1 --to 2 --rel DEPENDS_ON
+brane edge create --from 1 --to 2 --rel AFFECTS
+
+# verify against rules
+brane verify
 
 # semantic search
 brane search "authentication"
 
-# verify structural integrity
-brane verify
-
-# list what you have
-brane concept list
-brane edge list
-brane rule list
+# visualize the graph
+brane graph viz
+brane graph viz --format mermaid
 ```
 
-short aliases for the impatient:
+short aliases:
 ```bash
 brane c list          # concept
 brane e list          # edge
 brane r list          # rule
+brane g viz           # graph
 ```
 
 json output for scripting:
@@ -84,9 +117,40 @@ brane concept list --json
 
 api mode for machines:
 ```bash
-brane /mind/concepts/list '{}'
 echo '{"query":"auth"}' | brane /mind/search
 ```
+
+
+LENSES
+------
+  different domains have different values. **lenses** are shareable ontology
+  configurations that encode domain-specific concept types, relations, and rules.
+
+  ```yaml
+  # ethics-ic.lens.yaml
+  name: "IC AI Ethics Framework"
+  source: "ICD-505 / NSM-25"
+
+  concept_types:
+    - Action
+    - Decision
+    - AutomatedDecision
+    - ProtectedRight
+
+  rules:
+    - name: human_loop_required
+      severity: error
+      principle: "4. Human-Centered"
+  ```
+
+  organizations can publish, share, and compose lenses:
+
+  | Lens | Domain |
+  |------|--------|
+  | `ethics-ic` | Intelligence Community |
+  | `ethics-gdpr` | EU Data Protection |
+  | `arch-clean` | Clean Architecture |
+  | `security-owasp` | OWASP Top 10 |
 
 
 ARCHITECTURE
@@ -103,24 +167,20 @@ ARCHITECTURE
 
   **mind** knows what it means. concepts, relationships, constraints.
 
-  the CLI is the corpus callosum. it reads body, extracts meaning via LLM,
+  the CLI is the corpus callosum. it reads body, extracts meaning,
   writes to mind, queries mind to verify body.
 
 
-WHY NOT EMBEDDINGS
-------------------
-  vector embeddings are the current orthodoxy. we dissent.
+MULTI-MODAL
+-----------
+  brane is content-agnostic. the same pattern works for:
 
-  embeddings compress meaning into geometric proximity. two concepts are
-  "similar" if their vectors are close. but proximity isn't relation.
-  "bank" (river) and "bank" (financial) may cluster together in embedding
-  space. in the graph, they're distinct nodes with distinct edges.
-
-  embeddings preserve *distance*. graphs preserve *structure*.
-
-  RAG is duct tape. you're still feeding tokens to a predictor and hoping
-  retrieval picks the right chunks. brane is plumbing—structured,
-  verifiable, queryable.
+  | Content | Extract | Verify |
+  |---------|---------|--------|
+  | Source code | functions, data flows | architecture, security |
+  | Policy docs | entities, actions | completeness, consistency |
+  | AI model cards | training data, uses | bias assessment, documentation |
+  | Decisions | inputs, reasoning | human oversight, audit trail |
 
 
 PHILOSOPHY
@@ -129,92 +189,30 @@ PHILOSOPHY
 
   in M-theory, a brane is a membrane-like surface in eleven-dimensional
   spacetime. open strings must attach to branes—without them, strings
-  have no reference frame. they drift in dimensional chaos, vibrating
-  in every mode, signifying nothing.
+  have no reference frame. they drift in dimensional chaos.
 
-  edward witten called it M-theory. M for membrane. M for mother.
-  M for mystery.
+  D-branes are where boundary conditions apply—string endpoints are *fixed*.
+  this is what rules and constraints do. they're not arbitrary walls; they're
+  ontological fixtures that make certain reasonings possible.
 
-  the physics runs deeper than metaphor.
+  an LLM without structure is a closed string—it propagates freely through
+  embedding space, untethered. brane-attached reasoning is constrained,
+  localized, meaningful.
 
-  D-branes are where Dirichlet boundary conditions apply—string endpoints
-  are *fixed*. this is exactly what rules and constraints do. they're not
-  arbitrary walls; they're ontological fixtures that make certain
-  reasonings possible and others impossible. an LLM without structure
-  is a closed string—it propagates freely through embedding space,
-  untethered. brane-attached reasoning is constrained, localized, meaningful.
+  traditional linters are *syntactic*—they check form.
+  brane is *semantic*—it checks meaning.
 
-  [bernardo kastrup's analytical idealism](https://www.bernardokastrup.com/)
-  argues that consciousness is the fundamental substrate of reality—not
-  matter. physics describes the *behavior* of mind, not the existence of
-  stuff. individual minds are dissociated alters of universal mind, like
-  whirlpools in a stream.
+  but meaning is subjective. "good code" depends on context. "ethical AI"
+  depends on values. "compliant" depends on jurisdiction.
 
-  if mind is fundamental, then a codebase isn't just bytes—it's a
-  dissociated alter with its own internal logic, intentions, pathologies.
-  brane doesn't index it. it maps its psyche.
+  brane doesn't pretend objectivity. it makes subjectivity *explicit*:
 
-  **meaning precedes mechanism.**
+  - **your values** are encoded in lenses
+  - **your rules** define what violations mean
+  - **your attestations** create the audit trail
+  - **your provenance** links everything to source
 
-  pattern matching can't see this. an LLM scanning tokens sees
-  statistical regularities, not ontological structure. it predicts
-  the next token, not the purpose of the system.
-
-  brane inverts the paradigm:
-
-  1. **extract meaning explicitly** — LLMs identify concepts, not patterns
-  2. **encode as structure** — concepts and edges in a graph, not vectors
-  3. **verify against rules** — datalog constraints, not vibes
-  4. **ground in provenance** — every concept traces to source
-
-  the LLM is the instrument, not the ontology. we use pattern matching
-  to *extract* structure, but the structure itself is not statistical.
-  once encoded, reasoning proceeds over discrete relations with provable
-  properties. the LLM is a telescope; the stars are still real.
-
-  the result: agents that reason over what's explicit, and fail cleanly
-  on what isn't. graphs that admit refutation, not just retrieval.
-
-
-NAMING
-------
-  **brane** — the surface strings attach to. without it, chaos.
-
-  **body** — sqlite. the physical. files, hashes, content.
-
-  **mind** — cozodb. the semantic. concepts, edges, rules.
-
-  **calabi** — from calabi-yau manifolds. the hidden dimensions where
-  strings vibrate. our extraction engine projects high-dimensional
-  meaning onto the graph. the graph is the holographic boundary;
-  the codebase is the bulk.
-
-  goal: if it doesn't have a `.brane` folder, the agent can't reason
-  about it.
-
-  brane is the git of context.
-
-
-INTERFACE
----------
-  every operation uses `sys.call`:
-
-```typescript
-const result = await sys.call("/namespace/method", params)
-```
-
-  always returns:
-
-```typescript
-{
-  status:  "success" | "error",
-  result:  T | null,
-  errors:  ErrorMap | null,
-  meta:    { path, timestamp, duration_ms }
-}
-```
-
-  no surprises. errors are data, not exceptions.
+  the subjectivity is the feature, not the bug.
 
 
 COMMANDS
@@ -226,14 +224,14 @@ brane search <query>           semantic concept search
 brane verify                   run all rules
 
 brane concept                  manage concepts
-  create --name --type         Entity | Rule | File
-  list [--type] [--limit]
+  create --name --type
+  list [--type]
   get <id>
-  update <id> [--name] [--type]
+  update <id>
   delete <id>
 
 brane edge                     manage relationships
-  create --from --to --rel     DEPENDS_ON | IMPLEMENTS | CONTAINS
+  create --from --to --rel
   list [--from] [--to]
   get <id>
   delete <id>
@@ -243,18 +241,21 @@ brane rule                     manage verification rules
   get <name>
   query <name>
 
-brane body                     file tracking
-  init
-  scan <path>
-  file list|status|add
+brane graph                    explore the graph
+  summary                      counts and distributions
+  concepts [--type]            list concepts
+  edges [--relation]           list edges
+  neighbors <id>               show connected concepts
+  viz [--format] [--center]    visualize (ascii/mermaid)
 
-brane fts                      full-text search
-  index [--force]
-  search <query>
+brane lens                     manage ontology configurations
+  show
+  import <file>
+  export <file>
 
 brane context query <q>        graph-aware context retrieval
 brane extract <path>           LLM concept extraction
-brane pr-verify                verify changes against rules
+brane pr-verify                verify PR changes against rules
 ```
 
 
@@ -276,19 +277,6 @@ CONVENTIONS
   - **errors as data** — not exceptions
 
 
-TESTS
------
-  tc-style. language-agnostic. JSON in, JSON out.
-
-```
-tests/{handler}/
-├── run                           # executable
-└── data/{NN-case}/
-    ├── input.json
-    └── expected.json
-```
-
-
 ROADMAP
 -------
   see `dna/product/ROADMAP.md`
@@ -307,6 +295,13 @@ $ brane verify
 
 Good. Now you know something.
 ```
+
+
+REFERENCES
+----------
+  - [IC Principles of AI Ethics](https://www.intel.gov/principles-of-artificial-intelligence-ethics-for-the-intelligence-community)
+  - [ICD-505: Artificial Intelligence](https://www.dni.gov/files/documents/ICD/ICD-505-Artificial-Intelligence.pdf)
+  - [NSM-25 AI Framework](https://bidenwhitehouse.archives.gov/briefing-room/statements-releases/2024/10/24/fact-sheet-biden-harris-administration-outlines-coordinated-approach-to-harness-power-of-ai-for-u-s-national-security/)
 
 
 LICENSE
