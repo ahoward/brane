@@ -20,6 +20,7 @@ import { context } from "./commands/context.ts"
 import { extract } from "./commands/extract.ts"
 import { prVerify } from "./commands/pr-verify.ts"
 import { lens } from "./commands/lens.ts"
+import { graph } from "./commands/graph.ts"
 
 export const main = defineCommand({
   meta: {
@@ -52,6 +53,9 @@ export const main = defineCommand({
 
     // Lens commands
     lens,
+
+    // Graph exploration
+    graph,
   },
 })
 
@@ -65,4 +69,5 @@ export const subCommandAliases: Record<string, string> = {
   b: "body",
   f: "fts",
   l: "lens",
+  g: "graph",
 }

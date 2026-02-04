@@ -1,0 +1,16 @@
+{
+  "status": "success",
+  "result": {
+    "format": "ascii",
+    "output": "[AuthService] Entity\n├── DEPENDS_ON → [Database] Entity\n└── USES → [Logger] Entity\n\n[Database] Entity\n└── (no outgoing edges)\n\n[Logger] Entity\n└── (no outgoing edges)",
+    "nodes": 3,
+    "edges": 2,
+    "truncated": false
+  },
+  "errors": null,
+  "meta": {
+    "path": "/graph/viz",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

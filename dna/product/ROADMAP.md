@@ -33,12 +33,11 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 ### Next
 
-- [ ] `026-context-vector` — Integrate vector search into `/context/query` for anchor concept finding
-- [ ] `027-graph-explore` — CLI graph visualization/exploration commands
+(empty - MVP complete!)
 
 ### MVP Backlog
 
-(empty - above items are final MVP work)
+(empty - all MVP features complete)
 
 ### Post-MVP (Services & Infrastructure)
 
@@ -55,6 +54,8 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 | Feature | PR | Date |
 |---------|-----|------|
+| `027-graph-explore` | — | 2026-02-03 |
+| `026-context-vector` | #29 | 2026-02-01 |
 | `025-lens-config` | #28 | 2026-02-01 |
 | `024-prose-support` | — | 2026-01-31 |
 | `023-cli-dx` | — | 2026-01-30 |
@@ -97,3 +98,5 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 - **021-vector-search complete!** — Semantic concept search with local embeddings (fastembed-js)
 - **024-prose-support complete!** — Freeform concept types and edge relations for prose/creative use
 - **025-lens-config complete!** — Shareable ontology configs with usage tracking and blessing workflow
+- **026-context-vector complete!** — Semantic search for context queries with hybrid mode
+- **027-graph-explore complete!** — CLI graph visualization with summary, neighbors, viz (ASCII/Mermaid)

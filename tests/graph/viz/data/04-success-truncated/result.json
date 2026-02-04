@@ -1,0 +1,17 @@
+{
+  "status": "success",
+  "result": {
+    "format": "ascii",
+    "output": "<string>",
+    "nodes": 5,
+    "edges": 0,
+    "truncated": true,
+    "message": "Graph truncated to 5 nodes. Use --limit to increase or --center to focus on specific concept."
+  },
+  "errors": null,
+  "meta": {
+    "path": "/graph/viz",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

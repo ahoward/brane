@@ -1,0 +1,21 @@
+{
+  "status": "success",
+  "result": {
+    "concept": {
+      "id": 1,
+      "name": "Isolated",
+      "type": "Entity"
+    },
+    "neighbors": {
+      "incoming": [],
+      "outgoing": [],
+      "total": 0
+    }
+  },
+  "errors": null,
+  "meta": {
+    "path": "/graph/neighbors",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

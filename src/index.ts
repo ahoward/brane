@@ -48,6 +48,9 @@ import { handler as lens_import_handler } from "./handlers/lens/import.ts"
 import { handler as lens_export_handler } from "./handlers/lens/export.ts"
 import { handler as lens_stats_handler } from "./handlers/lens/stats.ts"
 import { handler as lens_bless_handler } from "./handlers/lens/bless.ts"
+import { handler as graph_summary_handler } from "./handlers/graph/summary.ts"
+import { handler as graph_neighbors_handler } from "./handlers/graph/neighbors.ts"
+import { handler as graph_viz_handler } from "./handlers/graph/viz.ts"
 
 sys.register("/ping", ping_handler)
 sys.register("/body/init", body_init_handler)
@@ -92,6 +95,9 @@ sys.register("/lens/import", lens_import_handler)
 sys.register("/lens/export", lens_export_handler)
 sys.register("/lens/stats", lens_stats_handler)
 sys.register("/lens/bless", lens_bless_handler)
+sys.register("/graph/summary", graph_summary_handler)
+sys.register("/graph/neighbors", graph_neighbors_handler)
+sys.register("/graph/viz", graph_viz_handler)
 
 // export
 export { sys }

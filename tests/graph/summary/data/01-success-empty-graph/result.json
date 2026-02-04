@@ -1,0 +1,19 @@
+{
+  "status": "success",
+  "result": {
+    "concepts": {
+      "total": 0,
+      "by_type": {}
+    },
+    "edges": {
+      "total": 0,
+      "by_relation": {}
+    }
+  },
+  "errors": null,
+  "meta": {
+    "path": "/graph/summary",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}
