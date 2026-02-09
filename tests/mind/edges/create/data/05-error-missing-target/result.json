@@ -1,0 +1,12 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "target": [{"code": "required", "message": "target is required"}]
+  },
+  "meta": {
+    "path": "/mind/edges/create",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

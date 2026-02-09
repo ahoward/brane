@@ -1,0 +1,12 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "params": [{"code": "required", "message": "concept_id or file_url is required"}]
+  },
+  "meta": {
+    "path": "/mind/provenance/list",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

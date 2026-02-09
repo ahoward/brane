@@ -1,0 +1,13 @@
+{
+  "status": "success",
+  "result": {
+    "types": "<array>",
+    "relations": "<array>"
+  },
+  "errors": null,
+  "meta": {
+    "path": "/lens/stats",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

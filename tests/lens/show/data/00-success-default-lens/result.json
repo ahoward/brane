@@ -1,0 +1,25 @@
+{
+  "status": "success",
+  "result": {
+    "name": "default",
+    "version": "1.0.0",
+    "description": "Default lens for code analysis",
+    "concepts": [
+      { "type": "Caveat", "description": "A constraint or warning about code behavior", "authority": "lens" },
+      { "type": "Entity", "description": "A code component (service, module, class)", "authority": "lens" },
+      { "type": "Rule", "description": "A governance rule for verification", "authority": "lens" }
+    ],
+    "relations": [
+      { "rel": "CONFLICTS_WITH", "description": "Mutual exclusion constraint", "symmetric": true, "authority": "lens" },
+      { "rel": "DEFINED_IN", "description": "Concept is defined in a file", "symmetric": false, "authority": "lens" },
+      { "rel": "DEPENDS_ON", "description": "Source requires target to function", "symmetric": false, "authority": "lens" }
+    ],
+    "consolidation": {}
+  },
+  "errors": null,
+  "meta": {
+    "path": "/lens/show",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

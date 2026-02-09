@@ -1,0 +1,12 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "concept_id": [{"code": "not_found", "message": "concept not found"}]
+  },
+  "meta": {
+    "path": "/mind/provenance/create",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "status": "success",
+  "result": {
+    "format": "mermaid",
+    "output": "graph TD\n    1[\"AuthService (Entity)\"]\n    2[\"Database (Entity)\"]\n    1 -->|DEPENDS_ON| 2",
+    "nodes": 2,
+    "edges": 1,
+    "truncated": false
+  },
+  "errors": null,
+  "meta": {
+    "path": "/graph/viz",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "status": "success",
+  "result": {
+    "annotations": [
+      {
+        "id": 1,
+        "target": 1,
+        "text": "Auth note",
+        "type": "note",
+        "authority": "infinity",
+        "created_at": "<timestamp>"
+      }
+    ],
+    "count": 1
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/annotations/list",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

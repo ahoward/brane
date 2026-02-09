@@ -1,0 +1,1 @@
+{"from": "AuthService", "to": "UserService", "rel": "DEPENDS_ON"}

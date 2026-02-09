@@ -1,0 +1,14 @@
+{
+  "status": "success",
+  "result": {
+    "path": "<string>",
+    "created": true,
+    "schema_version": "1.7.0"
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/init",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

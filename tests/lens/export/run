@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+#
+# Test runner for /lens/export
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+case "$TC_CASE_NAME" in
+  00-success-basic)
+    init_mind
+    ;;
+  01-error-not-initialized)
+    # Don't initialize
+    ;;
+esac
+
+echo "$INPUT" | brane /lens/export

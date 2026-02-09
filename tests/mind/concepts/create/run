@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+#
+# Test runner for /mind/concepts/create
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+case "$TC_CASE_NAME" in
+  00-success-create)
+    init_mind
+    ;;
+  01-success-create-caveat)
+    init_mind
+    ;;
+  02-error-missing-name)
+    init_mind
+    ;;
+  03-error-missing-type)
+    init_mind
+    ;;
+  04-success-custom-type)
+    init_mind
+    ;;
+  05-error-not-initialized)
+    # Don't initialize
+    ;;
+esac
+
+echo "$INPUT" | brane /mind/concepts/create

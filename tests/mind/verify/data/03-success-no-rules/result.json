@@ -1,0 +1,31 @@
+{
+  "status": "success",
+  "result": {
+    "passed": true,
+    "summary": {
+      "rules_passed": 2,
+      "rules_failed": 0,
+      "total_violations": 0
+    },
+    "rules": [
+      {
+        "name": "cycles",
+        "passed": true,
+        "violations": [],
+        "error": null
+      },
+      {
+        "name": "orphans",
+        "passed": true,
+        "violations": [],
+        "error": null
+      }
+    ]
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/verify",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

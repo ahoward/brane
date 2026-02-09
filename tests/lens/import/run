@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+#
+# Test runner for /lens/import
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+# WORKDIR is set by workspace() - this is where we cd to
+WORKSPACE="$PWD"
+
+case "$TC_CASE_NAME" in
+  00-success-basic)
+    init_mind
+    # Create sample lens file
+    cat > "$WORKSPACE/test-lens.yml" << 'EOF'
+name: test-lens
+version: 1.0.0
+description: Test lens for import
+
+concepts:
+  - type: TestEntity
+    description: A test entity type
+
+relations:
+  - rel: TEST_REL
+    description: A test relation
+    symmetric: false
+EOF
+    # Update input with actual path
+    INPUT=$(echo "$INPUT" | jq --arg path "$WORKSPACE/test-lens.yml" '.path = $path')
+    ;;
+  01-success-merge-mode)
+    init_mind
+    cat > "$WORKSPACE/merge-lens.yml" << 'EOF'
+name: merge-test
+version: 2.0.0
+concepts:
+  - type: MergedType
+    description: A merged type
+EOF
+    INPUT=$(echo "$INPUT" | jq --arg path "$WORKSPACE/merge-lens.yml" '.path = $path')
+    ;;
+  02-success-replace-mode)
+    init_mind
+    cat > "$WORKSPACE/replace-lens.yml" << 'EOF'
+name: replaced
+version: 3.0.0
+concepts:
+  - type: ReplacedType
+    description: A replaced type
+EOF
+    INPUT=$(echo "$INPUT" | jq --arg path "$WORKSPACE/replace-lens.yml" '.path = $path')
+    ;;
+  03-error-file-not-found)
+    init_mind
+    # Path in params.json points to non-existent file
+    ;;
+  04-error-invalid-yaml)
+    init_mind
+    cat > "$WORKSPACE/invalid.yml" << 'EOF'
+name: [invalid yaml
+  this is not valid
+EOF
+    INPUT=$(echo "$INPUT" | jq --arg path "$WORKSPACE/invalid.yml" '.path = $path')
+    ;;
+  05-error-missing-name)
+    init_mind
+    cat > "$WORKSPACE/no-name.yml" << 'EOF'
+version: 1.0.0
+concepts:
+  - type: SomeType
+    description: Missing name field
+EOF
+    INPUT=$(echo "$INPUT" | jq --arg path "$WORKSPACE/no-name.yml" '.path = $path')
+    ;;
+  06-error-not-initialized)
+    # Don't initialize
+    ;;
+esac
+
+echo "$INPUT" | brane /lens/import

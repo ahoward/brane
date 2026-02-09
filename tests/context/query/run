@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+#
+# Test runner for /context/query
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+FILE_URL="file:///test/auth.ts"
+
+case "$TC_CASE_NAME" in
+  00-success-basic-query)
+    init_mind
+    create_concepts '[{"name": "AuthService", "type": "Entity"}, {"name": "LoginHandler", "type": "Entity"}, {"name": "UserModel", "type": "Entity"}]'
+    ;;
+  01-success-no-matches)
+    init_mind
+    create_concepts '[{"name": "AuthService", "type": "Entity"}]'
+    ;;
+  02-success-with-neighbors)
+    init_mind
+    create_concepts '[{"name": "AuthService", "type": "Entity"}, {"name": "LoginHandler", "type": "Entity"}]'
+    create_edges '[{"source": 2, "target": 1, "relation": "DEPENDS_ON"}]'
+    ;;
+  03-success-with-files)
+    init_body_fts
+    init_mind
+    add_body_file "$FILE_URL" "hash1" 100 1234567890
+    create_concepts '[{"name": "AuthService", "type": "Entity"}]'
+    create_provenance "{\"concept_id\": 1, \"file_url\": \"$FILE_URL\"}"
+    # Add some FTS content
+    add_fts "$FILE_URL" "export class AuthService { authenticate() {} }" "hash1"
+    ;;
+  04-success-depth-2)
+    init_mind
+    create_concepts '[{"name": "AuthService", "type": "Entity"}, {"name": "LoginHandler", "type": "Entity"}, {"name": "SessionManager", "type": "Entity"}]'
+    create_edges '[{"source": 2, "target": 1, "relation": "DEPENDS_ON"}, {"source": 3, "target": 2, "relation": "DEPENDS_ON"}]'
+    ;;
+  05-success-empty-graph)
+    init_mind
+    # No concepts at all
+    ;;
+  06-error-missing-query)
+    init_mind
+    ;;
+  07-error-not-initialized)
+    # Don't initialize
+    ;;
+  08-success-semantic-match)
+    init_mind
+    create_concepts '[{"name": "AuthService", "type": "Entity"}, {"name": "LoginController", "type": "Entity"}, {"name": "DatabasePool", "type": "Entity"}]'
+    ;;
+  09-success-hybrid-both)
+    init_mind
+    create_concepts '[{"name": "AuthService", "type": "Entity"}, {"name": "LoginController", "type": "Entity"}]'
+    ;;
+  10-success-mode-exact)
+    init_mind
+    create_concepts '[{"name": "AuthService", "type": "Entity"}, {"name": "LoginController", "type": "Entity"}]'
+    ;;
+  11-success-mode-semantic)
+    init_mind
+    create_concepts '[{"name": "AuthService", "type": "Entity"}, {"name": "LoginController", "type": "Entity"}, {"name": "SessionManager", "type": "Entity"}]'
+    ;;
+  12-error-semantic-too-short)
+    init_mind
+    create_concepts '[{"name": "AuthService", "type": "Entity"}]'
+    ;;
+  13-success-short-query-hybrid)
+    init_mind
+    create_concepts '[{"name": "AuthService", "type": "Entity"}]'
+    ;;
+esac
+
+echo "$INPUT" | brane /context/query

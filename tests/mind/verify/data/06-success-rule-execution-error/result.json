@@ -1,0 +1,37 @@
+{
+  "status": "success",
+  "result": {
+    "passed": false,
+    "summary": {
+      "rules_passed": 2,
+      "rules_failed": 1,
+      "total_violations": 0
+    },
+    "rules": [
+      {
+        "name": "bad_rule",
+        "passed": false,
+        "violations": [],
+        "error": "Cannot find requested stored relation 'nonexistent_relation'"
+      },
+      {
+        "name": "cycles",
+        "passed": true,
+        "violations": [],
+        "error": null
+      },
+      {
+        "name": "orphans",
+        "passed": true,
+        "violations": [],
+        "error": null
+      }
+    ]
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/verify",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

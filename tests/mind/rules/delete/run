@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+#
+# Test runner for /mind/rules/delete
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+case "$TC_CASE_NAME" in
+  00-success-delete-custom)
+    init_mind
+    # Create a custom rule to delete
+    echo '{"name": "todelete", "description": "test", "body": "todelete[id, name] := *concepts[id, name, _]"}' | brane /mind/rules/create > /dev/null 2>&1
+    ;;
+  01-error-not-found)
+    init_mind
+    ;;
+  02-error-builtin-protected)
+    init_mind
+    ;;
+  03-error-missing-name)
+    init_mind
+    ;;
+  04-error-not-initialized)
+    # Initialize body but not mind
+    init_body
+    ;;
+esac
+
+echo "$INPUT" | brane /mind/rules/delete

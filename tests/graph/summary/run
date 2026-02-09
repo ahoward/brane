@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+#
+# Test runner for /graph/summary
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+case "$TC_CASE_NAME" in
+  00-success-basic-summary)
+    init_mind
+    create_concepts '[{"name": "AuthService", "type": "Entity"}, {"name": "Database", "type": "Entity"}, {"name": "MustAuth", "type": "Rule"}]'
+    create_edges '[{"source": 1, "target": 2, "relation": "DEPENDS_ON"}, {"source": 3, "target": 1, "relation": "APPLIES_TO"}]'
+    ;;
+  01-success-empty-graph)
+    init_mind
+    # No concepts or edges
+    ;;
+  02-error-not-initialized)
+    # Don't initialize
+    ;;
+esac
+
+echo "$INPUT" | brane /graph/summary

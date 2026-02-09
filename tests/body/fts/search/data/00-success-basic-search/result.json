@@ -1,0 +1,19 @@
+{
+  "status": "success",
+  "result": {
+    "matches": [
+      {
+        "url": "<string>",
+        "snippet": "<string>",
+        "score": "<number>"
+      }
+    ],
+    "total": 1
+  },
+  "errors": null,
+  "meta": {
+    "path": "/body/fts/search",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

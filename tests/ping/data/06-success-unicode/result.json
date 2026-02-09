@@ -1,0 +1,15 @@
+{
+  "status": "success",
+  "result": {
+    "emoji": "🧠💡🔥",
+    "japanese": "日本語",
+    "rtl": "مرحبا",
+    "special": "tab:\t newline:\n quote:\""
+  },
+  "errors": null,
+  "meta": {
+    "path": "/ping",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

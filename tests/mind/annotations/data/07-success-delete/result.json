@@ -1,0 +1,13 @@
+{
+  "status": "success",
+  "result": {
+    "deleted": true,
+    "id": 1
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/annotations/delete",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

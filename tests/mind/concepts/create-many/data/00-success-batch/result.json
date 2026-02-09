@@ -1,0 +1,16 @@
+{
+  "status": "success",
+  "result": {
+    "items": [
+      {"id": 1, "name": "AuthService", "type": "Entity"},
+      {"id": 2, "name": "Database", "type": "Entity"},
+      {"id": 3, "name": "Logger", "type": "Entity"}
+    ]
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/concepts/create-many",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

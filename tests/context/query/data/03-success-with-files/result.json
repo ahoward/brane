@@ -1,0 +1,25 @@
+{
+  "status": "success",
+  "result": {
+    "concepts": [
+      {"id": 1, "name": "AuthService", "type": "Entity", "relevance": "exact"}
+    ],
+    "files": [
+      {
+        "url": "file:///test/auth.ts",
+        "concepts": [1],
+        "preview": "export class AuthService { authenticate() {} }"
+      }
+    ],
+    "graph": {
+      "nodes": [1],
+      "edges": []
+    }
+  },
+  "errors": null,
+  "meta": {
+    "path": "/context/query",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

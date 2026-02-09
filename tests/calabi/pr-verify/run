@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+#
+# Test runner for /calabi/pr-verify
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+# Use fixed file URLs for tests
+FILE_URL1="file:///test/auth.ts"
+FILE_URL2="file:///test/login.ts"
+
+case "$TC_CASE_NAME" in
+  00-success-no-violations)
+    init_mind
+    # Create a clean graph with no violations
+    create_concepts '[{"name": "Auth", "type": "Entity"}, {"name": "User", "type": "Entity"}]'
+    create_edges '[{"source": 1, "target": 2, "relation": "DEPENDS_ON"}]'
+    ;;
+  01-success-with-violations)
+    init_mind
+    # Create orphan concept (no edges)
+    create_concepts '[{"name": "Orphan", "type": "Entity"}]'
+    ;;
+  02-success-no-changes)
+    init_mind
+    # Graph is initialized but no body files tracked = clean workspace
+    # Create connected concepts so no orphans
+    create_concepts '[{"name": "Auth", "type": "Entity"}, {"name": "User", "type": "Entity"}]'
+    create_edges '[{"source": 1, "target": 2, "relation": "DEPENDS_ON"}]'
+    ;;
+  03-success-specific-rules)
+    init_mind
+    # Create orphan (will fail orphans rule) but pass cycles
+    create_concepts '[{"name": "Orphan", "type": "Entity"}]'
+    ;;
+  04-success-dry-run)
+    init_mind
+    create_concepts '[{"name": "Auth", "type": "Entity"}]'
+    # Add a file to body.db that will show as trackable
+    add_body_file "$FILE_URL1" "hash1" 100 1234567890
+    ;;
+  05-error-body-not-initialized)
+    # Don't init anything - no .brane directory
+    ;;
+  06-error-mind-not-initialized)
+    init_body  # body but not mind
+    ;;
+  07-error-rule-not-found)
+    init_mind
+    ;;
+esac
+
+echo "$INPUT" | brane /calabi/pr-verify

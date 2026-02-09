@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+#
+# Test runner for /body/files/list
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+case "$TC_CASE_NAME" in
+  00-success-list-all)
+    init_body
+    add_body_file "file://$WORKDIR/README.md" "abc123" 100 1234567890
+    add_body_file "file://$WORKDIR/src/index.ts" "def456" 200 1234567891
+    add_body_file "file://$WORKDIR/src/util.ts" "ghi789" 300 1234567892
+    ;;
+
+  01-success-empty)
+    init_body
+    ;;
+
+  02-success-filter-path)
+    init_body
+    add_body_file "file://$WORKDIR/README.md" "abc123" 100 1234567890
+    add_body_file "file://$WORKDIR/src/index.ts" "def456" 200 1234567891
+    add_body_file "file://$WORKDIR/src/util.ts" "ghi789" 300 1234567892
+    add_body_file "file://$WORKDIR/tests/main.test.ts" "jkl012" 400 1234567893
+    ;;
+
+  03-success-filter-pattern)
+    init_body
+    add_body_file "file://$WORKDIR/README.md" "abc123" 100 1234567890
+    add_body_file "file://$WORKDIR/index.ts" "def456" 200 1234567891
+    add_body_file "file://$WORKDIR/util.ts" "ghi789" 300 1234567892
+    add_body_file "file://$WORKDIR/style.css" "jkl012" 400 1234567893
+    ;;
+
+  04-success-no-matches)
+    init_body
+    add_body_file "file://$WORKDIR/README.md" "abc123" 100 1234567890
+    add_body_file "file://$WORKDIR/src/index.ts" "def456" 200 1234567891
+    ;;
+
+  05-error-not-initialized)
+    ;;
+esac
+
+echo "$INPUT" | brane /body/files/list

@@ -1,0 +1,16 @@
+{
+  "status": "success",
+  "result": {
+    "rule": "all_entities",
+    "matches": [
+      {"id": 1, "name": "Service"}
+    ],
+    "count": 1
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/rules/query",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

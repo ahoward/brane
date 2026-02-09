@@ -1,0 +1,17 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "params": [
+      {
+        "code": "invalid_json",
+        "message": "<string>"
+      }
+    ]
+  },
+  "meta": {
+    "path": "/ping",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

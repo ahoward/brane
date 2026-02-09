@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+#
+# Test runner for /mind/concepts/list
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+case "$TC_CASE_NAME" in
+  00-success-list-all)
+    init_mind
+    create_concepts '[{"name": "AuthService", "type": "Entity"}, {"name": "Do not modify", "type": "Caveat"}]'
+    ;;
+  01-success-list-empty)
+    init_mind
+    ;;
+  02-success-filter-type)
+    init_mind
+    create_concepts '[{"name": "AuthService", "type": "Entity"}, {"name": "UserService", "type": "Entity"}, {"name": "Do not modify", "type": "Caveat"}]'
+    ;;
+esac
+
+echo "$INPUT" | brane /mind/concepts/list

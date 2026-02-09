@@ -1,0 +1,16 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "concepts": {
+      "0": {
+        "name": [{"code": "required", "message": "name is required"}]
+      }
+    }
+  },
+  "meta": {
+    "path": "/calabi/extract",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

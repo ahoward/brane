@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+#
+# Test runner for /mind/edges/delete
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+case "$TC_CASE_NAME" in
+  00-success-delete)
+    init_mind
+    create_concepts '[{"name": "A", "type": "Entity"}, {"name": "B", "type": "Entity"}]'
+    create_edges '[{"source": 1, "target": 2, "relation": "DEPENDS_ON"}]'
+    ;;
+  01-error-not-found)
+    init_mind
+    ;;
+  02-error-missing-id)
+    init_mind
+    ;;
+esac
+
+echo "$INPUT" | brane /mind/edges/delete

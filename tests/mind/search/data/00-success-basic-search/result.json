@@ -1,0 +1,12 @@
+{
+  "status": "success",
+  "result": {
+    "matches": "<array>"
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/search",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "status": "success",
+  "result": {
+    "rule": "cycles",
+    "matches": [
+      {"id": 1, "name": "A"},
+      {"id": 2, "name": "B"},
+      {"id": 3, "name": "C"}
+    ],
+    "count": 3
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/rules/query",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

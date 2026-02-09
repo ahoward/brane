@@ -1,0 +1,16 @@
+{
+  "status": "success",
+  "result": {
+    "items": [
+      {"id": 1, "source": 1, "target": 2, "relation": "DEPENDS_ON", "weight": 1},
+      {"id": 2, "source": 2, "target": 3, "relation": "DEPENDS_ON", "weight": 1},
+      {"id": 3, "source": 1, "target": 3, "relation": "USES", "weight": 1}
+    ]
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/edges/create-many",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

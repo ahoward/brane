@@ -1,0 +1,12 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "items": [{"code": "required", "message": "items[0].target is required"}]
+  },
+  "meta": {
+    "path": "/mind/edges/create-many",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

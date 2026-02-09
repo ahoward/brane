@@ -1,0 +1,106 @@
+#!/usr/bin/env bash
+#
+# Test runner for /body/fts/index
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+case "$TC_CASE_NAME" in
+  00-success-index-files)
+    init_body_fts
+    echo "hello world" > hello.txt
+    echo "function foo() { return 42; }" > code.js
+    HASH1=$(sha256sum hello.txt | cut -d' ' -f1)
+    SIZE1=$(stat -c%s hello.txt)
+    MTIME1=$(stat -c%Y hello.txt)
+    add_body_file "file://$WORKDIR/hello.txt" "$HASH1" "$SIZE1" "$MTIME1"
+    HASH2=$(sha256sum code.js | cut -d' ' -f1)
+    SIZE2=$(stat -c%s code.js)
+    MTIME2=$(stat -c%Y code.js)
+    add_body_file "file://$WORKDIR/code.js" "$HASH2" "$SIZE2" "$MTIME2"
+    ;;
+
+  01-success-incremental)
+    init_body_fts
+    echo "already indexed" > indexed.txt
+    echo "new file" > new.txt
+    HASH1=$(sha256sum indexed.txt | cut -d' ' -f1)
+    SIZE1=$(stat -c%s indexed.txt)
+    MTIME1=$(stat -c%Y indexed.txt)
+    add_body_file "file://$WORKDIR/indexed.txt" "$HASH1" "$SIZE1" "$MTIME1"
+    add_fts "file://$WORKDIR/indexed.txt" "already indexed" "$HASH1"
+    HASH2=$(sha256sum new.txt | cut -d' ' -f1)
+    SIZE2=$(stat -c%s new.txt)
+    MTIME2=$(stat -c%Y new.txt)
+    add_body_file "file://$WORKDIR/new.txt" "$HASH2" "$SIZE2" "$MTIME2"
+    ;;
+
+  02-success-skip-binary)
+    init_body_fts
+    echo "text file" > text.txt
+    printf '\x00\x01\x02\x03' > binary.bin
+    HASH1=$(sha256sum text.txt | cut -d' ' -f1)
+    SIZE1=$(stat -c%s text.txt)
+    MTIME1=$(stat -c%Y text.txt)
+    add_body_file "file://$WORKDIR/text.txt" "$HASH1" "$SIZE1" "$MTIME1"
+    HASH2=$(sha256sum binary.bin | cut -d' ' -f1)
+    SIZE2=$(stat -c%s binary.bin)
+    MTIME2=$(stat -c%Y binary.bin)
+    add_body_file "file://$WORKDIR/binary.bin" "$HASH2" "$SIZE2" "$MTIME2"
+    ;;
+
+  03-success-path-filter)
+    init_body_fts
+    mkdir -p src tests
+    echo "source code" > src/main.ts
+    echo "test code" > tests/main.test.ts
+    echo "root file" > root.txt
+    HASH1=$(sha256sum src/main.ts | cut -d' ' -f1)
+    SIZE1=$(stat -c%s src/main.ts)
+    MTIME1=$(stat -c%Y src/main.ts)
+    add_body_file "file://$WORKDIR/src/main.ts" "$HASH1" "$SIZE1" "$MTIME1"
+    HASH2=$(sha256sum tests/main.test.ts | cut -d' ' -f1)
+    SIZE2=$(stat -c%s tests/main.test.ts)
+    MTIME2=$(stat -c%Y tests/main.test.ts)
+    add_body_file "file://$WORKDIR/tests/main.test.ts" "$HASH2" "$SIZE2" "$MTIME2"
+    HASH3=$(sha256sum root.txt | cut -d' ' -f1)
+    SIZE3=$(stat -c%s root.txt)
+    MTIME3=$(stat -c%Y root.txt)
+    add_body_file "file://$WORKDIR/root.txt" "$HASH3" "$SIZE3" "$MTIME3"
+    ;;
+
+  04-success-force-reindex)
+    init_body_fts
+    echo "will be reindexed" > file.txt
+    HASH=$(sha256sum file.txt | cut -d' ' -f1)
+    SIZE=$(stat -c%s file.txt)
+    MTIME=$(stat -c%Y file.txt)
+    add_body_file "file://$WORKDIR/file.txt" "$HASH" "$SIZE" "$MTIME"
+    add_fts "file://$WORKDIR/file.txt" "will be reindexed" "$HASH"
+    ;;
+
+  05-success-empty)
+    init_body_fts
+    ;;
+
+  06-success-cleanup-stale)
+    init_body_fts
+    echo "still tracked" > current.txt
+    HASH=$(sha256sum current.txt | cut -d' ' -f1)
+    SIZE=$(stat -c%s current.txt)
+    MTIME=$(stat -c%Y current.txt)
+    add_body_file "file://$WORKDIR/current.txt" "$HASH" "$SIZE" "$MTIME"
+    add_fts "file://$WORKDIR/deleted.txt" "old content" "oldhash"
+    ;;
+
+  07-error-not-initialized)
+    echo "some file" > test.txt
+    ;;
+esac
+
+echo "$INPUT" | brane /body/fts/index

@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+#
+# Test runner for /mind/init
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+case "$TC_CASE_NAME" in
+  00-success-new-init)
+    init_body
+    ;;
+
+  01-success-idempotent)
+    init_mind
+    ;;
+
+  02-success-force-reinit)
+    init_mind
+    ;;
+
+  03-error-not-initialized)
+    echo "some file" > test.txt
+    ;;
+esac
+
+echo "$INPUT" | brane /mind/init

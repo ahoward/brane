@@ -1,0 +1,12 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "description": [{ "code": "required", "message": "description is required" }]
+  },
+  "meta": {
+    "path": "/lens/bless",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

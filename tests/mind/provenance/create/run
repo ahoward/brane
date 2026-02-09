@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+#
+# Test runner for /mind/provenance/create
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+# Use a fixed file URL for tests
+FILE_URL="file:///test/auth.ts"
+
+case "$TC_CASE_NAME" in
+  00-success-create)
+    init_mind
+    create_concept '{"name": "AuthService", "type": "Entity"}'
+    add_body_file "$FILE_URL" "hash1" 100 1234567890
+    ;;
+  01-success-idempotent)
+    init_mind
+    create_concept '{"name": "AuthService", "type": "Entity"}'
+    add_body_file "$FILE_URL" "hash1" 100 1234567890
+    create_provenance "{\"concept_id\": 1, \"file_url\": \"$FILE_URL\"}"
+    ;;
+  02-error-concept-not-found)
+    init_mind
+    add_body_file "$FILE_URL" "hash1" 100 1234567890
+    ;;
+  03-error-file-not-found)
+    init_mind
+    create_concept '{"name": "AuthService", "type": "Entity"}'
+    ;;
+  04-error-missing-concept-id)
+    init_mind
+    ;;
+  05-error-missing-file-url)
+    init_mind
+    ;;
+  06-error-not-initialized)
+    # Don't initialize
+    ;;
+esac
+
+echo "$INPUT" | brane /mind/provenance/create

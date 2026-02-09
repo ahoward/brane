@@ -1,0 +1,15 @@
+{
+  "status": "success",
+  "result": {
+    "indexed": 1,
+    "skipped": 1,
+    "deleted": 0,
+    "errors": 0
+  },
+  "errors": null,
+  "meta": {
+    "path": "/body/fts/index",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

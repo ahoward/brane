@@ -1,0 +1,22 @@
+{
+  "status": "success",
+  "result": {
+    "added": "<any>",
+    "updated": "<any>",
+    "deleted": [],
+    "unchanged": "<number>",
+    "summary": {
+      "added": 1,
+      "updated": 1,
+      "deleted": 0,
+      "unchanged": 1,
+      "errors": 0
+    }
+  },
+  "errors": null,
+  "meta": {
+    "path": "/body/scan",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

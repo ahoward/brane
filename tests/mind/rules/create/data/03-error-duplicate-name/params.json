@@ -1,0 +1,1 @@
+{"name": "myrule", "description": "duplicate", "body": "myrule[id] := *concepts[id, _, _]"}

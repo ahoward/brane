@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+#
+# Test runner for /mind/edges/create-many
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+case "$TC_CASE_NAME" in
+  00-success-batch)
+    init_mind
+    create_concepts '[{"name": "A", "type": "Entity"}, {"name": "B", "type": "Entity"}, {"name": "C", "type": "Entity"}]'
+    ;;
+  01-error-concept-not-found)
+    init_mind
+    create_concepts '[{"name": "OnlyOne", "type": "Entity"}]'
+    ;;
+  02-error-empty-items)
+    init_mind
+    ;;
+  03-error-missing-fields)
+    init_mind
+    create_concepts '[{"name": "A", "type": "Entity"}]'
+    ;;
+esac
+
+echo "$INPUT" | brane /mind/edges/create-many

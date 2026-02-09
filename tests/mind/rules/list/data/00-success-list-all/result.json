@@ -1,0 +1,29 @@
+{
+  "status": "success",
+  "result": {
+    "rules": [
+      {
+        "name": "cycles",
+        "description": "Detects circular dependencies via DEPENDS_ON edges",
+        "builtin": true
+      },
+      {
+        "name": "orphans",
+        "description": "Detects concepts with no edges (disconnected)",
+        "builtin": true
+      },
+      {
+        "name": "test_rule",
+        "description": "Test rule",
+        "builtin": false
+      }
+    ],
+    "count": 3
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/rules/list",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "status": "success",
+  "result": {
+    "id": 1,
+    "name": "Hamlet",
+    "type": "Character"
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/concepts/create",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

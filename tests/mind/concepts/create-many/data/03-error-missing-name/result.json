@@ -1,0 +1,12 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "items": [{"code": "required", "message": "items[1].name is required"}]
+  },
+  "meta": {
+    "path": "/mind/concepts/create-many",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

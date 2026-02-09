@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+#
+# Test runner for /body/scan
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+case "$TC_CASE_NAME" in
+  00-success-full-scan)
+    init_body
+    echo "file a" > a.txt
+    echo "file b" > b.txt
+    echo "file c" > c.txt
+    ;;
+
+  01-success-with-updates)
+    init_body
+    echo "unchanged" > unchanged.txt
+    echo "will modify" > modified.txt
+    HASH1=$(sha256sum unchanged.txt | cut -d' ' -f1)
+    SIZE1=$(stat -c%s unchanged.txt)
+    MTIME1=$(stat -c%Y unchanged.txt)
+    add_body_file "file://$WORKDIR/unchanged.txt" "$HASH1" "$SIZE1" "$MTIME1"
+    HASH2=$(sha256sum modified.txt | cut -d' ' -f1)
+    SIZE2=$(stat -c%s modified.txt)
+    MTIME2=$(stat -c%Y modified.txt)
+    add_body_file "file://$WORKDIR/modified.txt" "$HASH2" "$SIZE2" "$MTIME2"
+    echo "modified content" > modified.txt
+    echo "new file" > new.txt
+    ;;
+
+  02-success-with-deletes)
+    init_body
+    echo "keep this" > keep.txt
+    HASH=$(sha256sum keep.txt | cut -d' ' -f1)
+    SIZE=$(stat -c%s keep.txt)
+    MTIME=$(stat -c%Y keep.txt)
+    add_body_file "file://$WORKDIR/keep.txt" "$HASH" "$SIZE" "$MTIME"
+    add_body_file "file://$WORKDIR/deleted.txt" "fakehash" 100 1234567890
+    ;;
+
+  03-success-path-filter)
+    init_body
+    mkdir -p src tests
+    echo "src file 1" > src/index.ts
+    echo "src file 2" > src/util.ts
+    echo "test file" > tests/main.test.ts
+    echo "root file" > root.txt
+    ;;
+
+  04-success-dry-run)
+    init_body
+    echo "file a" > a.txt
+    echo "file b" > b.txt
+    ;;
+
+  05-success-empty)
+    init_body
+    ;;
+
+  06-error-not-initialized)
+    echo "some file" > test.txt
+    ;;
+esac
+
+echo "$INPUT" | brane /body/scan

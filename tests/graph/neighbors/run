@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+#
+# Test runner for /graph/neighbors
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+case "$TC_CASE_NAME" in
+  00-success-with-neighbors)
+    init_mind
+    create_concepts '[{"name": "AuthService", "type": "Entity"}, {"name": "Database", "type": "Entity"}, {"name": "LoginHandler", "type": "Entity"}]'
+    create_edges '[{"source": 1, "target": 2, "relation": "DEPENDS_ON"}, {"source": 3, "target": 1, "relation": "USES"}]'
+    ;;
+  01-success-no-neighbors)
+    init_mind
+    create_concepts '[{"name": "Isolated", "type": "Entity"}]'
+    ;;
+  02-error-not-found)
+    init_mind
+    create_concepts '[{"name": "AuthService", "type": "Entity"}]'
+    ;;
+  03-error-missing-id)
+    init_mind
+    ;;
+  04-error-not-initialized)
+    # Don't initialize
+    ;;
+esac
+
+echo "$INPUT" | brane /graph/neighbors

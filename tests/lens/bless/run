@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+#
+# Test runner for /lens/bless
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+case "$TC_CASE_NAME" in
+  00-success-type)
+    init_mind
+    ;;
+  01-success-relation)
+    init_mind
+    ;;
+  02-success-relation-symmetric)
+    init_mind
+    ;;
+  03-error-missing-description)
+    init_mind
+    ;;
+  04-error-neither-type-nor-rel)
+    init_mind
+    ;;
+  05-error-not-initialized)
+    # Don't initialize
+    ;;
+esac
+
+echo "$INPUT" | brane /lens/bless

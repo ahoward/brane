@@ -1,0 +1,12 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "items": [{"code": "not_found", "message": "items[0].target concept 999 not found"}]
+  },
+  "meta": {
+    "path": "/mind/edges/create-many",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

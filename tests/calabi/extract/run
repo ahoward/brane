@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+#
+# Test runner for /calabi/extract
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+# Use fixed file URLs for tests
+FILE_URL="file:///test/auth.ts"
+FILE_URL2="file:///test/login.ts"
+
+case "$TC_CASE_NAME" in
+  00-success-create-concepts)
+    init_mind
+    add_body_file "$FILE_URL" "hash1" 100 1234567890
+    ;;
+  01-success-with-edges)
+    init_mind
+    add_body_file "$FILE_URL" "hash1" 100 1234567890
+    ;;
+  02-success-reuse-existing)
+    init_mind
+    add_body_file "$FILE_URL" "hash1" 100 1234567890
+    # Create existing concept
+    create_concept '{"name": "AuthService", "type": "Entity"}'
+    ;;
+  03-success-replace-extraction)
+    init_mind
+    add_body_file "$FILE_URL" "hash1" 100 1234567890
+    # Create initial extraction
+    create_concept '{"name": "OldConcept", "type": "Entity"}'
+    create_provenance "{\"concept_id\": 1, \"file_url\": \"$FILE_URL\"}"
+    ;;
+  04-success-orphan-cleanup)
+    init_mind
+    add_body_file "$FILE_URL" "hash1" 100 1234567890
+    # Create concept only linked to this file
+    create_concept '{"name": "OrphanConcept", "type": "Entity"}'
+    create_provenance "{\"concept_id\": 1, \"file_url\": \"$FILE_URL\"}"
+    ;;
+  05-success-preserve-caveats)
+    init_mind
+    add_body_file "$FILE_URL" "hash1" 100 1234567890
+    # Create Caveat linked to this file
+    create_concept '{"name": "Do not modify", "type": "Caveat"}'
+    create_provenance "{\"concept_id\": 1, \"file_url\": \"$FILE_URL\"}"
+    ;;
+  06-success-empty-extraction)
+    init_mind
+    add_body_file "$FILE_URL" "hash1" 100 1234567890
+    # Create existing concept linked to file
+    create_concept '{"name": "ToBeRemoved", "type": "Entity"}'
+    create_provenance "{\"concept_id\": 1, \"file_url\": \"$FILE_URL\"}"
+    ;;
+  07-error-file-not-found)
+    init_mind
+    # Don't add file to body.db
+    ;;
+  08-error-missing-file-url)
+    init_mind
+    ;;
+  09-error-invalid-concept)
+    init_mind
+    add_body_file "$FILE_URL" "hash1" 100 1234567890
+    ;;
+  10-error-edge-unknown-source)
+    init_mind
+    add_body_file "$FILE_URL" "hash1" 100 1234567890
+    ;;
+  11-error-not-initialized)
+    # Don't initialize
+    ;;
+esac
+
+echo "$INPUT" | brane /calabi/extract

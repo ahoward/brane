@@ -1,0 +1,12 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "query": [{ "code": "invalid", "message": "<string>" }]
+  },
+  "meta": {
+    "path": "/body/fts/search",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

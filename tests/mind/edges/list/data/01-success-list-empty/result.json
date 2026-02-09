@@ -1,0 +1,13 @@
+{
+  "status": "success",
+  "result": {
+    "edges": [],
+    "total": 0
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/edges/list",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

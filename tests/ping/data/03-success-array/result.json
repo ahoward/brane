@@ -1,0 +1,13 @@
+{
+  "status": "success",
+  "result": {
+    "items": [1, 2, 3],
+    "tags": ["a", "b"]
+  },
+  "errors": null,
+  "meta": {
+    "path": "/ping",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+#
+# Test runner for /mind/concepts/get
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+case "$TC_CASE_NAME" in
+  00-success-get)
+    init_mind
+    create_concept '{"name": "AuthService", "type": "Entity"}'
+    ;;
+  01-error-not-found)
+    init_mind
+    ;;
+  02-error-missing-id)
+    init_mind
+    ;;
+esac
+
+echo "$INPUT" | brane /mind/concepts/get

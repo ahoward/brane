@@ -1,0 +1,29 @@
+{
+  "name": "brane",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "src/index.ts",
+  "bin": {
+    "brane": "src/cli.ts"
+  },
+  "scripts": {
+    "setup": "bun install && cd node_modules/cozo-node/cozo-lib-nodejs && npm run install",
+    "build": "mkdir -p bin && bun build src/cli.ts --compile --outfile bin/brane",
+    "repl": "bun run src/cli.ts repl",
+    "test": "bun test",
+    "test:tc": "bun run src/tc.ts",
+    "test:v": "bun run src/tc.ts -v",
+    "test:s": "bun run src/tc.ts -s",
+    "cli": "bun run src/cli.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/js-yaml": "^4.0.9",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "citty": "^0.2.0",
+    "cozo-node": "github:ahoward/cozo#feat/bundler-entry-point",
+    "js-yaml": "^4.1.1"
+  }
+}

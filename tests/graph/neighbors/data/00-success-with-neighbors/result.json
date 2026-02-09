@@ -1,0 +1,39 @@
+{
+  "status": "success",
+  "result": {
+    "concept": {
+      "id": 1,
+      "name": "AuthService",
+      "type": "Entity"
+    },
+    "neighbors": {
+      "incoming": [
+        {
+          "id": 3,
+          "name": "LoginHandler",
+          "type": "Entity",
+          "edge_id": 2,
+          "relation": "USES",
+          "weight": 1
+        }
+      ],
+      "outgoing": [
+        {
+          "id": 2,
+          "name": "Database",
+          "type": "Entity",
+          "edge_id": 1,
+          "relation": "DEPENDS_ON",
+          "weight": 1
+        }
+      ],
+      "total": 2
+    }
+  },
+  "errors": null,
+  "meta": {
+    "path": "/graph/neighbors",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

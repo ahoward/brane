@@ -1,0 +1,12 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "params": [{ "code": "invalid", "message": "must specify either type or relation" }]
+  },
+  "meta": {
+    "path": "/lens/bless",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

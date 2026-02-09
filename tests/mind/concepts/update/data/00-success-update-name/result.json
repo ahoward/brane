@@ -1,0 +1,14 @@
+{
+  "status": "success",
+  "result": {
+    "id": 1,
+    "name": "AuthenticationService",
+    "type": "Entity"
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/concepts/update",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

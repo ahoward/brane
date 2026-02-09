@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+#
+# Test runner for /mind/concepts/create-many
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+case "$TC_CASE_NAME" in
+  00-success-batch)
+    init_mind
+    ;;
+  01-success-single-item)
+    init_mind
+    ;;
+  02-error-empty-items)
+    init_mind
+    ;;
+  03-error-missing-name)
+    init_mind
+    ;;
+  04-error-not-initialized)
+    # Don't initialize
+    ;;
+esac
+
+echo "$INPUT" | brane /mind/concepts/create-many

@@ -1,0 +1,15 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "id": [{
+      "code": "not_found",
+      "message": "annotation not found"
+    }]
+  },
+  "meta": {
+    "path": "/mind/annotations/delete",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+#
+# Test runner for /graph/viz
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+case "$TC_CASE_NAME" in
+  00-success-ascii)
+    init_mind
+    create_concepts '[{"name": "AuthService", "type": "Entity"}, {"name": "Database", "type": "Entity"}]'
+    create_edges '[{"source": 1, "target": 2, "relation": "DEPENDS_ON"}]'
+    ;;
+  01-success-mermaid)
+    init_mind
+    create_concepts '[{"name": "AuthService", "type": "Entity"}, {"name": "Database", "type": "Entity"}]'
+    create_edges '[{"source": 1, "target": 2, "relation": "DEPENDS_ON"}]'
+    ;;
+  02-success-empty-graph)
+    init_mind
+    # No concepts
+    ;;
+  03-success-centered)
+    init_mind
+    create_concepts '[{"name": "AuthService", "type": "Entity"}, {"name": "Database", "type": "Entity"}, {"name": "Logger", "type": "Entity"}, {"name": "Unrelated", "type": "Entity"}]'
+    create_edges '[{"source": 1, "target": 2, "relation": "DEPENDS_ON"}, {"source": 1, "target": 3, "relation": "USES"}]'
+    ;;
+  04-success-truncated)
+    init_mind
+    # Create 25 concepts to trigger truncation - single batch call
+    items='['
+    for i in $(seq 1 25); do
+      [ $i -gt 1 ] && items="$items,"
+      items="$items{\"name\": \"Concept$i\", \"type\": \"Entity\"}"
+    done
+    items="$items]"
+    create_concepts "$items"
+    ;;
+  05-error-invalid-format)
+    init_mind
+    create_concepts '[{"name": "AuthService", "type": "Entity"}]'
+    ;;
+  06-error-center-not-found)
+    init_mind
+    create_concepts '[{"name": "AuthService", "type": "Entity"}]'
+    ;;
+esac
+
+echo "$INPUT" | brane /graph/viz

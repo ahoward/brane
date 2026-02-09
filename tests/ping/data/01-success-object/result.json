@@ -1,0 +1,13 @@
+{
+  "status": "success",
+  "result": {
+    "echo": "hello",
+    "count": 42
+  },
+  "errors": null,
+  "meta": {
+    "path": "/ping",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

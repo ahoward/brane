@@ -1,0 +1,12 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "mind": [{"code": "not_initialized", "message": "mind not initialized (run brane mind init)"}]
+  },
+  "meta": {
+    "path": "/calabi/scan",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

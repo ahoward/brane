@@ -1,0 +1,14 @@
+{
+  "status": "success",
+  "result": {
+    "items": [
+      {"id": 1, "name": "SingleConcept", "type": "Entity"}
+    ]
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/concepts/create-many",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

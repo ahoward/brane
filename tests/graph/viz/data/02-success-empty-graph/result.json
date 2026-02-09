@@ -1,0 +1,16 @@
+{
+  "status": "success",
+  "result": {
+    "format": "ascii",
+    "output": "(empty graph)",
+    "nodes": 0,
+    "edges": 0,
+    "truncated": false
+  },
+  "errors": null,
+  "meta": {
+    "path": "/graph/viz",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

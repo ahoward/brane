@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+#
+# Test runner for /mind/rules/list
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+case "$TC_CASE_NAME" in
+  00-success-list-all)
+    init_mind
+    # Create a custom rule to have both built-in and custom
+    echo '{"name": "test_rule", "description": "Test rule", "body": "test_rule[id, name] := *concepts[id, name, _]"}' | brane /mind/rules/create > /dev/null 2>&1
+    ;;
+  01-success-list-empty-custom)
+    init_mind
+    # Only built-in rules (no custom rules created)
+    ;;
+  02-error-not-initialized)
+    # Initialize body but not mind
+    init_body
+    ;;
+esac
+
+echo "$INPUT" | brane /mind/rules/list

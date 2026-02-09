@@ -1,0 +1,12 @@
+{
+  "status": "success",
+  "result": {
+    "deleted": true
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/concepts/delete",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

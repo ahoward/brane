@@ -1,0 +1,16 @@
+{
+  "status": "success",
+  "result": {
+    "id": 1,
+    "source": 1,
+    "target": 2,
+    "relation": "INVESTIGATES",
+    "weight": 1
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/edges/create",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

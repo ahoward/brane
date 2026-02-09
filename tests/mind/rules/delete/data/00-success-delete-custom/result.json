@@ -1,0 +1,13 @@
+{
+  "status": "success",
+  "result": {
+    "deleted": true,
+    "name": "todelete"
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/rules/delete",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

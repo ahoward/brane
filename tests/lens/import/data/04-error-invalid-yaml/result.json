@@ -1,0 +1,12 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "yaml": [{ "code": "parse_error", "message": "<string>" }]
+  },
+  "meta": {
+    "path": "/lens/import",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

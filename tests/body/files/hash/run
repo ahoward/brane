@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+#
+# Test runner for /body/files/hash
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+case "$TC_CASE_NAME" in
+  00-success-single-file)
+    echo "hello world" > test.txt
+    ;;
+
+  01-success-multiple-files)
+    echo "content a" > a.txt
+    echo "content b" > b.txt
+    ;;
+
+  02-success-empty-file)
+    touch empty.txt
+    ;;
+
+  03-error-not-found)
+    ;;
+
+  04-error-no-path)
+    ;;
+esac
+
+echo "$INPUT" | brane /body/files/hash

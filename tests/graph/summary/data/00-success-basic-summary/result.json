@@ -1,0 +1,25 @@
+{
+  "status": "success",
+  "result": {
+    "concepts": {
+      "total": 3,
+      "by_type": {
+        "Entity": 2,
+        "Rule": 1
+      }
+    },
+    "edges": {
+      "total": 2,
+      "by_relation": {
+        "APPLIES_TO": 1,
+        "DEPENDS_ON": 1
+      }
+    }
+  },
+  "errors": null,
+  "meta": {
+    "path": "/graph/summary",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

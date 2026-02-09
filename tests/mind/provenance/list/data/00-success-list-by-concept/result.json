@@ -1,0 +1,16 @@
+{
+  "status": "success",
+  "result": {
+    "links": [
+      {"concept_id": 1, "file_url": "file:///test/auth.ts"},
+      {"concept_id": 1, "file_url": "file:///test/user.ts"}
+    ],
+    "total": 2
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/provenance/list",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

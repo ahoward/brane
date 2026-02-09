@@ -1,0 +1,19 @@
+{
+  "status": "success",
+  "result": {
+    "concepts": [
+      {"id": 1, "name": "AuthService", "type": "Entity", "relevance": "exact"}
+    ],
+    "files": [],
+    "graph": {
+      "nodes": [1],
+      "edges": []
+    }
+  },
+  "errors": null,
+  "meta": {
+    "path": "/context/query",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+#
+# Test runner for /body/files/status
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+case "$TC_CASE_NAME" in
+  00-success-clean)
+    init_body
+    echo "hello" > test.txt
+    HASH=$(sha256sum test.txt | cut -d' ' -f1)
+    SIZE=$(stat -c%s test.txt)
+    MTIME=$(stat -c%Y test.txt)
+    add_body_file "file://$WORKDIR/test.txt" "$HASH" "$SIZE" "$MTIME"
+    ;;
+
+  01-success-modified)
+    init_body
+    echo "original" > test.txt
+    add_body_file "file://$WORKDIR/test.txt" "oldhash123" 8 1234567890
+    echo "modified content" > test.txt
+    ;;
+
+  02-success-deleted)
+    init_body
+    add_body_file "file://$WORKDIR/deleted.txt" "somehash" 100 1234567890
+    ;;
+
+  03-success-new)
+    init_body
+    echo "new file" > untracked.txt
+    ;;
+
+  04-success-quick-mode)
+    init_body
+    echo "original" > tracked.txt
+    add_body_file "file://$WORKDIR/tracked.txt" "oldhash" 8 1234567890
+    echo "modified" > tracked.txt
+    echo "new file" > untracked.txt
+    ;;
+
+  05-success-filter-path)
+    init_body
+    mkdir -p src tests
+    echo "src file" > src/index.ts
+    echo "test file" > tests/main.test.ts
+    add_body_file "file://$WORKDIR/src/index.ts" "oldhash1" 8 1234567890
+    add_body_file "file://$WORKDIR/tests/main.test.ts" "oldhash2" 9 1234567890
+    echo "src modified" > src/index.ts
+    echo "test modified" > tests/main.test.ts
+    ;;
+
+  06-error-not-initialized)
+    ;;
+esac
+
+echo "$INPUT" | brane /body/files/status

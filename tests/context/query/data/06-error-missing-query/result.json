@@ -1,0 +1,12 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "query": [{"code": "required", "message": "query is required"}]
+  },
+  "meta": {
+    "path": "/context/query",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

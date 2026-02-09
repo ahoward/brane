@@ -1,0 +1,7 @@
+{
+  "file_url": "file:///test/nonexistent.ts",
+  "concepts": [
+    {"name": "TestConcept", "type": "Entity"}
+  ],
+  "edges": []
+}

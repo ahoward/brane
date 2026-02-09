@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+#
+# Test runner for /body/fts/search
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+case "$TC_CASE_NAME" in
+  00-success-basic-search)
+    init_body_fts
+    add_body_file "file://$WORKDIR/todo.txt" "hash1" 100 1234567890
+    add_fts "file://$WORKDIR/todo.txt" "This file has a TODO item that needs attention" "hash1"
+    add_body_file "file://$WORKDIR/readme.md" "hash2" 200 1234567890
+    add_fts "file://$WORKDIR/readme.md" "This is a readme file with no tasks" "hash2"
+    ;;
+
+  01-success-no-matches)
+    init_body_fts
+    add_body_file "file://$WORKDIR/hello.txt" "hash1" 100 1234567890
+    add_fts "file://$WORKDIR/hello.txt" "Hello world this is a test file" "hash1"
+    ;;
+
+  02-success-path-filter)
+    init_body_fts
+    add_body_file "file://$WORKDIR/src/main.ts" "hash1" 100 1234567890
+    add_fts "file://$WORKDIR/src/main.ts" "function main returns hello world" "hash1"
+    add_body_file "file://$WORKDIR/tests/main.test.ts" "hash2" 200 1234567890
+    add_fts "file://$WORKDIR/tests/main.test.ts" "function test expects main to return hello" "hash2"
+    ;;
+
+  03-success-with-limit)
+    init_body_fts
+    for i in 1 2 3 4 5; do
+      add_body_file "file://$WORKDIR/file$i.txt" "hash$i" 100 1234567890
+      add_fts "file://$WORKDIR/file$i.txt" "This file contains the word apple" "hash$i"
+    done
+    ;;
+
+  04-success-fts-syntax)
+    init_body_fts
+    add_body_file "file://$WORKDIR/errors.log" "hash1" 100 1234567890
+    add_fts "file://$WORKDIR/errors.log" "error: something went wrong" "hash1"
+    add_body_file "file://$WORKDIR/warnings.log" "hash2" 200 1234567890
+    add_fts "file://$WORKDIR/warnings.log" "warning: this might be a problem" "hash2"
+    add_body_file "file://$WORKDIR/mixed.log" "hash3" 300 1234567890
+    add_fts "file://$WORKDIR/mixed.log" "error: critical and warning: minor" "hash3"
+    ;;
+
+  05-success-not-indexed)
+    init_body_fts
+    add_body_file "file://$WORKDIR/unindexed.txt" "hash1" 100 1234567890
+    ;;
+
+  06-error-not-initialized)
+    echo "some file" > test.txt
+    ;;
+
+  07-error-empty-query)
+    init_body_fts
+    ;;
+
+  08-error-invalid-query)
+    init_body_fts
+    add_body_file "file://$WORKDIR/test.txt" "hash1" 100 1234567890
+    add_fts "file://$WORKDIR/test.txt" "test content" "hash1"
+    ;;
+esac
+
+echo "$INPUT" | brane /body/fts/search

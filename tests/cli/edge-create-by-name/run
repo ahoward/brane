@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+#
+# Test runner for CLI edge create with name resolution
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+case "$TC_CASE_NAME" in
+  00-success-create-by-name)
+    init_mind
+    create_concepts '[{"name": "AuthService", "type": "Entity"}, {"name": "UserService", "type": "Entity"}]'
+    ;;
+  01-success-create-by-name-with-spaces)
+    init_mind
+    create_concepts '[{"name": "Detective Marsh", "type": "Character"}, {"name": "The Murder", "type": "Event"}]'
+    ;;
+esac
+
+# Extract args from params.json and call CLI command
+from=$(echo "$INPUT" | jq -r '.from')
+to=$(echo "$INPUT" | jq -r '.to')
+rel=$(echo "$INPUT" | jq -r '.rel')
+weight=$(echo "$INPUT" | jq -r '.weight // empty')
+
+args=(edge create --from "$from" --to "$to" --rel "$rel" --json)
+if [[ -n "$weight" ]]; then
+  args+=(--weight "$weight")
+fi
+
+brane "${args[@]}"
