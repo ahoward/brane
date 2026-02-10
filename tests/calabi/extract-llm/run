@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+#
+# Test runner for /calabi/extract-llm
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+# Test file content
+TEST_FILE_CONTENT='export class AuthService { login() {} }'
+FILE_URL="file://$WORKDIR/auth.ts"
+
+case "$TC_CASE_NAME" in
+  00-success-extract)
+    init_mind
+    # Write actual file to disk
+    echo "$TEST_FILE_CONTENT" > "$WORKDIR/auth.ts"
+    # Track in body.db
+    add_body_file "$FILE_URL" "hash1" 100 1234567890
+    # Substitute file_url in params
+    INPUT=$(echo "$INPUT" | sed "s|__FILE_URL__|$FILE_URL|g")
+    ;;
+  01-success-dry-run)
+    init_mind
+    echo "$TEST_FILE_CONTENT" > "$WORKDIR/auth.ts"
+    add_body_file "$FILE_URL" "hash1" 100 1234567890
+    INPUT=$(echo "$INPUT" | sed "s|__FILE_URL__|$FILE_URL|g")
+    ;;
+  02-error-not-tracked)
+    init_mind
+    echo "$TEST_FILE_CONTENT" > "$WORKDIR/auth.ts"
+    # Don't add to body.db
+    INPUT=$(echo "$INPUT" | sed "s|__FILE_URL__|$FILE_URL|g")
+    ;;
+  03-error-not-initialized)
+    # Don't initialize - no .brane directory
+    INPUT=$(echo "$INPUT" | sed "s|__FILE_URL__|$FILE_URL|g")
+    ;;
+esac
+
+echo "$INPUT" | brane /calabi/extract-llm
