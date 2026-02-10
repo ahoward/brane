@@ -117,6 +117,73 @@ EXAMPLE: IC AI ETHICS
   now `brane verify` checks content against ethics—not vibes.
 
 
+EXAMPLE: ADVERSARIAL LENS
+--------------------------
+  [LLMs have word models, not world models.](https://www.latent.space/p/adversarial-reasoning)
+  they produce artifacts that *look* expert but collapse under adversarial
+  pressure — because they're graded on "does this sound right?" not "does
+  this survive the other side pushing back?"
+
+  the core problem: LLMs don't model the counterparty. when a model
+  drafts a negotiation position, it doesn't ask who will read it, what
+  they're optimizing, or how they'll probe it.
+
+  brane makes that structure explicit:
+
+  ```bash
+  brane init
+
+  # what the model produced
+  brane concept create --name "Pricing Recommendation" --type Claim
+  brane concept create --name "Market Analysis" --type Evidence
+  brane concept create --name "Competitor Weakness" --type Claim
+
+  # who's in the room (the hidden state)
+  brane concept create --name "Our Sales Team" --type Agent
+  brane concept create --name "Their Procurement" --type Agent
+
+  # what each side optimizes
+  brane edge create --from "Our Sales Team" --to "Pricing Recommendation" --rel ADVOCATES
+  brane edge create --from "Their Procurement" --to "Pricing Recommendation" --rel CHALLENGES
+
+  # the model's evidence
+  brane edge create --from "Market Analysis" --to "Pricing Recommendation" --rel SUPPORTS
+
+  # rule: every Claim needs a modeled challenger
+  brane rule create \
+    --name "unchallenged_claims" \
+    --description "Claims no adversary has been modeled to challenge" \
+    --body 'unchallenged_claims[id, name] := *concepts[id, name, "Claim", _], not *edges[_, _, id, "CHALLENGES", _]'
+
+  brane verify   # ✗ FAILED: unchallenged_claims: Competitor Weakness
+  ```
+
+  "Competitor Weakness" is a claim nobody on the other side has been
+  modeled to push back on. their legal will scrutinize the methodology.
+  their procurement will demand sources. the model didn't think about
+  that — but the graph caught it.
+
+  the [article's](https://www.latent.space/p/adversarial-reasoning)
+  chess/poker split maps cleanly:
+
+  | | chess-like (code, proofs) | poker-like (negotiation, contracts) |
+  |---|---|---|
+  | **info** | perfect — all state visible | imperfect — hidden incentives |
+  | **LLM** | excels | produces exploitable patterns |
+  | **brane** | built-in rules (`cycles`, `orphans`) | adversarial lens (model the counterparty) |
+
+  an adversarial lens encodes what the article calls the four requirements
+  for robustness:
+
+  1. **detect strategic framing** — Claim vs Evidence types force the question
+  2. **identify agents and incentives** — Agent concepts with ADVOCATES/CHALLENGES edges
+  3. **simulate counterparty reactions** — rules that fire when Claims lack challengers
+  4. **choose robust actions** — verify before shipping
+
+  LLMs produce artifacts that look expert. `brane verify` checks whether
+  they survive experts.
+
+
 INSTALL
 -------
   requires [bun](https://bun.sh). [direnv](https://direnv.net) optional.
@@ -204,6 +271,7 @@ LENSES
   | Lens | Domain | Status |
   |------|--------|--------|
   | `default` | general-purpose (ships with brane) | available |
+  | `adversarial` | LLM output adversarial robustness | planned |
   | `ethics-ic` | Intelligence Community | planned |
   | `ethics-gdpr` | EU Data Protection | planned |
   | `arch-clean` | Clean Architecture | planned |
@@ -272,6 +340,7 @@ MULTI-MODAL
   | prose / fiction | characters, events | continuity, structure |
   | policy docs | entities, actions | completeness, consistency |
   | research | theories, evidence | contradictions, gaps |
+  | LLM output | claims, agents, incentives | adversarial robustness |
 
 
 PHILOSOPHY
@@ -385,6 +454,7 @@ REFERENCES
   - [IC Principles of AI Ethics](https://www.intel.gov/principles-of-artificial-intelligence-ethics-for-the-intelligence-community)
   - [ICD-505: Artificial Intelligence](https://www.dni.gov/files/documents/ICD/ICD-505-Artificial-Intelligence.pdf)
   - [NSM-25 AI Framework](https://bidenwhitehouse.archives.gov/briefing-room/statements-releases/2024/10/24/fact-sheet-biden-harris-administration-outlines-coordinated-approach-to-harness-power-of-ai-for-u-s-national-security/)
+  - [Experts Have World Models. LLMs Have Word Models.](https://www.latent.space/p/adversarial-reasoning)
 
 
 LICENSE
