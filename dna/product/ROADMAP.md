@@ -33,16 +33,12 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 ### Next
 
-(empty - MVP complete!)
+- [ ] `030-ingest` — Unified `brane ingest` command (merge scan + extract into single "add material to worldview" operation)
 
-### MVP Backlog
+### Planned
 
-(empty - all MVP features complete)
-
-### Post-MVP (Services & Infrastructure)
-
-*Holding off until MVP is complete.*
-
+- [ ] `031-multi-lens` — Named lenses as top-level citizens (`.brane/lens/{name}/body.db + mind.db`), lens switching, composition
+- [ ] `032-corpus` — Organized test/sample material in `corpus/prose/` and `corpus/code/` for development and examples
 - [ ] `028-verifier-node` — Headless verification node
 - [ ] `029-protocol-spec` — CTX token integration spec
 

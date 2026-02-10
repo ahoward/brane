@@ -112,6 +112,8 @@ ai/                   # AI agent resources
 - CozoDB mind.db (RocksDB backend) - existing `concepts:semantic` HNSW index (026-context-vector)
 - TypeScript 5.x (Bun 1.x runtime) + citty (CLI), CozoDB (cozo-node), existing mind.ts utilities (027-graph-explore)
 - CozoDB mind.db (RocksDB backend) - no schema changes required (027-graph-explore)
+- TypeScript 5.x (Bun 1.x runtime) + CozoDB (cozo-node), bun:sqlite, citty (CLI), existing mind.ts/body.ts utilities (030-ingest)
+- SQLite body.db (file tracking), CozoDB mind.db (knowledge graph) — both existing (030-ingest)
 
 ## Recent Changes
 - 021-vector-search: Added semantic search via `/mind/search` endpoint with local embeddings (fastembed-js BGESmallEN, 384 dims)

@@ -18,6 +18,7 @@ import { annotation } from "./commands/annotation.ts"
 import { provenance } from "./commands/provenance.ts"
 import { context } from "./commands/context.ts"
 import { extract } from "./commands/extract.ts"
+import { ingest } from "./commands/ingest.ts"
 import { prVerify } from "./commands/pr-verify.ts"
 import { lens } from "./commands/lens.ts"
 import { graph } from "./commands/graph.ts"
@@ -48,6 +49,7 @@ export const main = defineCommand({
     context,
 
     // Calabi commands
+    ingest,
     extract,
     "pr-verify": prVerify,
 
