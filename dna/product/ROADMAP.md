@@ -33,11 +33,11 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 ### Next
 
-- [ ] `030-ingest` — Unified `brane ingest` command (merge scan + extract into single "add material to worldview" operation)
+- [ ] `031-multi-lens` — Named lenses as top-level citizens (`.brane/lens/{name}/body.db + mind.db`), lens switching, composition
 
 ### Planned
 
-- [ ] `031-multi-lens` — Named lenses as top-level citizens (`.brane/lens/{name}/body.db + mind.db`), lens switching, composition
+- [ ] `033-prune` — `brane prune` command to clean orphaned concepts/edges from mind.db when source files are deleted or re-extracted
 - [ ] `032-corpus` — Organized test/sample material in `corpus/prose/` and `corpus/code/` for development and examples
 - [ ] `028-verifier-node` — Headless verification node
 - [ ] `029-protocol-spec` — CTX token integration spec
@@ -50,6 +50,7 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 | Feature | PR | Date |
 |---------|-----|------|
+| `030-ingest` | — | 2026-02-10 |
 | `027-graph-explore` | — | 2026-02-03 |
 | `026-context-vector` | #29 | 2026-02-01 |
 | `025-lens-config` | #28 | 2026-02-01 |
@@ -96,3 +97,4 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 - **025-lens-config complete!** — Shareable ontology configs with usage tracking and blessing workflow
 - **026-context-vector complete!** — Semantic search for context queries with hybrid mode
 - **027-graph-explore complete!** — CLI graph visualization with summary, neighbors, viz (ASCII/Mermaid)
+- **030-ingest complete!** — Unified `brane ingest` (scan + extract in one step), Gemini-reviewed, 290 tests
