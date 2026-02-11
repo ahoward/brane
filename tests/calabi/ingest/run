@@ -64,6 +64,13 @@ case "$TC_CASE_NAME" in
     echo 'export class AuthService { login() {} }' > auth.ts
     # INPUT has no __PATH__ to substitute — path is omitted
     ;;
+  07-success-skip-binary)
+    # Init workspace, create a binary file (contains null bytes), verify skipped
+    init_mind
+    mkdir -p src
+    printf 'binary\x00content\x00here' > src/data.bin
+    INPUT=$(echo "$INPUT" | sed "s|__PATH__|$WORKDIR/src/data.bin|g")
+    ;;
 esac
 
 echo "$INPUT" | brane /calabi/ingest

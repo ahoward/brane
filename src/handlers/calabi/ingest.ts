@@ -11,6 +11,7 @@ import { handler as body_scan_handler } from "../body/scan.ts"
 import { handler as extract_handler } from "./extract.ts"
 import { resolve } from "node:path"
 import { existsSync } from "node:fs"
+import { Database } from "bun:sqlite"
 
 interface IngestParams {
   path?:    string
@@ -47,6 +48,28 @@ interface IngestResult {
     provenance_created: number
     errors:             number
   }
+}
+
+// Invalidate a file's hash in body.db so the next ingest re-processes it.
+// Used when extraction fails — prevents "sync drift" where body.db thinks
+// the file is current but mind.db never got the extraction.
+function invalidate_body_hash(brane_path: string, file_url: string): void {
+  try {
+    const db = new Database(resolve(brane_path, "body.db"))
+    db.run("UPDATE files SET hash = ? WHERE url = ?", ["extraction_pending", file_url])
+    db.close()
+  } catch {
+    // Best effort — if body.db is locked, the file just won't be retried automatically
+  }
+}
+
+// Check if file content looks binary (contains null bytes in first 8KB)
+function looks_binary(buffer: ArrayBuffer): boolean {
+  const bytes = new Uint8Array(buffer, 0, Math.min(buffer.byteLength, 8192))
+  for (let i = 0; i < bytes.length; i++) {
+    if (bytes[i] === 0) return true
+  }
+  return false
 }
 
 export async function handler(params: Params): Promise<Result<IngestResult>> {
@@ -140,16 +163,27 @@ export async function handler(params: Params): Promise<Result<IngestResult>> {
   for (const file of files_to_extract) {
     const file_path = file.url.replace("file://", "")
 
-    // Read file content
+    // Read file content (skip binary files)
     let file_content: string
     try {
-      file_content = await Bun.file(file_path).text()
+      const buf = await Bun.file(file_path).arrayBuffer()
+      if (looks_binary(buf)) {
+        file_results.push({
+          file_url: file.url,
+          status:   "error",
+          error:    `skipped binary file: ${file_path}`
+        })
+        totals.errors++
+        continue
+      }
+      file_content = new TextDecoder().decode(buf)
     } catch {
       file_results.push({
         file_url: file.url,
         status:   "error",
         error:    `cannot read file: ${file_path}`
       })
+      if (!dry_run) invalidate_body_hash(brane_path, file.url)
       totals.errors++
       continue
     }
@@ -171,6 +205,7 @@ export async function handler(params: Params): Promise<Result<IngestResult>> {
         status:   "error",
         error:    `LLM extraction failed: ${message}`
       })
+      if (!dry_run) invalidate_body_hash(brane_path, file.url)
       totals.errors++
       continue
     }
@@ -225,6 +260,7 @@ export async function handler(params: Params): Promise<Result<IngestResult>> {
     } else {
       file_result.status = "error"
       file_result.error = "patch application failed"
+      invalidate_body_hash(brane_path, file.url)
       totals.errors++
       file_results.push(file_result)
       continue
