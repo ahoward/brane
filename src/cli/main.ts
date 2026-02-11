@@ -6,7 +6,6 @@ import { defineCommand } from "citty"
 
 // Import all commands
 import { init } from "./commands/init.ts"
-import { scan } from "./commands/scan.ts"
 import { search } from "./commands/search.ts"
 import { verify } from "./commands/verify.ts"
 import { concept } from "./commands/concept.ts"
@@ -17,7 +16,6 @@ import { fts } from "./commands/fts.ts"
 import { annotation } from "./commands/annotation.ts"
 import { provenance } from "./commands/provenance.ts"
 import { context } from "./commands/context.ts"
-import { extract } from "./commands/extract.ts"
 import { ingest } from "./commands/ingest.ts"
 import { prVerify } from "./commands/pr-verify.ts"
 import { lens } from "./commands/lens.ts"
@@ -32,7 +30,7 @@ export const main = defineCommand({
   subCommands: {
     // Convenience commands (most used)
     init,
-    scan,
+    ingest,
     search,
     verify,
 
@@ -49,8 +47,6 @@ export const main = defineCommand({
     context,
 
     // Calabi commands
-    ingest,
-    extract,
     "pr-verify": prVerify,
 
     // Lens commands

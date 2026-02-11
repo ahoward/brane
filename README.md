@@ -204,8 +204,8 @@ USAGE
 # initialize a project
 brane init
 
-# scan files into body
-brane scan src/
+# ingest files (scan + LLM extraction in one step)
+brane ingest src/
 
 # create concepts
 brane concept create --name AuthService --type Entity
@@ -369,7 +369,7 @@ COMMANDS
 --------
 ```
 brane init                     initialize body + mind
-brane scan <path>              scan files into body
+brane ingest <path>            scan files + extract knowledge
 brane search <query>           semantic concept search
 brane verify                   run all rules
 
@@ -406,8 +406,7 @@ brane lens                     manage ontology configurations
   export
 
 brane context query <q>        graph-aware context retrieval
-brane extract <path>           LLM concept extraction (planned)
-brane pr-verify                verify PR changes against rules (planned)
+brane pr-verify                verify PR changes against rules
 ```
 
 
