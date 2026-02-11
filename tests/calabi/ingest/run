@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+#
+# Test runner for /calabi/ingest
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+case "$TC_CASE_NAME" in
+  00-success-single-file)
+    # Init workspace with body+mind, create a test file, ingest it
+    init_mind
+    mkdir -p src
+    echo 'export class AuthService { login() {} }' > src/auth.ts
+    # Pass absolute path to the file
+    INPUT=$(echo "$INPUT" | sed "s|__PATH__|$WORKDIR/src/auth.ts|g")
+    ;;
+  01-success-updated-file)
+    # Init workspace, pre-track a file with old hash, then update it
+    init_mind
+    mkdir -p src
+    echo 'export class AuthService { login() {} }' > src/auth.ts
+    # Track with a DIFFERENT hash so scan sees it as "updated"
+    add_body_file "file://$WORKDIR/src/auth.ts" "oldhash000" 100 1234567890
+    INPUT=$(echo "$INPUT" | sed "s|__PATH__|$WORKDIR/src/auth.ts|g")
+    ;;
+  02-success-unchanged-file)
+    # Init workspace, scan the file first (so hash matches), then ingest again
+    init_mind
+    mkdir -p src
+    echo 'export class AuthService { login() {} }' > src/auth.ts
+    # First scan to track the file with correct hash
+    (cd "$WORKDIR" && echo "{\"path\": \"$WORKDIR/src/auth.ts\"}" | brane /body/scan > /dev/null 2>&1)
+    INPUT=$(echo "$INPUT" | sed "s|__PATH__|$WORKDIR/src/auth.ts|g")
+    ;;
+  03-success-directory)
+    # Init workspace, create multiple files, ingest directory
+    init_mind
+    mkdir -p src
+    echo 'export class AuthService { login() {} }' > src/auth.ts
+    echo 'export class Logger { log() {} }' > src/logger.ts
+    INPUT=$(echo "$INPUT" | sed "s|__PATH__|$WORKDIR/src|g")
+    ;;
+  04-success-dry-run)
+    # Init workspace, create file, dry-run ingest
+    init_mind
+    mkdir -p src
+    echo 'export class AuthService { login() {} }' > src/auth.ts
+    INPUT=$(echo "$INPUT" | sed "s|__PATH__|$WORKDIR/src/auth.ts|g")
+    ;;
+  05-error-not-initialized)
+    # Don't initialize — no .brane directory
+    mkdir -p src
+    echo 'export class AuthService { login() {} }' > src/auth.ts
+    INPUT=$(echo "$INPUT" | sed "s|__PATH__|$WORKDIR/src/auth.ts|g")
+    ;;
+  06-success-default-path)
+    # Init workspace, create file at root, no path param (defaults to ".")
+    init_mind
+    echo 'export class AuthService { login() {} }' > auth.ts
+    # INPUT has no __PATH__ to substitute — path is omitted
+    ;;
+  07-success-skip-binary)
+    # Init workspace, create a binary file (contains null bytes), verify skipped
+    init_mind
+    mkdir -p src
+    printf 'binary\x00content\x00here' > src/data.bin
+    INPUT=$(echo "$INPUT" | sed "s|__PATH__|$WORKDIR/src/data.bin|g")
+    ;;
+esac
+
+echo "$INPUT" | brane /calabi/ingest

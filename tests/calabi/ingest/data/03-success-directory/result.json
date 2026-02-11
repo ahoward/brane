@@ -1,0 +1,27 @@
+{
+  "status": "success",
+  "result": {
+    "files": "<array:2>",
+    "totals": {
+      "files_scanned": 2,
+      "files_added": 2,
+      "files_updated": 0,
+      "files_unchanged": 0,
+      "files_extracted": 2,
+      "files_skipped": 0,
+      "concepts_extracted": 2,
+      "edges_extracted": 0,
+      "concepts_created": 2,
+      "concepts_reused": 0,
+      "edges_created": 0,
+      "provenance_created": 2,
+      "errors": 0
+    }
+  },
+  "errors": null,
+  "meta": {
+    "path": "/calabi/ingest",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

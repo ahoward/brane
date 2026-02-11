@@ -2,7 +2,7 @@
 #
 # 00-quickstart.sh — brane in 60 seconds
 #
-# init → scan → concepts → edges → verify
+# init → ingest → concepts → edges → verify
 #
 
 set -e
@@ -46,17 +46,21 @@ brane init
 # mind: created .brane/mind.db
 
 # ─────────────────────────────────────────────────────────────────────────────
-# scan files
+# ingest files (scan + extract in one step)
 # ─────────────────────────────────────────────────────────────────────────────
 
-brane scan src/
+brane ingest src/
 
-# added: 3
-# updated: 0
-# unchanged: 0
+# ingesting: src/auth.ts (added)
+#   concepts: 1 extracted (1 created, 0 reused)
+# ingesting: src/database.ts (added)
+#   concepts: 1 extracted (1 created, 0 reused)
+# ingesting: src/api.ts (added)
+#   concepts: 1 extracted (1 created, 0 reused)
+# summary: 3 files scanned, 3 extracted
 
 # ─────────────────────────────────────────────────────────────────────────────
-# create concepts
+# or create concepts manually
 # ─────────────────────────────────────────────────────────────────────────────
 
 brane concept create --name AuthService --type Entity

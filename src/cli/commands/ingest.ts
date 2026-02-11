@@ -1,18 +1,18 @@
 //
-// extract.ts - brane extract (calabi/extract-llm)
+// ingest.ts - brane ingest (calabi/ingest)
 //
 
 import { defineCommand } from "citty"
 import { sys } from "../../index.ts"
 import { output } from "../output.ts"
 
-export const extract = defineCommand({
+export const ingest = defineCommand({
   meta: {
-    name: "extract",
-    description: "Extract concepts from code using LLM",
+    name: "ingest",
+    description: "Index files and extract knowledge in one step",
   },
   args: {
-    path: { type: "positional", description: "Path to extract from" },
+    path: { type: "positional", description: "Path to ingest (default: .)", required: false },
     "dry-run": { type: "boolean", description: "Preview without applying" },
     json: { type: "boolean", alias: "j", description: "Output as JSON" },
   },
@@ -21,7 +21,7 @@ export const extract = defineCommand({
     if (args.path) params.path = args.path
     if (args["dry-run"]) params.dry_run = true
 
-    const result = await sys.call("/calabi/extract-llm", params)
+    const result = await sys.call("/calabi/ingest", params)
     if (args.json) {
       output(result, { json: true })
     } else if (result.status === "error") {
@@ -31,8 +31,13 @@ export const extract = defineCommand({
 
       for (const file of data.files ?? []) {
         const display_path = file.file_url?.replace("file://", "") ?? file.file_url
-        if (params.dry_run) {
-          console.log(`extracting: ${display_path} (dry run)`)
+        if (file.status === "error") {
+          console.log(`ingesting: ${display_path} (error)`)
+          console.log(`  ${file.error}`)
+        } else if (file.status === "unchanged") {
+          console.log(`ingesting: ${display_path} (unchanged, skipped)`)
+        } else if (params.dry_run) {
+          console.log(`ingesting: ${display_path} (${file.status}, dry run)`)
           if (file.patch?.concepts?.length > 0) {
             console.log("  concepts:")
             for (const c of file.patch.concepts) {
@@ -48,11 +53,19 @@ export const extract = defineCommand({
           }
           console.log("  (no changes applied)")
         } else {
-          console.log(`extracting: ${display_path}`)
+          console.log(`ingesting: ${display_path} (${file.status})`)
           console.log(`  concepts: ${file.concepts_extracted} extracted (${file.concepts_created} created, ${file.concepts_reused} reused)`)
           console.log(`  edges: ${file.edges_extracted} extracted (${file.edges_created} created)`)
           console.log(`  provenance: ${file.provenance_created} links`)
         }
+      }
+
+      // Summary line
+      const t = data.totals
+      if (t) {
+        const skipped = t.files_unchanged > 0 ? `, ${t.files_skipped} skipped` : ""
+        const errors = t.errors > 0 ? `, ${t.errors} errors` : ""
+        console.log(`\nsummary: ${t.files_scanned} files scanned, ${t.files_extracted} extracted${skipped}${errors}`)
       }
     }
   },
