@@ -22,15 +22,6 @@ export const init = defineCommand({
       return
     }
 
-    if (!args.json) {
-      const data = body_result.result as any
-      if (data?.created) {
-        console.log(`body: created ${data.path}`)
-      } else {
-        console.log(`body: exists ${data?.path}`)
-      }
-    }
-
     // Initialize mind
     const mind_result = await sys.call("/mind/init", {})
     if (mind_result.status === "error") {
@@ -50,11 +41,13 @@ export const init = defineCommand({
         meta: mind_result.meta,
       }, null, 2))
     } else {
-      const data = mind_result.result as any
-      if (data?.created) {
-        console.log(`mind: created ${data.path}`)
+      const body = body_result.result as any
+      const created = body?.created || (mind_result.result as any)?.created
+      const brane_path = body?.path ?? ".brane"
+      if (created) {
+        console.log(`initialized ${brane_path}`)
       } else {
-        console.log(`mind: exists ${data?.path}`)
+        console.log(`${brane_path} already initialized`)
       }
     }
   },
