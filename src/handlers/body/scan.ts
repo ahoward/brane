@@ -2,7 +2,7 @@
 // scan.ts - full directory scan: hash all files, update body.db
 //
 
-import type { Params, Result } from "../../lib/types.ts"
+import type { Params, Result, Emit } from "../../lib/types.ts"
 import { success, error } from "../../lib/result.ts"
 import { resolve, basename, relative } from "node:path"
 import { existsSync, statSync, readdirSync, readFileSync } from "node:fs"
@@ -164,7 +164,7 @@ function discover_files(
 //
 // main handler
 //
-export async function handler(params: Params): Promise<Result<ScanResult>> {
+export async function handler(params: Params, emit?: Emit): Promise<Result<ScanResult>> {
   const p = (params ?? {}) as ScanParams
 
   // Check brane is initialized

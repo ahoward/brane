@@ -2,7 +2,7 @@
 // extract.ts - apply extraction patch to mind.db
 //
 
-import type { Params, Result } from "../../lib/types.ts"
+import type { Params, Result, Emit } from "../../lib/types.ts"
 import { success, error } from "../../lib/result.ts"
 import { open_mind, is_mind_error, is_valid_concept_type, is_valid_edge_relation, get_next_concept_id, get_next_edge_id } from "../../lib/mind.ts"
 import { file_exists_in_body } from "../../lib/body.ts"
@@ -34,7 +34,7 @@ interface ExtractResult {
   concepts_orphaned?: number
 }
 
-export async function handler(params: Params): Promise<Result<ExtractResult>> {
+export async function handler(params: Params, emit?: Emit): Promise<Result<ExtractResult>> {
   const p = (params ?? {}) as ExtractParams
 
   // Validate file_url

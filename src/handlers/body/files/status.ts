@@ -2,7 +2,7 @@
 // status.ts - show changed/new/deleted files vs body.db
 //
 
-import type { Params, Result } from "../../../lib/types.ts"
+import type { Params, Result, Emit } from "../../../lib/types.ts"
 import { success, error } from "../../../lib/result.ts"
 import { resolve, basename, relative } from "node:path"
 import { existsSync, statSync, readdirSync, readFileSync } from "node:fs"
@@ -156,7 +156,7 @@ function discover_files(
 //
 // main handler
 //
-export async function handler(params: Params): Promise<Result<StatusResult>> {
+export async function handler(params: Params, emit?: Emit): Promise<Result<StatusResult>> {
   const p = (params ?? {}) as StatusParams
 
   // Check brane is initialized

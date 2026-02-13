@@ -2,7 +2,7 @@
 // query.ts - execute a rule and return matching concepts
 //
 
-import type { Params, Result } from "../../../lib/types.ts"
+import type { Params, Result, Emit } from "../../../lib/types.ts"
 import { success, error } from "../../../lib/result.ts"
 import { open_mind, is_mind_error, get_rule_by_name } from "../../../lib/mind.ts"
 
@@ -21,7 +21,7 @@ interface QueryResult {
   count:   number
 }
 
-export async function handler(params: Params): Promise<Result<QueryResult>> {
+export async function handler(params: Params, emit?: Emit): Promise<Result<QueryResult>> {
   const p = (params ?? {}) as QueryParams
 
   // Validate name

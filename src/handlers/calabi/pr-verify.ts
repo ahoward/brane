@@ -2,7 +2,7 @@
 // pr-verify.ts - verify workspace changes against rules
 //
 
-import type { Params, Result } from "../../lib/types.ts"
+import type { Params, Result, Emit } from "../../lib/types.ts"
 import { success, error } from "../../lib/result.ts"
 import { open_mind, is_mind_error, get_rule_by_name, type Rule } from "../../lib/mind.ts"
 import { resolve, basename, relative } from "node:path"
@@ -323,7 +323,7 @@ async function run_verification(
 // Main handler
 //
 
-export async function handler(params: Params): Promise<Result<PrVerifyResult>> {
+export async function handler(params: Params, emit?: Emit): Promise<Result<PrVerifyResult>> {
   const p = (params ?? {}) as PrVerifyParams
   const requested_rules = p.rules ?? []
   const dry_run = p.dry_run ?? false

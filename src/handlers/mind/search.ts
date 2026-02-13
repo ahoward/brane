@@ -2,7 +2,7 @@
 // search.ts - semantic search for concepts using vector similarity
 //
 
-import type { Params, Result } from "../../lib/types.ts"
+import type { Params, Result, Emit } from "../../lib/types.ts"
 import { success, error } from "../../lib/result.ts"
 import { open_mind, is_mind_error } from "../../lib/mind.ts"
 import { generate_embedding, EMBED_DIM } from "../../lib/embed.ts"
@@ -23,7 +23,7 @@ interface SearchResult {
   matches: Match[]
 }
 
-export async function handler(params: Params): Promise<Result<SearchResult>> {
+export async function handler(params: Params, emit?: Emit): Promise<Result<SearchResult>> {
   const p = (params ?? {}) as SearchParams
 
   // Validate query

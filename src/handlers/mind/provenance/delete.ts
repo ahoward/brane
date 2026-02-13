@@ -2,7 +2,7 @@
 // delete.ts - delete provenance link(s)
 //
 
-import type { Params, Result } from "../../../lib/types.ts"
+import type { Params, Result, Emit } from "../../../lib/types.ts"
 import { success, error } from "../../../lib/result.ts"
 import { open_mind, is_mind_error } from "../../../lib/mind.ts"
 
@@ -20,7 +20,7 @@ interface DeleteByFileResult {
   file_url: string
 }
 
-export async function handler(params: Params): Promise<Result<DeleteSingleResult | DeleteByFileResult>> {
+export async function handler(params: Params, emit?: Emit): Promise<Result<DeleteSingleResult | DeleteByFileResult>> {
   const p = (params ?? {}) as DeleteParams
 
   // file_url is always required

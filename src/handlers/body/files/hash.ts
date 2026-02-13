@@ -2,7 +2,7 @@
 // hash.ts - compute SHA-256 hash for files
 //
 
-import type { Params, Result } from "../../../lib/types.ts"
+import type { Params, Result, Emit } from "../../../lib/types.ts"
 import { success, error } from "../../../lib/result.ts"
 import { resolve } from "node:path"
 import { existsSync, statSync } from "node:fs"
@@ -37,7 +37,7 @@ async function compute_hash(file_path: string): Promise<string> {
 //
 // main handler
 //
-export async function handler(params: Params): Promise<Result<HashResult>> {
+export async function handler(params: Params, emit?: Emit): Promise<Result<HashResult>> {
   const p = (params ?? {}) as HashParams
 
   // Collect paths

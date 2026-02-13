@@ -2,7 +2,7 @@
 // sys.ts - the core sys.call interface
 //
 
-import type { Params, Result, Handler, Meta } from "./lib/types.ts"
+import type { Params, Result, Handler, Meta, Emit } from "./lib/types.ts"
 import { error, invalid_json } from "./lib/result.ts"
 
 //
@@ -27,7 +27,7 @@ export function paths(): string[] {
 //
 // the main interface
 //
-export async function call(path: string, params: Params = null): Promise<Result> {
+export async function call(path: string, params: Params = null, emit?: Emit): Promise<Result> {
   const start = performance.now()
 
   const build_meta = (): Meta => ({
@@ -53,7 +53,7 @@ export async function call(path: string, params: Params = null): Promise<Result>
   }
 
   try {
-    const result = await handler(params)
+    const result = await handler(params, emit)
     result.meta = { ...result.meta, ...build_meta() }
     return result
   } catch (err) {

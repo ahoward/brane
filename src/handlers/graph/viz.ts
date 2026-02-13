@@ -2,7 +2,7 @@
 // viz.ts - Graph visualization
 //
 
-import type { Params, Result } from "../../lib/types.ts"
+import type { Params, Result, Emit } from "../../lib/types.ts"
 import { success, error } from "../../lib/result.ts"
 import { open_mind, is_mind_error } from "../../lib/mind.ts"
 import { render_graph, type VizConcept, type VizEdge, type VizOutput } from "../../lib/viz.ts"
@@ -13,7 +13,7 @@ interface VizParams {
   limit?: number
 }
 
-export async function handler(params: Params): Promise<Result<VizOutput>> {
+export async function handler(params: Params, emit?: Emit): Promise<Result<VizOutput>> {
   const p = params as VizParams
 
   // Validate format if provided

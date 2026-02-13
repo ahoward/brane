@@ -2,7 +2,7 @@
 // create.ts - create a new concept
 //
 
-import type { Params, Result } from "../../../lib/types.ts"
+import type { Params, Result, Emit } from "../../../lib/types.ts"
 import { success, error } from "../../../lib/result.ts"
 import { open_mind, is_mind_error, is_valid_concept_type, get_next_concept_id } from "../../../lib/mind.ts"
 import { generate_embedding } from "../../../lib/embed.ts"
@@ -19,7 +19,7 @@ interface Concept {
   type: string
 }
 
-export async function handler(params: Params): Promise<Result<Concept>> {
+export async function handler(params: Params, emit?: Emit): Promise<Result<Concept>> {
   const p = (params ?? {}) as CreateParams
 
   // Validate name

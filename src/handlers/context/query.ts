@@ -2,7 +2,7 @@
 // query.ts - query context for AI agents
 //
 
-import type { Params, Result } from "../../lib/types.ts"
+import type { Params, Result, Emit } from "../../lib/types.ts"
 import { success, error } from "../../lib/result.ts"
 import { open_mind, is_mind_error } from "../../lib/mind.ts"
 import { generate_embedding } from "../../lib/embed.ts"
@@ -54,7 +54,7 @@ const DEFAULT_DEPTH = 1
 const DEFAULT_LIMIT = 10
 const PREVIEW_LENGTH = 500
 
-export async function handler(params: Params): Promise<Result<ContextResult>> {
+export async function handler(params: Params, emit?: Emit): Promise<Result<ContextResult>> {
   const p = (params ?? {}) as QueryParams
 
   // Validate query

@@ -2,7 +2,7 @@
 // summary.ts - Graph summary statistics
 //
 
-import type { Params, Result } from "../../lib/types.ts"
+import type { Params, Result, Emit } from "../../lib/types.ts"
 import { success, error } from "../../lib/result.ts"
 import { open_mind, is_mind_error } from "../../lib/mind.ts"
 
@@ -17,7 +17,7 @@ interface SummaryResult {
   }
 }
 
-export async function handler(_params: Params): Promise<Result<SummaryResult>> {
+export async function handler(_params: Params, _emit?: Emit): Promise<Result<SummaryResult>> {
   // Open mind.db
   const mind = open_mind()
 

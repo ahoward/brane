@@ -2,7 +2,7 @@
 // add.ts - add files to body.db
 //
 
-import type { Params, Result } from "../../../lib/types.ts"
+import type { Params, Result, Emit } from "../../../lib/types.ts"
 import { success, error } from "../../../lib/result.ts"
 import { resolve, basename, dirname, relative } from "node:path"
 import { existsSync, statSync, readdirSync, readFileSync } from "node:fs"
@@ -155,7 +155,7 @@ async function compute_hash(file_path: string): Promise<string> {
 //
 // main handler
 //
-export async function handler(params: Params): Promise<Result<AddResult>> {
+export async function handler(params: Params, emit?: Emit): Promise<Result<AddResult>> {
   const p = (params ?? {}) as AddParams
 
   // Collect paths

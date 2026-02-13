@@ -2,7 +2,7 @@
 // update.ts - update an edge's relation or weight
 //
 
-import type { Params, Result } from "../../../lib/types.ts"
+import type { Params, Result, Emit } from "../../../lib/types.ts"
 import { success, error } from "../../../lib/result.ts"
 import { open_mind, is_mind_error, is_valid_edge_relation } from "../../../lib/mind.ts"
 import { update_relation_usage } from "../../../lib/lens.ts"
@@ -21,7 +21,7 @@ interface Edge {
   weight:   number
 }
 
-export async function handler(params: Params): Promise<Result<Edge>> {
+export async function handler(params: Params, emit?: Emit): Promise<Result<Edge>> {
   const p = (params ?? {}) as UpdateParams
 
   // Validate id

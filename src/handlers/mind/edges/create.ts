@@ -2,7 +2,7 @@
 // create.ts - create a new edge between concepts
 //
 
-import type { Params, Result } from "../../../lib/types.ts"
+import type { Params, Result, Emit } from "../../../lib/types.ts"
 import { success, error } from "../../../lib/result.ts"
 import { open_mind, is_mind_error, is_valid_edge_relation, get_next_edge_id, concept_exists } from "../../../lib/mind.ts"
 import { update_relation_usage } from "../../../lib/lens.ts"
@@ -22,7 +22,7 @@ interface Edge {
   weight:   number
 }
 
-export async function handler(params: Params): Promise<Result<Edge>> {
+export async function handler(params: Params, emit?: Emit): Promise<Result<Edge>> {
   const p = (params ?? {}) as CreateParams
 
   // Validate source

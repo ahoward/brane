@@ -2,7 +2,7 @@
 // create.ts - create a provenance link between concept and file
 //
 
-import type { Params, Result } from "../../../lib/types.ts"
+import type { Params, Result, Emit } from "../../../lib/types.ts"
 import { success, error } from "../../../lib/result.ts"
 import { open_mind, is_mind_error, concept_exists } from "../../../lib/mind.ts"
 import { file_exists_in_body } from "../../../lib/body.ts"
@@ -17,7 +17,7 @@ interface Provenance {
   file_url:   string
 }
 
-export async function handler(params: Params): Promise<Result<Provenance>> {
+export async function handler(params: Params, emit?: Emit): Promise<Result<Provenance>> {
   const p = (params ?? {}) as CreateParams
 
   // Validate concept_id

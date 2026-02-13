@@ -2,7 +2,7 @@
 // export.ts - export lens configuration as YAML
 //
 
-import type { Params, Result } from "../../lib/types.ts"
+import type { Params, Result, Emit } from "../../lib/types.ts"
 import { success, error } from "../../lib/result.ts"
 import { open_mind, is_mind_error, get_lens_config } from "../../lib/lens.ts"
 import * as yaml from "js-yaml"
@@ -11,7 +11,7 @@ interface ExportResult {
   yaml: string
 }
 
-export async function handler(params: Params): Promise<Result<ExportResult>> {
+export async function handler(params: Params, emit?: Emit): Promise<Result<ExportResult>> {
   // Open mind.db
   const mind = open_mind()
 

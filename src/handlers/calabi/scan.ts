@@ -2,7 +2,7 @@
 // scan.ts - scan dirty files and extract to mind.db
 //
 
-import type { Params, Result } from "../../lib/types.ts"
+import type { Params, Result, Emit } from "../../lib/types.ts"
 import { success, error } from "../../lib/result.ts"
 import { open_mind, is_mind_error } from "../../lib/mind.ts"
 import { handler as extract_handler } from "./extract.ts"
@@ -30,7 +30,7 @@ interface FileRecord {
   hash: string
 }
 
-export async function handler(params: Params): Promise<Result<ScanResult>> {
+export async function handler(params: Params, emit?: Emit): Promise<Result<ScanResult>> {
   const p = (params ?? {}) as ScanParams
   const path_filter = p.path ?? ""
   const dry_run = p.dry_run ?? false
@@ -119,7 +119,7 @@ export async function handler(params: Params): Promise<Result<ScanResult>> {
             { name: concept_name, type: "Entity" }
           ],
           edges: []
-        })
+        }, emit)
 
         if (extract_result.status === "success" && extract_result.result) {
           total_concepts_created += extract_result.result.concepts_created

@@ -2,7 +2,7 @@
 // extract-llm.ts - LLM-powered knowledge extraction orchestrator
 //
 
-import type { Params, Result } from "../../lib/types.ts"
+import type { Params, Result, Emit } from "../../lib/types.ts"
 import { success, error } from "../../lib/result.ts"
 import { open_mind, is_mind_error } from "../../lib/mind.ts"
 import { file_exists_in_body } from "../../lib/body.ts"
@@ -44,7 +44,7 @@ interface ExtractLlmResult {
   }
 }
 
-export async function handler(params: Params): Promise<Result<ExtractLlmResult>> {
+export async function handler(params: Params, emit?: Emit): Promise<Result<ExtractLlmResult>> {
   const p = (params ?? {}) as ExtractLlmParams
   const dry_run = p.dry_run ?? false
 
@@ -237,7 +237,7 @@ export async function handler(params: Params): Promise<Result<ExtractLlmResult>>
         relation:    e.relation,
         weight:      e.weight
       }))
-    })
+    }, emit)
 
     if (patch_result.status === "success" && patch_result.result) {
       const r = patch_result.result as any

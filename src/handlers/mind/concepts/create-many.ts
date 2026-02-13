@@ -2,7 +2,7 @@
 // create-many.ts - batch create concepts
 //
 
-import type { Params, Result } from "../../../lib/types.ts"
+import type { Params, Result, Emit } from "../../../lib/types.ts"
 import { success, error } from "../../../lib/result.ts"
 import { open_mind, is_mind_error, is_valid_concept_type } from "../../../lib/mind.ts"
 import { generate_embeddings } from "../../../lib/embed.ts"
@@ -23,7 +23,7 @@ interface Concept {
   type: string
 }
 
-export async function handler(params: Params): Promise<Result<{ items: Concept[] }>> {
+export async function handler(params: Params, emit?: Emit): Promise<Result<{ items: Concept[] }>> {
   const p = (params ?? {}) as CreateManyParams
 
   // Validate items array

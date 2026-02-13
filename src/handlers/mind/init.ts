@@ -2,7 +2,7 @@
 // init.ts - initialize CozoDB mind.db with schema
 //
 
-import type { Params, Result } from "../../lib/types.ts"
+import type { Params, Result, Emit } from "../../lib/types.ts"
 import { success, error } from "../../lib/result.ts"
 import { resolve } from "node:path"
 import { existsSync, rmSync } from "node:fs"
@@ -267,7 +267,7 @@ async function get_schema_version(db: CozoDb): Promise<string> {
 // Main handler
 //
 
-export async function handler(params: Params): Promise<Result<InitResult>> {
+export async function handler(params: Params, emit?: Emit): Promise<Result<InitResult>> {
   const p = (params ?? {}) as InitParams
 
   // Check brane is initialized

@@ -2,7 +2,7 @@
 // bless.ts - promote a detected type or relation to golden status
 //
 
-import type { Params, Result } from "../../lib/types.ts"
+import type { Params, Result, Emit } from "../../lib/types.ts"
 import { success, error } from "../../lib/result.ts"
 import { open_mind, is_mind_error } from "../../lib/lens.ts"
 
@@ -13,7 +13,7 @@ interface BlessResult {
   symmetric?:  boolean
 }
 
-export async function handler(params: Params): Promise<Result<BlessResult>> {
+export async function handler(params: Params, emit?: Emit): Promise<Result<BlessResult>> {
   // Open mind.db
   const mind = open_mind()
 

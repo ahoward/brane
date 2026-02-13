@@ -2,7 +2,7 @@
 // ingest.ts - unified scan + extract orchestrator
 //
 
-import type { Params, Result } from "../../lib/types.ts"
+import type { Params, Result, Emit } from "../../lib/types.ts"
 import { success, error } from "../../lib/result.ts"
 import { open_mind, is_mind_error } from "../../lib/mind.ts"
 import { get_golden_types, get_golden_relations } from "../../lib/lens.ts"
@@ -72,7 +72,7 @@ function looks_binary(buffer: ArrayBuffer): boolean {
   return false
 }
 
-export async function handler(params: Params): Promise<Result<IngestResult>> {
+export async function handler(params: Params, emit?: Emit): Promise<Result<IngestResult>> {
   const p = (params ?? {}) as IngestParams
   const dry_run = p.dry_run ?? false
   const path = p.path ?? "."
@@ -89,7 +89,8 @@ export async function handler(params: Params): Promise<Result<IngestResult>> {
   }
 
   // Step 1: Scan files into body.db
-  const scan_result = await body_scan_handler({ path, dry_run })
+  emit?.("progress", { phase: "scanning", current: 0, total: 0, message: path })
+  const scan_result = await body_scan_handler({ path, dry_run }, emit)
 
   if (scan_result.status === "error") {
     return scan_result as any
@@ -160,8 +161,10 @@ export async function handler(params: Params): Promise<Result<IngestResult>> {
   //  so we just track the count in totals)
 
   // Step 4: Extract each file
-  for (const file of files_to_extract) {
+  for (let i = 0; i < files_to_extract.length; i++) {
+    const file = files_to_extract[i]
     const file_path = file.url.replace("file://", "")
+    emit?.("progress", { phase: "extracting", current: i + 1, total: files_to_extract.length, message: file_path })
 
     // Read file content (skip binary files)
     let file_content: string
@@ -249,7 +252,7 @@ export async function handler(params: Params): Promise<Result<IngestResult>> {
         relation:    e.relation,
         weight:      e.weight
       }))
-    })
+    }, emit)
 
     if (patch_result.status === "success" && patch_result.result) {
       const r = patch_result.result as any

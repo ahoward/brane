@@ -2,7 +2,7 @@
 // verify.ts - run all or selected rules and report violations
 //
 
-import type { Params, Result } from "../../lib/types.ts"
+import type { Params, Result, Emit } from "../../lib/types.ts"
 import { success, error } from "../../lib/result.ts"
 import { open_mind, is_mind_error, get_rule_by_name, type Rule } from "../../lib/mind.ts"
 import type { CozoDb } from "cozo-node"
@@ -83,7 +83,7 @@ async function get_all_rules(db: CozoDb): Promise<Rule[]> {
   }))
 }
 
-export async function handler(params: Params): Promise<Result<VerifyResult>> {
+export async function handler(params: Params, emit?: Emit): Promise<Result<VerifyResult>> {
   const p = (params ?? {}) as VerifyParams
   const requested_rules = p.rules ?? []
 

@@ -28,4 +28,6 @@ export interface Result<T = unknown> {
 
 export type Params = unknown
 
-export type Handler = (params: Params) => Promise<Result>
+export type Emit = (event: string, data?: unknown) => void
+
+export type Handler = (params: Params, emit?: Emit) => Promise<Result>

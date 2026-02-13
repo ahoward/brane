@@ -2,11 +2,11 @@
 // stats.ts - return usage stats for types and relations
 //
 
-import type { Params, Result } from "../../lib/types.ts"
+import type { Params, Result, Emit } from "../../lib/types.ts"
 import { success, error } from "../../lib/result.ts"
 import { open_mind, is_mind_error, get_lens_stats, type LensStats } from "../../lib/lens.ts"
 
-export async function handler(params: Params): Promise<Result<LensStats>> {
+export async function handler(params: Params, emit?: Emit): Promise<Result<LensStats>> {
   // Open mind.db
   const mind = open_mind()
 

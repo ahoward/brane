@@ -2,7 +2,7 @@
 // neighbors.ts - Get neighbors of a concept
 //
 
-import type { Params, Result } from "../../lib/types.ts"
+import type { Params, Result, Emit } from "../../lib/types.ts"
 import { success, error } from "../../lib/result.ts"
 import { open_mind, is_mind_error } from "../../lib/mind.ts"
 
@@ -28,7 +28,7 @@ interface NeighborsResult {
   }
 }
 
-export async function handler(params: Params): Promise<Result<NeighborsResult>> {
+export async function handler(params: Params, emit?: Emit): Promise<Result<NeighborsResult>> {
   const p = params as { id?: number }
 
   // Validate required id

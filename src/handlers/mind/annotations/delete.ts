@@ -2,7 +2,7 @@
 // delete.ts - delete an annotation by ID
 //
 
-import type { Params, Result } from "../../../lib/types.ts"
+import type { Params, Result, Emit } from "../../../lib/types.ts"
 import { success, error } from "../../../lib/result.ts"
 import {
   open_mind,
@@ -19,7 +19,7 @@ interface DeleteResult {
   id:      number
 }
 
-export async function handler(params: Params): Promise<Result<DeleteResult>> {
+export async function handler(params: Params, emit?: Emit): Promise<Result<DeleteResult>> {
   const p = (params ?? {}) as DeleteParams
 
   // Validate id

@@ -2,7 +2,7 @@
 // list.ts - list edges with optional filters
 //
 
-import type { Params, Result } from "../../../lib/types.ts"
+import type { Params, Result, Emit } from "../../../lib/types.ts"
 import { success, error } from "../../../lib/result.ts"
 import { open_mind, is_mind_error } from "../../../lib/mind.ts"
 
@@ -25,7 +25,7 @@ interface ListResult {
   total: number
 }
 
-export async function handler(params: Params): Promise<Result<ListResult>> {
+export async function handler(params: Params, emit?: Emit): Promise<Result<ListResult>> {
   const p = (params ?? {}) as ListParams
 
   // Open mind.db

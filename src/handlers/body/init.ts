@@ -2,7 +2,7 @@
 // init.ts - initialize .brane/ directory and body.db
 //
 
-import type { Params, Result } from "../../lib/types.ts"
+import type { Params, Result, Emit } from "../../lib/types.ts"
 import { success, error } from "../../lib/result.ts"
 import { resolve } from "node:path"
 import { existsSync, statSync, mkdirSync } from "node:fs"
@@ -17,7 +17,7 @@ interface InitResult {
   created: boolean
 }
 
-export async function handler(params: Params): Promise<Result<InitResult>> {
+export async function handler(params: Params, emit?: Emit): Promise<Result<InitResult>> {
   const p = (params ?? {}) as InitParams
 
   // determine target path

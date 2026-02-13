@@ -2,11 +2,11 @@
 // show.ts - return current lens configuration
 //
 
-import type { Params, Result } from "../../lib/types.ts"
+import type { Params, Result, Emit } from "../../lib/types.ts"
 import { success, error } from "../../lib/result.ts"
 import { open_mind, is_mind_error, get_lens_config, type LensConfig } from "../../lib/lens.ts"
 
-export async function handler(params: Params): Promise<Result<LensConfig>> {
+export async function handler(params: Params, emit?: Emit): Promise<Result<LensConfig>> {
   // Open mind.db
   const mind = open_mind()
 

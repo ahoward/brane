@@ -5,6 +5,7 @@
 import { defineCommand } from "citty"
 import { sys } from "../../index.ts"
 import { output } from "../output.ts"
+import { create_progress_emitter, finish_progress } from "../../lib/progress.ts"
 
 export const ingest = defineCommand({
   meta: {
@@ -21,7 +22,18 @@ export const ingest = defineCommand({
     if (args.path) params.path = args.path
     if (args["dry-run"]) params.dry_run = true
 
-    const result = await sys.call("/calabi/ingest", params)
+    const emit = create_progress_emitter({ enabled: !args.json && !args["dry-run"] })
+    const result = await sys.call("/calabi/ingest", params, emit)
+    // Clear progress line before output
+    if (!args.json && !args["dry-run"] && result.status === "success") {
+      const data = result.result as any
+      const t = data?.totals
+      if (t) {
+        const elapsed = result.meta?.duration_ms ? `${(result.meta.duration_ms / 1000).toFixed(1)}s` : ""
+        finish_progress(`done — ${t.files_scanned} files, ${t.concepts_created} concepts, ${t.edges_created} edges (${elapsed})`)
+      }
+    }
+
     if (args.json) {
       output(result, { json: true })
     } else if (result.status === "error") {

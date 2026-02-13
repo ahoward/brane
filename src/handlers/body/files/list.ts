@@ -2,7 +2,7 @@
 // list.ts - list tracked files from body.db
 //
 
-import type { Params, Result } from "../../../lib/types.ts"
+import type { Params, Result, Emit } from "../../../lib/types.ts"
 import { success, error } from "../../../lib/result.ts"
 import { resolve } from "node:path"
 import { existsSync } from "node:fs"
@@ -54,7 +54,7 @@ function matches_glob(url: string, pattern: string): boolean {
 //
 // main handler
 //
-export async function handler(params: Params): Promise<Result<ListResult>> {
+export async function handler(params: Params, emit?: Emit): Promise<Result<ListResult>> {
   const p = (params ?? {}) as ListParams
 
   // Check brane is initialized

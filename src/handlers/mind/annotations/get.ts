@@ -2,7 +2,7 @@
 // get.ts - get a single annotation by ID
 //
 
-import type { Params, Result } from "../../../lib/types.ts"
+import type { Params, Result, Emit } from "../../../lib/types.ts"
 import { success, error } from "../../../lib/result.ts"
 import {
   open_mind,
@@ -23,7 +23,7 @@ interface Annotation {
   created_at: string
 }
 
-export async function handler(params: Params): Promise<Result<Annotation>> {
+export async function handler(params: Params, emit?: Emit): Promise<Result<Annotation>> {
   const p = (params ?? {}) as GetParams
 
   // Validate id

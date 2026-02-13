@@ -2,7 +2,7 @@
 // search.ts - full-text search across indexed files
 //
 
-import type { Params, Result } from "../../../lib/types.ts"
+import type { Params, Result, Emit } from "../../../lib/types.ts"
 import { success, error } from "../../../lib/result.ts"
 import { resolve } from "node:path"
 import { existsSync } from "node:fs"
@@ -27,7 +27,7 @@ interface SearchResult {
 
 const DEFAULT_LIMIT = 100
 
-export async function handler(params: Params): Promise<Result<SearchResult>> {
+export async function handler(params: Params, emit?: Emit): Promise<Result<SearchResult>> {
   const p = (params ?? {}) as SearchParams
 
   // check brane is initialized

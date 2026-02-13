@@ -2,7 +2,7 @@
 // get.ts - get a single rule by name
 //
 
-import type { Params, Result } from "../../../lib/types.ts"
+import type { Params, Result, Emit } from "../../../lib/types.ts"
 import { success, error } from "../../../lib/result.ts"
 import { open_mind, is_mind_error, get_rule_by_name, type Rule } from "../../../lib/mind.ts"
 
@@ -10,7 +10,7 @@ interface GetParams {
   name?: string
 }
 
-export async function handler(params: Params): Promise<Result<Rule>> {
+export async function handler(params: Params, emit?: Emit): Promise<Result<Rule>> {
   const p = (params ?? {}) as GetParams
 
   // Validate name

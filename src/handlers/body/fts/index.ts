@@ -2,7 +2,7 @@
 // index.ts - build FTS5 index from file contents
 //
 
-import type { Params, Result } from "../../../lib/types.ts"
+import type { Params, Result, Emit } from "../../../lib/types.ts"
 import { success, error } from "../../../lib/result.ts"
 import { resolve } from "node:path"
 import { existsSync } from "node:fs"
@@ -96,7 +96,7 @@ async function read_text_content(file_path: string): Promise<string | null> {
 // main handler
 //
 
-export async function handler(params: Params): Promise<Result<IndexResult>> {
+export async function handler(params: Params, emit?: Emit): Promise<Result<IndexResult>> {
   const p = (params ?? {}) as IndexParams
 
   // check brane is initialized

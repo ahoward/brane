@@ -2,7 +2,7 @@
 // list.ts - list annotations with optional filters
 //
 
-import type { Params, Result } from "../../../lib/types.ts"
+import type { Params, Result, Emit } from "../../../lib/types.ts"
 import { success, error } from "../../../lib/result.ts"
 import {
   open_mind,
@@ -31,7 +31,7 @@ interface ListResult {
   count:       number
 }
 
-export async function handler(params: Params): Promise<Result<ListResult>> {
+export async function handler(params: Params, emit?: Emit): Promise<Result<ListResult>> {
   const p = (params ?? {}) as ListParams
 
   // Validate type filter if provided

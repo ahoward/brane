@@ -2,7 +2,7 @@
 // import.ts - import lens configuration from YAML file
 //
 
-import type { Params, Result } from "../../lib/types.ts"
+import type { Params, Result, Emit } from "../../lib/types.ts"
 import { success, error } from "../../lib/result.ts"
 import { open_mind, is_mind_error } from "../../lib/lens.ts"
 import { existsSync, readFileSync } from "node:fs"
@@ -31,7 +31,7 @@ interface LensYaml {
   consolidation?: Record<string, string>
 }
 
-export async function handler(params: Params): Promise<Result<ImportResult>> {
+export async function handler(params: Params, emit?: Emit): Promise<Result<ImportResult>> {
   const p = (params ?? {}) as ImportParams
 
   // Validate path
