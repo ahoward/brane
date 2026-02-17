@@ -42,13 +42,11 @@ export const init = defineCommand({
       }, null, 2))
     } else {
       const body = body_result.result as any
-      const created = body?.created || (mind_result.result as any)?.created
-      const brane_path = body?.path ?? ".brane"
-      if (created) {
-        console.log(`initialized ${brane_path}`)
-      } else {
-        console.log(`${brane_path} already initialized`)
-      }
+      const mind = mind_result.result as any
+      const body_status = body?.created ? "created" : "exists"
+      const mind_status = mind?.created ? "created" : "exists"
+      console.log(`${body_status} ${body?.path}/body.db`)
+      console.log(`${mind_status} ${mind?.path}`)
     }
   },
 })
