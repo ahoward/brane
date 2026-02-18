@@ -117,12 +117,16 @@ export const lens = defineCommand({
     }),
 
     show: defineCommand({
-      meta: { name: "show", description: "Show current lens configuration" },
+      meta: { name: "show", description: "Show lens configuration (active or named)" },
       args: {
+        name: { type: "positional", description: "Lens name (default: active lens)", required: false },
         json: { type: "boolean", alias: "j", description: "Output as JSON" },
       },
       async run({ args }) {
-        const result = await sys.call("/lens/show", {})
+        const params: any = {}
+        if (args.name) params.name = args.name
+
+        const result = await sys.call("/lens/show", params)
 
         if (args.json) {
           output(result, { json: true })
