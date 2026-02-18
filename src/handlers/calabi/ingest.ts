@@ -9,6 +9,7 @@ import { get_golden_types, get_golden_relations } from "../../lib/lens.ts"
 import { extract_from_file } from "../../lib/llm.ts"
 import { handler as body_scan_handler } from "../body/scan.ts"
 import { handler as extract_handler } from "./extract.ts"
+import { resolve_lens_paths } from "../../lib/state.ts"
 import { resolve } from "node:path"
 import { existsSync } from "node:fs"
 import { Database } from "bun:sqlite"
@@ -53,9 +54,9 @@ interface IngestResult {
 // Invalidate a file's hash in body.db so the next ingest re-processes it.
 // Used when extraction fails — prevents "sync drift" where body.db thinks
 // the file is current but mind.db never got the extraction.
-function invalidate_body_hash(brane_path: string, file_url: string): void {
+function invalidate_body_hash(body_db_path: string, file_url: string): void {
   try {
-    const db = new Database(resolve(brane_path, "body.db"))
+    const db = new Database(body_db_path)
     db.run("UPDATE files SET hash = ? WHERE url = ?", ["extraction_pending", file_url])
     db.close()
   } catch {
@@ -77,8 +78,10 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Inges
   const dry_run = p.dry_run ?? false
   const path = p.path ?? "."
 
-  // Check .brane exists
-  const brane_path = resolve(process.cwd(), ".brane")
+  // Resolve lens paths
+  const lens_paths = resolve_lens_paths()
+  const brane_path = lens_paths.brane_path
+
   if (!existsSync(brane_path)) {
     return error({
       body: [{
@@ -186,7 +189,7 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Inges
         status:   "error",
         error:    `cannot read file: ${file_path}`
       })
-      if (!dry_run) invalidate_body_hash(brane_path, file.url)
+      if (!dry_run) invalidate_body_hash(lens_paths.body_db_path, file.url)
       totals.errors++
       continue
     }
@@ -208,7 +211,7 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Inges
         status:   "error",
         error:    `LLM extraction failed: ${message}`
       })
-      if (!dry_run) invalidate_body_hash(brane_path, file.url)
+      if (!dry_run) invalidate_body_hash(lens_paths.body_db_path, file.url)
       totals.errors++
       continue
     }
@@ -263,7 +266,7 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Inges
     } else {
       file_result.status = "error"
       file_result.error = "patch application failed"
-      invalidate_body_hash(brane_path, file.url)
+      invalidate_body_hash(lens_paths.body_db_path, file.url)
       totals.errors++
       file_results.push(file_result)
       continue

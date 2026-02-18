@@ -4,6 +4,7 @@
 
 import type { Params, Result, Emit } from "../../../lib/types.ts"
 import { success, error } from "../../../lib/result.ts"
+import { resolve_lens_paths } from "../../../lib/state.ts"
 import { resolve } from "node:path"
 import { existsSync } from "node:fs"
 import { Database } from "bun:sqlite"
@@ -100,8 +101,9 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Index
   const p = (params ?? {}) as IndexParams
 
   // check brane is initialized
-  const brane_path = resolve(process.cwd(), ".brane")
-  const db_path = resolve(brane_path, "body.db")
+  const lens_paths = resolve_lens_paths()
+  const brane_path = lens_paths.brane_path
+  const db_path = lens_paths.body_db_path
 
   if (!existsSync(brane_path) || !existsSync(db_path)) {
     return error({

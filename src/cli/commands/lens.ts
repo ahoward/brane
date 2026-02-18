@@ -1,5 +1,5 @@
 //
-// lens.ts - brane lens [show|import|export|stats|bless]
+// lens.ts - brane lens [create|use|list|delete|migrate|show|import|export|stats|bless]
 //
 
 import { defineCommand } from "citty"
@@ -9,9 +9,113 @@ import { output } from "../output.ts"
 export const lens = defineCommand({
   meta: {
     name: "lens",
-    description: "Manage lens configuration (golden types, relations, stats)",
+    description: "Manage lenses (named perspectives with independent knowledge graphs)",
   },
   subCommands: {
+    create: defineCommand({
+      meta: { name: "create", description: "Create a new named lens" },
+      args: {
+        name: { type: "positional", description: "Lens name", required: true },
+        config: { type: "string", alias: "c", description: "YAML config file to pre-load" },
+        json: { type: "boolean", alias: "j", description: "Output as JSON" },
+      },
+      async run({ args }) {
+        const params: any = { name: args.name }
+        if (args.config) params.config = args.config
+
+        const result = await sys.call("/lens/create", params)
+
+        if (args.json) {
+          output(result, { json: true })
+        } else if (result.status === "success" && result.result) {
+          const r = result.result as any
+          console.log(`created ${r.path}/body.db`)
+          console.log(`created ${r.path}/mind.db`)
+        } else {
+          output(result, {})
+        }
+      },
+    }),
+
+    use: defineCommand({
+      meta: { name: "use", description: "Switch to a named lens" },
+      args: {
+        name: { type: "positional", description: "Lens name", required: true },
+        json: { type: "boolean", alias: "j", description: "Output as JSON" },
+      },
+      async run({ args }) {
+        const result = await sys.call("/lens/use", { name: args.name })
+
+        if (args.json) {
+          output(result, { json: true })
+        } else if (result.status === "success") {
+          console.log(`active lens: ${args.name}`)
+        } else {
+          output(result, {})
+        }
+      },
+    }),
+
+    list: defineCommand({
+      meta: { name: "list", description: "List all lenses" },
+      args: {
+        json: { type: "boolean", alias: "j", description: "Output as JSON" },
+      },
+      async run({ args }) {
+        const result = await sys.call("/lens/list", {})
+
+        if (args.json) {
+          output(result, { json: true })
+        } else if (result.status === "success" && result.result) {
+          const r = result.result as { lenses: Array<{ name: string; active: boolean; path: string }> }
+          for (const l of r.lenses) {
+            const marker = l.active ? "* " : "  "
+            console.log(`${marker}${l.name}`)
+          }
+        } else {
+          output(result, {})
+        }
+      },
+    }),
+
+    delete: defineCommand({
+      meta: { name: "delete", description: "Delete a named lens" },
+      args: {
+        name: { type: "positional", description: "Lens name", required: true },
+        json: { type: "boolean", alias: "j", description: "Output as JSON" },
+      },
+      async run({ args }) {
+        const result = await sys.call("/lens/delete", { name: args.name })
+
+        if (args.json) {
+          output(result, { json: true })
+        } else if (result.status === "success") {
+          console.log(`deleted lens: ${args.name}`)
+        } else {
+          output(result, {})
+        }
+      },
+    }),
+
+    migrate: defineCommand({
+      meta: { name: "migrate", description: "Migrate flat layout to lens/default/" },
+      args: {
+        json: { type: "boolean", alias: "j", description: "Output as JSON" },
+      },
+      async run({ args }) {
+        const result = await sys.call("/lens/migrate", {})
+
+        if (args.json) {
+          output(result, { json: true })
+        } else if (result.status === "success" && result.result) {
+          const r = result.result as any
+          console.log(`migrated ${r.from} → ${r.to}`)
+        } else {
+          output(result, {})
+        }
+      },
+    }),
+
     show: defineCommand({
       meta: { name: "show", description: "Show current lens configuration" },
       args: {

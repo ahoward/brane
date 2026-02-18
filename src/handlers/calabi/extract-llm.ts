@@ -4,6 +4,7 @@
 
 import type { Params, Result, Emit } from "../../lib/types.ts"
 import { success, error } from "../../lib/result.ts"
+import { resolve_lens_paths } from "../../lib/state.ts"
 import { open_mind, is_mind_error } from "../../lib/mind.ts"
 import { file_exists_in_body } from "../../lib/body.ts"
 import { get_golden_types, get_golden_relations } from "../../lib/lens.ts"
@@ -59,8 +60,8 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Extra
     // Check if path is a directory
     if (existsSync(abs_path) && statSync(abs_path).isDirectory()) {
       // Query body.db for all files under this directory
-      const brane_path = resolve(process.cwd(), ".brane")
-      const body_db_path = resolve(brane_path, "body.db")
+      const lens_paths = resolve_lens_paths()
+      const body_db_path = lens_paths.body_db_path
 
       if (!existsSync(body_db_path)) {
         return error({
@@ -100,7 +101,7 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Extra
   }
 
   // Check .brane exists
-  const brane_path = resolve(process.cwd(), ".brane")
+  const brane_path = resolve_lens_paths().brane_path
   if (!existsSync(brane_path)) {
     return error({
       body: [{

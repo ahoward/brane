@@ -4,6 +4,7 @@
 
 import type { Params, Result, Emit } from "../../lib/types.ts"
 import { success, error } from "../../lib/result.ts"
+import { resolve_lens_paths } from "../../lib/state.ts"
 import { open_mind, is_mind_error, get_rule_by_name, type Rule } from "../../lib/mind.ts"
 import { resolve, basename, relative } from "node:path"
 import { existsSync, statSync, readdirSync, readFileSync } from "node:fs"
@@ -161,8 +162,9 @@ function discover_files(
 }
 
 async function get_file_changes(path_filter?: string): Promise<ChangedFiles> {
-  const brane_path = resolve(process.cwd(), ".brane")
-  const db_path = resolve(brane_path, "body.db")
+  const lens_paths = resolve_lens_paths()
+  const brane_path = lens_paths.brane_path
+  const db_path = lens_paths.body_db_path
 
   const db = new Database(db_path, { readonly: true })
 
@@ -330,8 +332,9 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<PrVer
   const path_filter = p.path
 
   // Check body.db exists
-  const brane_path = resolve(process.cwd(), ".brane")
-  const body_db_path = resolve(brane_path, "body.db")
+  const lens_paths = resolve_lens_paths()
+  const brane_path = lens_paths.brane_path
+  const body_db_path = lens_paths.body_db_path
 
   if (!existsSync(brane_path) || !existsSync(body_db_path)) {
     return error({

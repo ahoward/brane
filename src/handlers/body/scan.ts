@@ -8,6 +8,7 @@ import { resolve, basename, relative } from "node:path"
 import { existsSync, statSync, readdirSync, readFileSync } from "node:fs"
 import { Database } from "bun:sqlite"
 import { createHash } from "node:crypto"
+import { resolve_lens_paths } from "../../lib/state.ts"
 
 interface ScanParams {
   path?:    string
@@ -167,9 +168,10 @@ function discover_files(
 export async function handler(params: Params, emit?: Emit): Promise<Result<ScanResult>> {
   const p = (params ?? {}) as ScanParams
 
-  // Check brane is initialized
-  const brane_path = resolve(process.cwd(), ".brane")
-  const db_path = resolve(brane_path, "body.db")
+  // Resolve lens-aware paths
+  const lens_paths = resolve_lens_paths()
+  const brane_path = lens_paths.brane_path
+  const db_path = lens_paths.body_db_path
 
   if (!existsSync(brane_path) || !existsSync(db_path)) {
     return error({

@@ -10,7 +10,8 @@ import { CozoDb } from "../../lib/cozo"
 import { EMBED_DIM } from "../../lib/embed.ts"
 
 interface InitParams {
-  force?: boolean
+  force?:      boolean
+  target_dir?: string  // create mind.db directly in this directory (for lens creation)
 }
 
 interface InitResult {
@@ -270,20 +271,29 @@ async function get_schema_version(db: CozoDb): Promise<string> {
 export async function handler(params: Params, emit?: Emit): Promise<Result<InitResult>> {
   const p = (params ?? {}) as InitParams
 
-  // Check brane is initialized
-  const brane_path = resolve(process.cwd(), ".brane")
-  const body_db_path = resolve(brane_path, "body.db")
+  // If target_dir specified, create mind.db directly there (for lens creation)
+  let mind_db_path: string
 
-  if (!existsSync(brane_path) || !existsSync(body_db_path)) {
-    return error({
-      brane: [{
-        code:    "not_initialized",
-        message: "brane not initialized (run brane init)"
-      }]
-    })
+  if (p.target_dir) {
+    const dir = resolve(p.target_dir)
+    mind_db_path = resolve(dir, "mind.db")
+  } else {
+    // Check brane is initialized
+    const brane_path = resolve(process.cwd(), ".brane")
+    const body_db_path = resolve(brane_path, "body.db")
+
+    if (!existsSync(brane_path) || !existsSync(body_db_path)) {
+      return error({
+        brane: [{
+          code:    "not_initialized",
+          message: "brane not initialized (run brane init)"
+        }]
+      })
+    }
+
+    mind_db_path = resolve(brane_path, "mind.db")
   }
 
-  const mind_db_path = resolve(brane_path, "mind.db")
   const force = p.force === true
 
   // Handle force flag - remove existing mind.db
