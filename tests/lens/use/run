@@ -27,6 +27,9 @@ case "$TC_CASE_NAME" in
   04-error-not-initialized)
     # Don't initialize
     ;;
+  05-error-path-traversal)
+    init_brane
+    ;;
 esac
 
 echo "$INPUT" | brane /lens/use

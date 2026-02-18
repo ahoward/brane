@@ -5,7 +5,7 @@
 import type { Params, Result, Emit } from "../../lib/types.ts"
 import { success, error } from "../../lib/result.ts"
 import { open_mind, is_mind_error, get_lens_config, type LensConfig } from "../../lib/lens.ts"
-import { resolve_lens_paths, lens_exists } from "../../lib/state.ts"
+import { resolve_lens_paths, lens_exists, is_valid_active_lens_name } from "../../lib/state.ts"
 import { CozoDb } from "../../lib/cozo"
 import { existsSync } from "node:fs"
 
@@ -19,6 +19,16 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<LensC
   // If name specified, open that lens's mind.db directly
   if (p.name && typeof p.name === "string" && p.name.trim() !== "") {
     const name = p.name.trim()
+
+    // Guard: valid name (prevent path traversal)
+    if (!is_valid_active_lens_name(name)) {
+      return error({
+        name: [{
+          code:    "invalid",
+          message: `invalid lens name: ${name}`
+        }]
+      })
+    }
 
     if (!lens_exists(name)) {
       return error({

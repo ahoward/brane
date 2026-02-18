@@ -4,7 +4,7 @@
 
 import type { Params, Result, Emit } from "../../lib/types.ts"
 import { success, error } from "../../lib/result.ts"
-import { get_active_lens, lens_exists, has_state } from "../../lib/state.ts"
+import { get_active_lens, lens_exists, has_state, is_valid_lens_name } from "../../lib/state.ts"
 import { resolve } from "node:path"
 import { existsSync, rmSync } from "node:fs"
 
@@ -39,6 +39,16 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Delet
       brane: [{
         code:    "not_initialized",
         message: "brane not initialized (run brane init)"
+      }]
+    })
+  }
+
+  // Guard: valid name (prevent path traversal)
+  if (!is_valid_lens_name(name) && name !== "default") {
+    return error({
+      name: [{
+        code:    "invalid",
+        message: `invalid lens name: ${name}`
       }]
     })
   }

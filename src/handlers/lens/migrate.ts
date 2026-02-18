@@ -7,7 +7,7 @@ import { success, error } from "../../lib/result.ts"
 import { has_state } from "../../lib/state.ts"
 import { sys } from "../../index.ts"
 import { resolve } from "node:path"
-import { existsSync, mkdirSync, renameSync } from "node:fs"
+import { existsSync, mkdirSync, renameSync, rmSync } from "node:fs"
 
 interface MigrateResult {
   migrated: boolean
@@ -55,21 +55,38 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Migra
   // Create lens/default/ directory
   mkdirSync(lens_default_dir, { recursive: true })
 
-  // Move files
+  // Move files with rollback on failure
+  const moved_body = existsSync(flat_body)
+  const moved_wal = existsSync(flat_body + "-wal")
+  const moved_shm = existsSync(flat_body + "-shm")
+
   try {
-    if (existsSync(flat_body)) {
+    if (moved_body) {
       renameSync(flat_body, resolve(lens_default_dir, "body.db"))
-      // Also move WAL/SHM files if they exist
-      const wal = flat_body + "-wal"
-      const shm = flat_body + "-shm"
-      if (existsSync(wal)) renameSync(wal, resolve(lens_default_dir, "body.db-wal"))
-      if (existsSync(shm)) renameSync(shm, resolve(lens_default_dir, "body.db-shm"))
+      if (moved_wal) renameSync(flat_body + "-wal", resolve(lens_default_dir, "body.db-wal"))
+      if (moved_shm) renameSync(flat_body + "-shm", resolve(lens_default_dir, "body.db-shm"))
     }
 
     if (existsSync(flat_mind)) {
       renameSync(flat_mind, resolve(lens_default_dir, "mind.db"))
     }
   } catch (err) {
+    // Rollback: move body.db back if mind.db move failed
+    try {
+      const target_body = resolve(lens_default_dir, "body.db")
+      if (existsSync(target_body) && !existsSync(flat_body)) {
+        renameSync(target_body, flat_body)
+      }
+      const target_wal = resolve(lens_default_dir, "body.db-wal")
+      if (existsSync(target_wal)) renameSync(target_wal, flat_body + "-wal")
+      const target_shm = resolve(lens_default_dir, "body.db-shm")
+      if (existsSync(target_shm)) renameSync(target_shm, flat_body + "-shm")
+      // Remove empty default dir after rollback
+      rmSync(lens_default_dir, { recursive: true, force: true })
+    } catch {
+      // Rollback failed — best effort
+    }
+
     const message = err instanceof Error ? err.message : String(err)
     return error({
       brane: [{

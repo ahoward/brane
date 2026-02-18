@@ -59,18 +59,19 @@ export function has_state(): boolean {
   return existsSync(state_db_path)
 }
 
-// Get active lens name from state.db. Falls back to "default".
+// Get active lens name from state.db. Falls back to "default" only if state.db doesn't exist.
+// Throws if state.db exists but cannot be read (corruption, lock, etc.)
 export function get_active_lens(): string {
   const db = open_state()
-  if (!db) return "default"
+  if (!db) return "default"  // no state.db → flat layout → default
 
   try {
     const row = db.query("SELECT value FROM config WHERE key = ?").get("active_lens") as { value: string } | null
     db.close()
     return row?.value ?? "default"
-  } catch {
+  } catch (err) {
     db.close()
-    return "default"
+    throw new Error(`failed to read active lens from state.db: ${err instanceof Error ? err.message : String(err)}`)
   }
 }
 
@@ -96,11 +97,10 @@ export function list_lenses(): string[] {
   // Check for lens directory entries
   if (existsSync(lens_dir)) {
     try {
-      const entries = readdirSync(lens_dir)
+      const entries = readdirSync(lens_dir, { withFileTypes: true })
       for (const entry of entries) {
-        const entry_path = resolve(lens_dir, entry)
-        if (existsSync(entry_path) && statSync(entry_path).isDirectory()) {
-          lenses.push(entry)
+        if (entry.isDirectory()) {
+          lenses.push(entry.name)
         }
       }
     } catch {

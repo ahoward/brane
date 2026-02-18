@@ -32,6 +32,9 @@ case "$TC_CASE_NAME" in
   05-error-missing-name)
     init_brane
     ;;
+  06-error-path-traversal)
+    init_brane
+    ;;
 esac
 
 echo "$INPUT" | brane /lens/delete

@@ -4,7 +4,7 @@
 
 import type { Params, Result, Emit } from "../../lib/types.ts"
 import { success, error } from "../../lib/result.ts"
-import { set_active_lens, lens_exists, has_state, is_valid_active_lens_name } from "../../lib/state.ts"
+import { set_active_lens, lens_exists, has_state, is_valid_active_lens_name, is_valid_lens_name } from "../../lib/state.ts"
 import { resolve } from "node:path"
 import { existsSync } from "node:fs"
 
@@ -31,6 +31,16 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<UseRe
   }
 
   const name = p.name.trim()
+
+  // Guard: valid name (prevent path traversal — "default" is always valid)
+  if (!is_valid_active_lens_name(name)) {
+    return error({
+      name: [{
+        code:    "invalid",
+        message: `invalid lens name: ${name}`
+      }]
+    })
+  }
 
   // Guard: brane initialized with state.db
   const brane_path = resolve(process.cwd(), ".brane")
