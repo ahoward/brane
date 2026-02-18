@@ -6,6 +6,7 @@ NAME
 TL;DR
 -----
   the subjective linter.
+  deterministic subjective bias.
 
   brane turns your values — ethics, policy, safety, intent — into a
   knowledge graph that fails the build when you violate them.
