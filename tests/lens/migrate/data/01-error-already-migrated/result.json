@@ -1,0 +1,12 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "brane": [{ "code": "already_migrated", "message": "already migrated: .brane/lens/default/ exists" }]
+  },
+  "meta": {
+    "path": "/lens/migrate",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

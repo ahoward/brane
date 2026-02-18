@@ -1,0 +1,12 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "name": [{ "code": "is_default", "message": "cannot delete the default lens" }]
+  },
+  "meta": {
+    "path": "/lens/delete",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

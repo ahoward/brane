@@ -6,6 +6,7 @@ import type { Params, Result, Emit } from "../../lib/types.ts"
 import { success, error } from "../../lib/result.ts"
 import { open_mind, is_mind_error } from "../../lib/mind.ts"
 import { handler as extract_handler } from "./extract.ts"
+import { resolve_lens_paths } from "../../lib/state.ts"
 import { resolve } from "node:path"
 import { existsSync } from "node:fs"
 import Database from "bun:sqlite"
@@ -35,9 +36,10 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<ScanR
   const path_filter = p.path ?? ""
   const dry_run = p.dry_run ?? false
 
-  // Check body.db exists
-  const brane_path = resolve(process.cwd(), ".brane")
-  const body_db_path = resolve(brane_path, "body.db")
+  // Resolve lens-aware paths
+  const lens_paths = resolve_lens_paths()
+  const brane_path = lens_paths.brane_path
+  const body_db_path = lens_paths.body_db_path
 
   if (!existsSync(brane_path) || !existsSync(body_db_path)) {
     return error({

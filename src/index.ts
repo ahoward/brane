@@ -55,6 +55,12 @@ import { handler as lens_bless_handler } from "./handlers/lens/bless.ts"
 import { handler as graph_summary_handler } from "./handlers/graph/summary.ts"
 import { handler as graph_neighbors_handler } from "./handlers/graph/neighbors.ts"
 import { handler as graph_viz_handler } from "./handlers/graph/viz.ts"
+import { handler as state_init_handler } from "./handlers/state/init.ts"
+import { handler as lens_create_handler } from "./handlers/lens/create.ts"
+import { handler as lens_use_handler } from "./handlers/lens/use.ts"
+import { handler as lens_list_handler } from "./handlers/lens/list.ts"
+import { handler as lens_delete_handler } from "./handlers/lens/delete.ts"
+import { handler as lens_migrate_handler } from "./handlers/lens/migrate.ts"
 
 sys.register("/ping", ping_handler)
 sys.register("/body/init", body_init_handler)
@@ -106,6 +112,12 @@ sys.register("/lens/bless", lens_bless_handler)
 sys.register("/graph/summary", graph_summary_handler)
 sys.register("/graph/neighbors", graph_neighbors_handler)
 sys.register("/graph/viz", graph_viz_handler)
+sys.register("/state/init", state_init_handler)
+sys.register("/lens/create", lens_create_handler)
+sys.register("/lens/use", lens_use_handler)
+sys.register("/lens/list", lens_list_handler)
+sys.register("/lens/delete", lens_delete_handler)
+sys.register("/lens/migrate", lens_migrate_handler)
 
 // export
 export { sys }

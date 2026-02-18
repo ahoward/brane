@@ -4,6 +4,7 @@
 
 import type { Params, Result, Emit } from "../../lib/types.ts"
 import { success, error } from "../../lib/result.ts"
+import { resolve_lens_paths } from "../../lib/state.ts"
 import { open_mind, is_mind_error } from "../../lib/mind.ts"
 import { generate_embedding } from "../../lib/embed.ts"
 import { resolve } from "node:path"
@@ -71,8 +72,9 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Conte
   const limit = Math.min(Math.max(p.limit ?? DEFAULT_LIMIT, 1), 50)
 
   // Check body.db exists
-  const brane_path = resolve(process.cwd(), ".brane")
-  const body_db_path = resolve(brane_path, "body.db")
+  const lens_paths = resolve_lens_paths()
+  const brane_path = lens_paths.brane_path
+  const body_db_path = lens_paths.body_db_path
 
   if (!existsSync(brane_path) || !existsSync(body_db_path)) {
     return error({

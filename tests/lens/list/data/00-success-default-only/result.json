@@ -1,0 +1,14 @@
+{
+  "status": "success",
+  "result": {
+    "lenses": [
+      { "name": "default", "active": true, "path": "<string>" }
+    ]
+  },
+  "errors": null,
+  "meta": {
+    "path": "/lens/list",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "status": "success",
+  "result": {
+    "name": "temp",
+    "deleted": true
+  },
+  "errors": null,
+  "meta": {
+    "path": "/lens/delete",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

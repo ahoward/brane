@@ -5,166 +5,146 @@ NAME
 
 TL;DR
 -----
-  brane is a local knowledge graph that finds structural problems in
-  code **and** prose. model anything as concepts + edges. define rules.
-  `brane verify`.
-
-### code: catch a circular dependency
-
-  ```bash
-  brane init
-
-  # model your services
-  brane concept create --name AuthService --type Service
-  brane concept create --name UserService --type Service
-
-  # AuthService depends on UserService
-  brane edge create --from AuthService --to UserService --rel DEPENDS_ON
-
-  brane verify   # ✓ all rules passed
-
-  # 6 months later, someone adds the reverse dependency
-  brane edge create --from UserService --to AuthService --rel DEPENDS_ON
-
-  brane verify   # ✗ FAILED: cycles: AuthService, UserService
-  ```
-
-  `cycles` is a built-in rule — 3 lines of Datalog. not a 500-line
-  ESLint plugin.
-
-### prose: catch a dangling character
-
-  ```bash
-  brane init
-
-  # model a murder mystery
-  brane concept create --name "Detective Marsh" --type Character
-  brane concept create --name "Lord Ashworth" --type Character
-  brane concept create --name "The Butler" --type Character
-  brane concept create --name "The Murder" --type Event
-
-  # wire up the story
-  brane edge create --from "Lord Ashworth" --to "The Murder" --rel VICTIM_OF
-  brane edge create --from "Detective Marsh" --to "The Murder" --rel INVESTIGATES
-  brane edge create --from "The Butler" --to "The Murder" --rel SUSPECT_IN
-
-  brane verify   # ✓ all rules passed
-
-  # 50 pages later, you introduce a new character but forget her scene
-  brane concept create --name "Lady Ashworth" --type Character
-
-  brane verify   # ✗ FAILED: orphans: Lady Ashworth
-  ```
-
-  Lady Ashworth exists in your cast but connects to nothing — no
-  event, no location, no other character. is she a red herring you
-  forgot to set up, or a character you forgot to write?
-
-  a human can't hold 200 pages in their head. the graph can.
-
-  **[runnable scripts: code](examples/code/) | [prose](examples/prose/)**
-
-
-SYNOPSIS
---------
   the subjective linter.
+  deterministic subjective bias.
 
-  every linter encodes values. ESLint says "semicolons matter." security
-  scanners say "CVEs matter." but they can't answer "does this align with
-  *our* values?"
-
-  brane checks alignment with human-defined values—ethics, policy,
-  architecture, intent—encoded as a knowledge graph with verifiable rules.
-
-  **the git of ethics.**
-
-
-THESIS
-------
-  AI ethics documents are PDFs that get filed and ignored.
-
-  ICD-505. GDPR. Acceptable Use Policies. The NSM-25 AI Framework. They're
-  read once and forgotten. When code ships, nobody checks it against the
-  ethics PDF. When an LLM generates content, nobody verifies it against
-  policy. When an AI makes decisions, the audit trail is logs, not reasoning.
-
-  **ethics without enforcement is theater.**
-
-  brane makes values machine-readable:
+  brane turns your values — ethics, policy, safety, intent — into a
+  knowledge graph that fails the build when you violate them.
 
   ```
   values (human)  →  knowledge graph  →  violations  →  human review
   ```
 
-  encode your values as concepts, edges, and rules. run `brane verify`.
-  get specific, auditable, actionable results. not checkbox compliance.
+  existing linters catch syntax errors. brane catches value errors.
 
 
-EXAMPLE: IC AI ETHICS
----------------------
-  the Intelligence Community's six AI ethics principles become Datalog rules:
+WHY
+---
+  every linter encodes values. ESLint says "semicolons matter." security
+  scanners say "CVEs matter." but none of them can answer:
 
-  ```datalog
-  -- Principle 4: Human-Centered
-  -- Automated decisions on rights need human review
-  violations[id, name, 'missing_human_loop'] :=
-    *concepts[id, name, 'AutomatedDecision', _],
-    *edges[_, id, right_id, 'IMPACTS', _],
-    *concepts[right_id, _, 'ConstitutionalRight', _],
-    not *edges[_, id, _, 'REQUIRES_HUMAN_REVIEW', _]
-  ```
+  **"does this align with *our* values?"**
 
-  now `brane verify` checks content against ethics—not vibes.
+  that question matters when the stakes aren't semicolons:
+
+  - a children's app pipes location data to an ad network — no parental consent gate in the call chain. that's a COPPA violation. $50,000 per incident.
+  - an LLM drafts a blog post that frames surveillance as safety — without acknowledging civil liberties tradeoffs. it contradicts your published editorial guidelines.
+  - a recommendation engine surfaces age-restricted content to minors because nobody modeled the age-gating requirement as a structural constraint.
+  - a hiring algorithm correlates with protected characteristics. the bias assessment edge is missing from the graph. EEOC exposure.
+
+  today, these are caught by humans reading everything. or they aren't
+  caught at all.
+
+  **ethics without enforcement is theater.**
+
+  brane makes values machine-readable. encode them once. verify forever.
 
 
-EXAMPLE: ADVERSARIAL LENS
---------------------------
-  [LLMs have word models, not world models.](https://www.latent.space/p/adversarial-reasoning)
-  they produce artifacts that *look* expert but collapse under adversarial
-  pressure — because they're graded on "does this sound right?" not "does
-  this survive the other side pushing back?"
-
-  the core problem: LLMs don't model the counterparty. when a model
-  drafts a negotiation position, it doesn't ask who will read it, what
-  they're optimizing, or how they'll probe it.
-
-  brane makes that structure explicit:
-
+CATCH IT BEFORE IT SHIPS
+-------------------------
   ```bash
   brane init
-
-  # what the model produced
-  brane concept create --name "Pricing Recommendation" --type Claim
-  brane concept create --name "Market Analysis" --type Evidence
-  brane concept create --name "Competitor Weakness" --type Claim
-
-  # who's in the room (the hidden state)
-  brane concept create --name "Our Sales Team" --type Agent
-  brane concept create --name "Their Procurement" --type Agent
-
-  # what each side optimizes
-  brane edge create --from "Our Sales Team" --to "Pricing Recommendation" --rel ADVOCATES
-  brane edge create --from "Their Procurement" --to "Pricing Recommendation" --rel CHALLENGES
-
-  # the model's evidence
-  brane edge create --from "Market Analysis" --to "Pricing Recommendation" --rel SUPPORTS
-
-  # rule: every Claim needs a modeled challenger
-  brane rule create \
-    --name "unchallenged_claims" \
-    --description "Claims no adversary has been modeled to challenge" \
-    --body 'unchallenged_claims[id, name] := *concepts[id, name, "Claim", _], not *edges[_, _, id, "CHALLENGES", _]'
-
-  brane verify   # ✗ FAILED: unchallenged_claims: Competitor Weakness
+  brane ingest src/
+  brane verify
   ```
 
-  "Competitor Weakness" is a claim nobody on the other side has been
-  modeled to push back on. their legal will scrutinize the methodology.
-  their procurement will demand sources. the model didn't think about
-  that — but the graph caught it.
+  that's the workflow. ingest extracts structure from your code and
+  prose automatically. verify checks it against your rules. three
+  commands.
 
-  the [article's](https://www.latent.space/p/adversarial-reasoning)
-  chess/poker split maps cleanly:
+  when it fails, it tells you exactly what and why:
+
+  ```
+  $ brane verify
+
+  ✗ unguarded_minor_data
+    LocationTracker processes MinorUserData
+    and calls AdNetworkAPI — no consent verification in the pipeline.
+    COPPA Rule 312.5 requires verifiable parental consent.
+    Provenance: src/tracking/location.ts
+
+  ✗ unbalanced_framing
+    Claim "AI Monitoring improves public safety"
+    references SurveillanceTechnology but has no
+    ACKNOWLEDGES edge to civil liberties concerns.
+    Provenance: drafts/ai-safety-post.md
+
+  2 violations found
+  ```
+
+  a human reviewer might miss this in 50,000 lines of code.
+  the graph won't.
+
+
+HOW IT WORKS
+------------
+  brane extracts meaning from your files into a knowledge graph of
+  concepts and edges. then it runs Datalog rules against that graph.
+
+  extraction is LLM-powered — brane shells out to any CLI tool you
+  have installed (claude, gemini, llama). no SDK, no API keys in
+  brane itself. no LLM? manual curation works too. most workflows
+  are: ingest automatically, curate the edges, verify continuously.
+
+  a rule is 3-6 lines of Datalog:
+
+  ```datalog
+  -- services handling minor data must have consent verification
+  unguarded_minor_data[id, name] :=
+    *concepts[id, name, 'Service', _],
+    *edges[_, id, data_id, 'PROCESSES', _],
+    *concepts[data_id, _, 'ProtectedData', _],
+    *edges[_, id, ext_id, 'CALLS', _],
+    *concepts[ext_id, _, 'ExternalService', _],
+    not *edges[_, id, _, 'VERIFIED_BY', _]
+  ```
+
+  this isn't grep. grep finds strings. brane finds structural violations
+  across relationships that span your entire codebase. the
+  `LocationTracker → MinorUserData → AdNetworkAPI` chain might cross
+  ten files. the missing `VERIFIED_BY` edge is the absence of something
+  that should exist. you can't grep for what isn't there.
+
+
+EXAMPLE: PROSE THAT VIOLATES INTERNAL GUIDELINES
+-------------------------------------------------
+  your organization publishes ethical AI content guidelines. one rule:
+  never frame surveillance as safety without acknowledging civil
+  liberties tradeoffs.
+
+  an LLM drafts a blog post. brane ingests it:
+
+  ```bash
+  brane ingest drafts/ai-safety-post.md
+
+  brane verify   # ✗ FAILED: unbalanced_framing: "AI Monitoring System"
+  ```
+
+  the rule fired because the extracted graph has a Claim ("AI Monitoring
+  System improves safety") linked to a SurveillanceTechnology concept,
+  but no edge acknowledges the civil liberties dimension.
+
+  the LLM wrote something that *sounds* reasonable. the graph caught
+  that it contradicts your published values. before it shipped.
+
+
+EXAMPLE: ADVERSARIAL ROBUSTNESS
+-------------------------------
+  [LLMs have word models, not world models.](https://www.latent.space/p/adversarial-reasoning)
+  they produce artifacts that *look* expert but collapse under
+  adversarial pressure.
+
+  ```bash
+  brane ingest contracts/vendor-proposal.md
+
+  brane verify   # ✗ FAILED: unchallenged_claims: "Below-Market Pricing"
+  ```
+
+  the LLM-generated proposal claims "below-market pricing" — but
+  nobody on the other side has been modeled to challenge it. their
+  procurement will demand comps. their legal will scrutinize the
+  methodology. the model didn't think about that — but the graph
+  caught it.
 
   | | chess-like (code, proofs) | poker-like (negotiation, contracts) |
   |---|---|---|
@@ -172,121 +152,89 @@ EXAMPLE: ADVERSARIAL LENS
   | **LLM** | excels | produces exploitable patterns |
   | **brane** | built-in rules (`cycles`, `orphans`) | adversarial lens (model the counterparty) |
 
-  an adversarial lens encodes what the article calls the four requirements
-  for robustness:
 
-  1. **detect strategic framing** — Claim vs Evidence types force the question
-  2. **identify agents and incentives** — Agent concepts with ADVOCATES/CHALLENGES edges
-  3. **simulate counterparty reactions** — rules that fire when Claims lack challengers
-  4. **choose robust actions** — verify before shipping
-
-  LLMs produce artifacts that look expert. `brane verify` checks whether
-  they survive experts.
-
-
-INSTALL
--------
-  requires [bun](https://bun.sh). [direnv](https://direnv.net) optional.
-
-```bash
-git clone https://github.com/ahoward/brane.git
-cd brane
-bun install
-bun run build
-direnv allow        # adds ./bin to PATH
-brane --help
-```
-
-
-USAGE
+CI/CD
 -----
-```bash
-# initialize a project
-brane init
+  brane fits your existing pipeline:
 
-# ingest files (scan + LLM extraction in one step)
-brane ingest src/
+  ```yaml
+  # .github/workflows/verify.yml
+  - name: Verify values alignment
+    run: |
+      brane ingest src/
+      brane verify --exit-code
+  ```
 
-# create concepts
-brane concept create --name AuthService --type Entity
-brane concept create --name UserData --type ProtectedRight
-
-# create relationships (by name, not ID)
-brane edge create --from AuthService --to UserData --rel AFFECTS
-
-# verify against rules
-brane verify
-
-# semantic search
-brane search "authentication"
-
-# visualize the graph
-brane graph viz
-brane graph viz --format mermaid
-```
-
-short aliases:
-```bash
-brane c list          # concept
-brane e list          # edge
-brane r list          # rule
-brane g viz           # graph
-```
-
-json output for scripting:
-```bash
-brane concept list --json
-```
-
-api mode for machines:
-```bash
-echo '{"query":"auth"}' | brane /mind/search
-```
+  values violations fail the build, same as lint errors or test
+  failures. catch them in PR review, not in production.
 
 
 LENSES
 ------
-  different domains have different values. **lenses** are shareable ontology
-  configurations that encode domain-specific concept types, relations, and rules.
+  different domains have different values. **lenses** are independent
+  knowledge graphs — each with its own body.db and mind.db — that encode
+  domain-specific concept types, relations, and rules.
 
-  ```yaml
-  # ethics-ic.lens.yaml
-  name: "IC AI Ethics Framework"
-  source: "ICD-505 / NSM-25"
+  ```bash
+  brane lens create child-safety
+  brane lens create content-ethics
+  brane lens use child-safety
 
-  concept_types:
-    - Action
-    - Decision
-    - AutomatedDecision
-    - ProtectedRight
+  # work in isolation — each lens has its own graph
+  brane ingest src/
+  brane verify
 
-  rules:
-    - name: human_loop_required
-      severity: error
-      principle: "4. Human-Centered"
+  brane lens use content-ethics
+  brane ingest drafts/
+  brane verify
+
+  brane lens list
   ```
 
-  the idea: organizations publish, share, and compose lenses.
+  organizations publish, share, and compose lenses:
 
-  | Lens | Domain | Status |
+  | Lens | Domain | Checks |
   |------|--------|--------|
-  | `default` | general-purpose (ships with brane) | available |
-  | `adversarial` | LLM output adversarial robustness | planned |
-  | `ethics-ic` | Intelligence Community | planned |
-  | `ethics-gdpr` | EU Data Protection | planned |
-  | `arch-clean` | Clean Architecture | planned |
-  | `security-owasp` | OWASP Top 10 | planned |
+  | `child-safety` | COPPA / minor protection | data collection, consent, age gating |
+  | `content-ethics` | editorial guidelines | framing, balance, accuracy |
+  | `adversarial` | LLM output robustness | unchallenged claims, missing counterparties |
+  | `ethics-ic` | Intelligence Community | human oversight, bias assessment |
+  | `ethics-gdpr` | EU Data Protection | legal basis, data minimization |
+  | `arch-clean` | software architecture | dependency rules, layer violations |
+  | `security-owasp` | application security | injection, access control |
+
+
+MULTI-MODAL
+-----------
+  brane is content-agnostic. the graph doesn't care what you model:
+
+  | Content | Extract | Verify |
+  |---------|---------|--------|
+  | source code | services, data flows, APIs | safety, architecture, access control |
+  | prose / content | claims, entities, framing | brand alignment, ethical guidelines |
+  | policy docs | rights, obligations, processes | completeness, consistency |
+  | AI/ML systems | models, datasets, decisions | bias, consent, human oversight |
+  | LLM output | claims, agents, incentives | adversarial robustness, accuracy |
 
 
 ARCHITECTURE
 ------------
   split-brain. two databases, each optimized for its domain.
 
-```
-.brane/
-├── body.db    # sqlite - physical reality (files, hashes, FTS)
-└── mind.db    # cozodb - semantic reality (concepts, edges, rules)
-```
+  ```
+  .brane/
+  ├── state.db                     # brane-wide config (active lens)
+  └── lens/
+      ├── default/
+      │   ├── body.db              # sqlite — files, hashes, FTS
+      │   └── mind.db              # cozodb — concepts, edges, rules
+      ├── child-safety/
+      │   ├── body.db
+      │   └── mind.db
+      └── content-ethics/
+          ├── body.db
+          └── mind.db
+  ```
 
   **body** knows what exists. paths, hashes, sizes, content.
 
@@ -298,144 +246,124 @@ ARCHITECTURE
 
 WHY LOCAL-FIRST
 ---------------
-  knowledge graphs are having a moment. [obie fernandez built one in four
-  days](https://obie.medium.com/what-used-to-take-months-now-takes-days-cc8883cc21e9)
-  — an organizational memory system that distills Slack threads and Claude
-  Code transcripts into queryable knowledge. it's genuinely impressive work.
+  your values graph should be as portable as your code.
 
-  it also requires Rails, Postgres, Oxigraph (a SPARQL triple store),
-  pgvector, OpenRouter API keys, a Docker container managed by Overmind,
-  and a Render deployment. to remember what happened in Slack.
-
-  brane takes the opposite approach:
-
-  | | nexus (fernandez) | brane |
-  |---|---|---|
-  | **graph engine** | Oxigraph (SPARQL) | CozoDB (Datalog) |
-  | **vector store** | Postgres + pgvector | built-in (model2vec, pure TS) |
-  | **LLM dependency** | OpenRouter (required) | none (optional extraction) |
-  | **deployment** | Docker + Render | single binary, zero deps |
-  | **query language** | SPARQL via LLM translation | Datalog (3-line rules) |
-  | **data location** | cloud postgres | `.brane/` in your repo |
-  | **works offline** | no | yes |
-  | **binary size** | N/A (server) | ~85 MB |
-
-  nexus is a *memory service* — it watches your conversations and builds
-  a graph in the cloud. brane is a *structural tool* — it lives in your
-  repo and catches architectural violations before they ship. same idea
-  (knowledge graphs are useful), different philosophy (your graph should
-  be as portable as your code).
-
-  you don't need a Render account to know that AuthService depends on
-  UserService. you need a `.brane/` directory and three seconds.
+  - **single binary, zero dependencies** — no Docker, no Postgres, no API keys
+  - **works offline** — airplane, SCIF, air-gapped network
+  - **data stays local** — `.brane/` lives in your repo
+  - **git-native** — branch, diff, merge your knowledge graph
+  - **embeds locally** — model2vec (pure TypeScript, no ONNX, no GPU)
+  - **LLM-optional** — extraction uses CLI tools, not SDKs. works without any LLM.
 
 
-MULTI-MODAL
------------
-  brane is content-agnostic. the graph doesn't care what you model:
+INSTALL
+-------
+  requires [bun](https://bun.sh). [direnv](https://direnv.net) optional.
 
-  | Content | Extract | Verify |
-  |---------|---------|--------|
-  | source code | functions, data flows | architecture, security |
-  | prose / fiction | characters, events | continuity, structure |
-  | policy docs | entities, actions | completeness, consistency |
-  | research | theories, evidence | contradictions, gaps |
-  | LLM output | claims, agents, incentives | adversarial robustness |
+  ```bash
+  git clone https://github.com/ahoward/brane.git
+  cd brane
+  bun install
+  bun run build
+  direnv allow                    # adds ./bin to PATH (if using direnv)
+  export PATH="$PWD/bin:$PATH"   # or do this manually
+  brane --help
+  ```
 
 
-PHILOSOPHY
-----------
-  in physics, a brane is where boundary conditions apply — string
-  endpoints are fixed. without branes, strings drift in dimensional
-  chaos. rules and constraints do the same thing for reasoning.
+USAGE
+-----
+  ```bash
+  # setup
+  brane init
+  brane lens create my-project
 
-  traditional linters are *syntactic* — they check form.
-  brane is *semantic* — it checks meaning.
+  # ingest and verify
+  brane ingest src/
+  brane verify
 
-  but meaning is subjective. "good code" depends on context. "ethical AI"
-  depends on values. "compliant" depends on jurisdiction.
+  # explore
+  brane search "authentication"
+  brane graph viz
+  brane graph neighbors AuthService
 
-  brane doesn't pretend objectivity. it makes subjectivity *explicit*:
+  # curate
+  brane concept create --name AuthService --type Service
+  brane edge create --from AuthService --to UserData --rel PROCESSES
+  brane rule list
 
-  - **your values** are encoded in lenses
-  - **your rules** define what violations mean
-  - **your attestations** create the audit trail
-  - **your provenance** links everything to source
+  # manage lenses
+  brane lens use my-project
+  brane lens list
+  brane lens show
+  ```
 
-  the subjectivity is the feature, not the bug.
+  short aliases:
+  ```bash
+  brane c list          # concept
+  brane e list          # edge
+  brane r list          # rule
+  brane g viz           # graph
+  ```
+
+  api mode for machines:
+  ```bash
+  echo '{"query":"auth"}' | brane /mind/search
+  ```
 
 
 COMMANDS
 --------
-```
-brane init                     initialize body + mind
-brane ingest <path>            scan files + extract knowledge
-brane search <query>           semantic concept search
-brane verify                   run all rules
+  ```
+  brane init                     initialize body + mind
+  brane ingest <path>            scan files + extract knowledge
+  brane search <query>           semantic concept search
+  brane verify                   run all rules
 
-brane concept                  manage concepts
-  create --name --type
-  list [--type]
-  get <id>
-  update <id>
-  delete <id>
+  brane concept                  manage concepts
+    create --name --type
+    list [--type]
+    get <id>
+    update <id>
+    delete <id>
 
-brane edge                     manage relationships
-  create --from <id|name> --to <id|name> --rel <rel>
-  list [--from] [--to] [--rel]
-  get <id>
-  delete <id>
+  brane edge                     manage relationships
+    create --from <id|name> --to <id|name> --rel <rel>
+    list [--from] [--to] [--rel]
+    get <id>
+    delete <id>
 
-brane rule                     manage verification rules
-  list
-  get <name>
-  query <name>
+  brane rule                     manage verification rules
+    list
+    get <name>
+    query <name>
 
-brane graph                    explore the graph
-  summary                      counts and distributions
-  concepts [--type]            list concepts
-  edges [--relation]           list edges
-  neighbors <id|name>           show connected concepts
-  viz [--format] [--center]    visualize (ascii/mermaid)
+  brane graph                    explore the graph
+    summary                      counts and distributions
+    concepts [--type]            list concepts
+    edges [--relation]           list edges
+    neighbors <id|name>          show connected concepts
+    viz [--format] [--center]    visualize (ascii/mermaid)
 
-brane lens                     manage ontology configurations
-  show
-  stats
-  bless --type|--rel
-  import <file>
-  export
+  brane lens                     manage lenses
+    create <name>                create a new lens
+    use <name>                   switch active lens
+    list                         list all lenses
+    show [name]                  show lens configuration
+    delete <name>                delete a lens
 
-brane context query <q>        graph-aware context retrieval
-brane pr-verify                verify PR changes against rules
-```
+  brane context query <q>        graph-aware context retrieval
+  brane pr-verify                verify PR changes against rules
+  ```
 
 
 DEVELOPMENT
 -----------
-```bash
-bun run test          # run tests
-bun run repl          # interactive mode
-bun run build         # compile binary
-```
-
-
-CONVENTIONS
------------
-  - **POD only** — no classes for data structures
-  - **result envelope** — every call, same shape
-  - **null over undefined** — unix-clean
-  - **snake_case** — ruby-style
-  - **errors as data** — not exceptions
-
-
-ROADMAP
--------
-  see `dna/product/ROADMAP.md`
-
-  **phase 1** — the skeleton (body.db, file tracking, FTS)
-  **phase 2** — the mind (cozodb, concepts, calabi extraction)
-  **phase 3** — the shield (rules, verification, annotations)
-  **phase 4** — the network (decentralized verification protocol)
+  ```bash
+  bun run test          # run tests (321 tests)
+  bun run repl          # interactive mode
+  bun run build         # compile binary
+  ```
 
 
 ---
@@ -453,6 +381,7 @@ REFERENCES
   - [IC Principles of AI Ethics](https://www.intel.gov/principles-of-artificial-intelligence-ethics-for-the-intelligence-community)
   - [ICD-505: Artificial Intelligence](https://www.dni.gov/files/documents/ICD/ICD-505-Artificial-Intelligence.pdf)
   - [NSM-25 AI Framework](https://bidenwhitehouse.archives.gov/briefing-room/statements-releases/2024/10/24/fact-sheet-biden-harris-administration-outlines-coordinated-approach-to-harness-power-of-ai-for-u-s-national-security/)
+  - [COPPA — Children's Online Privacy Protection Act](https://www.ftc.gov/legal-library/browse/rules/childrens-online-privacy-protection-rule-coppa)
   - [Experts Have World Models. LLMs Have Word Models.](https://www.latent.space/p/adversarial-reasoning)
 
 

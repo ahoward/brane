@@ -9,7 +9,8 @@ import { existsSync, statSync, mkdirSync } from "node:fs"
 import { Database } from "bun:sqlite"
 
 interface InitParams {
-  path?: string
+  path?:       string
+  target_dir?: string  // create body.db directly in this directory (for lens creation)
 }
 
 interface InitResult {
@@ -19,6 +20,20 @@ interface InitResult {
 
 export async function handler(params: Params, emit?: Emit): Promise<Result<InitResult>> {
   const p = (params ?? {}) as InitParams
+
+  // If target_dir is specified, create body.db directly there (for lens creation)
+  if (p.target_dir) {
+    const dir = resolve(p.target_dir)
+    if (!existsSync(dir)) {
+      mkdirSync(dir, { recursive: true })
+    }
+    const db_path = resolve(dir, "body.db")
+    if (existsSync(db_path)) {
+      return success({ path: dir, created: false })
+    }
+    create_body_db(db_path)
+    return success({ path: dir, created: true })
+  }
 
   // determine target path
   let target_path: string

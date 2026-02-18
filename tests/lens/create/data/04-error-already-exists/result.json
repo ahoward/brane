@@ -1,0 +1,12 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "name": [{ "code": "already_exists", "message": "lens already exists: taken" }]
+  },
+  "meta": {
+    "path": "/lens/create",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

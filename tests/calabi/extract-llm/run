@@ -4,6 +4,8 @@
 #
 set -e
 
+export BRANE_LLM_MOCK=1
+
 BRANE_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
 source "$BRANE_ROOT/tests/lib.sh"
 

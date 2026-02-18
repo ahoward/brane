@@ -1,0 +1,12 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "name": [{ "code": "is_active", "message": "cannot delete the active lens: active-lens (switch to a different lens first)" }]
+  },
+  "meta": {
+    "path": "/lens/delete",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

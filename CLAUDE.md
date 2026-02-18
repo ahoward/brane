@@ -114,6 +114,8 @@ ai/                   # AI agent resources
 - CozoDB mind.db (RocksDB backend) - no schema changes required (027-graph-explore)
 - TypeScript 5.x (Bun 1.x runtime) + CozoDB (cozo-node), bun:sqlite, citty (CLI), existing mind.ts/body.ts utilities (030-ingest)
 - SQLite body.db (file tracking), CozoDB mind.db (knowledge graph) — both existing (030-ingest)
+- TypeScript 5.x (Bun 1.x runtime) + cozo-node (CozoDB), bun:sqlite, citty (CLI), js-yaml (YAML parsing) — all existing (031-multi-lens)
+- SQLite `.brane/state.db` (new, brane-wide config); SQLite `.brane/lens/{name}/body.db` (per-lens file tracking); CozoDB `.brane/lens/{name}/mind.db` (per-lens knowledge graph) (031-multi-lens)
 
 ## Recent Changes
 - 021-vector-search: Added semantic search via `/mind/search` endpoint with local embeddings (fastembed-js BGESmallEN, 384 dims)

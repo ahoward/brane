@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+#
+# Test runner for /lens/delete
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+case "$TC_CASE_NAME" in
+  00-success-basic)
+    init_brane
+    create_lens "temp"
+    ;;
+  01-error-is-default)
+    init_brane
+    ;;
+  02-error-is-active)
+    init_brane
+    create_lens "active-lens"
+    use_lens "active-lens"
+    ;;
+  03-error-not-found)
+    init_brane
+    ;;
+  04-error-not-initialized)
+    # Don't initialize
+    ;;
+  05-error-missing-name)
+    init_brane
+    ;;
+  06-error-path-traversal)
+    init_brane
+    ;;
+esac
+
+echo "$INPUT" | brane /lens/delete

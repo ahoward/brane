@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+#
+# Test runner for /lens/create
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+case "$TC_CASE_NAME" in
+  00-success-basic)
+    init_brane
+    ;;
+  01-success-with-dashes)
+    init_brane
+    ;;
+  02-error-missing-name)
+    init_brane
+    ;;
+  03-error-invalid-name)
+    init_brane
+    ;;
+  04-error-already-exists)
+    init_brane
+    create_lens "taken"
+    ;;
+  05-error-not-initialized)
+    # Don't initialize — no .brane at all
+    ;;
+  06-error-reserved-name)
+    init_brane
+    ;;
+esac
+
+echo "$INPUT" | brane /lens/create

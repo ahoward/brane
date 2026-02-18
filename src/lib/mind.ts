@@ -5,6 +5,7 @@
 import { resolve } from "node:path"
 import { existsSync } from "node:fs"
 import { CozoDb } from "./cozo"
+import { resolve_lens_paths } from "./state.ts"
 
 export interface MindDb {
   db:   CozoDb
@@ -17,22 +18,28 @@ export interface MindError {
 }
 
 //
-// Open mind.db, returns error if not initialized
+// Open mind.db, returns error if not initialized.
+// Uses resolve_lens_paths() to find the active lens's mind.db.
 //
 
 export function open_mind(): MindDb | MindError {
-  const brane_path = resolve(process.cwd(), ".brane")
-  const body_db_path = resolve(brane_path, "body.db")
-  const mind_db_path = resolve(brane_path, "mind.db")
+  const paths = resolve_lens_paths()
 
-  if (!existsSync(brane_path) || !existsSync(body_db_path)) {
+  if (!existsSync(paths.brane_path)) {
     return {
       code:    "not_initialized",
       message: "brane not initialized (run brane init)"
     }
   }
 
-  if (!existsSync(mind_db_path)) {
+  if (!existsSync(paths.body_db_path)) {
+    return {
+      code:    "not_initialized",
+      message: "brane not initialized (run brane init)"
+    }
+  }
+
+  if (!existsSync(paths.mind_db_path)) {
     return {
       code:    "not_initialized",
       message: "mind not initialized (run brane mind init)"
@@ -40,8 +47,8 @@ export function open_mind(): MindDb | MindError {
   }
 
   try {
-    const db = new CozoDb("rocksdb", mind_db_path)
-    return { db, path: mind_db_path }
+    const db = new CozoDb("rocksdb", paths.mind_db_path)
+    return { db, path: paths.mind_db_path }
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err)
     return {

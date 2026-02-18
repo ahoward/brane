@@ -29,6 +29,13 @@ export const init = defineCommand({
       return
     }
 
+    // Initialize state.db (for multi-lens support)
+    const state_result = await sys.call("/state/init", {})
+    if (state_result.status === "error") {
+      output(state_result, { json: args.json })
+      return
+    }
+
     if (args.json) {
       // Combine results for JSON output
       console.log(JSON.stringify({

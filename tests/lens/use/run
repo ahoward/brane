@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+#
+# Test runner for /lens/use
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+case "$TC_CASE_NAME" in
+  00-success-basic)
+    init_brane
+    create_lens "security"
+    ;;
+  01-success-switch-back)
+    init_brane
+    ;;
+  02-error-missing-name)
+    init_brane
+    ;;
+  03-error-not-found)
+    init_brane
+    ;;
+  04-error-not-initialized)
+    # Don't initialize
+    ;;
+  05-error-path-traversal)
+    init_brane
+    ;;
+esac
+
+echo "$INPUT" | brane /lens/use
