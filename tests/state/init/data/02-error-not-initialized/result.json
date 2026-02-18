@@ -1,0 +1,12 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "state": [{ "code": "not_initialized", "message": "brane not initialized (run brane init)" }]
+  },
+  "meta": {
+    "path": "/state/init",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

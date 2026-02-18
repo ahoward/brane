@@ -1,0 +1,12 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "brane": [{ "code": "no_flat_layout", "message": "no flat layout found (no .brane/body.db or .brane/mind.db)" }]
+  },
+  "meta": {
+    "path": "/lens/migrate",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

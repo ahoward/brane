@@ -1,0 +1,16 @@
+{
+  "status": "success",
+  "result": {
+    "lenses": [
+      { "name": "analysis", "active": false, "path": "<string>" },
+      { "name": "default", "active": true, "path": "<string>" },
+      { "name": "security", "active": false, "path": "<string>" }
+    ]
+  },
+  "errors": null,
+  "meta": {
+    "path": "/lens/list",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

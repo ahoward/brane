@@ -1,0 +1,14 @@
+{
+  "status": "success",
+  "result": {
+    "name": "my-lens-1",
+    "path": "<string>",
+    "created": true
+  },
+  "errors": null,
+  "meta": {
+    "path": "/lens/create",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

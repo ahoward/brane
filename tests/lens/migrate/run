@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+#
+# Test runner for /lens/migrate
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+case "$TC_CASE_NAME" in
+  00-success-basic)
+    init_mind
+    init_state
+    ;;
+  01-error-already-migrated)
+    init_brane
+    mkdir -p .brane/lens/default
+    ;;
+  02-error-not-initialized)
+    # Don't initialize — no .brane dir at all
+    ;;
+  03-error-no-flat-layout)
+    mkdir -p .brane
+    init_state
+    ;;
+esac
+
+echo "$INPUT" | brane /lens/migrate

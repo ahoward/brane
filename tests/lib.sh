@@ -199,6 +199,29 @@ create_provenance() {
   echo "$1" | brane /mind/provenance/create > /dev/null 2>&1
 }
 
+# Initialize state.db in current .brane/
+init_state() {
+  echo '{}' | brane /state/init > /dev/null 2>&1
+}
+
+# Initialize body + mind + state (full brane init)
+init_brane() {
+  init_mind
+  init_state
+}
+
+# Create a named lens (requires init_brane first)
+create_lens() {
+  local name="$1"
+  echo "{\"name\": \"$name\"}" | brane /lens/create > /dev/null 2>&1
+}
+
+# Switch to a named lens
+use_lens() {
+  local name="$1"
+  echo "{\"name\": \"$name\"}" | brane /lens/use > /dev/null 2>&1
+}
+
 # Create isolated workspace, run cleanup on exit
 workspace() {
   WORKDIR=$(mktemp -d)

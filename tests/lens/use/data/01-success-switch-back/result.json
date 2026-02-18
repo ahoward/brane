@@ -1,0 +1,13 @@
+{
+  "status": "success",
+  "result": {
+    "name": "default",
+    "active": true
+  },
+  "errors": null,
+  "meta": {
+    "path": "/lens/use",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

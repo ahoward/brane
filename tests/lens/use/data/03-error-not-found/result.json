@@ -1,0 +1,12 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "name": [{ "code": "not_found", "message": "lens not found: nonexistent" }]
+  },
+  "meta": {
+    "path": "/lens/use",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+#
+# Test runner for /state/init
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+case "$TC_CASE_NAME" in
+  00-success-create)
+    init_body
+    ;;
+
+  01-success-idempotent)
+    init_body
+    echo '{}' | brane /state/init > /dev/null 2>&1
+    ;;
+
+  02-error-not-initialized)
+    # no init — .brane dir does not exist
+    ;;
+esac
+
+echo "$INPUT" | brane /state/init

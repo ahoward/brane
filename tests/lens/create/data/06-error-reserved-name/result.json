@@ -1,0 +1,12 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "name": [{ "code": "invalid", "message": "invalid lens name: create (use alphanumeric, hyphens, underscores; cannot be a reserved word)" }]
+  },
+  "meta": {
+    "path": "/lens/create",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

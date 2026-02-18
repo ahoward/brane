@@ -1,0 +1,12 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "name": [{ "code": "required", "message": "name is required" }]
+  },
+  "meta": {
+    "path": "/lens/create",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

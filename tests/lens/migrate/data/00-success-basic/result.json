@@ -1,0 +1,14 @@
+{
+  "status": "success",
+  "result": {
+    "migrated": true,
+    "from": "<string>",
+    "to": "<string>"
+  },
+  "errors": null,
+  "meta": {
+    "path": "/lens/migrate",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "status": "success",
+  "result": {
+    "path": "<string>",
+    "created": false
+  },
+  "errors": null,
+  "meta": {
+    "path": "/state/init",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}
