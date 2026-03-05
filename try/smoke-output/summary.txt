@@ -1,0 +1,9 @@
+Concepts: 45
+  Caveat: 21
+  Entity: 18
+  Rule: 6
+
+Edges: 42
+  CONFLICTS_WITH: 8
+  DEFINED_IN: 13
+  DEPENDS_ON: 21

@@ -1,0 +1,57 @@
+
+--- code/panopticon.ts ---
+  [14] BehaviorTracker (Entity)
+  [15] AdNetworkAPI (Entity)
+  [16] LawEnforcementGateway (Entity)
+  [17] NoConsentForMinors (Caveat)
+  [18] BiometricSharingWithoutWarrant (Caveat)
+  [19] LocationSharedBeforeConsent (Caveat)
+  [20] PurgeNotImplemented (Caveat)
+  [21] UserProfile (Entity)
+  [22] MinorProfile (Entity)
+  [23] NoConsentForMinorTracking (Caveat)
+  [24] BiometricsSentWithoutWarrant (Caveat)
+  [25] ShadowProfileWithoutOptIn (Caveat)
+
+--- code/kingmaker.ts ---
+  [7] ContentRanker (Entity)
+  [8] ContentItem (Entity)
+  [9] RankingConfig (Entity)
+  [10] ToxicityFilterDisabled (Caveat)
+  [11] DiversityPlacementCaveat (Caveat)
+  [12] ShadowBanNoAppeals (Caveat)
+  [13] EngagementOverSafetyRule (Rule)
+
+--- code/oracle.ts ---
+  [1] DecisionEngine (Entity)
+  [2] Applicant (Entity)
+  [3] Decision (Entity)
+  [4] ProxyDiscrimination (Caveat)
+  [5] PostHocExplanation (Caveat)
+  [6] NoHumanReview (Rule)
+
+--- prose/safety-theater.md ---
+  [39] AiPublicSafetyPlatform (Entity)
+  [40] FacialRecognitionModule (Entity)
+  [41] RiskScoringAlgorithm (Entity)
+  [42] BiasedBenchmarkDataset (Caveat)
+  [43] DeceptiveConsentPractices (Caveat)
+  [44] DisproportionateEnforcementImpact (Caveat)
+  [45] RequireIndependentValidation (Rule)
+
+--- prose/move-fast.md ---
+  [26] FunZoneApp (Entity)
+  [27] AdaptiveAlgorithmsDarkPatterns (Caveat)
+  [28] FunCoinsMonetization (Caveat)
+  [29] FamilyDashboard (Entity)
+  [30] COPPACompliance (Rule)
+  [31] ChildDataCollection (Caveat)
+  [32] ScreenTimeViolation (Caveat)
+
+--- prose/alignment-washing.md ---
+  [33] AlignmentWashing (Caveat)
+  [34] EthicsBoardAdvisoryOnly (Caveat)
+  [35] ResponsibleAiFramework (Entity)
+  [36] TransparencyReporting (Entity)
+  [37] DomainSpecificValidationRequired (Rule)
+  [38] BenchmarkIndependenceRequired (Rule)

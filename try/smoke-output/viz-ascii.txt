@@ -1,0 +1,68 @@
+[DecisionEngine] Entity
+├── DEPENDS_ON → [Applicant] Entity
+└── DEPENDS_ON → [Decision] Entity
+
+[Applicant] Entity
+└── (no outgoing edges)
+
+[Decision] Entity
+└── (no outgoing edges)
+
+[ProxyDiscrimination] Caveat
+└── DEFINED_IN → [Applicant] Entity
+
+[PostHocExplanation] Caveat
+├── DEFINED_IN → [Decision] Entity
+└── CONFLICTS_WITH → [ProxyDiscrimination] Caveat
+
+[NoHumanReview] Rule
+└── DEFINED_IN → [DecisionEngine] Entity
+
+[ContentRanker] Entity
+├── DEPENDS_ON → [ContentItem] Entity
+└── DEPENDS_ON → [RankingConfig] Entity
+
+[ContentItem] Entity
+└── (no outgoing edges)
+
+[RankingConfig] Entity
+└── (no outgoing edges)
+
+[ToxicityFilterDisabled] Caveat
+└── DEFINED_IN → [ContentRanker] Entity
+
+[DiversityPlacementCaveat] Caveat
+└── DEFINED_IN → [ContentRanker] Entity
+
+[ShadowBanNoAppeals] Caveat
+└── (no outgoing edges)
+
+[EngagementOverSafetyRule] Rule
+└── DEPENDS_ON → [ToxicityFilterDisabled] Caveat
+
+[BehaviorTracker] Entity
+├── DEPENDS_ON → [AdNetworkAPI] Entity
+├── DEPENDS_ON → [LawEnforcementGateway] Entity
+├── DEPENDS_ON → [AdNetworkAPI] Entity
+└── DEPENDS_ON → [LawEnforcementGateway] Entity
+
+[AdNetworkAPI] Entity
+└── (no outgoing edges)
+
+[LawEnforcementGateway] Entity
+└── (no outgoing edges)
+
+[NoConsentForMinors] Caveat
+└── DEFINED_IN → [BehaviorTracker] Entity
+
+[BiometricSharingWithoutWarrant] Caveat
+└── DEPENDS_ON → [LawEnforcementGateway] Entity
+
+[LocationSharedBeforeConsent] Caveat
+├── DEPENDS_ON → [AdNetworkAPI] Entity
+└── DEFINED_IN → [AdNetworkAPI] Entity
+
+[PurgeNotImplemented] Caveat
+└── DEFINED_IN → [BehaviorTracker] Entity
+
+Warning: Graph truncated to 20 nodes. Use --limit to increase or --center to focus on specific concept.

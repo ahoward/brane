@@ -1,0 +1,186 @@
+# Smoke Test: Corpus Extraction
+
+Real LLM extraction (Claude) + AST ensemble pipeline against `corpus/`.
+
+**45 concepts, 42 edges** across 6 files (3 code, 3 prose).
+
+## Graph
+
+```mermaid
+graph TD
+    1["DecisionEngine (Entity)"]
+    2["Applicant (Entity)"]
+    3["Decision (Entity)"]
+    4["ProxyDiscrimination (Caveat)"]
+    5["PostHocExplanation (Caveat)"]
+    6["NoHumanReview (Rule)"]
+    7["ContentRanker (Entity)"]
+    8["ContentItem (Entity)"]
+    9["RankingConfig (Entity)"]
+    10["ToxicityFilterDisabled (Caveat)"]
+    11["DiversityPlacementCaveat (Caveat)"]
+    12["ShadowBanNoAppeals (Caveat)"]
+    13["EngagementOverSafetyRule (Rule)"]
+    14["BehaviorTracker (Entity)"]
+    15["AdNetworkAPI (Entity)"]
+    16["LawEnforcementGateway (Entity)"]
+    17["NoConsentForMinors (Caveat)"]
+    18["BiometricSharingWithoutWarrant (Caveat)"]
+    19["LocationSharedBeforeConsent (Caveat)"]
+    20["PurgeNotImplemented (Caveat)"]
+    21["UserProfile (Entity)"]
+    22["MinorProfile (Entity)"]
+    23["NoConsentForMinorTracking (Caveat)"]
+    24["BiometricsSentWithoutWarrant (Caveat)"]
+    25["ShadowProfileWithoutOptIn (Caveat)"]
+    26["FunZoneApp (Entity)"]
+    27["AdaptiveAlgorithmsDarkPatterns (Caveat)"]
+    28["FunCoinsMonetization (Caveat)"]
+    29["FamilyDashboard (Entity)"]
+    30["COPPACompliance (Rule)"]
+    31["ChildDataCollection (Caveat)"]
+    32["ScreenTimeViolation (Caveat)"]
+    33["AlignmentWashing (Caveat)"]
+    34["EthicsBoardAdvisoryOnly (Caveat)"]
+    35["ResponsibleAiFramework (Entity)"]
+    36["TransparencyReporting (Entity)"]
+    37["DomainSpecificValidationRequired (Rule)"]
+    38["BenchmarkIndependenceRequired (Rule)"]
+    39["AiPublicSafetyPlatform (Entity)"]
+    40["FacialRecognitionModule (Entity)"]
+    41["RiskScoringAlgorithm (Entity)"]
+    42["BiasedBenchmarkDataset (Caveat)"]
+    43["DeceptiveConsentPractices (Caveat)"]
+    44["DisproportionateEnforcementImpact (Caveat)"]
+    45["RequireIndependentValidation (Rule)"]
+    1 -->|DEPENDS_ON| 2
+    1 -->|DEPENDS_ON| 3
+    4 -->|DEFINED_IN| 2
+    5 -->|DEFINED_IN| 3
+    6 -->|DEFINED_IN| 1
+    5 -->|CONFLICTS_WITH| 4
+    7 -->|DEPENDS_ON| 8
+    7 -->|DEPENDS_ON| 9
+    10 -->|DEFINED_IN| 7
+    11 -->|DEFINED_IN| 7
+    13 -->|DEPENDS_ON| 10
+    14 -->|DEPENDS_ON| 15
+    14 -->|DEPENDS_ON| 16
+    17 -->|DEFINED_IN| 14
+    18 -->|DEPENDS_ON| 16
+    19 -->|DEPENDS_ON| 15
+    14 -->|DEPENDS_ON| 15
+    14 -->|DEPENDS_ON| 16
+    14 -->|DEPENDS_ON| 21
+    22 -->|DEPENDS_ON| 21
+    23 -->|DEFINED_IN| 14
+    24 -->|DEFINED_IN| 16
+    19 -->|DEFINED_IN| 15
+    20 -->|DEFINED_IN| 14
+    25 -->|DEFINED_IN| 14
+    26 -->|DEPENDS_ON| 27
+    26 -->|DEPENDS_ON| 28
+    26 -->|DEPENDS_ON| 29
+    31 -->|CONFLICTS_WITH| 30
+    27 -->|DEPENDS_ON| 32
+    28 -->|CONFLICTS_WITH| 30
+    33 -->|CONFLICTS_WITH| 35
+    34 -->|CONFLICTS_WITH| 35
+    36 -->|DEPENDS_ON| 35
+    37 -->|CONFLICTS_WITH| 33
+    38 -->|CONFLICTS_WITH| 33
+    40 -->|DEPENDS_ON| 39
+    41 -->|DEPENDS_ON| 39
+    40 -->|DEPENDS_ON| 42
+    42 -->|CONFLICTS_WITH| 45
+    43 -->|DEFINED_IN| 39
+    44 -->|DEFINED_IN| 39
+```
+
+## Summary
+
+| | count |
+|---|---|
+| Concepts | 45 |
+| &mdash; Entity | 18 |
+| &mdash; Caveat | 21 |
+| &mdash; Rule | 6 |
+| Edges | 42 |
+| &mdash; DEPENDS_ON | 21 |
+| &mdash; DEFINED_IN | 13 |
+| &mdash; CONFLICTS_WITH | 8 |
+
+## Provenance (file -> concepts)
+
+### code/oracle.ts
+| ID | Concept | Type |
+|----|---------|------|
+| 1 | DecisionEngine | Entity |
+| 2 | Applicant | Entity |
+| 3 | Decision | Entity |
+| 4 | ProxyDiscrimination | Caveat |
+| 5 | PostHocExplanation | Caveat |
+| 6 | NoHumanReview | Rule |
+
+### code/kingmaker.ts
+| ID | Concept | Type |
+|----|---------|------|
+| 7 | ContentRanker | Entity |
+| 8 | ContentItem | Entity |
+| 9 | RankingConfig | Entity |
+| 10 | ToxicityFilterDisabled | Caveat |
+| 11 | DiversityPlacementCaveat | Caveat |
+| 12 | ShadowBanNoAppeals | Caveat |
+| 13 | EngagementOverSafetyRule | Rule |
+
+### code/panopticon.ts
+| ID | Concept | Type |
+|----|---------|------|
+| 14 | BehaviorTracker | Entity |
+| 15 | AdNetworkAPI | Entity |
+| 16 | LawEnforcementGateway | Entity |
+| 17 | NoConsentForMinors | Caveat |
+| 18 | BiometricSharingWithoutWarrant | Caveat |
+| 19 | LocationSharedBeforeConsent | Caveat |
+| 20 | PurgeNotImplemented | Caveat |
+| 21 | UserProfile | Entity |
+| 22 | MinorProfile | Entity |
+| 23 | NoConsentForMinorTracking | Caveat |
+| 24 | BiometricsSentWithoutWarrant | Caveat |
+| 25 | ShadowProfileWithoutOptIn | Caveat |
+
+### prose/move-fast.md
+| ID | Concept | Type |
+|----|---------|------|
+| 26 | FunZoneApp | Entity |
+| 27 | AdaptiveAlgorithmsDarkPatterns | Caveat |
+| 28 | FunCoinsMonetization | Caveat |
+| 29 | FamilyDashboard | Entity |
+| 30 | COPPACompliance | Rule |
+| 31 | ChildDataCollection | Caveat |
+| 32 | ScreenTimeViolation | Caveat |
+
+### prose/alignment-washing.md
+| ID | Concept | Type |
+|----|---------|------|
+| 33 | AlignmentWashing | Caveat |
+| 34 | EthicsBoardAdvisoryOnly | Caveat |
+| 35 | ResponsibleAiFramework | Entity |
+| 36 | TransparencyReporting | Entity |
+| 37 | DomainSpecificValidationRequired | Rule |
+| 38 | BenchmarkIndependenceRequired | Rule |
+
+### prose/safety-theater.md
+| ID | Concept | Type |
+|----|---------|------|
+| 39 | AiPublicSafetyPlatform | Entity |
+| 40 | FacialRecognitionModule | Entity |
+| 41 | RiskScoringAlgorithm | Entity |
+| 42 | BiasedBenchmarkDataset | Caveat |
+| 43 | DeceptiveConsentPractices | Caveat |
+| 44 | DisproportionateEnforcementImpact | Caveat |
+| 45 | RequireIndependentValidation | Rule |
+
+---
+
+*Generated by `bash try/smoke.sh` — real Claude LLM extraction + tree-sitter AST ensemble pipeline.*

@@ -1,0 +1,239 @@
+{
+  "status": "success",
+  "result": {
+    "concepts": [
+      {
+        "id": 1,
+        "name": "DecisionEngine",
+        "type": "Entity"
+      },
+      {
+        "id": 2,
+        "name": "Applicant",
+        "type": "Entity"
+      },
+      {
+        "id": 3,
+        "name": "Decision",
+        "type": "Entity"
+      },
+      {
+        "id": 4,
+        "name": "ProxyDiscrimination",
+        "type": "Caveat"
+      },
+      {
+        "id": 5,
+        "name": "PostHocExplanation",
+        "type": "Caveat"
+      },
+      {
+        "id": 6,
+        "name": "NoHumanReview",
+        "type": "Rule"
+      },
+      {
+        "id": 7,
+        "name": "ContentRanker",
+        "type": "Entity"
+      },
+      {
+        "id": 8,
+        "name": "ContentItem",
+        "type": "Entity"
+      },
+      {
+        "id": 9,
+        "name": "RankingConfig",
+        "type": "Entity"
+      },
+      {
+        "id": 10,
+        "name": "ToxicityFilterDisabled",
+        "type": "Caveat"
+      },
+      {
+        "id": 11,
+        "name": "DiversityPlacementCaveat",
+        "type": "Caveat"
+      },
+      {
+        "id": 12,
+        "name": "ShadowBanNoAppeals",
+        "type": "Caveat"
+      },
+      {
+        "id": 13,
+        "name": "EngagementOverSafetyRule",
+        "type": "Rule"
+      },
+      {
+        "id": 14,
+        "name": "BehaviorTracker",
+        "type": "Entity"
+      },
+      {
+        "id": 15,
+        "name": "AdNetworkAPI",
+        "type": "Entity"
+      },
+      {
+        "id": 16,
+        "name": "LawEnforcementGateway",
+        "type": "Entity"
+      },
+      {
+        "id": 17,
+        "name": "NoConsentForMinors",
+        "type": "Caveat"
+      },
+      {
+        "id": 18,
+        "name": "BiometricSharingWithoutWarrant",
+        "type": "Caveat"
+      },
+      {
+        "id": 19,
+        "name": "LocationSharedBeforeConsent",
+        "type": "Caveat"
+      },
+      {
+        "id": 20,
+        "name": "PurgeNotImplemented",
+        "type": "Caveat"
+      },
+      {
+        "id": 21,
+        "name": "UserProfile",
+        "type": "Entity"
+      },
+      {
+        "id": 22,
+        "name": "MinorProfile",
+        "type": "Entity"
+      },
+      {
+        "id": 23,
+        "name": "NoConsentForMinorTracking",
+        "type": "Caveat"
+      },
+      {
+        "id": 24,
+        "name": "BiometricsSentWithoutWarrant",
+        "type": "Caveat"
+      },
+      {
+        "id": 25,
+        "name": "ShadowProfileWithoutOptIn",
+        "type": "Caveat"
+      },
+      {
+        "id": 26,
+        "name": "FunZoneApp",
+        "type": "Entity"
+      },
+      {
+        "id": 27,
+        "name": "AdaptiveAlgorithmsDarkPatterns",
+        "type": "Caveat"
+      },
+      {
+        "id": 28,
+        "name": "FunCoinsMonetization",
+        "type": "Caveat"
+      },
+      {
+        "id": 29,
+        "name": "FamilyDashboard",
+        "type": "Entity"
+      },
+      {
+        "id": 30,
+        "name": "COPPACompliance",
+        "type": "Rule"
+      },
+      {
+        "id": 31,
+        "name": "ChildDataCollection",
+        "type": "Caveat"
+      },
+      {
+        "id": 32,
+        "name": "ScreenTimeViolation",
+        "type": "Caveat"
+      },
+      {
+        "id": 33,
+        "name": "AlignmentWashing",
+        "type": "Caveat"
+      },
+      {
+        "id": 34,
+        "name": "EthicsBoardAdvisoryOnly",
+        "type": "Caveat"
+      },
+      {
+        "id": 35,
+        "name": "ResponsibleAiFramework",
+        "type": "Entity"
+      },
+      {
+        "id": 36,
+        "name": "TransparencyReporting",
+        "type": "Entity"
+      },
+      {
+        "id": 37,
+        "name": "DomainSpecificValidationRequired",
+        "type": "Rule"
+      },
+      {
+        "id": 38,
+        "name": "BenchmarkIndependenceRequired",
+        "type": "Rule"
+      },
+      {
+        "id": 39,
+        "name": "AiPublicSafetyPlatform",
+        "type": "Entity"
+      },
+      {
+        "id": 40,
+        "name": "FacialRecognitionModule",
+        "type": "Entity"
+      },
+      {
+        "id": 41,
+        "name": "RiskScoringAlgorithm",
+        "type": "Entity"
+      },
+      {
+        "id": 42,
+        "name": "BiasedBenchmarkDataset",
+        "type": "Caveat"
+      },
+      {
+        "id": 43,
+        "name": "DeceptiveConsentPractices",
+        "type": "Caveat"
+      },
+      {
+        "id": 44,
+        "name": "DisproportionateEnforcementImpact",
+        "type": "Caveat"
+      },
+      {
+        "id": 45,
+        "name": "RequireIndependentValidation",
+        "type": "Rule"
+      }
+    ],
+    "total": 45
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/concepts/list",
+    "timestamp": "2026-03-05T16:44:53.099Z",
+    "duration_ms": 22.453
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "status": "success",
+  "result": {
+    "format": "ascii",
+    "output": "[DecisionEngine] Entity\n├── DEPENDS_ON → [Applicant] Entity\n└── DEPENDS_ON → [Decision] Entity\n\n[Applicant] Entity\n└── (no outgoing edges)\n\n[Decision] Entity\n└── (no outgoing edges)\n\n[ProxyDiscrimination] Caveat\n└── DEFINED_IN → [Applicant] Entity\n\n[PostHocExplanation] Caveat\n├── DEFINED_IN → [Decision] Entity\n└── CONFLICTS_WITH → [ProxyDiscrimination] Caveat\n\n[NoHumanReview] Rule\n└── DEFINED_IN → [DecisionEngine] Entity\n\n[ContentRanker] Entity\n├── DEPENDS_ON → [ContentItem] Entity\n└── DEPENDS_ON → [RankingConfig] Entity\n\n[ContentItem] Entity\n└── (no outgoing edges)\n\n[RankingConfig] Entity\n└── (no outgoing edges)\n\n[ToxicityFilterDisabled] Caveat\n└── DEFINED_IN → [ContentRanker] Entity\n\n[DiversityPlacementCaveat] Caveat\n└── DEFINED_IN → [ContentRanker] Entity\n\n[ShadowBanNoAppeals] Caveat\n└── (no outgoing edges)\n\n[EngagementOverSafetyRule] Rule\n└── DEPENDS_ON → [ToxicityFilterDisabled] Caveat\n\n[BehaviorTracker] Entity\n├── DEPENDS_ON → [AdNetworkAPI] Entity\n├── DEPENDS_ON → [LawEnforcementGateway] Entity\n├── DEPENDS_ON → [AdNetworkAPI] Entity\n└── DEPENDS_ON → [LawEnforcementGateway] Entity\n\n[AdNetworkAPI] Entity\n└── (no outgoing edges)\n\n[LawEnforcementGateway] Entity\n└── (no outgoing edges)\n\n[NoConsentForMinors] Caveat\n└── DEFINED_IN → [BehaviorTracker] Entity\n\n[BiometricSharingWithoutWarrant] Caveat\n└── DEPENDS_ON → [LawEnforcementGateway] Entity\n\n[LocationSharedBeforeConsent] Caveat\n├── DEPENDS_ON → [AdNetworkAPI] Entity\n└── DEFINED_IN → [AdNetworkAPI] Entity\n\n[PurgeNotImplemented] Caveat\n└── DEFINED_IN → [BehaviorTracker] Entity",
+    "nodes": 20,
+    "edges": 20,
+    "truncated": true,
+    "message": "Graph truncated to 20 nodes. Use --limit to increase or --center to focus on specific concept."
+  },
+  "errors": null,
+  "meta": {
+    "path": "/graph/viz",
+    "timestamp": "2026-03-05T16:44:53.409Z",
+    "duration_ms": 21.868
+  }
+}

@@ -1,0 +1,308 @@
+{
+  "status": "success",
+  "result": {
+    "edges": [
+      {
+        "id": 1,
+        "source": 1,
+        "target": 2,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 2,
+        "source": 1,
+        "target": 3,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 3,
+        "source": 4,
+        "target": 2,
+        "relation": "DEFINED_IN",
+        "weight": 0.8
+      },
+      {
+        "id": 4,
+        "source": 5,
+        "target": 3,
+        "relation": "DEFINED_IN",
+        "weight": 0.8
+      },
+      {
+        "id": 5,
+        "source": 6,
+        "target": 1,
+        "relation": "DEFINED_IN",
+        "weight": 0.7
+      },
+      {
+        "id": 6,
+        "source": 5,
+        "target": 4,
+        "relation": "CONFLICTS_WITH",
+        "weight": 0.9
+      },
+      {
+        "id": 7,
+        "source": 7,
+        "target": 8,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 8,
+        "source": 7,
+        "target": 9,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 9,
+        "source": 10,
+        "target": 7,
+        "relation": "DEFINED_IN",
+        "weight": 0.8
+      },
+      {
+        "id": 10,
+        "source": 11,
+        "target": 7,
+        "relation": "DEFINED_IN",
+        "weight": 0.8
+      },
+      {
+        "id": 11,
+        "source": 13,
+        "target": 10,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 12,
+        "source": 14,
+        "target": 15,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 13,
+        "source": 14,
+        "target": 16,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 14,
+        "source": 17,
+        "target": 14,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 15,
+        "source": 18,
+        "target": 16,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 16,
+        "source": 19,
+        "target": 15,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 17,
+        "source": 14,
+        "target": 15,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 18,
+        "source": 14,
+        "target": 16,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 19,
+        "source": 14,
+        "target": 21,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 20,
+        "source": 22,
+        "target": 21,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 21,
+        "source": 23,
+        "target": 14,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 22,
+        "source": 24,
+        "target": 16,
+        "relation": "DEFINED_IN",
+        "weight": 0.8
+      },
+      {
+        "id": 23,
+        "source": 19,
+        "target": 15,
+        "relation": "DEFINED_IN",
+        "weight": 0.8
+      },
+      {
+        "id": 24,
+        "source": 20,
+        "target": 14,
+        "relation": "DEFINED_IN",
+        "weight": 0.7
+      },
+      {
+        "id": 25,
+        "source": 25,
+        "target": 14,
+        "relation": "DEFINED_IN",
+        "weight": 0.7
+      },
+      {
+        "id": 26,
+        "source": 26,
+        "target": 27,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 27,
+        "source": 26,
+        "target": 28,
+        "relation": "DEPENDS_ON",
+        "weight": 0.9
+      },
+      {
+        "id": 28,
+        "source": 26,
+        "target": 29,
+        "relation": "DEPENDS_ON",
+        "weight": 0.3
+      },
+      {
+        "id": 29,
+        "source": 31,
+        "target": 30,
+        "relation": "CONFLICTS_WITH",
+        "weight": 1
+      },
+      {
+        "id": 30,
+        "source": 27,
+        "target": 32,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 31,
+        "source": 28,
+        "target": 30,
+        "relation": "CONFLICTS_WITH",
+        "weight": 0.8
+      },
+      {
+        "id": 32,
+        "source": 33,
+        "target": 35,
+        "relation": "CONFLICTS_WITH",
+        "weight": 1
+      },
+      {
+        "id": 33,
+        "source": 34,
+        "target": 35,
+        "relation": "CONFLICTS_WITH",
+        "weight": 1
+      },
+      {
+        "id": 34,
+        "source": 36,
+        "target": 35,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 35,
+        "source": 37,
+        "target": 33,
+        "relation": "CONFLICTS_WITH",
+        "weight": 0.8
+      },
+      {
+        "id": 36,
+        "source": 38,
+        "target": 33,
+        "relation": "CONFLICTS_WITH",
+        "weight": 0.8
+      },
+      {
+        "id": 37,
+        "source": 40,
+        "target": 39,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 38,
+        "source": 41,
+        "target": 39,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 39,
+        "source": 40,
+        "target": 42,
+        "relation": "DEPENDS_ON",
+        "weight": 0.9
+      },
+      {
+        "id": 40,
+        "source": 42,
+        "target": 45,
+        "relation": "CONFLICTS_WITH",
+        "weight": 0.8
+      },
+      {
+        "id": 41,
+        "source": 43,
+        "target": 39,
+        "relation": "DEFINED_IN",
+        "weight": 0.7
+      },
+      {
+        "id": 42,
+        "source": 44,
+        "target": 39,
+        "relation": "DEFINED_IN",
+        "weight": 0.7
+      }
+    ],
+    "total": 42
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/edges/list",
+    "timestamp": "2026-03-05T16:44:53.254Z",
+    "duration_ms": 20.243
+  }
+}
