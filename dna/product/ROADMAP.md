@@ -33,7 +33,6 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 ### Next
 
-- [ ] `033-prune` — `brane prune` command to clean orphaned concepts/edges from mind.db when source files are deleted or re-extracted
 - [ ] `032-corpus` — Organized test/sample material in `corpus/prose/` and `corpus/code/` for development and examples
 - [ ] `028-verifier-node` — Headless verification node
 - [ ] `029-protocol-spec` — CTX token integration spec
@@ -46,6 +45,7 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 | Feature | PR | Date |
 |---------|-----|------|
+| `033-prune` | — | 2026-03-05 |
 | `031-multi-lens` | #31 | 2026-02-18 |
 | `030-ingest` | — | 2026-02-10 |
 | `027-graph-explore` | — | 2026-02-03 |
@@ -96,3 +96,4 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 - **027-graph-explore complete!** — CLI graph visualization with summary, neighbors, viz (ASCII/Mermaid)
 - **030-ingest complete!** — Unified `brane ingest` (scan + extract in one step), Gemini-reviewed, 290 tests
 - **031-multi-lens complete!** — Named lenses as independent knowledge graphs, state.db, security hardened, README rewrite, 321 tests
+- **033-prune complete!** — `brane prune` removes orphaned concepts/edges/provenance, Gemini-reviewed safety fix, 328 tests
