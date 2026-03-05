@@ -1,0 +1,30 @@
+{
+  "status": "success",
+  "result": {
+    "concepts_removed": 1,
+    "edges_removed": 0,
+    "provenance_removed": 1,
+    "details": {
+      "concepts": [
+        {
+          "id": 1,
+          "name": "Orphan",
+          "type": "Entity"
+        }
+      ],
+      "edges": [],
+      "provenance": [
+        {
+          "concept_id": 1,
+          "file_url": "file:///project/deleted.ts"
+        }
+      ]
+    }
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/prune",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

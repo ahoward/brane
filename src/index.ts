@@ -61,6 +61,7 @@ import { handler as lens_use_handler } from "./handlers/lens/use.ts"
 import { handler as lens_list_handler } from "./handlers/lens/list.ts"
 import { handler as lens_delete_handler } from "./handlers/lens/delete.ts"
 import { handler as lens_migrate_handler } from "./handlers/lens/migrate.ts"
+import { handler as mind_prune_handler } from "./handlers/mind/prune.ts"
 
 sys.register("/ping", ping_handler)
 sys.register("/body/init", body_init_handler)
@@ -118,6 +119,7 @@ sys.register("/lens/use", lens_use_handler)
 sys.register("/lens/list", lens_list_handler)
 sys.register("/lens/delete", lens_delete_handler)
 sys.register("/lens/migrate", lens_migrate_handler)
+sys.register("/mind/prune", mind_prune_handler)
 
 // export
 export { sys }

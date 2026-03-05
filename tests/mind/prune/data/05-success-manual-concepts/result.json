@@ -1,0 +1,19 @@
+{
+  "status": "success",
+  "result": {
+    "concepts_removed": 0,
+    "edges_removed": 0,
+    "provenance_removed": 0,
+    "details": {
+      "concepts": [],
+      "edges": [],
+      "provenance": []
+    }
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/prune",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

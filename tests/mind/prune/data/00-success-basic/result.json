@@ -1,0 +1,37 @@
+{
+  "status": "success",
+  "result": {
+    "concepts_removed": 1,
+    "edges_removed": 1,
+    "provenance_removed": 1,
+    "details": {
+      "concepts": [
+        {
+          "id": 1,
+          "name": "AuthService",
+          "type": "Entity"
+        }
+      ],
+      "edges": [
+        {
+          "id": 1,
+          "source": 1,
+          "target": 2,
+          "relation": "DEPENDS_ON"
+        }
+      ],
+      "provenance": [
+        {
+          "concept_id": 1,
+          "file_url": "file:///project/src/auth.ts"
+        }
+      ]
+    }
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/prune",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

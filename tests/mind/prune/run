@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+#
+# Test runner for /mind/prune
+#
+# Strategy: To create provenance for files not in body.db (simulating deletion),
+# we first add the file to body.db, create provenance, then DELETE the file from body.db.
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+# Helper: add file to body, create provenance, then delete file from body (simulates deletion)
+create_stale_provenance() {
+  local concept_id="$1" file_url="$2"
+  add_body_file "$file_url" "fakehash" 100 1000
+  create_provenance "{\"concept_id\": $concept_id, \"file_url\": \"$file_url\"}"
+  sqlite3 .brane/body.db "DELETE FROM files WHERE url = '$file_url';"
+}
+
+case "$TC_CASE_NAME" in
+  00-success-basic)
+    # Concept with stale provenance (file deleted from body.db) gets pruned
+    init_mind
+    create_concepts '[{"name": "AuthService", "type": "Entity"}, {"name": "Logger", "type": "Entity"}]'
+    create_edges '[{"source": 1, "target": 2, "relation": "DEPENDS_ON"}]'
+    # Logger has valid provenance
+    add_body_file "file:///project/src/logger.ts" "abc123" 100 1000
+    create_provenance '{"concept_id": 2, "file_url": "file:///project/src/logger.ts"}'
+    # AuthService has stale provenance (file "deleted")
+    create_stale_provenance 1 "file:///project/src/auth.ts"
+    ;;
+  01-success-no-orphans)
+    # All provenance is valid, nothing to prune
+    init_mind
+    create_concepts '[{"name": "A", "type": "Entity"}, {"name": "B", "type": "Entity"}]'
+    create_edges '[{"source": 1, "target": 2, "relation": "DEPENDS_ON"}]'
+    add_body_file "file:///project/a.ts" "aaa" 50 1000
+    add_body_file "file:///project/b.ts" "bbb" 50 1000
+    create_provenance '{"concept_id": 1, "file_url": "file:///project/a.ts"}'
+    create_provenance '{"concept_id": 2, "file_url": "file:///project/b.ts"}'
+    ;;
+  02-success-multi-provenance)
+    # Concept with provenance from 2 files, one removed — concept survives
+    init_mind
+    create_concepts '[{"name": "SharedUtil", "type": "Entity"}]'
+    # Valid provenance
+    add_body_file "file:///project/a.ts" "aaa" 50 1000
+    create_provenance '{"concept_id": 1, "file_url": "file:///project/a.ts"}'
+    # Stale provenance (file "deleted")
+    create_stale_provenance 1 "file:///project/b.ts"
+    ;;
+  03-error-not-initialized)
+    # No .brane directory
+    ;;
+  04-success-dry-run)
+    # Dry run: returns counts but doesn't modify mind.db
+    init_mind
+    create_concepts '[{"name": "Orphan", "type": "Entity"}]'
+    # Stale provenance (file "deleted")
+    create_stale_provenance 1 "file:///project/deleted.ts"
+    ;;
+  05-success-manual-concepts)
+    # Concept with no provenance at all — should never be pruned
+    init_mind
+    create_concepts '[{"name": "ManualConcept", "type": "Entity"}]'
+    # No provenance created for this concept
+    ;;
+  06-error-no-body-db)
+    # .brane exists with mind.db but no body.db — must abort, not wipe everything
+    init_mind
+    rm -f .brane/body.db
+    ;;
+esac
+
+echo "$INPUT" | brane /mind/prune

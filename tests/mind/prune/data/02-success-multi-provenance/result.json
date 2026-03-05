@@ -1,0 +1,24 @@
+{
+  "status": "success",
+  "result": {
+    "concepts_removed": 0,
+    "edges_removed": 0,
+    "provenance_removed": 1,
+    "details": {
+      "concepts": [],
+      "edges": [],
+      "provenance": [
+        {
+          "concept_id": 1,
+          "file_url": "file:///project/b.ts"
+        }
+      ]
+    }
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/prune",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

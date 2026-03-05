@@ -20,6 +20,7 @@ import { ingest } from "./commands/ingest.ts"
 import { prVerify } from "./commands/pr-verify.ts"
 import { lens } from "./commands/lens.ts"
 import { graph } from "./commands/graph.ts"
+import { prune } from "./commands/prune.ts"
 
 export const main = defineCommand({
   meta: {
@@ -33,6 +34,7 @@ export const main = defineCommand({
     ingest,
     search,
     verify,
+    prune,
 
     // Resource commands
     concept,
