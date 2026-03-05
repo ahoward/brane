@@ -1,0 +1,4 @@
+{
+  "file_url": "file:///test/service.ts",
+  "content": "import { Database } from \"./db\"\nimport { Logger } from \"./log\"\n\nexport type UserId = string\n\nexport interface UserRecord {\n  id: UserId\n  name: string\n}\n\nexport class UserService {\n  constructor(private db: Database) {}\n  async find(id: UserId): Promise<UserRecord | null> { return null }\n}\n"
+}

@@ -1,0 +1,43 @@
+{
+  "status": "success",
+  "result": {
+    "file_url": "file:///test/sample.ts",
+    "language": "typescript",
+    "imports": [],
+    "symbols": [
+      {
+        "kind": "interface",
+        "name": "Config",
+        "signature": null,
+        "line": 1,
+        "children": []
+      },
+      {
+        "kind": "class",
+        "name": "App",
+        "signature": null,
+        "line": 5,
+        "children": [
+          {
+            "kind": "method",
+            "name": "run",
+            "signature": "(): void",
+            "line": 6,
+            "children": []
+          }
+        ]
+      }
+    ],
+    "sentinels": [
+      "Config",
+      "App"
+    ],
+    "coverage": null
+  },
+  "errors": null,
+  "meta": {
+    "path": "/calabi/extract-ast",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

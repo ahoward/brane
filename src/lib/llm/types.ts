@@ -8,6 +8,7 @@ export interface LlmExtractionRequest {
   file_path:        string
   golden_types:     { type: string; description: string }[]
   golden_relations: { rel: string; description: string; symmetric: boolean }[]
+  missing_sentinels?: string[]  // for adversarial re-extraction pass
 }
 
 export interface LlmExtractionResult {

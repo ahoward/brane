@@ -1,0 +1,61 @@
+{
+  "status": "success",
+  "result": {
+    "file_url": "file:///test/service.ts",
+    "language": "typescript",
+    "imports": [
+      "./db",
+      "./log"
+    ],
+    "symbols": [
+      {
+        "kind": "type",
+        "name": "UserId",
+        "signature": null,
+        "line": 4,
+        "children": []
+      },
+      {
+        "kind": "interface",
+        "name": "UserRecord",
+        "signature": null,
+        "line": 6,
+        "children": []
+      },
+      {
+        "kind": "class",
+        "name": "UserService",
+        "signature": null,
+        "line": 11,
+        "children": [
+          {
+            "kind": "method",
+            "name": "constructor",
+            "signature": "(private db: Database)",
+            "line": 12,
+            "children": []
+          },
+          {
+            "kind": "method",
+            "name": "find",
+            "signature": "(id: UserId): Promise<UserRecord | null>",
+            "line": 13,
+            "children": []
+          }
+        ]
+      }
+    ],
+    "sentinels": [
+      "UserId",
+      "UserRecord",
+      "UserService"
+    ],
+    "coverage": null
+  },
+  "errors": null,
+  "meta": {
+    "path": "/calabi/extract-ast",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

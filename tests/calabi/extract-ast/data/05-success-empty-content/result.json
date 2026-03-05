@@ -1,0 +1,17 @@
+{
+  "status": "success",
+  "result": {
+    "file_url": "file:///test/empty.ts",
+    "language": "typescript",
+    "imports": [],
+    "symbols": [],
+    "sentinels": [],
+    "coverage": null
+  },
+  "errors": null,
+  "meta": {
+    "path": "/calabi/extract-ast",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

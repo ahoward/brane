@@ -87,14 +87,37 @@ function build_user_prompt(request: LlmExtractionRequest): string {
     content = content.slice(0, MAX_CONTENT_BYTES) + "\n\n[... truncated at 100KB ...]"
   }
 
-  return `Extract concepts and relationships from this file.\n\nFile: ${request.file_path}\n\n\`\`\`\n${content}\n\`\`\``
+  let prompt = `Extract concepts and relationships from this file.\n\nFile: ${request.file_path}\n\n\`\`\`\n${content}\n\`\`\``
+
+  if (request.missing_sentinels && request.missing_sentinels.length > 0) {
+    prompt += `\n\nIMPORTANT: The following symbols were found via static analysis but are missing from the knowledge graph. You MUST include concepts for each:\n${request.missing_sentinels.map(s => `- ${s}`).join("\n")}`
+  }
+
+  return prompt
+}
+
+// Strip agent-nesting env vars so child CLI tools don't refuse to run.
+// Brane shells out to `claude`, `gemini`, etc. — those tools detect nesting
+// via env vars and abort. We are a tool invoking a tool, not a nested session.
+const AGENT_NESTING_VARS = [
+  "CLAUDECODE",         // Claude Code nested session detection
+  "CLAUDE_CODE",        // alternate form
+  "GEMINI_SESSION",     // Gemini session detection (future)
+]
+
+function clean_env(): Record<string, string | undefined> {
+  const env = { ...process.env }
+  for (const key of AGENT_NESTING_VARS) {
+    delete env[key]
+  }
+  return env
 }
 
 function run_cli(args: string[], stdin: string): Promise<{ stdout: string; stderr: string; code: number }> {
   return new Promise((resolve, reject) => {
     const proc = spawn(args[0], args.slice(1), {
       stdio: ["pipe", "pipe", "pipe"],
-      env: { ...process.env }
+      env: clean_env()
     })
 
     let stdout = ""

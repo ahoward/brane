@@ -24,6 +24,8 @@
   "dependencies": {
     "citty": "^0.2.0",
     "cozo-node": "github:ahoward/cozo#feat/bundler-entry-point",
-    "js-yaml": "^4.1.1"
+    "js-yaml": "^4.1.1",
+    "tree-sitter-wasms": "0.1.13",
+    "web-tree-sitter": "0.25.3"
   }
 }
