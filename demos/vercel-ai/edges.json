@@ -1,0 +1,4886 @@
+{
+  "status": "success",
+  "result": {
+    "edges": [
+      {
+        "id": 1,
+        "source": 1,
+        "target": 2,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 2,
+        "source": 1,
+        "target": 3,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 3,
+        "source": 1,
+        "target": 5,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 4,
+        "source": 2,
+        "target": 5,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 5,
+        "source": 4,
+        "target": 2,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 6,
+        "source": 6,
+        "target": 7,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 7,
+        "source": 14,
+        "target": 8,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 8,
+        "source": 14,
+        "target": 9,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 9,
+        "source": 14,
+        "target": 10,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 10,
+        "source": 14,
+        "target": 11,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 11,
+        "source": 14,
+        "target": 12,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 12,
+        "source": 14,
+        "target": 13,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 13,
+        "source": 15,
+        "target": 14,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 14,
+        "source": 16,
+        "target": 17,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 15,
+        "source": 16,
+        "target": 18,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 16,
+        "source": 17,
+        "target": 13,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 17,
+        "source": 16,
+        "target": 13,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 18,
+        "source": 19,
+        "target": 16,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 19,
+        "source": 21,
+        "target": 20,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 20,
+        "source": 22,
+        "target": 20,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 21,
+        "source": 23,
+        "target": 20,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 22,
+        "source": 24,
+        "target": 20,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 23,
+        "source": 25,
+        "target": 20,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 24,
+        "source": 22,
+        "target": 26,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 25,
+        "source": 23,
+        "target": 26,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 26,
+        "source": 24,
+        "target": 26,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 27,
+        "source": 25,
+        "target": 26,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 28,
+        "source": 27,
+        "target": 22,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 29,
+        "source": 28,
+        "target": 23,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 30,
+        "source": 29,
+        "target": 21,
+        "relation": "DEPENDS_ON",
+        "weight": 0.3
+      },
+      {
+        "id": 31,
+        "source": 29,
+        "target": 22,
+        "relation": "DEPENDS_ON",
+        "weight": 0.3
+      },
+      {
+        "id": 32,
+        "source": 29,
+        "target": 23,
+        "relation": "DEPENDS_ON",
+        "weight": 0.3
+      },
+      {
+        "id": 33,
+        "source": 29,
+        "target": 24,
+        "relation": "DEPENDS_ON",
+        "weight": 0.3
+      },
+      {
+        "id": 34,
+        "source": 29,
+        "target": 25,
+        "relation": "DEPENDS_ON",
+        "weight": 0.3
+      },
+      {
+        "id": 35,
+        "source": 22,
+        "target": 26,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 36,
+        "source": 23,
+        "target": 26,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 37,
+        "source": 24,
+        "target": 26,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 38,
+        "source": 25,
+        "target": 26,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 39,
+        "source": 27,
+        "target": 22,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 40,
+        "source": 30,
+        "target": 23,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 41,
+        "source": 32,
+        "target": 31,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 42,
+        "source": 32,
+        "target": 33,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 43,
+        "source": 32,
+        "target": 34,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 44,
+        "source": 32,
+        "target": 32,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 45,
+        "source": 36,
+        "target": 31,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 46,
+        "source": 37,
+        "target": 31,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 47,
+        "source": 35,
+        "target": 31,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 48,
+        "source": 31,
+        "target": 38,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 49,
+        "source": 31,
+        "target": 39,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 50,
+        "source": 31,
+        "target": 40,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 51,
+        "source": 31,
+        "target": 41,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 52,
+        "source": 42,
+        "target": 31,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 53,
+        "source": 43,
+        "target": 39,
+        "relation": "DEFINED_IN",
+        "weight": 0.8
+      },
+      {
+        "id": 54,
+        "source": 44,
+        "target": 45,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 55,
+        "source": 45,
+        "target": 3,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 56,
+        "source": 44,
+        "target": 46,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 57,
+        "source": 44,
+        "target": 12,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 58,
+        "source": 44,
+        "target": 47,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 59,
+        "source": 44,
+        "target": 48,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 60,
+        "source": 49,
+        "target": 44,
+        "relation": "DEFINED_IN",
+        "weight": 0.8
+      },
+      {
+        "id": 61,
+        "source": 44,
+        "target": 51,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 62,
+        "source": 44,
+        "target": 50,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 63,
+        "source": 44,
+        "target": 12,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 64,
+        "source": 44,
+        "target": 35,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 65,
+        "source": 52,
+        "target": 12,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 66,
+        "source": 52,
+        "target": 51,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 67,
+        "source": 53,
+        "target": 44,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 68,
+        "source": 51,
+        "target": 35,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 69,
+        "source": 44,
+        "target": 50,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 70,
+        "source": 44,
+        "target": 51,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 71,
+        "source": 44,
+        "target": 54,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 72,
+        "source": 44,
+        "target": 56,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 73,
+        "source": 44,
+        "target": 57,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 74,
+        "source": 44,
+        "target": 60,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 75,
+        "source": 44,
+        "target": 61,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 76,
+        "source": 51,
+        "target": 58,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 77,
+        "source": 51,
+        "target": 59,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 78,
+        "source": 44,
+        "target": 55,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 79,
+        "source": 62,
+        "target": 44,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 80,
+        "source": 63,
+        "target": 44,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 81,
+        "source": 64,
+        "target": 55,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 82,
+        "source": 66,
+        "target": 65,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 83,
+        "source": 67,
+        "target": 66,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 84,
+        "source": 68,
+        "target": 66,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 85,
+        "source": 65,
+        "target": 65,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 86,
+        "source": 69,
+        "target": 29,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 87,
+        "source": 70,
+        "target": 29,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 88,
+        "source": 71,
+        "target": 29,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 89,
+        "source": 72,
+        "target": 29,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 90,
+        "source": 70,
+        "target": 69,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 91,
+        "source": 71,
+        "target": 69,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 92,
+        "source": 72,
+        "target": 69,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 93,
+        "source": 73,
+        "target": 39,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 94,
+        "source": 73,
+        "target": 44,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 95,
+        "source": 39,
+        "target": 44,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 96,
+        "source": 49,
+        "target": 39,
+        "relation": "DEFINED_IN",
+        "weight": 0.8
+      },
+      {
+        "id": 97,
+        "source": 74,
+        "target": 39,
+        "relation": "DEFINED_IN",
+        "weight": 0.7
+      },
+      {
+        "id": 98,
+        "source": 75,
+        "target": 39,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 99,
+        "source": 13,
+        "target": 76,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 100,
+        "source": 13,
+        "target": 13,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 101,
+        "source": 77,
+        "target": 3,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 102,
+        "source": 3,
+        "target": 13,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 103,
+        "source": 3,
+        "target": 78,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 104,
+        "source": 77,
+        "target": 78,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 105,
+        "source": 77,
+        "target": 79,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 106,
+        "source": 80,
+        "target": 77,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 107,
+        "source": 82,
+        "target": 81,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 108,
+        "source": 82,
+        "target": 66,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 109,
+        "source": 82,
+        "target": 82,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 110,
+        "source": 83,
+        "target": 81,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 111,
+        "source": 84,
+        "target": 81,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 112,
+        "source": 85,
+        "target": 81,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 113,
+        "source": 87,
+        "target": 86,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 114,
+        "source": 87,
+        "target": 88,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 115,
+        "source": 87,
+        "target": 87,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 116,
+        "source": 89,
+        "target": 86,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 117,
+        "source": 90,
+        "target": 86,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 118,
+        "source": 91,
+        "target": 90,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 119,
+        "source": 92,
+        "target": 44,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 120,
+        "source": 92,
+        "target": 93,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 121,
+        "source": 94,
+        "target": 44,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 122,
+        "source": 94,
+        "target": 93,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 123,
+        "source": 95,
+        "target": 94,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 124,
+        "source": 92,
+        "target": 95,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 125,
+        "source": 96,
+        "target": 97,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 126,
+        "source": 96,
+        "target": 33,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 127,
+        "source": 96,
+        "target": 13,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 128,
+        "source": 41,
+        "target": 13,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 129,
+        "source": 41,
+        "target": 98,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 130,
+        "source": 41,
+        "target": 41,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 131,
+        "source": 99,
+        "target": 41,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 132,
+        "source": 100,
+        "target": 98,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 133,
+        "source": 100,
+        "target": 13,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 134,
+        "source": 40,
+        "target": 97,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 135,
+        "source": 101,
+        "target": 40,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 136,
+        "source": 104,
+        "target": 101,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 137,
+        "source": 102,
+        "target": 40,
+        "relation": "DEFINED_IN",
+        "weight": 0.8
+      },
+      {
+        "id": 138,
+        "source": 103,
+        "target": 40,
+        "relation": "DEFINED_IN",
+        "weight": 0.8
+      },
+      {
+        "id": 139,
+        "source": 39,
+        "target": 106,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 140,
+        "source": 39,
+        "target": 105,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 141,
+        "source": 39,
+        "target": 107,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 142,
+        "source": 39,
+        "target": 13,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 143,
+        "source": 39,
+        "target": 108,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 144,
+        "source": 109,
+        "target": 105,
+        "relation": "CONFLICTS_WITH",
+        "weight": 0.3
+      },
+      {
+        "id": 145,
+        "source": 45,
+        "target": 13,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 146,
+        "source": 45,
+        "target": 29,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 147,
+        "source": 45,
+        "target": 3,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 148,
+        "source": 45,
+        "target": 78,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 149,
+        "source": 45,
+        "target": 110,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 150,
+        "source": 111,
+        "target": 45,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 151,
+        "source": 79,
+        "target": 13,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 152,
+        "source": 112,
+        "target": 13,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 153,
+        "source": 79,
+        "target": 112,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 154,
+        "source": 79,
+        "target": 113,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 155,
+        "source": 114,
+        "target": 113,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 156,
+        "source": 112,
+        "target": 115,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 157,
+        "source": 113,
+        "target": 115,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 158,
+        "source": 98,
+        "target": 112,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 159,
+        "source": 98,
+        "target": 113,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 160,
+        "source": 112,
+        "target": 13,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 161,
+        "source": 114,
+        "target": 113,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 162,
+        "source": 116,
+        "target": 117,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 163,
+        "source": 116,
+        "target": 16,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 164,
+        "source": 116,
+        "target": 13,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 165,
+        "source": 86,
+        "target": 121,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 166,
+        "source": 86,
+        "target": 88,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 167,
+        "source": 118,
+        "target": 86,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 168,
+        "source": 119,
+        "target": 86,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 169,
+        "source": 120,
+        "target": 86,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 170,
+        "source": 122,
+        "target": 123,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 171,
+        "source": 122,
+        "target": 124,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 172,
+        "source": 125,
+        "target": 13,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 173,
+        "source": 125,
+        "target": 7,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 174,
+        "source": 126,
+        "target": 125,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 175,
+        "source": 127,
+        "target": 13,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 176,
+        "source": 117,
+        "target": 127,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 177,
+        "source": 117,
+        "target": 128,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 178,
+        "source": 129,
+        "target": 127,
+        "relation": "CONFLICTS_WITH",
+        "weight": 0.5
+      },
+      {
+        "id": 179,
+        "source": 129,
+        "target": 128,
+        "relation": "CONFLICTS_WITH",
+        "weight": 0.5
+      },
+      {
+        "id": 180,
+        "source": 130,
+        "target": 10,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 181,
+        "source": 131,
+        "target": 10,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 182,
+        "source": 132,
+        "target": 10,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 183,
+        "source": 133,
+        "target": 10,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 184,
+        "source": 134,
+        "target": 10,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 185,
+        "source": 131,
+        "target": 26,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 186,
+        "source": 132,
+        "target": 26,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 187,
+        "source": 133,
+        "target": 26,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 188,
+        "source": 134,
+        "target": 26,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 189,
+        "source": 131,
+        "target": 135,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 190,
+        "source": 132,
+        "target": 135,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 191,
+        "source": 134,
+        "target": 135,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 192,
+        "source": 139,
+        "target": 11,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 193,
+        "source": 11,
+        "target": 136,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 194,
+        "source": 11,
+        "target": 13,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 195,
+        "source": 139,
+        "target": 137,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 196,
+        "source": 138,
+        "target": 11,
+        "relation": "DEFINED_IN",
+        "weight": 0.8
+      },
+      {
+        "id": 197,
+        "source": 144,
+        "target": 93,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 198,
+        "source": 144,
+        "target": 46,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 199,
+        "source": 144,
+        "target": 140,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 200,
+        "source": 93,
+        "target": 140,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 201,
+        "source": 141,
+        "target": 140,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 202,
+        "source": 143,
+        "target": 142,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 203,
+        "source": 143,
+        "target": 93,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 204,
+        "source": 144,
+        "target": 141,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 205,
+        "source": 145,
+        "target": 93,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 206,
+        "source": 146,
+        "target": 121,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 207,
+        "source": 140,
+        "target": 136,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 208,
+        "source": 140,
+        "target": 13,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 209,
+        "source": 140,
+        "target": 29,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 210,
+        "source": 140,
+        "target": 147,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 211,
+        "source": 140,
+        "target": 3,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 212,
+        "source": 136,
+        "target": 13,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 213,
+        "source": 148,
+        "target": 140,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 214,
+        "source": 140,
+        "target": 13,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 215,
+        "source": 140,
+        "target": 29,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 216,
+        "source": 140,
+        "target": 136,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 217,
+        "source": 140,
+        "target": 3,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 218,
+        "source": 140,
+        "target": 147,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 219,
+        "source": 140,
+        "target": 149,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 220,
+        "source": 136,
+        "target": 13,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 221,
+        "source": 147,
+        "target": 136,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 222,
+        "source": 150,
+        "target": 140,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 223,
+        "source": 150,
+        "target": 136,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 224,
+        "source": 150,
+        "target": 147,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 225,
+        "source": 150,
+        "target": 149,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 226,
+        "source": 78,
+        "target": 13,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 227,
+        "source": 78,
+        "target": 6,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 228,
+        "source": 78,
+        "target": 65,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 229,
+        "source": 78,
+        "target": 100,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 230,
+        "source": 151,
+        "target": 152,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 231,
+        "source": 151,
+        "target": 153,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 232,
+        "source": 151,
+        "target": 154,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 233,
+        "source": 151,
+        "target": 155,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 234,
+        "source": 151,
+        "target": 156,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 235,
+        "source": 151,
+        "target": 157,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 236,
+        "source": 152,
+        "target": 158,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 237,
+        "source": 153,
+        "target": 158,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 238,
+        "source": 156,
+        "target": 3,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 239,
+        "source": 157,
+        "target": 3,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 240,
+        "source": 152,
+        "target": 13,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 241,
+        "source": 152,
+        "target": 12,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 242,
+        "source": 154,
+        "target": 13,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 243,
+        "source": 151,
+        "target": 159,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 244,
+        "source": 160,
+        "target": 161,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 245,
+        "source": 161,
+        "target": 162,
+        "relation": "DEPENDS_ON",
+        "weight": 0.9
+      },
+      {
+        "id": 246,
+        "source": 161,
+        "target": 164,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 247,
+        "source": 161,
+        "target": 165,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 248,
+        "source": 163,
+        "target": 166,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 249,
+        "source": 167,
+        "target": 162,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 250,
+        "source": 160,
+        "target": 166,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 251,
+        "source": 160,
+        "target": 161,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 252,
+        "source": 161,
+        "target": 169,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 253,
+        "source": 161,
+        "target": 168,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 254,
+        "source": 161,
+        "target": 170,
+        "relation": "DEPENDS_ON",
+        "weight": 0.3
+      },
+      {
+        "id": 255,
+        "source": 161,
+        "target": 173,
+        "relation": "DEPENDS_ON",
+        "weight": 0.3
+      },
+      {
+        "id": 256,
+        "source": 161,
+        "target": 172,
+        "relation": "DEPENDS_ON",
+        "weight": 0.3
+      },
+      {
+        "id": 257,
+        "source": 161,
+        "target": 171,
+        "relation": "DEPENDS_ON",
+        "weight": 0.3
+      },
+      {
+        "id": 258,
+        "source": 161,
+        "target": 174,
+        "relation": "DEPENDS_ON",
+        "weight": 0.3
+      },
+      {
+        "id": 259,
+        "source": 161,
+        "target": 176,
+        "relation": "DEPENDS_ON",
+        "weight": 0.3
+      },
+      {
+        "id": 260,
+        "source": 161,
+        "target": 177,
+        "relation": "DEPENDS_ON",
+        "weight": 0.3
+      },
+      {
+        "id": 261,
+        "source": 161,
+        "target": 178,
+        "relation": "DEPENDS_ON",
+        "weight": 0.3
+      },
+      {
+        "id": 262,
+        "source": 161,
+        "target": 179,
+        "relation": "DEPENDS_ON",
+        "weight": 0.3
+      },
+      {
+        "id": 263,
+        "source": 160,
+        "target": 175,
+        "relation": "DEPENDS_ON",
+        "weight": 0.3
+      },
+      {
+        "id": 264,
+        "source": 163,
+        "target": 161,
+        "relation": "DEFINED_IN",
+        "weight": 0.7
+      },
+      {
+        "id": 265,
+        "source": 180,
+        "target": 161,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 266,
+        "source": 181,
+        "target": 123,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 267,
+        "source": 181,
+        "target": 182,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 268,
+        "source": 181,
+        "target": 181,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 269,
+        "source": 183,
+        "target": 44,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 270,
+        "source": 183,
+        "target": 10,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 271,
+        "source": 183,
+        "target": 46,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 272,
+        "source": 184,
+        "target": 10,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 273,
+        "source": 183,
+        "target": 184,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 274,
+        "source": 81,
+        "target": 185,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 275,
+        "source": 81,
+        "target": 78,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 276,
+        "source": 81,
+        "target": 13,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 277,
+        "source": 186,
+        "target": 81,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 278,
+        "source": 187,
+        "target": 81,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 279,
+        "source": 11,
+        "target": 188,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 280,
+        "source": 11,
+        "target": 189,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 281,
+        "source": 11,
+        "target": 121,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 282,
+        "source": 11,
+        "target": 136,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 283,
+        "source": 190,
+        "target": 188,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 284,
+        "source": 191,
+        "target": 11,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 285,
+        "source": 196,
+        "target": 192,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 286,
+        "source": 196,
+        "target": 196,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 287,
+        "source": 193,
+        "target": 192,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 288,
+        "source": 194,
+        "target": 192,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 289,
+        "source": 195,
+        "target": 192,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 290,
+        "source": 40,
+        "target": 197,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 291,
+        "source": 40,
+        "target": 198,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 292,
+        "source": 40,
+        "target": 96,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 293,
+        "source": 197,
+        "target": 198,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 294,
+        "source": 197,
+        "target": 33,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 295,
+        "source": 197,
+        "target": 97,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 296,
+        "source": 200,
+        "target": 197,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 297,
+        "source": 199,
+        "target": 40,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 298,
+        "source": 201,
+        "target": 202,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 299,
+        "source": 201,
+        "target": 202,
+        "relation": "DEFINED_IN",
+        "weight": 0.1
+      },
+      {
+        "id": 300,
+        "source": 192,
+        "target": 203,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 301,
+        "source": 192,
+        "target": 13,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 302,
+        "source": 192,
+        "target": 204,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 303,
+        "source": 192,
+        "target": 205,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 304,
+        "source": 206,
+        "target": 192,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 305,
+        "source": 207,
+        "target": 192,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 306,
+        "source": 208,
+        "target": 93,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 307,
+        "source": 208,
+        "target": 10,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 308,
+        "source": 184,
+        "target": 93,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 309,
+        "source": 184,
+        "target": 10,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 310,
+        "source": 209,
+        "target": 10,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 311,
+        "source": 12,
+        "target": 3,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 312,
+        "source": 12,
+        "target": 13,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 313,
+        "source": 210,
+        "target": 12,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 314,
+        "source": 211,
+        "target": 12,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 315,
+        "source": 212,
+        "target": 12,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 316,
+        "source": 213,
+        "target": 212,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 317,
+        "source": 214,
+        "target": 13,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 318,
+        "source": 214,
+        "target": 216,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 319,
+        "source": 215,
+        "target": 214,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 320,
+        "source": 219,
+        "target": 93,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 321,
+        "source": 219,
+        "target": 217,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 322,
+        "source": 219,
+        "target": 218,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 323,
+        "source": 219,
+        "target": 141,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 324,
+        "source": 220,
+        "target": 141,
+        "relation": "DEFINED_IN",
+        "weight": 0.8
+      },
+      {
+        "id": 325,
+        "source": 221,
+        "target": 217,
+        "relation": "DEFINED_IN",
+        "weight": 0.8
+      },
+      {
+        "id": 326,
+        "source": 93,
+        "target": 218,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 327,
+        "source": 44,
+        "target": 77,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 328,
+        "source": 44,
+        "target": 66,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 329,
+        "source": 44,
+        "target": 223,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 330,
+        "source": 44,
+        "target": 224,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 331,
+        "source": 222,
+        "target": 77,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 332,
+        "source": 225,
+        "target": 226,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 333,
+        "source": 225,
+        "target": 227,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 334,
+        "source": 225,
+        "target": 225,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 335,
+        "source": 228,
+        "target": 225,
+        "relation": "DEFINED_IN",
+        "weight": 0.7
+      },
+      {
+        "id": 336,
+        "source": 229,
+        "target": 225,
+        "relation": "DEFINED_IN",
+        "weight": 0.7
+      },
+      {
+        "id": 337,
+        "source": 230,
+        "target": 231,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 338,
+        "source": 233,
+        "target": 230,
+        "relation": "DEFINED_IN",
+        "weight": 0.8
+      },
+      {
+        "id": 339,
+        "source": 233,
+        "target": 231,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 340,
+        "source": 234,
+        "target": 230,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 341,
+        "source": 235,
+        "target": 230,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 342,
+        "source": 235,
+        "target": 236,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 343,
+        "source": 235,
+        "target": 237,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 344,
+        "source": 235,
+        "target": 225,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 345,
+        "source": 235,
+        "target": 238,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 346,
+        "source": 239,
+        "target": 226,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 347,
+        "source": 239,
+        "target": 240,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 348,
+        "source": 239,
+        "target": 241,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 349,
+        "source": 242,
+        "target": 239,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 350,
+        "source": 243,
+        "target": 239,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 351,
+        "source": 243,
+        "target": 232,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 352,
+        "source": 243,
+        "target": 244,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 353,
+        "source": 243,
+        "target": 243,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 354,
+        "source": 245,
+        "target": 239,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 355,
+        "source": 246,
+        "target": 239,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 356,
+        "source": 247,
+        "target": 248,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 357,
+        "source": 247,
+        "target": 226,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 358,
+        "source": 247,
+        "target": 249,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 359,
+        "source": 250,
+        "target": 247,
+        "relation": "DEFINED_IN",
+        "weight": 0.7
+      },
+      {
+        "id": 360,
+        "source": 251,
+        "target": 244,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 361,
+        "source": 252,
+        "target": 251,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 362,
+        "source": 253,
+        "target": 251,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 363,
+        "source": 251,
+        "target": 226,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 364,
+        "source": 251,
+        "target": 254,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 365,
+        "source": 251,
+        "target": 244,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 366,
+        "source": 251,
+        "target": 255,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 367,
+        "source": 256,
+        "target": 257,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 368,
+        "source": 256,
+        "target": 259,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 369,
+        "source": 256,
+        "target": 258,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 370,
+        "source": 257,
+        "target": 258,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 371,
+        "source": 260,
+        "target": 256,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 372,
+        "source": 261,
+        "target": 257,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 373,
+        "source": 262,
+        "target": 263,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 374,
+        "source": 262,
+        "target": 264,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 375,
+        "source": 262,
+        "target": 262,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 376,
+        "source": 265,
+        "target": 263,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 377,
+        "source": 266,
+        "target": 263,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 378,
+        "source": 236,
+        "target": 268,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 379,
+        "source": 236,
+        "target": 267,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 380,
+        "source": 260,
+        "target": 236,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 381,
+        "source": 269,
+        "target": 237,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 382,
+        "source": 269,
+        "target": 226,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 383,
+        "source": 269,
+        "target": 258,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 384,
+        "source": 237,
+        "target": 226,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 385,
+        "source": 237,
+        "target": 258,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 386,
+        "source": 270,
+        "target": 237,
+        "relation": "DEFINED_IN",
+        "weight": 0.7
+      },
+      {
+        "id": 387,
+        "source": 230,
+        "target": 271,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 388,
+        "source": 230,
+        "target": 257,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 389,
+        "source": 257,
+        "target": 226,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 390,
+        "source": 260,
+        "target": 230,
+        "relation": "DEFINED_IN",
+        "weight": 0.8
+      },
+      {
+        "id": 391,
+        "source": 236,
+        "target": 272,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 392,
+        "source": 236,
+        "target": 264,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 393,
+        "source": 233,
+        "target": 236,
+        "relation": "DEFINED_IN",
+        "weight": 0.8
+      },
+      {
+        "id": 394,
+        "source": 234,
+        "target": 236,
+        "relation": "DEFINED_IN",
+        "weight": 0.7
+      },
+      {
+        "id": 395,
+        "source": 263,
+        "target": 267,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 396,
+        "source": 263,
+        "target": 254,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 397,
+        "source": 263,
+        "target": 273,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 398,
+        "source": 263,
+        "target": 274,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 399,
+        "source": 237,
+        "target": 230,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 400,
+        "source": 237,
+        "target": 256,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 401,
+        "source": 237,
+        "target": 275,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 402,
+        "source": 237,
+        "target": 226,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 403,
+        "source": 237,
+        "target": 258,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 404,
+        "source": 260,
+        "target": 237,
+        "relation": "DEFINED_IN",
+        "weight": 0.7
+      },
+      {
+        "id": 405,
+        "source": 238,
+        "target": 230,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 406,
+        "source": 230,
+        "target": 93,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 407,
+        "source": 276,
+        "target": 238,
+        "relation": "DEFINED_IN",
+        "weight": 0.7
+      },
+      {
+        "id": 408,
+        "source": 46,
+        "target": 238,
+        "relation": "DEPENDS_ON",
+        "weight": 0.3
+      },
+      {
+        "id": 409,
+        "source": 247,
+        "target": 230,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 410,
+        "source": 230,
+        "target": 46,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 411,
+        "source": 247,
+        "target": 44,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 412,
+        "source": 247,
+        "target": 93,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 413,
+        "source": 277,
+        "target": 247,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 414,
+        "source": 278,
+        "target": 247,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 415,
+        "source": 225,
+        "target": 230,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 416,
+        "source": 230,
+        "target": 44,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 417,
+        "source": 230,
+        "target": 93,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 418,
+        "source": 279,
+        "target": 225,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 419,
+        "source": 256,
+        "target": 280,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 420,
+        "source": 256,
+        "target": 281,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 421,
+        "source": 233,
+        "target": 256,
+        "relation": "DEFINED_IN",
+        "weight": 0.8
+      },
+      {
+        "id": 422,
+        "source": 282,
+        "target": 233,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 423,
+        "source": 280,
+        "target": 256,
+        "relation": "DEFINED_IN",
+        "weight": 0.1
+      },
+      {
+        "id": 424,
+        "source": 238,
+        "target": 226,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 425,
+        "source": 238,
+        "target": 283,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 426,
+        "source": 238,
+        "target": 284,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 427,
+        "source": 238,
+        "target": 238,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 428,
+        "source": 285,
+        "target": 238,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 429,
+        "source": 285,
+        "target": 286,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 430,
+        "source": 287,
+        "target": 288,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 431,
+        "source": 287,
+        "target": 289,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 432,
+        "source": 287,
+        "target": 290,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 433,
+        "source": 287,
+        "target": 291,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 434,
+        "source": 292,
+        "target": 288,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 435,
+        "source": 296,
+        "target": 288,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 436,
+        "source": 296,
+        "target": 293,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 437,
+        "source": 296,
+        "target": 173,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 438,
+        "source": 296,
+        "target": 294,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 439,
+        "source": 296,
+        "target": 295,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 440,
+        "source": 297,
+        "target": 293,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 441,
+        "source": 297,
+        "target": 173,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 442,
+        "source": 296,
+        "target": 296,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 443,
+        "source": 298,
+        "target": 299,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 444,
+        "source": 298,
+        "target": 300,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 445,
+        "source": 298,
+        "target": 301,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 446,
+        "source": 298,
+        "target": 298,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 447,
+        "source": 288,
+        "target": 289,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 448,
+        "source": 288,
+        "target": 46,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 449,
+        "source": 303,
+        "target": 288,
+        "relation": "DEFINED_IN",
+        "weight": 0.8
+      },
+      {
+        "id": 450,
+        "source": 49,
+        "target": 288,
+        "relation": "DEFINED_IN",
+        "weight": 0.8
+      },
+      {
+        "id": 451,
+        "source": 304,
+        "target": 288,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 452,
+        "source": 288,
+        "target": 305,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 453,
+        "source": 288,
+        "target": 44,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 454,
+        "source": 288,
+        "target": 93,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 455,
+        "source": 288,
+        "target": 289,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 456,
+        "source": 288,
+        "target": 306,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 457,
+        "source": 308,
+        "target": 288,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 458,
+        "source": 288,
+        "target": 46,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 459,
+        "source": 308,
+        "target": 309,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 460,
+        "source": 310,
+        "target": 308,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 461,
+        "source": 291,
+        "target": 311,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 462,
+        "source": 291,
+        "target": 312,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 463,
+        "source": 291,
+        "target": 313,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 464,
+        "source": 308,
+        "target": 299,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 465,
+        "source": 308,
+        "target": 314,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 466,
+        "source": 308,
+        "target": 301,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 467,
+        "source": 308,
+        "target": 302,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 468,
+        "source": 299,
+        "target": 301,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 469,
+        "source": 299,
+        "target": 315,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 470,
+        "source": 299,
+        "target": 316,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 471,
+        "source": 299,
+        "target": 141,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 472,
+        "source": 317,
+        "target": 299,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 473,
+        "source": 305,
+        "target": 294,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 474,
+        "source": 305,
+        "target": 295,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 475,
+        "source": 295,
+        "target": 294,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 476,
+        "source": 294,
+        "target": 318,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 477,
+        "source": 319,
+        "target": 294,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 478,
+        "source": 320,
+        "target": 305,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 479,
+        "source": 301,
+        "target": 294,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 480,
+        "source": 301,
+        "target": 295,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 481,
+        "source": 295,
+        "target": 294,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 482,
+        "source": 294,
+        "target": 318,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 483,
+        "source": 321,
+        "target": 294,
+        "relation": "CONFLICTS_WITH",
+        "weight": 0.7
+      },
+      {
+        "id": 484,
+        "source": 320,
+        "target": 301,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 485,
+        "source": 312,
+        "target": 301,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 486,
+        "source": 289,
+        "target": 322,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 487,
+        "source": 289,
+        "target": 323,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 488,
+        "source": 289,
+        "target": 13,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 489,
+        "source": 289,
+        "target": 8,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 490,
+        "source": 318,
+        "target": 8,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 491,
+        "source": 324,
+        "target": 289,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 492,
+        "source": 289,
+        "target": 329,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 493,
+        "source": 325,
+        "target": 329,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 494,
+        "source": 326,
+        "target": 329,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 495,
+        "source": 327,
+        "target": 329,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 496,
+        "source": 328,
+        "target": 329,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 497,
+        "source": 302,
+        "target": 329,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 498,
+        "source": 293,
+        "target": 329,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 499,
+        "source": 289,
+        "target": 325,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 500,
+        "source": 289,
+        "target": 326,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 501,
+        "source": 289,
+        "target": 327,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 502,
+        "source": 289,
+        "target": 328,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 503,
+        "source": 289,
+        "target": 302,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 504,
+        "source": 289,
+        "target": 293,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 505,
+        "source": 330,
+        "target": 291,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 506,
+        "source": 330,
+        "target": 288,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 507,
+        "source": 291,
+        "target": 311,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 508,
+        "source": 330,
+        "target": 311,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 509,
+        "source": 330,
+        "target": 330,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 510,
+        "source": 259,
+        "target": 331,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 511,
+        "source": 259,
+        "target": 332,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 512,
+        "source": 333,
+        "target": 259,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 513,
+        "source": 333,
+        "target": 334,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 514,
+        "source": 333,
+        "target": 335,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 515,
+        "source": 333,
+        "target": 281,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 516,
+        "source": 259,
+        "target": 336,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 517,
+        "source": 337,
+        "target": 342,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 518,
+        "source": 337,
+        "target": 339,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 519,
+        "source": 337,
+        "target": 340,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 520,
+        "source": 337,
+        "target": 341,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 521,
+        "source": 337,
+        "target": 343,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 522,
+        "source": 338,
+        "target": 337,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 523,
+        "source": 339,
+        "target": 340,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 524,
+        "source": 339,
+        "target": 341,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 525,
+        "source": 344,
+        "target": 275,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 526,
+        "source": 344,
+        "target": 345,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 527,
+        "source": 344,
+        "target": 346,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 528,
+        "source": 347,
+        "target": 275,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 529,
+        "source": 349,
+        "target": 348,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 530,
+        "source": 349,
+        "target": 350,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 531,
+        "source": 349,
+        "target": 351,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 532,
+        "source": 349,
+        "target": 352,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 533,
+        "source": 349,
+        "target": 353,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 534,
+        "source": 348,
+        "target": 353,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 535,
+        "source": 354,
+        "target": 358,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 536,
+        "source": 354,
+        "target": 355,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 537,
+        "source": 355,
+        "target": 356,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 538,
+        "source": 354,
+        "target": 357,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 539,
+        "source": 331,
+        "target": 343,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 540,
+        "source": 331,
+        "target": 359,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 541,
+        "source": 359,
+        "target": 331,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 542,
+        "source": 360,
+        "target": 361,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 543,
+        "source": 360,
+        "target": 362,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 544,
+        "source": 363,
+        "target": 360,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 545,
+        "source": 331,
+        "target": 364,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 546,
+        "source": 331,
+        "target": 365,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 547,
+        "source": 331,
+        "target": 358,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 548,
+        "source": 366,
+        "target": 331,
+        "relation": "DEFINED_IN",
+        "weight": 0.7
+      },
+      {
+        "id": 549,
+        "source": 367,
+        "target": 331,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 550,
+        "source": 360,
+        "target": 368,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 551,
+        "source": 360,
+        "target": 369,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 552,
+        "source": 370,
+        "target": 360,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 553,
+        "source": 371,
+        "target": 372,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 554,
+        "source": 371,
+        "target": 373,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 555,
+        "source": 371,
+        "target": 374,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 556,
+        "source": 375,
+        "target": 371,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 557,
+        "source": 376,
+        "target": 377,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 558,
+        "source": 376,
+        "target": 378,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 559,
+        "source": 376,
+        "target": 358,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 560,
+        "source": 366,
+        "target": 376,
+        "relation": "DEFINED_IN",
+        "weight": 0.7
+      },
+      {
+        "id": 561,
+        "source": 376,
+        "target": 378,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 562,
+        "source": 376,
+        "target": 377,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 563,
+        "source": 376,
+        "target": 343,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 564,
+        "source": 379,
+        "target": 376,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 565,
+        "source": 371,
+        "target": 376,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 566,
+        "source": 371,
+        "target": 380,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 567,
+        "source": 381,
+        "target": 382,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 568,
+        "source": 382,
+        "target": 383,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 569,
+        "source": 381,
+        "target": 384,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 570,
+        "source": 381,
+        "target": 385,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 571,
+        "source": 386,
+        "target": 381,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 572,
+        "source": 387,
+        "target": 381,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 573,
+        "source": 388,
+        "target": 389,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 574,
+        "source": 388,
+        "target": 390,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 575,
+        "source": 388,
+        "target": 391,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 576,
+        "source": 392,
+        "target": 388,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 577,
+        "source": 268,
+        "target": 354,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 578,
+        "source": 268,
+        "target": 393,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 579,
+        "source": 393,
+        "target": 394,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 580,
+        "source": 395,
+        "target": 358,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 581,
+        "source": 396,
+        "target": 395,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 582,
+        "source": 395,
+        "target": 350,
+        "relation": "DEPENDS_ON",
+        "weight": 0.3
+      },
+      {
+        "id": 583,
+        "source": 395,
+        "target": 351,
+        "relation": "DEPENDS_ON",
+        "weight": 0.3
+      },
+      {
+        "id": 584,
+        "source": 398,
+        "target": 268,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 585,
+        "source": 398,
+        "target": 356,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 586,
+        "source": 398,
+        "target": 357,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 587,
+        "source": 398,
+        "target": 264,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 588,
+        "source": 268,
+        "target": 397,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 589,
+        "source": 348,
+        "target": 395,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 590,
+        "source": 399,
+        "target": 348,
+        "relation": "DEFINED_IN",
+        "weight": 0.8
+      },
+      {
+        "id": 591,
+        "source": 337,
+        "target": 358,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 592,
+        "source": 337,
+        "target": 401,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 593,
+        "source": 337,
+        "target": 46,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 594,
+        "source": 400,
+        "target": 337,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 595,
+        "source": 402,
+        "target": 337,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 596,
+        "source": 381,
+        "target": 403,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 597,
+        "source": 381,
+        "target": 405,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 598,
+        "source": 381,
+        "target": 404,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 599,
+        "source": 404,
+        "target": 406,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 600,
+        "source": 381,
+        "target": 407,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 601,
+        "source": 275,
+        "target": 408,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 602,
+        "source": 275,
+        "target": 271,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 603,
+        "source": 275,
+        "target": 268,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 604,
+        "source": 275,
+        "target": 259,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 605,
+        "source": 275,
+        "target": 371,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 606,
+        "source": 275,
+        "target": 348,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 607,
+        "source": 275,
+        "target": 360,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 608,
+        "source": 409,
+        "target": 275,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 609,
+        "source": 408,
+        "target": 337,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 610,
+        "source": 408,
+        "target": 354,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 611,
+        "source": 408,
+        "target": 331,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 612,
+        "source": 408,
+        "target": 376,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 613,
+        "source": 408,
+        "target": 395,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 614,
+        "source": 412,
+        "target": 271,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 615,
+        "source": 412,
+        "target": 401,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 616,
+        "source": 412,
+        "target": 46,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 617,
+        "source": 412,
+        "target": 232,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 618,
+        "source": 411,
+        "target": 271,
+        "relation": "DEFINED_IN",
+        "weight": 0.7
+      },
+      {
+        "id": 619,
+        "source": 395,
+        "target": 414,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 620,
+        "source": 395,
+        "target": 415,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 621,
+        "source": 395,
+        "target": 343,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 622,
+        "source": 413,
+        "target": 395,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 623,
+        "source": 271,
+        "target": 337,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 624,
+        "source": 271,
+        "target": 417,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 625,
+        "source": 416,
+        "target": 271,
+        "relation": "DEFINED_IN",
+        "weight": 0.8
+      },
+      {
+        "id": 626,
+        "source": 354,
+        "target": 418,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 627,
+        "source": 354,
+        "target": 419,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 628,
+        "source": 354,
+        "target": 343,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 629,
+        "source": 420,
+        "target": 354,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 630,
+        "source": 421,
+        "target": 422,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 631,
+        "source": 421,
+        "target": 423,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 632,
+        "source": 424,
+        "target": 422,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 633,
+        "source": 425,
+        "target": 421,
+        "relation": "DEFINED_IN",
+        "weight": 0.7
+      },
+      {
+        "id": 634,
+        "source": 426,
+        "target": 421,
+        "relation": "DEFINED_IN",
+        "weight": 0.7
+      },
+      {
+        "id": 635,
+        "source": 427,
+        "target": 421,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 636,
+        "source": 428,
+        "target": 429,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 637,
+        "source": 428,
+        "target": 38,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 638,
+        "source": 428,
+        "target": 430,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 639,
+        "source": 428,
+        "target": 428,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 640,
+        "source": 204,
+        "target": 429,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 641,
+        "source": 204,
+        "target": 430,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 642,
+        "source": 204,
+        "target": 204,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 643,
+        "source": 26,
+        "target": 429,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 644,
+        "source": 26,
+        "target": 431,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 645,
+        "source": 26,
+        "target": 432,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 646,
+        "source": 26,
+        "target": 26,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 647,
+        "source": 433,
+        "target": 429,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 648,
+        "source": 433,
+        "target": 33,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 649,
+        "source": 433,
+        "target": 97,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 650,
+        "source": 434,
+        "target": 433,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 651,
+        "source": 384,
+        "target": 429,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 652,
+        "source": 384,
+        "target": 435,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 653,
+        "source": 436,
+        "target": 429,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 654,
+        "source": 436,
+        "target": 437,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 655,
+        "source": 436,
+        "target": 430,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 656,
+        "source": 436,
+        "target": 436,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 657,
+        "source": 205,
+        "target": 429,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 658,
+        "source": 205,
+        "target": 430,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 659,
+        "source": 97,
+        "target": 429,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 660,
+        "source": 97,
+        "target": 430,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 661,
+        "source": 97,
+        "target": 97,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 662,
+        "source": 438,
+        "target": 429,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 663,
+        "source": 438,
+        "target": 439,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 664,
+        "source": 438,
+        "target": 430,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 665,
+        "source": 440,
+        "target": 429,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 666,
+        "source": 440,
+        "target": 441,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 667,
+        "source": 440,
+        "target": 430,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 668,
+        "source": 442,
+        "target": 440,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 669,
+        "source": 443,
+        "target": 26,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 670,
+        "source": 444,
+        "target": 443,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 671,
+        "source": 445,
+        "target": 429,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 672,
+        "source": 445,
+        "target": 430,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 673,
+        "source": 445,
+        "target": 445,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 674,
+        "source": 446,
+        "target": 429,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 675,
+        "source": 446,
+        "target": 430,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 676,
+        "source": 447,
+        "target": 429,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 677,
+        "source": 447,
+        "target": 448,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 678,
+        "source": 447,
+        "target": 449,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 679,
+        "source": 447,
+        "target": 447,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 680,
+        "source": 450,
+        "target": 429,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 681,
+        "source": 450,
+        "target": 430,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 682,
+        "source": 451,
+        "target": 450,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 683,
+        "source": 33,
+        "target": 429,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 684,
+        "source": 452,
+        "target": 33,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 685,
+        "source": 453,
+        "target": 429,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 686,
+        "source": 453,
+        "target": 430,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 687,
+        "source": 453,
+        "target": 453,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 688,
+        "source": 454,
+        "target": 455,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 689,
+        "source": 44,
+        "target": 454,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 690,
+        "source": 288,
+        "target": 454,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 691,
+        "source": 454,
+        "target": 457,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 692,
+        "source": 456,
+        "target": 454,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 693,
+        "source": 44,
+        "target": 459,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 694,
+        "source": 93,
+        "target": 459,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 695,
+        "source": 458,
+        "target": 44,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 696,
+        "source": 458,
+        "target": 93,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      }
+    ],
+    "total": 696
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/edges/list",
+    "timestamp": "2026-03-05T18:07:42.761Z",
+    "duration_ms": 34.584
+  }
+}

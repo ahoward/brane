@@ -1,0 +1,71 @@
+[PrepareStepFunction] Entity
+├── DEPENDS_ON → [PrepareStepResult] Entity
+├── DEPENDS_ON → [StepResult] Entity
+└── DEFINED_IN → [PrepareStepFile] Entity
+
+[PrepareStepResult] Entity
+└── DEFINED_IN → [PrepareStepFile] Entity
+
+[StepResult] Entity
+└── DEPENDS_ON → [ToolSet] Entity
+
+[PrepareStepOverridesModel] Caveat
+└── DEPENDS_ON → [PrepareStepResult] Entity
+
+[PrepareStepFile] Entity
+└── (no outgoing edges)
+
+[ReasoningOutput] Entity
+└── DEPENDS_ON → [ProviderMetadata] Entity
+
+[ProviderMetadata] Entity
+└── (no outgoing edges)
+
+[GenerateTextModule] Entity
+└── (no outgoing edges)
+
+[StreamTextModule] Entity
+└── (no outgoing edges)
+
+[OutputModule] Entity
+└── (no outgoing edges)
+
+[SmoothStream] Entity
+└── DEPENDS_ON → [ToolSet] Entity
+
+[StopCondition] Entity
+├── DEPENDS_ON → [StepResult] Entity
+└── DEPENDS_ON → [ToolSet] Entity
+
+[ToolSet] Entity
+└── DEFINED_IN → [ToolSet] Entity
+
+[GenerateTextIndex] Entity
+├── DEPENDS_ON → [GenerateTextModule] Entity
+├── DEPENDS_ON → [StreamTextModule] Entity
+├── DEPENDS_ON → [OutputModule] Entity
+├── DEPENDS_ON → [SmoothStream] Entity
+├── DEPENDS_ON → [StopCondition] Entity
+└── DEPENDS_ON → [ToolSet] Entity
+
+[BackwardsCompatibilityAlias] Caveat
+└── DEFINED_IN → [GenerateTextIndex] Entity
+
+[TypedToolError] Entity
+├── DEPENDS_ON → [StaticToolError] Entity
+├── DEPENDS_ON → [DynamicToolError] Entity
+└── DEPENDS_ON → [ToolSet] Entity
+
+[StaticToolError] Entity
+└── DEPENDS_ON → [ToolSet] Entity
+
+[DynamicToolError] Entity
+└── (no outgoing edges)
+
+[StaticVsDynamicToolErrorDiscrimination] Caveat
+└── DEFINED_IN → [TypedToolError] Entity
+
+[OutputInterface] Entity
+└── (no outgoing edges)
+
+Warning: Graph truncated to 20 nodes. Use --limit to increase or --center to focus on specific concept.

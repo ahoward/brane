@@ -1,0 +1,439 @@
+{
+  "status": "success",
+  "result": {
+    "concepts": [
+      {
+        "id": 1,
+        "name": "AnalyzerEngine",
+        "type": "Entity"
+      },
+      {
+        "id": 2,
+        "name": "RecognizerRegistry",
+        "type": "Entity"
+      },
+      {
+        "id": 3,
+        "name": "NlpEngine",
+        "type": "Entity"
+      },
+      {
+        "id": 4,
+        "name": "ContextAwareEnhancer",
+        "type": "Entity"
+      },
+      {
+        "id": 5,
+        "name": "AppTracer",
+        "type": "Entity"
+      },
+      {
+        "id": 6,
+        "name": "RegistryLanguageConsistency",
+        "type": "Rule"
+      },
+      {
+        "id": 7,
+        "name": "AllowListMatchMode",
+        "type": "Caveat"
+      },
+      {
+        "id": 8,
+        "name": "EntityRecognizer",
+        "type": "Entity"
+      },
+      {
+        "id": 9,
+        "name": "RecognizerResult",
+        "type": "Entity"
+      },
+      {
+        "id": 10,
+        "name": "NlpArtifacts",
+        "type": "Entity"
+      },
+      {
+        "id": 11,
+        "name": "AnalyzeAbstractMethod",
+        "type": "Rule"
+      },
+      {
+        "id": 12,
+        "name": "ContextEnhancement",
+        "type": "Caveat"
+      },
+      {
+        "id": 13,
+        "name": "RemoveDuplicates",
+        "type": "Entity"
+      },
+      {
+        "id": 14,
+        "name": "PatternRecognizer",
+        "type": "Entity"
+      },
+      {
+        "id": 15,
+        "name": "LocalRecognizer",
+        "type": "Entity"
+      },
+      {
+        "id": 16,
+        "name": "Pattern",
+        "type": "Entity"
+      },
+      {
+        "id": 17,
+        "name": "AnalysisExplanation",
+        "type": "Entity"
+      },
+      {
+        "id": 18,
+        "name": "PatternOrDenyListRequired",
+        "type": "Rule"
+      },
+      {
+        "id": 19,
+        "name": "ValidationOverridesScore",
+        "type": "Caveat"
+      },
+      {
+        "id": 20,
+        "name": "BatchAnalyzerEngine",
+        "type": "Entity"
+      },
+      {
+        "id": 21,
+        "name": "DictAnalyzerResult",
+        "type": "Entity"
+      },
+      {
+        "id": 22,
+        "name": "PrimitiveTypesOnly",
+        "type": "Caveat"
+      },
+      {
+        "id": 23,
+        "name": "NestedDictRecursion",
+        "type": "Caveat"
+      },
+      {
+        "id": 24,
+        "name": "AnalyzerRequest",
+        "type": "Entity"
+      },
+      {
+        "id": 25,
+        "name": "AdHocRecognizerDeserialization",
+        "type": "Caveat"
+      },
+      {
+        "id": 26,
+        "name": "DefaultRegexFlags",
+        "type": "Caveat"
+      },
+      {
+        "id": 27,
+        "name": "AnalysisExplanationScoreContext",
+        "type": "Caveat"
+      },
+      {
+        "id": 28,
+        "name": "AnalysisExplanationFile",
+        "type": "Entity"
+      },
+      {
+        "id": 29,
+        "name": "NlpEnginePackage",
+        "type": "Entity"
+      },
+      {
+        "id": 30,
+        "name": "SpacyNlpEngine",
+        "type": "Entity"
+      },
+      {
+        "id": 31,
+        "name": "StanzaNlpEngine",
+        "type": "Entity"
+      },
+      {
+        "id": 32,
+        "name": "TransformersNlpEngine",
+        "type": "Entity"
+      },
+      {
+        "id": 33,
+        "name": "NlpEngineProvider",
+        "type": "Entity"
+      },
+      {
+        "id": 34,
+        "name": "NerModelConfiguration",
+        "type": "Entity"
+      },
+      {
+        "id": 35,
+        "name": "ModelToPresidioEntityMapping",
+        "type": "Entity"
+      },
+      {
+        "id": 36,
+        "name": "AggregationStrategyValidation",
+        "type": "Caveat"
+      },
+      {
+        "id": 37,
+        "name": "AlignmentModeValidation",
+        "type": "Caveat"
+      },
+      {
+        "id": 38,
+        "name": "LowScoreEntityMultiplier",
+        "type": "Rule"
+      },
+      {
+        "id": 39,
+        "name": "SpacyHuggingfacePipelinesRequired",
+        "type": "Caveat"
+      },
+      {
+        "id": 40,
+        "name": "DualModelConfiguration",
+        "type": "Rule"
+      },
+      {
+        "id": 41,
+        "name": "TransformersNlpEngineDefinition",
+        "type": "Entity"
+      },
+      {
+        "id": 42,
+        "name": "SetKeywordsMethod",
+        "type": "Entity"
+      },
+      {
+        "id": 43,
+        "name": "DefaultScoreCaveat",
+        "type": "Caveat"
+      },
+      {
+        "id": 44,
+        "name": "NlpEngineNotSerializable",
+        "type": "Caveat"
+      },
+      {
+        "id": 45,
+        "name": "StanzaTokenizer",
+        "type": "Entity"
+      },
+      {
+        "id": 46,
+        "name": "LoadPipelineFunction",
+        "type": "Entity"
+      },
+      {
+        "id": 47,
+        "name": "StanzaOptionalImport",
+        "type": "Caveat"
+      },
+      {
+        "id": 48,
+        "name": "DeviceDetector",
+        "type": "Entity"
+      },
+      {
+        "id": 49,
+        "name": "ModelMustBeLoadedBeforeUse",
+        "type": "Caveat"
+      },
+      {
+        "id": 50,
+        "name": "UnmappedEntitiesKeptWithWarning",
+        "type": "Caveat"
+      },
+      {
+        "id": 51,
+        "name": "SpacyNlpEngineDefinedIn",
+        "type": "Rule"
+      },
+      {
+        "id": 52,
+        "name": "ConfigurationValidator",
+        "type": "Entity"
+      },
+      {
+        "id": 53,
+        "name": "MutualExclusionConfFileAndNlpConfig",
+        "type": "Caveat"
+      },
+      {
+        "id": 54,
+        "name": "EngineAvailabilityCheck",
+        "type": "Rule"
+      },
+      {
+        "id": 55,
+        "name": "LazyModuleGetattr",
+        "type": "Entity"
+      },
+      {
+        "id": 56,
+        "name": "PresidioDeviceEnvVar",
+        "type": "Rule"
+      },
+      {
+        "id": 57,
+        "name": "CudaFallbackToCpu",
+        "type": "Caveat"
+      },
+      {
+        "id": 58,
+        "name": "MpsNotSupported",
+        "type": "Caveat"
+      },
+      {
+        "id": 59,
+        "name": "ThreadSafeSingleton",
+        "type": "Rule"
+      },
+      {
+        "id": 60,
+        "name": "NlpEngineIsAbstract",
+        "type": "Caveat"
+      },
+      {
+        "id": 61,
+        "name": "AnonymizerEngine",
+        "type": "Entity"
+      },
+      {
+        "id": 62,
+        "name": "EngineBase",
+        "type": "Entity"
+      },
+      {
+        "id": 63,
+        "name": "ConflictResolutionStrategy",
+        "type": "Entity"
+      },
+      {
+        "id": 64,
+        "name": "OperatorConfig",
+        "type": "Entity"
+      },
+      {
+        "id": 65,
+        "name": "DefaultReplaceOperator",
+        "type": "Rule"
+      },
+      {
+        "id": 66,
+        "name": "ConflictResolutionMerge",
+        "type": "Caveat"
+      },
+      {
+        "id": 67,
+        "name": "WhitespaceMerge",
+        "type": "Caveat"
+      },
+      {
+        "id": 68,
+        "name": "DeanonymizeEngine",
+        "type": "Entity"
+      },
+      {
+        "id": 69,
+        "name": "OperatorType",
+        "type": "Entity"
+      },
+      {
+        "id": 70,
+        "name": "OperatorsFactory",
+        "type": "Entity"
+      },
+      {
+        "id": 71,
+        "name": "DeanonymizerExtensibility",
+        "type": "Rule"
+      },
+      {
+        "id": 72,
+        "name": "PresidioAnalyzer",
+        "type": "Entity"
+      },
+      {
+        "id": 73,
+        "name": "PresidioAnonymizer",
+        "type": "Entity"
+      },
+      {
+        "id": 74,
+        "name": "PresidioImageRedactor",
+        "type": "Entity"
+      },
+      {
+        "id": 75,
+        "name": "PresidioStructured",
+        "type": "Entity"
+      },
+      {
+        "id": 76,
+        "name": "AutomatedDetectionLimitation",
+        "type": "Caveat"
+      },
+      {
+        "id": 77,
+        "name": "ReadmeFile",
+        "type": "Entity"
+      },
+      {
+        "id": 78,
+        "name": "SecurityPolicy",
+        "type": "Rule"
+      },
+      {
+        "id": 79,
+        "name": "VulnerabilityReportingProcess",
+        "type": "Rule"
+      },
+      {
+        "id": 80,
+        "name": "NoPublicDisclosure",
+        "type": "Caveat"
+      },
+      {
+        "id": 81,
+        "name": "CoordinatedVulnerabilityDisclosure",
+        "type": "Rule"
+      },
+      {
+        "id": 82,
+        "name": "PresidioMetaPackage",
+        "type": "Entity"
+      },
+      {
+        "id": 83,
+        "name": "HashOperatorRandomSaltDefault",
+        "type": "Caveat"
+      },
+      {
+        "id": 84,
+        "name": "CountryRecognizersDisabledByDefault",
+        "type": "Caveat"
+      },
+      {
+        "id": 85,
+        "name": "MD5HashDeprecated",
+        "type": "Caveat"
+      }
+    ],
+    "total": 85
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/concepts/list",
+    "timestamp": "2026-03-05T17:22:17.385Z",
+    "duration_ms": 23.187
+  }
+}

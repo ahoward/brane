@@ -1,0 +1,71 @@
+[AnalyzerEngine] Entity
+├── DEPENDS_ON → [RecognizerRegistry] Entity
+├── DEPENDS_ON → [NlpEngine] Entity
+├── DEPENDS_ON → [ContextAwareEnhancer] Entity
+└── DEPENDS_ON → [AppTracer] Entity
+
+[RecognizerRegistry] Entity
+└── (no outgoing edges)
+
+[NlpEngine] Entity
+└── DEPENDS_ON → [NlpArtifacts] Entity
+
+[ContextAwareEnhancer] Entity
+└── (no outgoing edges)
+
+[AppTracer] Entity
+└── (no outgoing edges)
+
+[RegistryLanguageConsistency] Rule
+└── DEFINED_IN → [AnalyzerEngine] Entity
+
+[AllowListMatchMode] Caveat
+└── DEFINED_IN → [AnalyzerEngine] Entity
+
+[EntityRecognizer] Entity
+├── DEPENDS_ON → [RecognizerResult] Entity
+└── DEPENDS_ON → [NlpArtifacts] Entity
+
+[RecognizerResult] Entity
+└── (no outgoing edges)
+
+[NlpArtifacts] Entity
+└── DEPENDS_ON → [NlpEngine] Entity
+
+[AnalyzeAbstractMethod] Rule
+└── DEFINED_IN → [EntityRecognizer] Entity
+
+[ContextEnhancement] Caveat
+└── DEFINED_IN → [EntityRecognizer] Entity
+
+[RemoveDuplicates] Entity
+├── DEPENDS_ON → [RecognizerResult] Entity
+└── DEFINED_IN → [EntityRecognizer] Entity
+
+[PatternRecognizer] Entity
+├── DEPENDS_ON → [LocalRecognizer] Entity
+├── DEPENDS_ON → [Pattern] Entity
+├── DEPENDS_ON → [RecognizerResult] Entity
+├── DEPENDS_ON → [AnalysisExplanation] Entity
+└── DEPENDS_ON → [EntityRecognizer] Entity
+
+[LocalRecognizer] Entity
+└── (no outgoing edges)
+
+[Pattern] Entity
+└── (no outgoing edges)
+
+[AnalysisExplanation] Entity
+└── (no outgoing edges)
+
+[PatternOrDenyListRequired] Rule
+└── DEFINED_IN → [PatternRecognizer] Entity
+
+[ValidationOverridesScore] Caveat
+└── DEFINED_IN → [PatternRecognizer] Entity
+
+[BatchAnalyzerEngine] Entity
+├── DEPENDS_ON → [AnalyzerEngine] Entity
+└── DEPENDS_ON → [NlpArtifacts] Entity
+
+Warning: Graph truncated to 20 nodes. Use --limit to increase or --center to focus on specific concept.

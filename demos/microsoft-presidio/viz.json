@@ -1,0 +1,17 @@
+{
+  "status": "success",
+  "result": {
+    "format": "ascii",
+    "output": "[AnalyzerEngine] Entity\n├── DEPENDS_ON → [RecognizerRegistry] Entity\n├── DEPENDS_ON → [NlpEngine] Entity\n├── DEPENDS_ON → [ContextAwareEnhancer] Entity\n└── DEPENDS_ON → [AppTracer] Entity\n\n[RecognizerRegistry] Entity\n└── (no outgoing edges)\n\n[NlpEngine] Entity\n└── DEPENDS_ON → [NlpArtifacts] Entity\n\n[ContextAwareEnhancer] Entity\n└── (no outgoing edges)\n\n[AppTracer] Entity\n└── (no outgoing edges)\n\n[RegistryLanguageConsistency] Rule\n└── DEFINED_IN → [AnalyzerEngine] Entity\n\n[AllowListMatchMode] Caveat\n└── DEFINED_IN → [AnalyzerEngine] Entity\n\n[EntityRecognizer] Entity\n├── DEPENDS_ON → [RecognizerResult] Entity\n└── DEPENDS_ON → [NlpArtifacts] Entity\n\n[RecognizerResult] Entity\n└── (no outgoing edges)\n\n[NlpArtifacts] Entity\n└── DEPENDS_ON → [NlpEngine] Entity\n\n[AnalyzeAbstractMethod] Rule\n└── DEFINED_IN → [EntityRecognizer] Entity\n\n[ContextEnhancement] Caveat\n└── DEFINED_IN → [EntityRecognizer] Entity\n\n[RemoveDuplicates] Entity\n├── DEPENDS_ON → [RecognizerResult] Entity\n└── DEFINED_IN → [EntityRecognizer] Entity\n\n[PatternRecognizer] Entity\n├── DEPENDS_ON → [LocalRecognizer] Entity\n├── DEPENDS_ON → [Pattern] Entity\n├── DEPENDS_ON → [RecognizerResult] Entity\n├── DEPENDS_ON → [AnalysisExplanation] Entity\n└── DEPENDS_ON → [EntityRecognizer] Entity\n\n[LocalRecognizer] Entity\n└── (no outgoing edges)\n\n[Pattern] Entity\n└── (no outgoing edges)\n\n[AnalysisExplanation] Entity\n└── (no outgoing edges)\n\n[PatternOrDenyListRequired] Rule\n└── DEFINED_IN → [PatternRecognizer] Entity\n\n[ValidationOverridesScore] Caveat\n└── DEFINED_IN → [PatternRecognizer] Entity\n\n[BatchAnalyzerEngine] Entity\n├── DEPENDS_ON → [AnalyzerEngine] Entity\n└── DEPENDS_ON → [NlpArtifacts] Entity",
+    "nodes": 20,
+    "edges": 23,
+    "truncated": true,
+    "message": "Graph truncated to 20 nodes. Use --limit to increase or --center to focus on specific concept."
+  },
+  "errors": null,
+  "meta": {
+    "path": "/graph/viz",
+    "timestamp": "2026-03-05T17:22:18.262Z",
+    "duration_ms": 25.447
+  }
+}

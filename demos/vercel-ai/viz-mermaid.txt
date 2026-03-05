@@ -1,0 +1,258 @@
+graph TD
+    1["PrepareStepFunction (Entity)"]
+    2["PrepareStepResult (Entity)"]
+    3["StepResult (Entity)"]
+    4["PrepareStepOverridesModel (Caveat)"]
+    5["PrepareStepFile (Entity)"]
+    6["ReasoningOutput (Entity)"]
+    7["ProviderMetadata (Entity)"]
+    8["GenerateTextModule (Entity)"]
+    9["StreamTextModule (Entity)"]
+    10["OutputModule (Entity)"]
+    11["SmoothStream (Entity)"]
+    12["StopCondition (Entity)"]
+    13["ToolSet (Entity)"]
+    14["GenerateTextIndex (Entity)"]
+    15["BackwardsCompatibilityAlias (Caveat)"]
+    16["TypedToolError (Entity)"]
+    17["StaticToolError (Entity)"]
+    18["DynamicToolError (Entity)"]
+    19["StaticVsDynamicToolErrorDiscrimination (Caveat)"]
+    20["OutputInterface (Entity)"]
+    21["TextOutput (Entity)"]
+    22["ObjectOutput (Entity)"]
+    23["ArrayOutput (Entity)"]
+    24["ChoiceOutput (Entity)"]
+    25["JsonOutput (Entity)"]
+    26["NoObjectGeneratedError (Entity)"]
+    27["PartialOutputNoValidation (Caveat)"]
+    28["ArrayRepairedParseSlicing (Caveat)"]
+    29["Output (Entity)"]
+    30["ArrayRepairedParseDropsLastElement (Caveat)"]
+    31["RunToolsTransformation (Entity)"]
+    32["RunToolsTransformationTest (Entity)"]
+    33["NoSuchToolError (Entity)"]
+    34["MockTracer (Entity)"]
+    35["ToolApprovalFlow (Caveat)"]
+    36["ProviderExecutedToolsSkipLocalExecution (Rule)"]
+    37["FinishHeldUntilToolResultsComplete (Rule)"]
+    38["SingleRequestTextStreamPart (Entity)"]
+    39["ExecuteToolCall (Entity)"]
+    40["ParseToolCall (Entity)"]
+    41["IsApprovalNeeded (Entity)"]
+    42["ToolResultsStreamClosure (Caveat)"]
+    43["ToolExecutionNonBlocking (Caveat)"]
+    44["GenerateText (Entity)"]
+    45["GenerateTextResult (Entity)"]
+    46["MockLanguageModelV3 (Entity)"]
+    47["PrepareStep (Entity)"]
+    48["ToolCallCallbacks (Entity)"]
+    49["CallbackErrorResilience (Caveat)"]
+    50["DefaultGenerateTextResult (Entity)"]
+    51["ExecuteTools (Entity)"]
+    52["MultiStepLoop (Caveat)"]
+    53["OutputParsingOnStopOnly (Rule)"]
+    54["AsContent (Entity)"]
+    55["GenerateTextIncludeSettings (Entity)"]
+    56["GenerateTextOnStartCallback (Entity)"]
+    57["GenerateTextOnStepStartCallback (Entity)"]
+    58["GenerateTextOnToolCallStartCallback (Entity)"]
+    59["GenerateTextOnToolCallFinishCallback (Entity)"]
+    60["GenerateTextOnStepFinishCallback (Entity)"]
+    61["GenerateTextOnFinishCallback (Entity)"]
+    62["StopConditionLoop (Caveat)"]
+    63["DeferredToolCallTracking (Caveat)"]
+    64["IncludeSettingsMemoryRule (Rule)"]
+    65["GeneratedFile (Entity)"]
+    66["DefaultGeneratedFile (Entity)"]
+    67["DefaultGeneratedFileWithType (Entity)"]
+    68["LazyConversionCaching (Caveat)"]
+    69["OutputUtils (Entity)"]
+    70["InferCompleteOutput (Entity)"]
+    71["InferPartialOutput (Entity)"]
+    72["InferElementOutput (Entity)"]
+    73["ExecuteToolCallTest (Entity)"]
+    74["PreliminaryToolResults (Entity)"]
+    75["DynamicTools (Entity)"]
+    76["Tool (Entity)"]
+    77["DefaultStepResult (Entity)"]
+    78["ContentPart (Entity)"]
+    79["ToolCallTypes (Entity)"]
+    80["StepResultDerivedProperties (Caveat)"]
+    81["ToResponseMessages (Entity)"]
+    82["ToResponseMessagesTest (Entity)"]
+    83["ToolResultSeparation (Rule)"]
+    84["ProviderExecutedToolsInlineResults (Rule)"]
+    85["EmptyTextPartOmission (Caveat)"]
+    86["PruneMessages (Entity)"]
+    87["PruneMessagesTest (Entity)"]
+    88["ModelMessage (Entity)"]
+    89["PruneReasoningModes (Caveat)"]
+    90["PruneToolCallModes (Caveat)"]
+    91["ToolCallBackwardTracing (Rule)"]
+    92["RetentionBenchmarkTest (Entity)"]
+    93["StreamText (Entity)"]
+    94["ExperimentalIncludeOption (Caveat)"]
+    95["MemoryRetentionBehavior (Caveat)"]
+    96["ToolCallRepairFunction (Entity)"]
+    97["InvalidToolInputError (Entity)"]
+    98["TypedToolCall (Entity)"]
+    99["NeedsApprovalCanBeBooleanOrFunction (Caveat)"]
+    100["ToolApprovalRequestOutput (Entity)"]
+    1 -->|DEPENDS_ON| 2
+    1 -->|DEPENDS_ON| 3
+    1 -->|DEFINED_IN| 5
+    2 -->|DEFINED_IN| 5
+    4 -->|DEPENDS_ON| 2
+    6 -->|DEPENDS_ON| 7
+    14 -->|DEPENDS_ON| 8
+    14 -->|DEPENDS_ON| 9
+    14 -->|DEPENDS_ON| 10
+    14 -->|DEPENDS_ON| 11
+    14 -->|DEPENDS_ON| 12
+    14 -->|DEPENDS_ON| 13
+    15 -->|DEFINED_IN| 14
+    16 -->|DEPENDS_ON| 17
+    16 -->|DEPENDS_ON| 18
+    17 -->|DEPENDS_ON| 13
+    16 -->|DEPENDS_ON| 13
+    19 -->|DEFINED_IN| 16
+    21 -->|DEPENDS_ON| 20
+    22 -->|DEPENDS_ON| 20
+    23 -->|DEPENDS_ON| 20
+    24 -->|DEPENDS_ON| 20
+    25 -->|DEPENDS_ON| 20
+    22 -->|DEPENDS_ON| 26
+    23 -->|DEPENDS_ON| 26
+    24 -->|DEPENDS_ON| 26
+    25 -->|DEPENDS_ON| 26
+    27 -->|DEFINED_IN| 22
+    28 -->|DEFINED_IN| 23
+    29 -->|DEPENDS_ON| 21
+    29 -->|DEPENDS_ON| 22
+    29 -->|DEPENDS_ON| 23
+    29 -->|DEPENDS_ON| 24
+    29 -->|DEPENDS_ON| 25
+    22 -->|DEPENDS_ON| 26
+    23 -->|DEPENDS_ON| 26
+    24 -->|DEPENDS_ON| 26
+    25 -->|DEPENDS_ON| 26
+    27 -->|DEFINED_IN| 22
+    30 -->|DEFINED_IN| 23
+    32 -->|DEPENDS_ON| 31
+    32 -->|DEPENDS_ON| 33
+    32 -->|DEPENDS_ON| 34
+    32 -->|DEFINED_IN| 32
+    36 -->|DEPENDS_ON| 31
+    37 -->|DEPENDS_ON| 31
+    35 -->|DEPENDS_ON| 31
+    31 -->|DEPENDS_ON| 38
+    31 -->|DEPENDS_ON| 39
+    31 -->|DEPENDS_ON| 40
+    31 -->|DEPENDS_ON| 41
+    42 -->|DEFINED_IN| 31
+    43 -->|DEFINED_IN| 39
+    44 -->|DEPENDS_ON| 45
+    45 -->|DEPENDS_ON| 3
+    44 -->|DEPENDS_ON| 46
+    44 -->|DEPENDS_ON| 12
+    44 -->|DEPENDS_ON| 47
+    44 -->|DEPENDS_ON| 48
+    49 -->|DEFINED_IN| 44
+    44 -->|DEPENDS_ON| 51
+    44 -->|DEPENDS_ON| 50
+    44 -->|DEPENDS_ON| 12
+    44 -->|DEPENDS_ON| 35
+    52 -->|DEPENDS_ON| 12
+    52 -->|DEPENDS_ON| 51
+    53 -->|DEFINED_IN| 44
+    51 -->|DEPENDS_ON| 35
+    44 -->|DEPENDS_ON| 50
+    44 -->|DEPENDS_ON| 51
+    44 -->|DEPENDS_ON| 54
+    44 -->|DEPENDS_ON| 56
+    44 -->|DEPENDS_ON| 57
+    44 -->|DEPENDS_ON| 60
+    44 -->|DEPENDS_ON| 61
+    51 -->|DEPENDS_ON| 58
+    51 -->|DEPENDS_ON| 59
+    44 -->|DEPENDS_ON| 55
+    62 -->|DEFINED_IN| 44
+    63 -->|DEFINED_IN| 44
+    64 -->|DEPENDS_ON| 55
+    66 -->|DEPENDS_ON| 65
+    67 -->|DEPENDS_ON| 66
+    68 -->|DEFINED_IN| 66
+    65 -->|DEFINED_IN| 65
+    69 -->|DEPENDS_ON| 29
+    70 -->|DEPENDS_ON| 29
+    71 -->|DEPENDS_ON| 29
+    72 -->|DEPENDS_ON| 29
+    70 -->|DEFINED_IN| 69
+    71 -->|DEFINED_IN| 69
+    72 -->|DEFINED_IN| 69
+    73 -->|DEPENDS_ON| 39
+    73 -->|DEPENDS_ON| 44
+    39 -->|DEPENDS_ON| 44
+    49 -->|DEFINED_IN| 39
+    74 -->|DEFINED_IN| 39
+    75 -->|DEPENDS_ON| 39
+    13 -->|DEPENDS_ON| 76
+    13 -->|DEFINED_IN| 13
+    77 -->|DEPENDS_ON| 3
+    3 -->|DEPENDS_ON| 13
+    3 -->|DEPENDS_ON| 78
+    77 -->|DEPENDS_ON| 78
+    77 -->|DEPENDS_ON| 79
+    80 -->|DEFINED_IN| 77
+    82 -->|DEPENDS_ON| 81
+    82 -->|DEPENDS_ON| 66
+    82 -->|DEFINED_IN| 82
+    83 -->|DEPENDS_ON| 81
+    84 -->|DEPENDS_ON| 81
+    85 -->|DEPENDS_ON| 81
+    87 -->|DEPENDS_ON| 86
+    87 -->|DEPENDS_ON| 88
+    87 -->|DEFINED_IN| 87
+    89 -->|DEPENDS_ON| 86
+    90 -->|DEPENDS_ON| 86
+    91 -->|DEPENDS_ON| 90
+    92 -->|DEPENDS_ON| 44
+    92 -->|DEPENDS_ON| 93
+    94 -->|DEPENDS_ON| 44
+    94 -->|DEPENDS_ON| 93
+    95 -->|DEPENDS_ON| 94
+    92 -->|DEFINED_IN| 95
+    96 -->|DEPENDS_ON| 97
+    96 -->|DEPENDS_ON| 33
+    96 -->|DEPENDS_ON| 13
+    41 -->|DEPENDS_ON| 13
+    41 -->|DEPENDS_ON| 98
+    41 -->|DEFINED_IN| 41
+    99 -->|DEFINED_IN| 41
+    100 -->|DEPENDS_ON| 98
+    100 -->|DEPENDS_ON| 13
+    40 -->|DEPENDS_ON| 97
+    39 -->|DEPENDS_ON| 13
+    45 -->|DEPENDS_ON| 13
+    45 -->|DEPENDS_ON| 29
+    45 -->|DEPENDS_ON| 3
+    45 -->|DEPENDS_ON| 78
+    79 -->|DEPENDS_ON| 13
+    86 -->|DEPENDS_ON| 88
+    11 -->|DEPENDS_ON| 13
+    78 -->|DEPENDS_ON| 13
+    78 -->|DEPENDS_ON| 6
+    78 -->|DEPENDS_ON| 65
+    78 -->|DEPENDS_ON| 100
+    81 -->|DEPENDS_ON| 78
+    81 -->|DEPENDS_ON| 13
+    40 -->|DEPENDS_ON| 96
+    12 -->|DEPENDS_ON| 3
+    12 -->|DEPENDS_ON| 13
+    44 -->|DEPENDS_ON| 77
+    44 -->|DEPENDS_ON| 66
+    26 -->|DEFINED_IN| 26
+    97 -->|DEFINED_IN| 97
+
+Warning: Graph truncated to 100 nodes. Use --limit to increase or --center to focus on specific concept.

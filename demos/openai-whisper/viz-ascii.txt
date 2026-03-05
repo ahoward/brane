@@ -1,0 +1,74 @@
+[WhisperInitModule] Entity
+├── DEPENDS_ON → [AudioModule] Entity
+├── DEPENDS_ON → [DecodingModule] Entity
+├── DEPENDS_ON → [TranscribeModule] Entity
+└── DEPENDS_ON → [WhisperModel] Entity
+
+[LoadModel] Entity
+├── DEPENDS_ON → [DownloadFunction] Entity
+├── DEPENDS_ON → [WhisperModel] Entity
+└── DEFINED_IN → [WhisperInitModule] Entity
+
+[DownloadFunction] Entity
+├── DEPENDS_ON → [Sha256ChecksumValidation] Rule
+└── DEFINED_IN → [WhisperInitModule] Entity
+
+[WhisperModel] Entity
+└── (no outgoing edges)
+
+[AudioModule] Entity
+└── DEFINED_IN → [AudioModule] Entity
+
+[DecodingModule] Entity
+└── (no outgoing edges)
+
+[TranscribeModule] Entity
+└── (no outgoing edges)
+
+[Sha256ChecksumValidation] Rule
+└── (no outgoing edges)
+
+[NormalizersModule] Entity
+├── DEPENDS_ON → [BasicTextNormalizer] Entity
+├── DEPENDS_ON → [EnglishTextNormalizer] Entity
+└── DEFINED_IN → [NormalizersModule] Entity
+
+[BasicTextNormalizer] Entity
+├── DEPENDS_ON → [RemoveSymbolsAndDiacritics] Entity
+├── DEPENDS_ON → [RemoveSymbols] Entity
+└── DEFINED_IN → [BasicTextNormalizer] Entity
+
+[EnglishTextNormalizer] Entity
+├── DEPENDS_ON → [EnglishNumberNormalizer] Entity
+├── DEPENDS_ON → [EnglishSpellingNormalizer] Entity
+└── DEPENDS_ON → [RemoveSymbolsAndDiacritics] Entity
+
+[EnglishNumberNormalizer] Entity
+└── DEFINED_IN → [EnglishNumberNormalizer] Entity
+
+[EnglishSpellingNormalizer] Entity
+├── DEPENDS_ON → [SpellingMappingFile] Caveat
+└── DEPENDS_ON → [BritishToAmericanMapping] Entity
+
+[RemoveSymbolsAndDiacritics] Entity
+└── DEPENDS_ON → [AdditionalDiacritics] Entity
+
+[SpellingMappingFile] Caveat
+└── (no outgoing edges)
+
+[NormalizationOrder] Rule
+└── DEPENDS_ON → [EnglishTextNormalizer] Entity
+
+[RemoveSymbols] Entity
+└── (no outgoing edges)
+
+[AdditionalDiacritics] Entity
+└── (no outgoing edges)
+
+[DiacriticsRemovalCaveat] Caveat
+└── DEPENDS_ON → [AdditionalDiacritics] Entity
+
+[BritishToAmericanMapping] Entity
+└── DEFINED_IN → [BritishToAmericanMapping] Entity
+
+Warning: Graph truncated to 20 nodes. Use --limit to increase or --center to focus on specific concept.

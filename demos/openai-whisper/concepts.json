@@ -1,0 +1,574 @@
+{
+  "status": "success",
+  "result": {
+    "concepts": [
+      {
+        "id": 1,
+        "name": "WhisperInitModule",
+        "type": "Entity"
+      },
+      {
+        "id": 2,
+        "name": "LoadModel",
+        "type": "Entity"
+      },
+      {
+        "id": 3,
+        "name": "DownloadFunction",
+        "type": "Entity"
+      },
+      {
+        "id": 4,
+        "name": "WhisperModel",
+        "type": "Entity"
+      },
+      {
+        "id": 5,
+        "name": "AudioModule",
+        "type": "Entity"
+      },
+      {
+        "id": 6,
+        "name": "DecodingModule",
+        "type": "Entity"
+      },
+      {
+        "id": 7,
+        "name": "TranscribeModule",
+        "type": "Entity"
+      },
+      {
+        "id": 8,
+        "name": "Sha256ChecksumValidation",
+        "type": "Rule"
+      },
+      {
+        "id": 9,
+        "name": "NormalizersModule",
+        "type": "Entity"
+      },
+      {
+        "id": 10,
+        "name": "BasicTextNormalizer",
+        "type": "Entity"
+      },
+      {
+        "id": 11,
+        "name": "EnglishTextNormalizer",
+        "type": "Entity"
+      },
+      {
+        "id": 12,
+        "name": "EnglishNumberNormalizer",
+        "type": "Entity"
+      },
+      {
+        "id": 13,
+        "name": "EnglishSpellingNormalizer",
+        "type": "Entity"
+      },
+      {
+        "id": 14,
+        "name": "RemoveSymbolsAndDiacritics",
+        "type": "Entity"
+      },
+      {
+        "id": 15,
+        "name": "SpellingMappingFile",
+        "type": "Caveat"
+      },
+      {
+        "id": 16,
+        "name": "NormalizationOrder",
+        "type": "Rule"
+      },
+      {
+        "id": 17,
+        "name": "RemoveSymbols",
+        "type": "Entity"
+      },
+      {
+        "id": 18,
+        "name": "AdditionalDiacritics",
+        "type": "Entity"
+      },
+      {
+        "id": 19,
+        "name": "DiacriticsRemovalCaveat",
+        "type": "Caveat"
+      },
+      {
+        "id": 20,
+        "name": "BritishToAmericanMapping",
+        "type": "Entity"
+      },
+      {
+        "id": 21,
+        "name": "NormalizerModule",
+        "type": "Entity"
+      },
+      {
+        "id": 22,
+        "name": "SpellingNormalizationIsOneDirectional",
+        "type": "Caveat"
+      },
+      {
+        "id": 23,
+        "name": "Whisper",
+        "type": "Entity"
+      },
+      {
+        "id": 24,
+        "name": "AudioEncoder",
+        "type": "Entity"
+      },
+      {
+        "id": 25,
+        "name": "TextDecoder",
+        "type": "Entity"
+      },
+      {
+        "id": 26,
+        "name": "MultiHeadAttention",
+        "type": "Entity"
+      },
+      {
+        "id": 27,
+        "name": "ResidualAttentionBlock",
+        "type": "Entity"
+      },
+      {
+        "id": 28,
+        "name": "ModelDimensions",
+        "type": "Entity"
+      },
+      {
+        "id": 29,
+        "name": "SdpaAvailabilityCaveat",
+        "type": "Caveat"
+      },
+      {
+        "id": 30,
+        "name": "KvCacheHooks",
+        "type": "Entity"
+      },
+      {
+        "id": 31,
+        "name": "Gpt2TiktokenVocabulary",
+        "type": "Entity"
+      },
+      {
+        "id": 32,
+        "name": "WhisperAssets",
+        "type": "Entity"
+      },
+      {
+        "id": 33,
+        "name": "TiktokenFormatCaveat",
+        "type": "Caveat"
+      },
+      {
+        "id": 34,
+        "name": "MultilingualTiktoken",
+        "type": "Entity"
+      },
+      {
+        "id": 35,
+        "name": "WhisperTokenizer",
+        "type": "Entity"
+      },
+      {
+        "id": 36,
+        "name": "DecodingTask",
+        "type": "Entity"
+      },
+      {
+        "id": 37,
+        "name": "DecodingOptions",
+        "type": "Entity"
+      },
+      {
+        "id": 38,
+        "name": "DecodingResult",
+        "type": "Entity"
+      },
+      {
+        "id": 39,
+        "name": "BeamSearchDecoder",
+        "type": "Entity"
+      },
+      {
+        "id": 40,
+        "name": "GreedyDecoder",
+        "type": "Entity"
+      },
+      {
+        "id": 41,
+        "name": "PyTorchInference",
+        "type": "Entity"
+      },
+      {
+        "id": 42,
+        "name": "LogitFilter",
+        "type": "Entity"
+      },
+      {
+        "id": 43,
+        "name": "ApplyTimestampRules",
+        "type": "Entity"
+      },
+      {
+        "id": 44,
+        "name": "MaximumLikelihoodRanker",
+        "type": "Entity"
+      },
+      {
+        "id": 45,
+        "name": "DetectLanguageFunction",
+        "type": "Entity"
+      },
+      {
+        "id": 46,
+        "name": "BeamSizeBestOfConflict",
+        "type": "Caveat"
+      },
+      {
+        "id": 47,
+        "name": "DecodeFunction",
+        "type": "Entity"
+      },
+      {
+        "id": 48,
+        "name": "TranscribeFunction",
+        "type": "Entity"
+      },
+      {
+        "id": 49,
+        "name": "CliFunction",
+        "type": "Entity"
+      },
+      {
+        "id": 50,
+        "name": "DecodeWithFallback",
+        "type": "Entity"
+      },
+      {
+        "id": 51,
+        "name": "TimingModule",
+        "type": "Entity"
+      },
+      {
+        "id": 52,
+        "name": "TokenizerModule",
+        "type": "Entity"
+      },
+      {
+        "id": 53,
+        "name": "UtilsModule",
+        "type": "Entity"
+      },
+      {
+        "id": 54,
+        "name": "WordTimestampsTranslationCaveat",
+        "type": "Caveat"
+      },
+      {
+        "id": 55,
+        "name": "FP16CpuCaveat",
+        "type": "Caveat"
+      },
+      {
+        "id": 56,
+        "name": "HallucinationSilenceThreshold",
+        "type": "Rule"
+      },
+      {
+        "id": 57,
+        "name": "TemperatureFallbackRule",
+        "type": "Rule"
+      },
+      {
+        "id": 58,
+        "name": "WhisperVersion",
+        "type": "Entity"
+      },
+      {
+        "id": 59,
+        "name": "WhisperMain",
+        "type": "Entity"
+      },
+      {
+        "id": 60,
+        "name": "CliEntrypoint",
+        "type": "Entity"
+      },
+      {
+        "id": 61,
+        "name": "ResultWriter",
+        "type": "Entity"
+      },
+      {
+        "id": 62,
+        "name": "SubtitlesWriter",
+        "type": "Entity"
+      },
+      {
+        "id": 63,
+        "name": "WriteTXT",
+        "type": "Entity"
+      },
+      {
+        "id": 64,
+        "name": "WriteVTT",
+        "type": "Entity"
+      },
+      {
+        "id": 65,
+        "name": "WriteSRT",
+        "type": "Entity"
+      },
+      {
+        "id": 66,
+        "name": "WriteTSV",
+        "type": "Entity"
+      },
+      {
+        "id": 67,
+        "name": "WriteJSON",
+        "type": "Entity"
+      },
+      {
+        "id": 68,
+        "name": "GetWriterFactory",
+        "type": "Entity"
+      },
+      {
+        "id": 69,
+        "name": "CompressionRatio",
+        "type": "Entity"
+      },
+      {
+        "id": 70,
+        "name": "FormatTimestamp",
+        "type": "Entity"
+      },
+      {
+        "id": 71,
+        "name": "EncodingSafety",
+        "type": "Caveat"
+      },
+      {
+        "id": 72,
+        "name": "Tokenizer",
+        "type": "Entity"
+      },
+      {
+        "id": 73,
+        "name": "GetEncoding",
+        "type": "Entity"
+      },
+      {
+        "id": 74,
+        "name": "GetTokenizer",
+        "type": "Entity"
+      },
+      {
+        "id": 75,
+        "name": "LanguageRegistry",
+        "type": "Entity"
+      },
+      {
+        "id": 76,
+        "name": "TiktokenDependency",
+        "type": "Entity"
+      },
+      {
+        "id": 77,
+        "name": "NonSpeechTokenSuppression",
+        "type": "Caveat"
+      },
+      {
+        "id": 78,
+        "name": "SpacelessLanguageSplitting",
+        "type": "Caveat"
+      },
+      {
+        "id": 79,
+        "name": "LanguageValidationRule",
+        "type": "Rule"
+      },
+      {
+        "id": 80,
+        "name": "DtwKernel",
+        "type": "Entity"
+      },
+      {
+        "id": 81,
+        "name": "MedianKernel",
+        "type": "Entity"
+      },
+      {
+        "id": 82,
+        "name": "MedianFilterCuda",
+        "type": "Entity"
+      },
+      {
+        "id": 83,
+        "name": "TritonRequired",
+        "type": "Caveat"
+      },
+      {
+        "id": 84,
+        "name": "MedianKernelCodeGen",
+        "type": "Caveat"
+      },
+      {
+        "id": 85,
+        "name": "TritonOpsModule",
+        "type": "Entity"
+      },
+      {
+        "id": 86,
+        "name": "MedianFilter",
+        "type": "Entity"
+      },
+      {
+        "id": 87,
+        "name": "DtwAlignment",
+        "type": "Entity"
+      },
+      {
+        "id": 88,
+        "name": "WordTiming",
+        "type": "Entity"
+      },
+      {
+        "id": 89,
+        "name": "FindAlignment",
+        "type": "Entity"
+      },
+      {
+        "id": 90,
+        "name": "AddWordTimestamps",
+        "type": "Entity"
+      },
+      {
+        "id": 91,
+        "name": "MergePunctuations",
+        "type": "Entity"
+      },
+      {
+        "id": 92,
+        "name": "TritonFallbackCaveat",
+        "type": "Caveat"
+      },
+      {
+        "id": 93,
+        "name": "LoadAudio",
+        "type": "Entity"
+      },
+      {
+        "id": 94,
+        "name": "PadOrTrim",
+        "type": "Entity"
+      },
+      {
+        "id": 95,
+        "name": "MelFilters",
+        "type": "Entity"
+      },
+      {
+        "id": 96,
+        "name": "LogMelSpectrogram",
+        "type": "Entity"
+      },
+      {
+        "id": 97,
+        "name": "AudioHyperparameters",
+        "type": "Entity"
+      },
+      {
+        "id": 98,
+        "name": "FfmpegRequired",
+        "type": "Caveat"
+      },
+      {
+        "id": 99,
+        "name": "MelFilterConstraint",
+        "type": "Rule"
+      },
+      {
+        "id": 100,
+        "name": "TranscribeMethod",
+        "type": "Entity"
+      },
+      {
+        "id": 101,
+        "name": "TurboModelNoTranslation",
+        "type": "Caveat"
+      },
+      {
+        "id": 102,
+        "name": "FfmpegDependency",
+        "type": "Rule"
+      },
+      {
+        "id": 103,
+        "name": "TiktokenTokenizer",
+        "type": "Entity"
+      },
+      {
+        "id": 104,
+        "name": "ModelSizeTiers",
+        "type": "Entity"
+      },
+      {
+        "id": 105,
+        "name": "WhisperProject",
+        "type": "Entity"
+      },
+      {
+        "id": 106,
+        "name": "TorchLoadSecurityFix",
+        "type": "Caveat"
+      },
+      {
+        "id": 107,
+        "name": "TranslationModelLimitation",
+        "type": "Caveat"
+      },
+      {
+        "id": 108,
+        "name": "LargeV3TurboModel",
+        "type": "Entity"
+      },
+      {
+        "id": 109,
+        "name": "TritonCompatibility",
+        "type": "Caveat"
+      },
+      {
+        "id": 110,
+        "name": "WordLevelTimestamps",
+        "type": "Entity"
+      },
+      {
+        "id": 111,
+        "name": "HallucinationSilenceSkip",
+        "type": "Rule"
+      },
+      {
+        "id": 112,
+        "name": "MitLicense",
+        "type": "Rule"
+      }
+    ],
+    "total": 112
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/concepts/list",
+    "timestamp": "2026-03-05T17:00:10.657Z",
+    "duration_ms": 28.091
+  }
+}

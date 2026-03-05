@@ -1,0 +1,756 @@
+{
+  "status": "success",
+  "result": {
+    "edges": [
+      {
+        "id": 1,
+        "source": 1,
+        "target": 2,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 2,
+        "source": 1,
+        "target": 3,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 3,
+        "source": 1,
+        "target": 4,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 4,
+        "source": 1,
+        "target": 5,
+        "relation": "DEPENDS_ON",
+        "weight": 0.3
+      },
+      {
+        "id": 5,
+        "source": 6,
+        "target": 1,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 6,
+        "source": 7,
+        "target": 1,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 7,
+        "source": 8,
+        "target": 9,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 8,
+        "source": 8,
+        "target": 10,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 9,
+        "source": 11,
+        "target": 8,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 10,
+        "source": 12,
+        "target": 8,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 11,
+        "source": 13,
+        "target": 9,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 12,
+        "source": 13,
+        "target": 8,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 13,
+        "source": 14,
+        "target": 15,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 14,
+        "source": 14,
+        "target": 16,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 15,
+        "source": 14,
+        "target": 9,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 16,
+        "source": 14,
+        "target": 17,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 17,
+        "source": 14,
+        "target": 8,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 18,
+        "source": 18,
+        "target": 14,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 19,
+        "source": 19,
+        "target": 14,
+        "relation": "DEFINED_IN",
+        "weight": 0.8
+      },
+      {
+        "id": 20,
+        "source": 20,
+        "target": 1,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 21,
+        "source": 20,
+        "target": 21,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 22,
+        "source": 20,
+        "target": 10,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 23,
+        "source": 22,
+        "target": 20,
+        "relation": "DEFINED_IN",
+        "weight": 0.7
+      },
+      {
+        "id": 24,
+        "source": 23,
+        "target": 20,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 25,
+        "source": 24,
+        "target": 14,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 26,
+        "source": 24,
+        "target": 24,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 27,
+        "source": 25,
+        "target": 14,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 28,
+        "source": 26,
+        "target": 24,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 29,
+        "source": 17,
+        "target": 28,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 30,
+        "source": 27,
+        "target": 17,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 31,
+        "source": 30,
+        "target": 3,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 32,
+        "source": 31,
+        "target": 3,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 33,
+        "source": 32,
+        "target": 3,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 34,
+        "source": 33,
+        "target": 3,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 35,
+        "source": 29,
+        "target": 34,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 36,
+        "source": 29,
+        "target": 10,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 37,
+        "source": 29,
+        "target": 3,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 38,
+        "source": 34,
+        "target": 35,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 39,
+        "source": 34,
+        "target": 36,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 40,
+        "source": 34,
+        "target": 37,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 41,
+        "source": 38,
+        "target": 34,
+        "relation": "DEFINED_IN",
+        "weight": 0.7
+      },
+      {
+        "id": 42,
+        "source": 32,
+        "target": 30,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 43,
+        "source": 32,
+        "target": 34,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 44,
+        "source": 32,
+        "target": 39,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 45,
+        "source": 40,
+        "target": 32,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 46,
+        "source": 41,
+        "target": 32,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 47,
+        "source": 10,
+        "target": 3,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 48,
+        "source": 42,
+        "target": 3,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 49,
+        "source": 42,
+        "target": 10,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 50,
+        "source": 43,
+        "target": 10,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 51,
+        "source": 44,
+        "target": 10,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 52,
+        "source": 31,
+        "target": 30,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 53,
+        "source": 31,
+        "target": 46,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 54,
+        "source": 31,
+        "target": 34,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 55,
+        "source": 31,
+        "target": 48,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 56,
+        "source": 46,
+        "target": 45,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 57,
+        "source": 47,
+        "target": 31,
+        "relation": "CONFLICTS_WITH",
+        "weight": 0.5
+      },
+      {
+        "id": 58,
+        "source": 30,
+        "target": 3,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 59,
+        "source": 30,
+        "target": 34,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 60,
+        "source": 30,
+        "target": 10,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 61,
+        "source": 30,
+        "target": 48,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 62,
+        "source": 49,
+        "target": 30,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 63,
+        "source": 50,
+        "target": 34,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 64,
+        "source": 51,
+        "target": 30,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 65,
+        "source": 33,
+        "target": 30,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 66,
+        "source": 33,
+        "target": 31,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 67,
+        "source": 33,
+        "target": 32,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 68,
+        "source": 33,
+        "target": 52,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 69,
+        "source": 33,
+        "target": 34,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 70,
+        "source": 53,
+        "target": 33,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 71,
+        "source": 54,
+        "target": 33,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 72,
+        "source": 48,
+        "target": 56,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 73,
+        "source": 55,
+        "target": 48,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 74,
+        "source": 55,
+        "target": 59,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 75,
+        "source": 57,
+        "target": 48,
+        "relation": "DEFINED_IN",
+        "weight": 0.8
+      },
+      {
+        "id": 76,
+        "source": 58,
+        "target": 48,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      },
+      {
+        "id": 77,
+        "source": 3,
+        "target": 10,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 78,
+        "source": 3,
+        "target": 60,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 79,
+        "source": 61,
+        "target": 62,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 80,
+        "source": 61,
+        "target": 63,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 81,
+        "source": 61,
+        "target": 64,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 82,
+        "source": 61,
+        "target": 9,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 83,
+        "source": 65,
+        "target": 61,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 84,
+        "source": 66,
+        "target": 61,
+        "relation": "DEFINED_IN",
+        "weight": 0.8
+      },
+      {
+        "id": 85,
+        "source": 67,
+        "target": 61,
+        "relation": "DEFINED_IN",
+        "weight": 0.7
+      },
+      {
+        "id": 86,
+        "source": 68,
+        "target": 62,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 87,
+        "source": 68,
+        "target": 69,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 88,
+        "source": 68,
+        "target": 70,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 89,
+        "source": 68,
+        "target": 68,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 90,
+        "source": 71,
+        "target": 68,
+        "relation": "DEPENDS_ON",
+        "weight": 0.5
+      },
+      {
+        "id": 91,
+        "source": 73,
+        "target": 72,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 92,
+        "source": 74,
+        "target": 72,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 93,
+        "source": 75,
+        "target": 72,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 94,
+        "source": 76,
+        "target": 72,
+        "relation": "CONFLICTS_WITH",
+        "weight": 0.5
+      },
+      {
+        "id": 95,
+        "source": 77,
+        "target": 72,
+        "relation": "DEFINED_IN",
+        "weight": 0.1
+      },
+      {
+        "id": 96,
+        "source": 78,
+        "target": 79,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 97,
+        "source": 79,
+        "target": 80,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 98,
+        "source": 78,
+        "target": 81,
+        "relation": "DEPENDS_ON",
+        "weight": 0.7
+      },
+      {
+        "id": 99,
+        "source": 82,
+        "target": 72,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 100,
+        "source": 82,
+        "target": 73,
+        "relation": "DEPENDS_ON",
+        "weight": 1
+      },
+      {
+        "id": 101,
+        "source": 75,
+        "target": 72,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 102,
+        "source": 75,
+        "target": 73,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 103,
+        "source": 74,
+        "target": 72,
+        "relation": "DEPENDS_ON",
+        "weight": 0.8
+      },
+      {
+        "id": 104,
+        "source": 83,
+        "target": 73,
+        "relation": "DEFINED_IN",
+        "weight": 1
+      },
+      {
+        "id": 105,
+        "source": 84,
+        "target": 72,
+        "relation": "DEFINED_IN",
+        "weight": 0.8
+      },
+      {
+        "id": 106,
+        "source": 85,
+        "target": 73,
+        "relation": "DEFINED_IN",
+        "weight": 0.5
+      }
+    ],
+    "total": 106
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/edges/list",
+    "timestamp": "2026-03-05T17:22:17.749Z",
+    "duration_ms": 27.778
+  }
+}

@@ -1,0 +1,192 @@
+graph TD
+    1["AnalyzerEngine (Entity)"]
+    2["RecognizerRegistry (Entity)"]
+    3["NlpEngine (Entity)"]
+    4["ContextAwareEnhancer (Entity)"]
+    5["AppTracer (Entity)"]
+    6["RegistryLanguageConsistency (Rule)"]
+    7["AllowListMatchMode (Caveat)"]
+    8["EntityRecognizer (Entity)"]
+    9["RecognizerResult (Entity)"]
+    10["NlpArtifacts (Entity)"]
+    11["AnalyzeAbstractMethod (Rule)"]
+    12["ContextEnhancement (Caveat)"]
+    13["RemoveDuplicates (Entity)"]
+    14["PatternRecognizer (Entity)"]
+    15["LocalRecognizer (Entity)"]
+    16["Pattern (Entity)"]
+    17["AnalysisExplanation (Entity)"]
+    18["PatternOrDenyListRequired (Rule)"]
+    19["ValidationOverridesScore (Caveat)"]
+    20["BatchAnalyzerEngine (Entity)"]
+    21["DictAnalyzerResult (Entity)"]
+    22["PrimitiveTypesOnly (Caveat)"]
+    23["NestedDictRecursion (Caveat)"]
+    24["AnalyzerRequest (Entity)"]
+    25["AdHocRecognizerDeserialization (Caveat)"]
+    26["DefaultRegexFlags (Caveat)"]
+    27["AnalysisExplanationScoreContext (Caveat)"]
+    28["AnalysisExplanationFile (Entity)"]
+    29["NlpEnginePackage (Entity)"]
+    30["SpacyNlpEngine (Entity)"]
+    31["StanzaNlpEngine (Entity)"]
+    32["TransformersNlpEngine (Entity)"]
+    33["NlpEngineProvider (Entity)"]
+    34["NerModelConfiguration (Entity)"]
+    35["ModelToPresidioEntityMapping (Entity)"]
+    36["AggregationStrategyValidation (Caveat)"]
+    37["AlignmentModeValidation (Caveat)"]
+    38["LowScoreEntityMultiplier (Rule)"]
+    39["SpacyHuggingfacePipelinesRequired (Caveat)"]
+    40["DualModelConfiguration (Rule)"]
+    41["TransformersNlpEngineDefinition (Entity)"]
+    42["SetKeywordsMethod (Entity)"]
+    43["DefaultScoreCaveat (Caveat)"]
+    44["NlpEngineNotSerializable (Caveat)"]
+    45["StanzaTokenizer (Entity)"]
+    46["LoadPipelineFunction (Entity)"]
+    47["StanzaOptionalImport (Caveat)"]
+    48["DeviceDetector (Entity)"]
+    49["ModelMustBeLoadedBeforeUse (Caveat)"]
+    50["UnmappedEntitiesKeptWithWarning (Caveat)"]
+    51["SpacyNlpEngineDefinedIn (Rule)"]
+    52["ConfigurationValidator (Entity)"]
+    53["MutualExclusionConfFileAndNlpConfig (Caveat)"]
+    54["EngineAvailabilityCheck (Rule)"]
+    55["LazyModuleGetattr (Entity)"]
+    56["PresidioDeviceEnvVar (Rule)"]
+    57["CudaFallbackToCpu (Caveat)"]
+    58["MpsNotSupported (Caveat)"]
+    59["ThreadSafeSingleton (Rule)"]
+    60["NlpEngineIsAbstract (Caveat)"]
+    61["AnonymizerEngine (Entity)"]
+    62["EngineBase (Entity)"]
+    63["ConflictResolutionStrategy (Entity)"]
+    64["OperatorConfig (Entity)"]
+    65["DefaultReplaceOperator (Rule)"]
+    66["ConflictResolutionMerge (Caveat)"]
+    67["WhitespaceMerge (Caveat)"]
+    68["DeanonymizeEngine (Entity)"]
+    69["OperatorType (Entity)"]
+    70["OperatorsFactory (Entity)"]
+    71["DeanonymizerExtensibility (Rule)"]
+    72["PresidioAnalyzer (Entity)"]
+    73["PresidioAnonymizer (Entity)"]
+    74["PresidioImageRedactor (Entity)"]
+    75["PresidioStructured (Entity)"]
+    76["AutomatedDetectionLimitation (Caveat)"]
+    77["ReadmeFile (Entity)"]
+    78["SecurityPolicy (Rule)"]
+    79["VulnerabilityReportingProcess (Rule)"]
+    80["NoPublicDisclosure (Caveat)"]
+    81["CoordinatedVulnerabilityDisclosure (Rule)"]
+    82["PresidioMetaPackage (Entity)"]
+    83["HashOperatorRandomSaltDefault (Caveat)"]
+    84["CountryRecognizersDisabledByDefault (Caveat)"]
+    85["MD5HashDeprecated (Caveat)"]
+    1 -->|DEPENDS_ON| 2
+    1 -->|DEPENDS_ON| 3
+    1 -->|DEPENDS_ON| 4
+    1 -->|DEPENDS_ON| 5
+    6 -->|DEFINED_IN| 1
+    7 -->|DEFINED_IN| 1
+    8 -->|DEPENDS_ON| 9
+    8 -->|DEPENDS_ON| 10
+    11 -->|DEFINED_IN| 8
+    12 -->|DEFINED_IN| 8
+    13 -->|DEPENDS_ON| 9
+    13 -->|DEFINED_IN| 8
+    14 -->|DEPENDS_ON| 15
+    14 -->|DEPENDS_ON| 16
+    14 -->|DEPENDS_ON| 9
+    14 -->|DEPENDS_ON| 17
+    14 -->|DEPENDS_ON| 8
+    18 -->|DEFINED_IN| 14
+    19 -->|DEFINED_IN| 14
+    20 -->|DEPENDS_ON| 1
+    20 -->|DEPENDS_ON| 21
+    20 -->|DEPENDS_ON| 10
+    22 -->|DEFINED_IN| 20
+    23 -->|DEFINED_IN| 20
+    24 -->|DEPENDS_ON| 14
+    24 -->|DEFINED_IN| 24
+    25 -->|DEPENDS_ON| 14
+    26 -->|DEFINED_IN| 24
+    17 -->|DEFINED_IN| 28
+    27 -->|DEPENDS_ON| 17
+    30 -->|DEPENDS_ON| 3
+    31 -->|DEPENDS_ON| 3
+    32 -->|DEPENDS_ON| 3
+    33 -->|DEPENDS_ON| 3
+    29 -->|DEPENDS_ON| 34
+    29 -->|DEPENDS_ON| 10
+    29 -->|DEPENDS_ON| 3
+    34 -->|DEPENDS_ON| 35
+    34 -->|DEPENDS_ON| 36
+    34 -->|DEPENDS_ON| 37
+    38 -->|DEFINED_IN| 34
+    32 -->|DEPENDS_ON| 30
+    32 -->|DEPENDS_ON| 34
+    32 -->|DEPENDS_ON| 39
+    40 -->|DEPENDS_ON| 32
+    41 -->|DEFINED_IN| 32
+    10 -->|DEPENDS_ON| 3
+    42 -->|DEPENDS_ON| 3
+    42 -->|DEFINED_IN| 10
+    43 -->|DEFINED_IN| 10
+    44 -->|DEFINED_IN| 10
+    31 -->|DEPENDS_ON| 30
+    31 -->|DEPENDS_ON| 46
+    31 -->|DEPENDS_ON| 34
+    31 -->|DEPENDS_ON| 48
+    46 -->|DEPENDS_ON| 45
+    47 -->|CONFLICTS_WITH| 31
+    30 -->|DEPENDS_ON| 3
+    30 -->|DEPENDS_ON| 34
+    30 -->|DEPENDS_ON| 10
+    30 -->|DEPENDS_ON| 48
+    49 -->|DEPENDS_ON| 30
+    50 -->|DEPENDS_ON| 34
+    51 -->|DEFINED_IN| 30
+    33 -->|DEPENDS_ON| 30
+    33 -->|DEPENDS_ON| 31
+    33 -->|DEPENDS_ON| 32
+    33 -->|DEPENDS_ON| 52
+    33 -->|DEPENDS_ON| 34
+    53 -->|DEFINED_IN| 33
+    54 -->|DEFINED_IN| 33
+    48 -->|DEPENDS_ON| 56
+    55 -->|DEPENDS_ON| 48
+    55 -->|DEPENDS_ON| 59
+    57 -->|DEFINED_IN| 48
+    58 -->|DEFINED_IN| 48
+    3 -->|DEPENDS_ON| 10
+    3 -->|DEPENDS_ON| 60
+    61 -->|DEPENDS_ON| 62
+    61 -->|DEPENDS_ON| 63
+    61 -->|DEPENDS_ON| 64
+    61 -->|DEPENDS_ON| 9
+    65 -->|DEFINED_IN| 61
+    66 -->|DEFINED_IN| 61
+    67 -->|DEFINED_IN| 61
+    68 -->|DEPENDS_ON| 62
+    68 -->|DEPENDS_ON| 69
+    68 -->|DEPENDS_ON| 70
+    68 -->|DEFINED_IN| 68
+    71 -->|DEPENDS_ON| 68
+    73 -->|DEPENDS_ON| 72
+    74 -->|DEPENDS_ON| 72
+    75 -->|DEPENDS_ON| 72
+    76 -->|CONFLICTS_WITH| 72
+    77 -->|DEFINED_IN| 72
+    78 -->|DEPENDS_ON| 79
+    79 -->|DEPENDS_ON| 80
+    78 -->|DEPENDS_ON| 81
+    82 -->|DEPENDS_ON| 72
+    82 -->|DEPENDS_ON| 73
+    75 -->|DEPENDS_ON| 72
+    75 -->|DEPENDS_ON| 73
+    74 -->|DEPENDS_ON| 72
+    83 -->|DEFINED_IN| 73
+    84 -->|DEFINED_IN| 72
+    85 -->|DEFINED_IN| 73

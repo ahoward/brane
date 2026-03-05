@@ -1,0 +1,17 @@
+{
+  "status": "success",
+  "result": {
+    "format": "ascii",
+    "output": "[PrepareStepFunction] Entity\n├── DEPENDS_ON → [PrepareStepResult] Entity\n├── DEPENDS_ON → [StepResult] Entity\n└── DEFINED_IN → [PrepareStepFile] Entity\n\n[PrepareStepResult] Entity\n└── DEFINED_IN → [PrepareStepFile] Entity\n\n[StepResult] Entity\n└── DEPENDS_ON → [ToolSet] Entity\n\n[PrepareStepOverridesModel] Caveat\n└── DEPENDS_ON → [PrepareStepResult] Entity\n\n[PrepareStepFile] Entity\n└── (no outgoing edges)\n\n[ReasoningOutput] Entity\n└── DEPENDS_ON → [ProviderMetadata] Entity\n\n[ProviderMetadata] Entity\n└── (no outgoing edges)\n\n[GenerateTextModule] Entity\n└── (no outgoing edges)\n\n[StreamTextModule] Entity\n└── (no outgoing edges)\n\n[OutputModule] Entity\n└── (no outgoing edges)\n\n[SmoothStream] Entity\n└── DEPENDS_ON → [ToolSet] Entity\n\n[StopCondition] Entity\n├── DEPENDS_ON → [StepResult] Entity\n└── DEPENDS_ON → [ToolSet] Entity\n\n[ToolSet] Entity\n└── DEFINED_IN → [ToolSet] Entity\n\n[GenerateTextIndex] Entity\n├── DEPENDS_ON → [GenerateTextModule] Entity\n├── DEPENDS_ON → [StreamTextModule] Entity\n├── DEPENDS_ON → [OutputModule] Entity\n├── DEPENDS_ON → [SmoothStream] Entity\n├── DEPENDS_ON → [StopCondition] Entity\n└── DEPENDS_ON → [ToolSet] Entity\n\n[BackwardsCompatibilityAlias] Caveat\n└── DEFINED_IN → [GenerateTextIndex] Entity\n\n[TypedToolError] Entity\n├── DEPENDS_ON → [StaticToolError] Entity\n├── DEPENDS_ON → [DynamicToolError] Entity\n└── DEPENDS_ON → [ToolSet] Entity\n\n[StaticToolError] Entity\n└── DEPENDS_ON → [ToolSet] Entity\n\n[DynamicToolError] Entity\n└── (no outgoing edges)\n\n[StaticVsDynamicToolErrorDiscrimination] Caveat\n└── DEFINED_IN → [TypedToolError] Entity\n\n[OutputInterface] Entity\n└── (no outgoing edges)",
+    "nodes": 20,
+    "edges": 23,
+    "truncated": true,
+    "message": "Graph truncated to 20 nodes. Use --limit to increase or --center to focus on specific concept."
+  },
+  "errors": null,
+  "meta": {
+    "path": "/graph/viz",
+    "timestamp": "2026-03-05T18:07:43.346Z",
+    "duration_ms": 41.455
+  }
+}

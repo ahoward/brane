@@ -1,0 +1,27 @@
+{
+  "status": "success",
+  "result": {
+    "concepts": {
+      "total": 85,
+      "by_type": {
+        "Caveat": 27,
+        "Entity": 44,
+        "Rule": 14
+      }
+    },
+    "edges": {
+      "total": 106,
+      "by_relation": {
+        "CONFLICTS_WITH": 2,
+        "DEFINED_IN": 30,
+        "DEPENDS_ON": 74
+      }
+    }
+  },
+  "errors": null,
+  "meta": {
+    "path": "/graph/summary",
+    "timestamp": "2026-03-05T17:22:17.017Z",
+    "duration_ms": 32.359
+  }
+}

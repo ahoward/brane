@@ -1,0 +1,17 @@
+{
+  "status": "success",
+  "result": {
+    "format": "ascii",
+    "output": "[WhisperInitModule] Entity\n├── DEPENDS_ON → [AudioModule] Entity\n├── DEPENDS_ON → [DecodingModule] Entity\n├── DEPENDS_ON → [TranscribeModule] Entity\n└── DEPENDS_ON → [WhisperModel] Entity\n\n[LoadModel] Entity\n├── DEPENDS_ON → [DownloadFunction] Entity\n├── DEPENDS_ON → [WhisperModel] Entity\n└── DEFINED_IN → [WhisperInitModule] Entity\n\n[DownloadFunction] Entity\n├── DEPENDS_ON → [Sha256ChecksumValidation] Rule\n└── DEFINED_IN → [WhisperInitModule] Entity\n\n[WhisperModel] Entity\n└── (no outgoing edges)\n\n[AudioModule] Entity\n└── DEFINED_IN → [AudioModule] Entity\n\n[DecodingModule] Entity\n└── (no outgoing edges)\n\n[TranscribeModule] Entity\n└── (no outgoing edges)\n\n[Sha256ChecksumValidation] Rule\n└── (no outgoing edges)\n\n[NormalizersModule] Entity\n├── DEPENDS_ON → [BasicTextNormalizer] Entity\n├── DEPENDS_ON → [EnglishTextNormalizer] Entity\n└── DEFINED_IN → [NormalizersModule] Entity\n\n[BasicTextNormalizer] Entity\n├── DEPENDS_ON → [RemoveSymbolsAndDiacritics] Entity\n├── DEPENDS_ON → [RemoveSymbols] Entity\n└── DEFINED_IN → [BasicTextNormalizer] Entity\n\n[EnglishTextNormalizer] Entity\n├── DEPENDS_ON → [EnglishNumberNormalizer] Entity\n├── DEPENDS_ON → [EnglishSpellingNormalizer] Entity\n└── DEPENDS_ON → [RemoveSymbolsAndDiacritics] Entity\n\n[EnglishNumberNormalizer] Entity\n└── DEFINED_IN → [EnglishNumberNormalizer] Entity\n\n[EnglishSpellingNormalizer] Entity\n├── DEPENDS_ON → [SpellingMappingFile] Caveat\n└── DEPENDS_ON → [BritishToAmericanMapping] Entity\n\n[RemoveSymbolsAndDiacritics] Entity\n└── DEPENDS_ON → [AdditionalDiacritics] Entity\n\n[SpellingMappingFile] Caveat\n└── (no outgoing edges)\n\n[NormalizationOrder] Rule\n└── DEPENDS_ON → [EnglishTextNormalizer] Entity\n\n[RemoveSymbols] Entity\n└── (no outgoing edges)\n\n[AdditionalDiacritics] Entity\n└── (no outgoing edges)\n\n[DiacriticsRemovalCaveat] Caveat\n└── DEPENDS_ON → [AdditionalDiacritics] Entity\n\n[BritishToAmericanMapping] Entity\n└── DEFINED_IN → [BritishToAmericanMapping] Entity",
+    "nodes": 20,
+    "edges": 26,
+    "truncated": true,
+    "message": "Graph truncated to 20 nodes. Use --limit to increase or --center to focus on specific concept."
+  },
+  "errors": null,
+  "meta": {
+    "path": "/graph/viz",
+    "timestamp": "2026-03-05T17:00:11.531Z",
+    "duration_ms": 26.427
+  }
+}

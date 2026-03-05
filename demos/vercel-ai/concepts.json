@@ -1,0 +1,2309 @@
+{
+  "status": "success",
+  "result": {
+    "concepts": [
+      {
+        "id": 1,
+        "name": "PrepareStepFunction",
+        "type": "Entity"
+      },
+      {
+        "id": 2,
+        "name": "PrepareStepResult",
+        "type": "Entity"
+      },
+      {
+        "id": 3,
+        "name": "StepResult",
+        "type": "Entity"
+      },
+      {
+        "id": 4,
+        "name": "PrepareStepOverridesModel",
+        "type": "Caveat"
+      },
+      {
+        "id": 5,
+        "name": "PrepareStepFile",
+        "type": "Entity"
+      },
+      {
+        "id": 6,
+        "name": "ReasoningOutput",
+        "type": "Entity"
+      },
+      {
+        "id": 7,
+        "name": "ProviderMetadata",
+        "type": "Entity"
+      },
+      {
+        "id": 8,
+        "name": "GenerateTextModule",
+        "type": "Entity"
+      },
+      {
+        "id": 9,
+        "name": "StreamTextModule",
+        "type": "Entity"
+      },
+      {
+        "id": 10,
+        "name": "OutputModule",
+        "type": "Entity"
+      },
+      {
+        "id": 11,
+        "name": "SmoothStream",
+        "type": "Entity"
+      },
+      {
+        "id": 12,
+        "name": "StopCondition",
+        "type": "Entity"
+      },
+      {
+        "id": 13,
+        "name": "ToolSet",
+        "type": "Entity"
+      },
+      {
+        "id": 14,
+        "name": "GenerateTextIndex",
+        "type": "Entity"
+      },
+      {
+        "id": 15,
+        "name": "BackwardsCompatibilityAlias",
+        "type": "Caveat"
+      },
+      {
+        "id": 16,
+        "name": "TypedToolError",
+        "type": "Entity"
+      },
+      {
+        "id": 17,
+        "name": "StaticToolError",
+        "type": "Entity"
+      },
+      {
+        "id": 18,
+        "name": "DynamicToolError",
+        "type": "Entity"
+      },
+      {
+        "id": 19,
+        "name": "StaticVsDynamicToolErrorDiscrimination",
+        "type": "Caveat"
+      },
+      {
+        "id": 20,
+        "name": "OutputInterface",
+        "type": "Entity"
+      },
+      {
+        "id": 21,
+        "name": "TextOutput",
+        "type": "Entity"
+      },
+      {
+        "id": 22,
+        "name": "ObjectOutput",
+        "type": "Entity"
+      },
+      {
+        "id": 23,
+        "name": "ArrayOutput",
+        "type": "Entity"
+      },
+      {
+        "id": 24,
+        "name": "ChoiceOutput",
+        "type": "Entity"
+      },
+      {
+        "id": 25,
+        "name": "JsonOutput",
+        "type": "Entity"
+      },
+      {
+        "id": 26,
+        "name": "NoObjectGeneratedError",
+        "type": "Entity"
+      },
+      {
+        "id": 27,
+        "name": "PartialOutputNoValidation",
+        "type": "Caveat"
+      },
+      {
+        "id": 28,
+        "name": "ArrayRepairedParseSlicing",
+        "type": "Caveat"
+      },
+      {
+        "id": 29,
+        "name": "Output",
+        "type": "Entity"
+      },
+      {
+        "id": 30,
+        "name": "ArrayRepairedParseDropsLastElement",
+        "type": "Caveat"
+      },
+      {
+        "id": 31,
+        "name": "RunToolsTransformation",
+        "type": "Entity"
+      },
+      {
+        "id": 32,
+        "name": "RunToolsTransformationTest",
+        "type": "Entity"
+      },
+      {
+        "id": 33,
+        "name": "NoSuchToolError",
+        "type": "Entity"
+      },
+      {
+        "id": 34,
+        "name": "MockTracer",
+        "type": "Entity"
+      },
+      {
+        "id": 35,
+        "name": "ToolApprovalFlow",
+        "type": "Caveat"
+      },
+      {
+        "id": 36,
+        "name": "ProviderExecutedToolsSkipLocalExecution",
+        "type": "Rule"
+      },
+      {
+        "id": 37,
+        "name": "FinishHeldUntilToolResultsComplete",
+        "type": "Rule"
+      },
+      {
+        "id": 38,
+        "name": "SingleRequestTextStreamPart",
+        "type": "Entity"
+      },
+      {
+        "id": 39,
+        "name": "ExecuteToolCall",
+        "type": "Entity"
+      },
+      {
+        "id": 40,
+        "name": "ParseToolCall",
+        "type": "Entity"
+      },
+      {
+        "id": 41,
+        "name": "IsApprovalNeeded",
+        "type": "Entity"
+      },
+      {
+        "id": 42,
+        "name": "ToolResultsStreamClosure",
+        "type": "Caveat"
+      },
+      {
+        "id": 43,
+        "name": "ToolExecutionNonBlocking",
+        "type": "Caveat"
+      },
+      {
+        "id": 44,
+        "name": "GenerateText",
+        "type": "Entity"
+      },
+      {
+        "id": 45,
+        "name": "GenerateTextResult",
+        "type": "Entity"
+      },
+      {
+        "id": 46,
+        "name": "MockLanguageModelV3",
+        "type": "Entity"
+      },
+      {
+        "id": 47,
+        "name": "PrepareStep",
+        "type": "Entity"
+      },
+      {
+        "id": 48,
+        "name": "ToolCallCallbacks",
+        "type": "Entity"
+      },
+      {
+        "id": 49,
+        "name": "CallbackErrorResilience",
+        "type": "Caveat"
+      },
+      {
+        "id": 50,
+        "name": "DefaultGenerateTextResult",
+        "type": "Entity"
+      },
+      {
+        "id": 51,
+        "name": "ExecuteTools",
+        "type": "Entity"
+      },
+      {
+        "id": 52,
+        "name": "MultiStepLoop",
+        "type": "Caveat"
+      },
+      {
+        "id": 53,
+        "name": "OutputParsingOnStopOnly",
+        "type": "Rule"
+      },
+      {
+        "id": 54,
+        "name": "AsContent",
+        "type": "Entity"
+      },
+      {
+        "id": 55,
+        "name": "GenerateTextIncludeSettings",
+        "type": "Entity"
+      },
+      {
+        "id": 56,
+        "name": "GenerateTextOnStartCallback",
+        "type": "Entity"
+      },
+      {
+        "id": 57,
+        "name": "GenerateTextOnStepStartCallback",
+        "type": "Entity"
+      },
+      {
+        "id": 58,
+        "name": "GenerateTextOnToolCallStartCallback",
+        "type": "Entity"
+      },
+      {
+        "id": 59,
+        "name": "GenerateTextOnToolCallFinishCallback",
+        "type": "Entity"
+      },
+      {
+        "id": 60,
+        "name": "GenerateTextOnStepFinishCallback",
+        "type": "Entity"
+      },
+      {
+        "id": 61,
+        "name": "GenerateTextOnFinishCallback",
+        "type": "Entity"
+      },
+      {
+        "id": 62,
+        "name": "StopConditionLoop",
+        "type": "Caveat"
+      },
+      {
+        "id": 63,
+        "name": "DeferredToolCallTracking",
+        "type": "Caveat"
+      },
+      {
+        "id": 64,
+        "name": "IncludeSettingsMemoryRule",
+        "type": "Rule"
+      },
+      {
+        "id": 65,
+        "name": "GeneratedFile",
+        "type": "Entity"
+      },
+      {
+        "id": 66,
+        "name": "DefaultGeneratedFile",
+        "type": "Entity"
+      },
+      {
+        "id": 67,
+        "name": "DefaultGeneratedFileWithType",
+        "type": "Entity"
+      },
+      {
+        "id": 68,
+        "name": "LazyConversionCaching",
+        "type": "Caveat"
+      },
+      {
+        "id": 69,
+        "name": "OutputUtils",
+        "type": "Entity"
+      },
+      {
+        "id": 70,
+        "name": "InferCompleteOutput",
+        "type": "Entity"
+      },
+      {
+        "id": 71,
+        "name": "InferPartialOutput",
+        "type": "Entity"
+      },
+      {
+        "id": 72,
+        "name": "InferElementOutput",
+        "type": "Entity"
+      },
+      {
+        "id": 73,
+        "name": "ExecuteToolCallTest",
+        "type": "Entity"
+      },
+      {
+        "id": 74,
+        "name": "PreliminaryToolResults",
+        "type": "Entity"
+      },
+      {
+        "id": 75,
+        "name": "DynamicTools",
+        "type": "Entity"
+      },
+      {
+        "id": 76,
+        "name": "Tool",
+        "type": "Entity"
+      },
+      {
+        "id": 77,
+        "name": "DefaultStepResult",
+        "type": "Entity"
+      },
+      {
+        "id": 78,
+        "name": "ContentPart",
+        "type": "Entity"
+      },
+      {
+        "id": 79,
+        "name": "ToolCallTypes",
+        "type": "Entity"
+      },
+      {
+        "id": 80,
+        "name": "StepResultDerivedProperties",
+        "type": "Caveat"
+      },
+      {
+        "id": 81,
+        "name": "ToResponseMessages",
+        "type": "Entity"
+      },
+      {
+        "id": 82,
+        "name": "ToResponseMessagesTest",
+        "type": "Entity"
+      },
+      {
+        "id": 83,
+        "name": "ToolResultSeparation",
+        "type": "Rule"
+      },
+      {
+        "id": 84,
+        "name": "ProviderExecutedToolsInlineResults",
+        "type": "Rule"
+      },
+      {
+        "id": 85,
+        "name": "EmptyTextPartOmission",
+        "type": "Caveat"
+      },
+      {
+        "id": 86,
+        "name": "PruneMessages",
+        "type": "Entity"
+      },
+      {
+        "id": 87,
+        "name": "PruneMessagesTest",
+        "type": "Entity"
+      },
+      {
+        "id": 88,
+        "name": "ModelMessage",
+        "type": "Entity"
+      },
+      {
+        "id": 89,
+        "name": "PruneReasoningModes",
+        "type": "Caveat"
+      },
+      {
+        "id": 90,
+        "name": "PruneToolCallModes",
+        "type": "Caveat"
+      },
+      {
+        "id": 91,
+        "name": "ToolCallBackwardTracing",
+        "type": "Rule"
+      },
+      {
+        "id": 92,
+        "name": "RetentionBenchmarkTest",
+        "type": "Entity"
+      },
+      {
+        "id": 93,
+        "name": "StreamText",
+        "type": "Entity"
+      },
+      {
+        "id": 94,
+        "name": "ExperimentalIncludeOption",
+        "type": "Caveat"
+      },
+      {
+        "id": 95,
+        "name": "MemoryRetentionBehavior",
+        "type": "Caveat"
+      },
+      {
+        "id": 96,
+        "name": "ToolCallRepairFunction",
+        "type": "Entity"
+      },
+      {
+        "id": 97,
+        "name": "InvalidToolInputError",
+        "type": "Entity"
+      },
+      {
+        "id": 98,
+        "name": "TypedToolCall",
+        "type": "Entity"
+      },
+      {
+        "id": 99,
+        "name": "NeedsApprovalCanBeBooleanOrFunction",
+        "type": "Caveat"
+      },
+      {
+        "id": 100,
+        "name": "ToolApprovalRequestOutput",
+        "type": "Entity"
+      },
+      {
+        "id": 101,
+        "name": "ToolCallRepair",
+        "type": "Entity"
+      },
+      {
+        "id": 102,
+        "name": "InvalidToolCallReturnsInvalidResult",
+        "type": "Rule"
+      },
+      {
+        "id": 103,
+        "name": "NoSuchToolReturnsInvalidResult",
+        "type": "Rule"
+      },
+      {
+        "id": 104,
+        "name": "RepairToolCallNullFallback",
+        "type": "Caveat"
+      },
+      {
+        "id": 105,
+        "name": "TelemetryRecordSpan",
+        "type": "Entity"
+      },
+      {
+        "id": 106,
+        "name": "ExecuteTool",
+        "type": "Entity"
+      },
+      {
+        "id": 107,
+        "name": "NotifyUtil",
+        "type": "Entity"
+      },
+      {
+        "id": 108,
+        "name": "ToolCallLifecycleCallbacks",
+        "type": "Rule"
+      },
+      {
+        "id": 109,
+        "name": "NonSerializableResultIgnored",
+        "type": "Caveat"
+      },
+      {
+        "id": 110,
+        "name": "LanguageModelUsage",
+        "type": "Entity"
+      },
+      {
+        "id": 111,
+        "name": "GenerateTextResultTotalUsage",
+        "type": "Caveat"
+      },
+      {
+        "id": 112,
+        "name": "StaticToolCall",
+        "type": "Entity"
+      },
+      {
+        "id": 113,
+        "name": "DynamicToolCall",
+        "type": "Entity"
+      },
+      {
+        "id": 114,
+        "name": "DynamicToolCallInvalidField",
+        "type": "Caveat"
+      },
+      {
+        "id": 115,
+        "name": "BaseToolCall",
+        "type": "Entity"
+      },
+      {
+        "id": 116,
+        "name": "ToolOutput",
+        "type": "Entity"
+      },
+      {
+        "id": 117,
+        "name": "TypedToolResult",
+        "type": "Entity"
+      },
+      {
+        "id": 118,
+        "name": "PruneMessagesReasoningFilter",
+        "type": "Caveat"
+      },
+      {
+        "id": 119,
+        "name": "PruneMessagesToolCallFilter",
+        "type": "Caveat"
+      },
+      {
+        "id": 120,
+        "name": "PruneMessagesEmptyRemoval",
+        "type": "Rule"
+      },
+      {
+        "id": 121,
+        "name": "ProviderUtils",
+        "type": "Entity"
+      },
+      {
+        "id": 122,
+        "name": "ExtractTextContent",
+        "type": "Entity"
+      },
+      {
+        "id": 123,
+        "name": "LanguageModelV4Content",
+        "type": "Entity"
+      },
+      {
+        "id": 124,
+        "name": "ExtractTextContentReturnsUndefinedForEmptyContent",
+        "type": "Caveat"
+      },
+      {
+        "id": 125,
+        "name": "ToolResult",
+        "type": "Entity"
+      },
+      {
+        "id": 126,
+        "name": "Caveat_DynamicVsStaticToolResult",
+        "type": "Caveat"
+      },
+      {
+        "id": 127,
+        "name": "StaticToolResult",
+        "type": "Entity"
+      },
+      {
+        "id": 128,
+        "name": "DynamicToolResult",
+        "type": "Entity"
+      },
+      {
+        "id": 129,
+        "name": "ToolResultDiscrimination",
+        "type": "Rule"
+      },
+      {
+        "id": 130,
+        "name": "OutputText",
+        "type": "Entity"
+      },
+      {
+        "id": 131,
+        "name": "OutputObject",
+        "type": "Entity"
+      },
+      {
+        "id": 132,
+        "name": "OutputArray",
+        "type": "Entity"
+      },
+      {
+        "id": 133,
+        "name": "OutputChoice",
+        "type": "Entity"
+      },
+      {
+        "id": 134,
+        "name": "OutputJson",
+        "type": "Entity"
+      },
+      {
+        "id": 135,
+        "name": "PartialJsonParsing",
+        "type": "Caveat"
+      },
+      {
+        "id": 136,
+        "name": "TextStreamPart",
+        "type": "Entity"
+      },
+      {
+        "id": 137,
+        "name": "SmoothStreamChunkingStrategies",
+        "type": "Rule"
+      },
+      {
+        "id": 138,
+        "name": "BufferFlushBeforeToolCall",
+        "type": "Caveat"
+      },
+      {
+        "id": 139,
+        "name": "SmoothStreamTest",
+        "type": "Entity"
+      },
+      {
+        "id": 140,
+        "name": "StreamTextResult",
+        "type": "Entity"
+      },
+      {
+        "id": 141,
+        "name": "UIMessageStream",
+        "type": "Entity"
+      },
+      {
+        "id": 142,
+        "name": "ToolExecution",
+        "type": "Entity"
+      },
+      {
+        "id": 143,
+        "name": "MultiStepStreaming",
+        "type": "Entity"
+      },
+      {
+        "id": 144,
+        "name": "StreamTextTestSuite",
+        "type": "Entity"
+      },
+      {
+        "id": 145,
+        "name": "ErrorHandlingMustUseOnError",
+        "type": "Caveat"
+      },
+      {
+        "id": 146,
+        "name": "ResponseMessage",
+        "type": "Entity"
+      },
+      {
+        "id": 147,
+        "name": "UIMessageStreamOptions",
+        "type": "Entity"
+      },
+      {
+        "id": 148,
+        "name": "StreamAutoConsumption",
+        "type": "Caveat"
+      },
+      {
+        "id": 149,
+        "name": "ConsumeStreamOptions",
+        "type": "Entity"
+      },
+      {
+        "id": 150,
+        "name": "StreamTextResultFile",
+        "type": "Rule"
+      },
+      {
+        "id": 151,
+        "name": "CallbackEvents",
+        "type": "Entity"
+      },
+      {
+        "id": 152,
+        "name": "OnStartEvent",
+        "type": "Entity"
+      },
+      {
+        "id": 153,
+        "name": "OnStepStartEvent",
+        "type": "Entity"
+      },
+      {
+        "id": 154,
+        "name": "OnToolCallStartEvent",
+        "type": "Entity"
+      },
+      {
+        "id": 155,
+        "name": "OnToolCallFinishEvent",
+        "type": "Entity"
+      },
+      {
+        "id": 156,
+        "name": "OnStepFinishEvent",
+        "type": "Entity"
+      },
+      {
+        "id": 157,
+        "name": "OnFinishEvent",
+        "type": "Entity"
+      },
+      {
+        "id": 158,
+        "name": "CallbackModelInfo",
+        "type": "Entity"
+      },
+      {
+        "id": 159,
+        "name": "CallbackLifecycleOrder",
+        "type": "Rule"
+      },
+      {
+        "id": 160,
+        "name": "StreamTextFunction",
+        "type": "Entity"
+      },
+      {
+        "id": 161,
+        "name": "DefaultStreamTextResult",
+        "type": "Entity"
+      },
+      {
+        "id": 162,
+        "name": "StitchableStreamArchitecture",
+        "type": "Entity"
+      },
+      {
+        "id": 163,
+        "name": "MultiStepToolLoop",
+        "type": "Caveat"
+      },
+      {
+        "id": 164,
+        "name": "OutputTransformStream",
+        "type": "Entity"
+      },
+      {
+        "id": 165,
+        "name": "UIMessageStreamIntegration",
+        "type": "Entity"
+      },
+      {
+        "id": 166,
+        "name": "StopConditionGating",
+        "type": "Rule"
+      },
+      {
+        "id": 167,
+        "name": "ChunkTimeoutAbort",
+        "type": "Caveat"
+      },
+      {
+        "id": 168,
+        "name": "StreamTextTransform",
+        "type": "Entity"
+      },
+      {
+        "id": 169,
+        "name": "EnrichedStreamPart",
+        "type": "Entity"
+      },
+      {
+        "id": 170,
+        "name": "StreamTextOnErrorCallback",
+        "type": "Entity"
+      },
+      {
+        "id": 171,
+        "name": "StreamTextOnStepFinishCallback",
+        "type": "Entity"
+      },
+      {
+        "id": 172,
+        "name": "StreamTextOnChunkCallback",
+        "type": "Entity"
+      },
+      {
+        "id": 173,
+        "name": "StreamTextOnFinishCallback",
+        "type": "Entity"
+      },
+      {
+        "id": 174,
+        "name": "StreamTextOnAbortCallback",
+        "type": "Entity"
+      },
+      {
+        "id": 175,
+        "name": "StreamTextIncludeSettings",
+        "type": "Entity"
+      },
+      {
+        "id": 176,
+        "name": "StreamTextOnStartCallback",
+        "type": "Entity"
+      },
+      {
+        "id": 177,
+        "name": "StreamTextOnStepStartCallback",
+        "type": "Entity"
+      },
+      {
+        "id": 178,
+        "name": "StreamTextOnToolCallStartCallback",
+        "type": "Entity"
+      },
+      {
+        "id": 179,
+        "name": "StreamTextOnToolCallFinishCallback",
+        "type": "Entity"
+      },
+      {
+        "id": 180,
+        "name": "StreamTeeSplitBuffering",
+        "type": "Caveat"
+      },
+      {
+        "id": 181,
+        "name": "ExtractReasoningContent",
+        "type": "Entity"
+      },
+      {
+        "id": 182,
+        "name": "LanguageModelV4Reasoning",
+        "type": "Entity"
+      },
+      {
+        "id": 183,
+        "name": "GenerateTextTypeTests",
+        "type": "Entity"
+      },
+      {
+        "id": 184,
+        "name": "OutputTypeInference",
+        "type": "Rule"
+      },
+      {
+        "id": 185,
+        "name": "CreateToolModelOutput",
+        "type": "Entity"
+      },
+      {
+        "id": 186,
+        "name": "ProviderExecutedToolResultsSkipped",
+        "type": "Caveat"
+      },
+      {
+        "id": 187,
+        "name": "SourcePartsSkipped",
+        "type": "Caveat"
+      },
+      {
+        "id": 188,
+        "name": "ChunkDetector",
+        "type": "Entity"
+      },
+      {
+        "id": 189,
+        "name": "ChunkingRegexps",
+        "type": "Entity"
+      },
+      {
+        "id": 190,
+        "name": "ChunkingMustReturnPrefixOfBuffer",
+        "type": "Caveat"
+      },
+      {
+        "id": 191,
+        "name": "NonSmoothableChunksPassThrough",
+        "type": "Rule"
+      },
+      {
+        "id": 192,
+        "name": "CollectToolApprovals",
+        "type": "Entity"
+      },
+      {
+        "id": 193,
+        "name": "ToolApprovalWorkflow",
+        "type": "Rule"
+      },
+      {
+        "id": 194,
+        "name": "ApprovedWithResultIgnored",
+        "type": "Caveat"
+      },
+      {
+        "id": 195,
+        "name": "UnknownApprovalIdThrows",
+        "type": "Caveat"
+      },
+      {
+        "id": 196,
+        "name": "CollectToolApprovalsTest",
+        "type": "Entity"
+      },
+      {
+        "id": 197,
+        "name": "DoParseToolCall",
+        "type": "Entity"
+      },
+      {
+        "id": 198,
+        "name": "ParseProviderExecutedDynamicToolCall",
+        "type": "Entity"
+      },
+      {
+        "id": 199,
+        "name": "InvalidToolCallFallback",
+        "type": "Caveat"
+      },
+      {
+        "id": 200,
+        "name": "EmptyInputCoercion",
+        "type": "Caveat"
+      },
+      {
+        "id": 201,
+        "name": "AsReasoningText",
+        "type": "Entity"
+      },
+      {
+        "id": 202,
+        "name": "ReasoningPart",
+        "type": "Entity"
+      },
+      {
+        "id": 203,
+        "name": "CollectedToolApprovals",
+        "type": "Entity"
+      },
+      {
+        "id": 204,
+        "name": "InvalidToolApprovalError",
+        "type": "Entity"
+      },
+      {
+        "id": 205,
+        "name": "ToolCallNotFoundForApprovalError",
+        "type": "Entity"
+      },
+      {
+        "id": 206,
+        "name": "ToolApprovalRequiresLastToolMessage",
+        "type": "Caveat"
+      },
+      {
+        "id": 207,
+        "name": "ApprovalWithExistingResultSkipped",
+        "type": "Rule"
+      },
+      {
+        "id": 208,
+        "name": "StreamTextTypeTests",
+        "type": "Entity"
+      },
+      {
+        "id": 209,
+        "name": "ElementStreamArrayOnly",
+        "type": "Caveat"
+      },
+      {
+        "id": 210,
+        "name": "StepCountIs",
+        "type": "Entity"
+      },
+      {
+        "id": 211,
+        "name": "HasToolCall",
+        "type": "Entity"
+      },
+      {
+        "id": 212,
+        "name": "IsStopConditionMet",
+        "type": "Entity"
+      },
+      {
+        "id": 213,
+        "name": "StopConditionOrSemantics",
+        "type": "Caveat"
+      },
+      {
+        "id": 214,
+        "name": "StaticToolOutputDenied",
+        "type": "Entity"
+      },
+      {
+        "id": 215,
+        "name": "TypedToolOutputDenied",
+        "type": "Entity"
+      },
+      {
+        "id": 216,
+        "name": "ValueOf",
+        "type": "Entity"
+      },
+      {
+        "id": 217,
+        "name": "StreamTextTelemetry",
+        "type": "Entity"
+      },
+      {
+        "id": 218,
+        "name": "ToolCallExecution",
+        "type": "Entity"
+      },
+      {
+        "id": 219,
+        "name": "StreamTextTestSnapshots",
+        "type": "Entity"
+      },
+      {
+        "id": 220,
+        "name": "ErrorMaskingInStreams",
+        "type": "Caveat"
+      },
+      {
+        "id": 221,
+        "name": "TelemetryDisabledByDefault",
+        "type": "Caveat"
+      },
+      {
+        "id": 222,
+        "name": "StopWhenMultiStep",
+        "type": "Caveat"
+      },
+      {
+        "id": 223,
+        "name": "TelemetryTracking",
+        "type": "Entity"
+      },
+      {
+        "id": 224,
+        "name": "ToolCallFlow",
+        "type": "Entity"
+      },
+      {
+        "id": 225,
+        "name": "ExtractReasoningMiddleware",
+        "type": "Entity"
+      },
+      {
+        "id": 226,
+        "name": "LanguageModelMiddleware",
+        "type": "Entity"
+      },
+      {
+        "id": 227,
+        "name": "GetPotentialStartIndex",
+        "type": "Entity"
+      },
+      {
+        "id": 228,
+        "name": "ReasoningStreamStateMachine",
+        "type": "Caveat"
+      },
+      {
+        "id": 229,
+        "name": "DelayedTextStartOrdering",
+        "type": "Caveat"
+      },
+      {
+        "id": 230,
+        "name": "WrapLanguageModel",
+        "type": "Entity"
+      },
+      {
+        "id": 231,
+        "name": "LanguageModelV4Middleware",
+        "type": "Entity"
+      },
+      {
+        "id": 232,
+        "name": "MockLanguageModelV4",
+        "type": "Entity"
+      },
+      {
+        "id": 233,
+        "name": "MiddlewareChaining",
+        "type": "Rule"
+      },
+      {
+        "id": 234,
+        "name": "MiddlewareArrayImmutability",
+        "type": "Caveat"
+      },
+      {
+        "id": 235,
+        "name": "MiddlewareIndex",
+        "type": "Entity"
+      },
+      {
+        "id": 236,
+        "name": "WrapEmbeddingModel",
+        "type": "Entity"
+      },
+      {
+        "id": 237,
+        "name": "WrapProvider",
+        "type": "Entity"
+      },
+      {
+        "id": 238,
+        "name": "SimulateStreamingMiddleware",
+        "type": "Entity"
+      },
+      {
+        "id": 239,
+        "name": "AddToolInputExamplesMiddleware",
+        "type": "Entity"
+      },
+      {
+        "id": 240,
+        "name": "LanguageModelV4FunctionTool",
+        "type": "Entity"
+      },
+      {
+        "id": 241,
+        "name": "MiddlewareAppendsExamplesToDescription",
+        "type": "Rule"
+      },
+      {
+        "id": 242,
+        "name": "OnlyTransformsFunctionToolsWithExamples",
+        "type": "Caveat"
+      },
+      {
+        "id": 243,
+        "name": "AddToolInputExamplesMiddlewareTest",
+        "type": "Entity"
+      },
+      {
+        "id": 244,
+        "name": "LanguageModelV4CallOptions",
+        "type": "Entity"
+      },
+      {
+        "id": 245,
+        "name": "MiddlewareRemovesInputExamplesByDefault",
+        "type": "Rule"
+      },
+      {
+        "id": 246,
+        "name": "ProviderToolsPassedUnchanged",
+        "type": "Caveat"
+      },
+      {
+        "id": 247,
+        "name": "ExtractJsonMiddleware",
+        "type": "Entity"
+      },
+      {
+        "id": 248,
+        "name": "DefaultTransform",
+        "type": "Entity"
+      },
+      {
+        "id": 249,
+        "name": "StreamSuffixBuffering",
+        "type": "Caveat"
+      },
+      {
+        "id": 250,
+        "name": "CustomTransformBuffersAll",
+        "type": "Caveat"
+      },
+      {
+        "id": 251,
+        "name": "DefaultSettingsMiddleware",
+        "type": "Entity"
+      },
+      {
+        "id": 252,
+        "name": "UserParamsPrecedenceRule",
+        "type": "Rule"
+      },
+      {
+        "id": 253,
+        "name": "ProviderOptionsDeepMerge",
+        "type": "Caveat"
+      },
+      {
+        "id": 254,
+        "name": "MergeObjects",
+        "type": "Entity"
+      },
+      {
+        "id": 255,
+        "name": "DefaultSettingsOverriddenByExplicitParams",
+        "type": "Caveat"
+      },
+      {
+        "id": 256,
+        "name": "WrapImageModel",
+        "type": "Entity"
+      },
+      {
+        "id": 257,
+        "name": "DoWrap",
+        "type": "Entity"
+      },
+      {
+        "id": 258,
+        "name": "ImageModelMiddleware",
+        "type": "Entity"
+      },
+      {
+        "id": 259,
+        "name": "AsImageModelV4",
+        "type": "Entity"
+      },
+      {
+        "id": 260,
+        "name": "MiddlewareOrderingRule",
+        "type": "Rule"
+      },
+      {
+        "id": 261,
+        "name": "MaxImagesPerCallBindingCaveat",
+        "type": "Caveat"
+      },
+      {
+        "id": 262,
+        "name": "DefaultEmbeddingSettingsMiddlewareTest",
+        "type": "Entity"
+      },
+      {
+        "id": 263,
+        "name": "DefaultEmbeddingSettingsMiddleware",
+        "type": "Entity"
+      },
+      {
+        "id": 264,
+        "name": "MockEmbeddingModelV4",
+        "type": "Entity"
+      },
+      {
+        "id": 265,
+        "name": "HeaderMergingBehavior",
+        "type": "Caveat"
+      },
+      {
+        "id": 266,
+        "name": "ProviderOptionsMergingBehavior",
+        "type": "Caveat"
+      },
+      {
+        "id": 267,
+        "name": "EmbeddingModelMiddleware",
+        "type": "Entity"
+      },
+      {
+        "id": 268,
+        "name": "AsEmbeddingModelV4",
+        "type": "Entity"
+      },
+      {
+        "id": 269,
+        "name": "WrapProviderTest",
+        "type": "Entity"
+      },
+      {
+        "id": 270,
+        "name": "WrapProviderSupportsV2AndV3",
+        "type": "Caveat"
+      },
+      {
+        "id": 271,
+        "name": "AsLanguageModelV4",
+        "type": "Entity"
+      },
+      {
+        "id": 272,
+        "name": "EmbeddingModelV4Middleware",
+        "type": "Entity"
+      },
+      {
+        "id": 273,
+        "name": "EmbeddingModelV4CallOptions",
+        "type": "Entity"
+      },
+      {
+        "id": 274,
+        "name": "MiddlewareMergesDefaultSettings",
+        "type": "Rule"
+      },
+      {
+        "id": 275,
+        "name": "AsProviderV4",
+        "type": "Entity"
+      },
+      {
+        "id": 276,
+        "name": "SimulateStreamingConvertsGenerateToStream",
+        "type": "Caveat"
+      },
+      {
+        "id": 277,
+        "name": "ExtractJsonMiddlewareStripsFences",
+        "type": "Caveat"
+      },
+      {
+        "id": 278,
+        "name": "ExtractJsonMiddlewareCustomTransform",
+        "type": "Caveat"
+      },
+      {
+        "id": 279,
+        "name": "StartWithReasoningOption",
+        "type": "Caveat"
+      },
+      {
+        "id": 280,
+        "name": "ImageModelV4Middleware",
+        "type": "Entity"
+      },
+      {
+        "id": 281,
+        "name": "MockImageModelV4",
+        "type": "Entity"
+      },
+      {
+        "id": 282,
+        "name": "WrapGenerateOrderRule",
+        "type": "Caveat"
+      },
+      {
+        "id": 283,
+        "name": "LanguageModelV4StreamPart",
+        "type": "Entity"
+      },
+      {
+        "id": 284,
+        "name": "StreamSimulationConvertsGenerateToStream",
+        "type": "Caveat"
+      },
+      {
+        "id": 285,
+        "name": "SimulateStreamingMiddlewareTestSnapshot",
+        "type": "Entity"
+      },
+      {
+        "id": 286,
+        "name": "StreamingEventProtocol",
+        "type": "Rule"
+      },
+      {
+        "id": 287,
+        "name": "AgentModule",
+        "type": "Entity"
+      },
+      {
+        "id": 288,
+        "name": "ToolLoopAgent",
+        "type": "Entity"
+      },
+      {
+        "id": 289,
+        "name": "ToolLoopAgentSettings",
+        "type": "Entity"
+      },
+      {
+        "id": 290,
+        "name": "AgentUIStream",
+        "type": "Entity"
+      },
+      {
+        "id": 291,
+        "name": "InferAgentUIMessage",
+        "type": "Entity"
+      },
+      {
+        "id": 292,
+        "name": "DeprecatedExperimentalAliases",
+        "type": "Caveat"
+      },
+      {
+        "id": 293,
+        "name": "ToolLoopAgentOnFinishCallback",
+        "type": "Entity"
+      },
+      {
+        "id": 294,
+        "name": "AgentCallParameters",
+        "type": "Entity"
+      },
+      {
+        "id": 295,
+        "name": "AgentStreamParameters",
+        "type": "Entity"
+      },
+      {
+        "id": 296,
+        "name": "ToolLoopAgentTypeTests",
+        "type": "Entity"
+      },
+      {
+        "id": 297,
+        "name": "OnFinishCallbackBidirectionalCompatibility",
+        "type": "Rule"
+      },
+      {
+        "id": 298,
+        "name": "PipeAgentUIStreamToResponse",
+        "type": "Entity"
+      },
+      {
+        "id": 299,
+        "name": "CreateAgentUIStream",
+        "type": "Entity"
+      },
+      {
+        "id": 300,
+        "name": "PipeUIMessageStreamToResponse",
+        "type": "Entity"
+      },
+      {
+        "id": 301,
+        "name": "Agent",
+        "type": "Entity"
+      },
+      {
+        "id": 302,
+        "name": "ToolLoopAgentOnStepFinishCallback",
+        "type": "Entity"
+      },
+      {
+        "id": 303,
+        "name": "ToolLoopAgentCallbackOrdering",
+        "type": "Rule"
+      },
+      {
+        "id": 304,
+        "name": "TelemetryIntegrations",
+        "type": "Entity"
+      },
+      {
+        "id": 305,
+        "name": "AgentInterface",
+        "type": "Entity"
+      },
+      {
+        "id": 306,
+        "name": "ToolLoopStopCondition",
+        "type": "Caveat"
+      },
+      {
+        "id": 307,
+        "name": "CallbackMerging",
+        "type": "Rule"
+      },
+      {
+        "id": 308,
+        "name": "CreateAgentUIStreamResponse",
+        "type": "Entity"
+      },
+      {
+        "id": 309,
+        "name": "ToolToModelOutputConversion",
+        "type": "Rule"
+      },
+      {
+        "id": 310,
+        "name": "OnFinishWithoutOriginalMessages",
+        "type": "Caveat"
+      },
+      {
+        "id": 311,
+        "name": "UIMessage",
+        "type": "Entity"
+      },
+      {
+        "id": 312,
+        "name": "InferAgentTools",
+        "type": "Entity"
+      },
+      {
+        "id": 313,
+        "name": "InferUITools",
+        "type": "Entity"
+      },
+      {
+        "id": 314,
+        "name": "CreateUIMessageStreamResponse",
+        "type": "Entity"
+      },
+      {
+        "id": 315,
+        "name": "ValidateUIMessages",
+        "type": "Entity"
+      },
+      {
+        "id": 316,
+        "name": "ConvertToModelMessages",
+        "type": "Entity"
+      },
+      {
+        "id": 317,
+        "name": "BackwardCompatibilityOriginalMessages",
+        "type": "Caveat"
+      },
+      {
+        "id": 318,
+        "name": "ToolLoopAgentCallbacks",
+        "type": "Entity"
+      },
+      {
+        "id": 319,
+        "name": "PromptOrMessagesConstraint",
+        "type": "Caveat"
+      },
+      {
+        "id": 320,
+        "name": "AgentVersioning",
+        "type": "Rule"
+      },
+      {
+        "id": 321,
+        "name": "PromptOrMessagesMutualExclusion",
+        "type": "Caveat"
+      },
+      {
+        "id": 322,
+        "name": "CallSettings",
+        "type": "Entity"
+      },
+      {
+        "id": 323,
+        "name": "LanguageModel",
+        "type": "Entity"
+      },
+      {
+        "id": 324,
+        "name": "StopConditionDefault",
+        "type": "Caveat"
+      },
+      {
+        "id": 325,
+        "name": "ToolLoopAgentOnStartCallback",
+        "type": "Entity"
+      },
+      {
+        "id": 326,
+        "name": "ToolLoopAgentOnStepStartCallback",
+        "type": "Entity"
+      },
+      {
+        "id": 327,
+        "name": "ToolLoopAgentOnToolCallStartCallback",
+        "type": "Entity"
+      },
+      {
+        "id": 328,
+        "name": "ToolLoopAgentOnToolCallFinishCallback",
+        "type": "Entity"
+      },
+      {
+        "id": 329,
+        "name": "ToolLoopAgentSettingsFile",
+        "type": "Entity"
+      },
+      {
+        "id": 330,
+        "name": "InferAgentUIMessageTypeTest",
+        "type": "Entity"
+      },
+      {
+        "id": 331,
+        "name": "AsImageModelV3",
+        "type": "Entity"
+      },
+      {
+        "id": 332,
+        "name": "ImageModelVersionProxy",
+        "type": "Caveat"
+      },
+      {
+        "id": 333,
+        "name": "AsImageModelV4Test",
+        "type": "Entity"
+      },
+      {
+        "id": 334,
+        "name": "MockImageModelV2",
+        "type": "Entity"
+      },
+      {
+        "id": 335,
+        "name": "MockImageModelV3",
+        "type": "Entity"
+      },
+      {
+        "id": 336,
+        "name": "ImageModelVersionUpgrade",
+        "type": "Rule"
+      },
+      {
+        "id": 337,
+        "name": "AsLanguageModelV3",
+        "type": "Entity"
+      },
+      {
+        "id": 338,
+        "name": "LanguageModelV2ToV3Proxy",
+        "type": "Caveat"
+      },
+      {
+        "id": 339,
+        "name": "ConvertV2StreamToV3",
+        "type": "Entity"
+      },
+      {
+        "id": 340,
+        "name": "ConvertV2FinishReasonToV3",
+        "type": "Entity"
+      },
+      {
+        "id": 341,
+        "name": "ConvertV2UsageToV3",
+        "type": "Entity"
+      },
+      {
+        "id": 342,
+        "name": "LanguageModelV3Spec",
+        "type": "Entity"
+      },
+      {
+        "id": 343,
+        "name": "LogV2CompatibilityWarning",
+        "type": "Entity"
+      },
+      {
+        "id": 344,
+        "name": "AsProviderV4Test",
+        "type": "Entity"
+      },
+      {
+        "id": 345,
+        "name": "MockProviderV3",
+        "type": "Entity"
+      },
+      {
+        "id": 346,
+        "name": "MockProviderV4",
+        "type": "Entity"
+      },
+      {
+        "id": 347,
+        "name": "V3ToV4ProviderConversion",
+        "type": "Rule"
+      },
+      {
+        "id": 348,
+        "name": "AsSpeechModelV4",
+        "type": "Entity"
+      },
+      {
+        "id": 349,
+        "name": "AsSpeechModelV4Test",
+        "type": "Entity"
+      },
+      {
+        "id": 350,
+        "name": "MockSpeechModelV2",
+        "type": "Entity"
+      },
+      {
+        "id": 351,
+        "name": "MockSpeechModelV3",
+        "type": "Entity"
+      },
+      {
+        "id": 352,
+        "name": "MockSpeechModelV4",
+        "type": "Entity"
+      },
+      {
+        "id": 353,
+        "name": "SpeechModelVersionAdapter",
+        "type": "Caveat"
+      },
+      {
+        "id": 354,
+        "name": "AsEmbeddingModelV3",
+        "type": "Entity"
+      },
+      {
+        "id": 355,
+        "name": "EmbeddingModelV2ToV3Compatibility",
+        "type": "Caveat"
+      },
+      {
+        "id": 356,
+        "name": "MockEmbeddingModelV2",
+        "type": "Entity"
+      },
+      {
+        "id": 357,
+        "name": "MockEmbeddingModelV3",
+        "type": "Entity"
+      },
+      {
+        "id": 358,
+        "name": "LogWarnings",
+        "type": "Entity"
+      },
+      {
+        "id": 359,
+        "name": "ImageModelV2V3Proxy",
+        "type": "Caveat"
+      },
+      {
+        "id": 360,
+        "name": "AsRerankingModelV4",
+        "type": "Entity"
+      },
+      {
+        "id": 361,
+        "name": "MockRerankingModelV3",
+        "type": "Entity"
+      },
+      {
+        "id": 362,
+        "name": "MockRerankingModelV4",
+        "type": "Entity"
+      },
+      {
+        "id": 363,
+        "name": "RerankingModelV3ToV4PassthroughRule",
+        "type": "Rule"
+      },
+      {
+        "id": 364,
+        "name": "ImageModelV2",
+        "type": "Entity"
+      },
+      {
+        "id": 365,
+        "name": "ImageModelV3",
+        "type": "Entity"
+      },
+      {
+        "id": 366,
+        "name": "V2ToV3CompatibilityWarning",
+        "type": "Caveat"
+      },
+      {
+        "id": 367,
+        "name": "AsImageModelV3Test",
+        "type": "Entity"
+      },
+      {
+        "id": 368,
+        "name": "RerankingModelV3",
+        "type": "Entity"
+      },
+      {
+        "id": 369,
+        "name": "RerankingModelV4",
+        "type": "Entity"
+      },
+      {
+        "id": 370,
+        "name": "RerankingModelProxyAdapter",
+        "type": "Caveat"
+      },
+      {
+        "id": 371,
+        "name": "AsTranscriptionModelV4",
+        "type": "Entity"
+      },
+      {
+        "id": 372,
+        "name": "MockTranscriptionModelV2",
+        "type": "Entity"
+      },
+      {
+        "id": 373,
+        "name": "MockTranscriptionModelV3",
+        "type": "Entity"
+      },
+      {
+        "id": 374,
+        "name": "MockTranscriptionModelV4",
+        "type": "Entity"
+      },
+      {
+        "id": 375,
+        "name": "TranscriptionModelVersionUpgrade",
+        "type": "Rule"
+      },
+      {
+        "id": 376,
+        "name": "AsTranscriptionModelV3",
+        "type": "Entity"
+      },
+      {
+        "id": 377,
+        "name": "TranscriptionModelV2",
+        "type": "Entity"
+      },
+      {
+        "id": 378,
+        "name": "TranscriptionModelV3",
+        "type": "Entity"
+      },
+      {
+        "id": 379,
+        "name": "V2ToV3TranscriptionProxyIncomplete",
+        "type": "Caveat"
+      },
+      {
+        "id": 380,
+        "name": "TranscriptionModelVersionProxy",
+        "type": "Caveat"
+      },
+      {
+        "id": 381,
+        "name": "ResolveModel",
+        "type": "Entity"
+      },
+      {
+        "id": 382,
+        "name": "GetGlobalProvider",
+        "type": "Entity"
+      },
+      {
+        "id": 383,
+        "name": "GatewayProvider",
+        "type": "Entity"
+      },
+      {
+        "id": 384,
+        "name": "UnsupportedModelVersionError",
+        "type": "Entity"
+      },
+      {
+        "id": 385,
+        "name": "ModelVersionAdapters",
+        "type": "Entity"
+      },
+      {
+        "id": 386,
+        "name": "VersionV2V3V4Only",
+        "type": "Caveat"
+      },
+      {
+        "id": 387,
+        "name": "VideoModelExperimental",
+        "type": "Caveat"
+      },
+      {
+        "id": 388,
+        "name": "AsVideoModelV4",
+        "type": "Entity"
+      },
+      {
+        "id": 389,
+        "name": "VideoModelV3ToV4ProxyAdapter",
+        "type": "Caveat"
+      },
+      {
+        "id": 390,
+        "name": "MockVideoModelV3",
+        "type": "Entity"
+      },
+      {
+        "id": 391,
+        "name": "MockVideoModelV4",
+        "type": "Entity"
+      },
+      {
+        "id": 392,
+        "name": "VideoModelVersionAdaptation",
+        "type": "Rule"
+      },
+      {
+        "id": 393,
+        "name": "EmbeddingModelVersionAdapter",
+        "type": "Caveat"
+      },
+      {
+        "id": 394,
+        "name": "ProxyBasedVersionUpgrade",
+        "type": "Rule"
+      },
+      {
+        "id": 395,
+        "name": "AsSpeechModelV3",
+        "type": "Entity"
+      },
+      {
+        "id": 396,
+        "name": "SpeechModelV2ToV3Compatibility",
+        "type": "Caveat"
+      },
+      {
+        "id": 397,
+        "name": "EmbeddingModelVersionUpgrade",
+        "type": "Rule"
+      },
+      {
+        "id": 398,
+        "name": "AsEmbeddingModelV4Test",
+        "type": "Entity"
+      },
+      {
+        "id": 399,
+        "name": "SpeechModelVersionProxy",
+        "type": "Caveat"
+      },
+      {
+        "id": 400,
+        "name": "LanguageModelV2ToV3Conversion",
+        "type": "Caveat"
+      },
+      {
+        "id": 401,
+        "name": "MockLanguageModelV2",
+        "type": "Entity"
+      },
+      {
+        "id": 402,
+        "name": "V2UsageToV3UsageMapping",
+        "type": "Rule"
+      },
+      {
+        "id": 403,
+        "name": "ModelVersionAdaptation",
+        "type": "Caveat"
+      },
+      {
+        "id": 404,
+        "name": "GlobalDefaultProvider",
+        "type": "Entity"
+      },
+      {
+        "id": 405,
+        "name": "GatewayFallback",
+        "type": "Rule"
+      },
+      {
+        "id": 406,
+        "name": "CustomProvider",
+        "type": "Entity"
+      },
+      {
+        "id": 407,
+        "name": "UnsupportedVersionError",
+        "type": "Caveat"
+      },
+      {
+        "id": 408,
+        "name": "AsProviderV3",
+        "type": "Entity"
+      },
+      {
+        "id": 409,
+        "name": "ProviderVersionUpgrade",
+        "type": "Rule"
+      },
+      {
+        "id": 410,
+        "name": "ProviderV2ToV3Caveat",
+        "type": "Caveat"
+      },
+      {
+        "id": 411,
+        "name": "V2ToV4ConversionChain",
+        "type": "Caveat"
+      },
+      {
+        "id": 412,
+        "name": "AsLanguageModelV4Test",
+        "type": "Entity"
+      },
+      {
+        "id": 413,
+        "name": "SpeechModelV3ProxyAdapter",
+        "type": "Caveat"
+      },
+      {
+        "id": 414,
+        "name": "SpeechModelV3",
+        "type": "Entity"
+      },
+      {
+        "id": 415,
+        "name": "SpeechModelV2",
+        "type": "Entity"
+      },
+      {
+        "id": 416,
+        "name": "LanguageModelVersionProxy",
+        "type": "Caveat"
+      },
+      {
+        "id": 417,
+        "name": "LanguageModelV4",
+        "type": "Entity"
+      },
+      {
+        "id": 418,
+        "name": "EmbeddingModelV3",
+        "type": "Entity"
+      },
+      {
+        "id": 419,
+        "name": "EmbeddingModelV2",
+        "type": "Entity"
+      },
+      {
+        "id": 420,
+        "name": "V2ToV3ProxyAdapter",
+        "type": "Caveat"
+      },
+      {
+        "id": 421,
+        "name": "ErrorIndex",
+        "type": "Entity"
+      },
+      {
+        "id": 422,
+        "name": "AiSdkProvider",
+        "type": "Entity"
+      },
+      {
+        "id": 423,
+        "name": "AiSdkProviderUtils",
+        "type": "Entity"
+      },
+      {
+        "id": 424,
+        "name": "CoreErrorClasses",
+        "type": "Entity"
+      },
+      {
+        "id": 425,
+        "name": "ToolErrors",
+        "type": "Entity"
+      },
+      {
+        "id": 426,
+        "name": "GenerationErrors",
+        "type": "Entity"
+      },
+      {
+        "id": 427,
+        "name": "ErrorReexportPattern",
+        "type": "Rule"
+      },
+      {
+        "id": 428,
+        "name": "InvalidStreamPartError",
+        "type": "Entity"
+      },
+      {
+        "id": 429,
+        "name": "AISDKError",
+        "type": "Entity"
+      },
+      {
+        "id": 430,
+        "name": "ErrorMarkerPattern",
+        "type": "Rule"
+      },
+      {
+        "id": 431,
+        "name": "NoObjectGeneratedErrorMarkerPattern",
+        "type": "Rule"
+      },
+      {
+        "id": 432,
+        "name": "NoObjectGeneratedErrorCauses",
+        "type": "Caveat"
+      },
+      {
+        "id": 433,
+        "name": "ToolCallRepairError",
+        "type": "Entity"
+      },
+      {
+        "id": 434,
+        "name": "ToolCallRepairErrorMarkerPattern",
+        "type": "Rule"
+      },
+      {
+        "id": 435,
+        "name": "ModelVersionMustBeV2",
+        "type": "Rule"
+      },
+      {
+        "id": 436,
+        "name": "NoSpeechGeneratedError",
+        "type": "Entity"
+      },
+      {
+        "id": 437,
+        "name": "SpeechModelResponseMetadata",
+        "type": "Entity"
+      },
+      {
+        "id": 438,
+        "name": "NoTranscriptGeneratedError",
+        "type": "Entity"
+      },
+      {
+        "id": 439,
+        "name": "TranscriptionModelResponseMetadata",
+        "type": "Entity"
+      },
+      {
+        "id": 440,
+        "name": "NoVideoGeneratedError",
+        "type": "Entity"
+      },
+      {
+        "id": 441,
+        "name": "VideoModelResponseMetadata",
+        "type": "Entity"
+      },
+      {
+        "id": 442,
+        "name": "DeprecatedIsNoVideoGeneratedError",
+        "type": "Caveat"
+      },
+      {
+        "id": 443,
+        "name": "VerifyNoObjectGeneratedError",
+        "type": "Entity"
+      },
+      {
+        "id": 444,
+        "name": "TestUtilityOnly",
+        "type": "Caveat"
+      },
+      {
+        "id": 445,
+        "name": "InvalidArgumentError",
+        "type": "Entity"
+      },
+      {
+        "id": 446,
+        "name": "MissingToolResultsError",
+        "type": "Entity"
+      },
+      {
+        "id": 447,
+        "name": "NoImageGeneratedError",
+        "type": "Entity"
+      },
+      {
+        "id": 448,
+        "name": "ImageModelResponseMetadata",
+        "type": "Entity"
+      },
+      {
+        "id": 449,
+        "name": "NoImageGeneratedErrorMarkerPattern",
+        "type": "Rule"
+      },
+      {
+        "id": 450,
+        "name": "UIMessageStreamError",
+        "type": "Entity"
+      },
+      {
+        "id": 451,
+        "name": "UIMessageStreamChunkSequencing",
+        "type": "Caveat"
+      },
+      {
+        "id": 452,
+        "name": "NoSuchToolErrorMarkerPattern",
+        "type": "Rule"
+      },
+      {
+        "id": 453,
+        "name": "NoOutputGeneratedError",
+        "type": "Entity"
+      },
+      {
+        "id": 454,
+        "name": "AiSdkPackage",
+        "type": "Entity"
+      },
+      {
+        "id": 455,
+        "name": "UnifiedProviderArchitecture",
+        "type": "Rule"
+      },
+      {
+        "id": 456,
+        "name": "AiSdkReact",
+        "type": "Entity"
+      },
+      {
+        "id": 457,
+        "name": "VercelAiGateway",
+        "type": "Entity"
+      },
+      {
+        "id": 458,
+        "name": "MaxOutputTokensCaveat",
+        "type": "Caveat"
+      },
+      {
+        "id": 459,
+        "name": "AiPackage",
+        "type": "Entity"
+      }
+    ],
+    "total": 459
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/concepts/list",
+    "timestamp": "2026-03-05T18:07:42.370Z",
+    "duration_ms": 32.303
+  }
+}
