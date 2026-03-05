@@ -23,9 +23,15 @@ export class MockLlmBackend implements LlmBackend {
       ? request.golden_types[0].type
       : "Entity"
 
-    return {
-      concepts: [{ name, type }],
-      edges: []
+    const concepts: { name: string; type: string }[] = [{ name, type }]
+
+    // Adversarial re-extraction: mock returns concepts for missing sentinels
+    if (request.missing_sentinels && request.missing_sentinels.length > 0) {
+      for (const sentinel of request.missing_sentinels) {
+        concepts.push({ name: sentinel, type: "Entity" })
+      }
     }
+
+    return { concepts, edges: [] }
   }
 }

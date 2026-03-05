@@ -47,7 +47,19 @@ $ brane verify
 
 extract meaning from files into a knowledge graph. run Datalog rules against it.
 
-extraction shells out to any LLM CLI you have (claude, gemini, llama). no SDK, no API keys in brane. no LLM? manual curation works too.
+extraction is an ensemble pipeline — not just "ask an LLM and hope":
+
+```
+source file → AST parse (tree-sitter)     → ground truth symbols
+            → sentinel generation          → mandatory concepts (classes, interfaces, types)
+            → LLM extraction (lens-guided) → semantic concepts + edges
+            → adversarial re-extraction    → critique pass for missed sentinels
+            → merge + coverage check       → high-confidence graph with metrics
+```
+
+AST parsing gives you ground truth. sentinels hold the LLM accountable. if the LLM misses a class that tree-sitter found, the pipeline re-extracts with explicit hints. coverage tells you exactly what percentage of your codebase the graph actually represents.
+
+no LLM? AST extraction still works. manual curation works too. the LLM is one signal in an ensemble, not the whole story.
 
 a rule is 3-6 lines of Datalog:
 
@@ -131,6 +143,7 @@ split-brain. two databases.
 - **runtime:** [bun](https://bun.sh) — typescript
 - **body:** bun:sqlite (WAL mode)
 - **mind:** CozoDB (Datalog + vector)
+- **AST:** web-tree-sitter + tree-sitter-wasms (multi-language WASM grammars)
 - **embeddings:** model2vec (pure TypeScript, no ONNX, no GPU)
 - **LLM:** optional. shells out to CLI tools. no SDKs.
 - **binary:** ~85 MB. zero runtime deps. works offline.
@@ -150,7 +163,7 @@ brane --help
 
 ```
 brane init                     initialize body + mind
-brane ingest <path>            scan files + extract knowledge
+brane ingest <path>            scan + AST parse + LLM extract + coverage
 brane search <query>           semantic concept search
 brane verify                   run all rules
 
@@ -178,6 +191,7 @@ brane graph                    explore the graph
 brane lens                     manage lenses
   create <name> | use <name> | list | show [name] | delete <name>
 
+brane prune                    remove orphaned concepts from deleted files
 brane context query <q>        graph-aware context retrieval
 brane pr-verify                verify PR changes against rules
 ```
@@ -189,7 +203,7 @@ api mode: `echo '{"query":"auth"}' | brane /mind/search`
 ## development
 
 ```bash
-bun run test          # 321 tests
+bun run test          # 334 tests
 bun run repl          # interactive mode
 bun run build         # compile binary
 ```

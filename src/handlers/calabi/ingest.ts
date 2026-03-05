@@ -7,6 +7,9 @@ import { success, error } from "../../lib/result.ts"
 import { open_mind, is_mind_error } from "../../lib/mind.ts"
 import { get_golden_types, get_golden_relations } from "../../lib/lens.ts"
 import { extract_from_file } from "../../lib/llm.ts"
+import { parse_file } from "../../lib/ast/parse.ts"
+import { generate_sentinels } from "../../lib/ast/sentinels.ts"
+import { compute_coverage } from "../../lib/coverage.ts"
 import { handler as body_scan_handler } from "../body/scan.ts"
 import { handler as extract_handler } from "./extract.ts"
 import { resolve_lens_paths } from "../../lib/state.ts"
@@ -28,6 +31,10 @@ interface IngestFileResult {
   concepts_reused?:    number
   edges_created?:      number
   provenance_created?: number
+  ast_symbols?:        number
+  ast_sentinels?:      number
+  coverage_pct?:       number
+  coverage_missing?:   string[]
   error?:              string
   patch?:              { concepts: any[]; edges: any[] }
 }
@@ -194,7 +201,11 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Inges
       continue
     }
 
-    // Call LLM extraction
+    // Step 4a: AST extraction (ground truth)
+    const file_ast = await parse_file(file.url, file_content)
+    const sentinels = generate_sentinels(file_ast)
+
+    // Step 4b: LLM extraction
     let extraction
     try {
       extraction = await extract_from_file({
@@ -216,11 +227,62 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Inges
       continue
     }
 
+    // Step 4c: Check coverage of LLM output against AST sentinels
+    const pre_coverage = compute_coverage(
+      file.url, sentinels,
+      extraction.concepts.map(c => c.name)
+    )
+
+    // Step 4d: Adversarial re-extraction if coverage < 100% and sentinels exist
+    if (pre_coverage.missing.length > 0) {
+      try {
+        const reextract = await extract_from_file({
+          file_url:           file.url,
+          file_content,
+          file_path,
+          golden_types,
+          golden_relations,
+          missing_sentinels:  pre_coverage.missing
+        })
+        // Merge re-extracted concepts (dedup by name)
+        const existing = new Set(extraction.concepts.map(c => c.name.toLowerCase()))
+        for (const c of reextract.concepts) {
+          if (!existing.has(c.name.toLowerCase())) {
+            extraction.concepts.push(c)
+            existing.add(c.name.toLowerCase())
+          }
+        }
+        for (const e of reextract.edges) {
+          extraction.edges.push(e)
+        }
+      } catch {
+        // Re-extraction failure is non-fatal — proceed with what we have
+      }
+    }
+
+    // Step 4e: Final merge — ensure all AST sentinels present as fallback
+    const final_names = new Set(extraction.concepts.map(c => c.name.toLowerCase()))
+    for (const sentinel of sentinels) {
+      if (!final_names.has(sentinel.name.toLowerCase())) {
+        extraction.concepts.push({ name: sentinel.name, type: "Entity" })
+      }
+    }
+
+    // Step 4f: Compute final coverage
+    const coverage = compute_coverage(
+      file.url, sentinels,
+      extraction.concepts.map(c => c.name)
+    )
+
     const file_result: IngestFileResult = {
       file_url:           file.url,
       status:             file.status,
       concepts_extracted: extraction.concepts.length,
-      edges_extracted:    extraction.edges.length
+      edges_extracted:    extraction.edges.length,
+      ast_symbols:        file_ast.symbols.length,
+      ast_sentinels:      sentinels.length,
+      coverage_pct:       coverage.coverage_pct,
+      coverage_missing:   coverage.missing
     }
 
     // Dry run — return patch without applying

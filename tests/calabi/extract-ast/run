@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+#
+# Test runner for /calabi/extract-ast
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+
+# extract-ast is stateless — no workspace needed
+echo "$INPUT" | brane /calabi/extract-ast

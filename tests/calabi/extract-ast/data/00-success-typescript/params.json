@@ -1,0 +1,4 @@
+{
+  "file_url": "file:///test/sample.ts",
+  "content": "export interface Config {\n  name: string\n}\n\nexport class App {\n  run(): void {}\n}\n"
+}

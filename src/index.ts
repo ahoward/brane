@@ -42,6 +42,7 @@ import { handler as mind_annotations_get_handler } from "./handlers/mind/annotat
 import { handler as mind_annotations_delete_handler } from "./handlers/mind/annotations/delete.ts"
 import { handler as mind_search_handler } from "./handlers/mind/search.ts"
 import { handler as calabi_extract_handler } from "./handlers/calabi/extract.ts"
+import { handler as calabi_extract_ast_handler } from "./handlers/calabi/extract-ast.ts"
 import { handler as calabi_extract_llm_handler } from "./handlers/calabi/extract-llm.ts"
 import { handler as calabi_ingest_handler } from "./handlers/calabi/ingest.ts"
 import { handler as calabi_scan_handler } from "./handlers/calabi/scan.ts"
@@ -100,6 +101,7 @@ sys.register("/mind/annotations/get", mind_annotations_get_handler)
 sys.register("/mind/annotations/delete", mind_annotations_delete_handler)
 sys.register("/mind/search", mind_search_handler)
 sys.register("/calabi/extract", calabi_extract_handler)
+sys.register("/calabi/extract-ast", calabi_extract_ast_handler)
 sys.register("/calabi/extract-llm", calabi_extract_llm_handler)
 sys.register("/calabi/ingest", calabi_ingest_handler)
 sys.register("/calabi/scan", calabi_scan_handler)
