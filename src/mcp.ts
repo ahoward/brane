@@ -419,6 +419,168 @@ const RESOURCE_TEMPLATES: McpResourceTemplate[] = [
 ]
 
 //
+// MCP Prompt definitions (#42)
+//
+
+interface McpPromptDef {
+  name:        string
+  description: string
+  arguments?:  { name: string; description: string; required: boolean }[]
+}
+
+const PROMPTS: McpPromptDef[] = [
+  {
+    name:        "memory-protocol",
+    description: "System prompt for how to use brane as memory — when to remember, recall, learn, and reflect",
+  },
+  {
+    name:        "pre-task-recall",
+    description: "Recall relevant memories before starting a task",
+    arguments:   [{ name: "task_description", description: "What you are about to do", required: true }],
+  },
+  {
+    name:        "post-task-remember",
+    description: "Remember what was learned after completing a task",
+    arguments:   [
+      { name: "task_description", description: "What you just did", required: true },
+      { name: "outcome", description: "What happened — success, failure, surprising findings", required: true },
+    ],
+  },
+  {
+    name:        "codebase-analysis",
+    description: "Systematic approach to learning a new codebase via brane",
+    arguments:   [{ name: "path", description: "Path to the codebase or directory to analyze", required: true }],
+  },
+  {
+    name:        "knowledge-audit",
+    description: "Review and clean up accumulated knowledge — find gaps, stale entries, consolidation opportunities",
+  },
+]
+
+type PromptRenderer = (args: Record<string, string>) => { role: string; content: { type: string; text: string } }[]
+
+const PROMPT_CONTENT: Record<string, PromptRenderer> = {
+  "memory-protocol": () => [{
+    role: "user",
+    content: {
+      type: "text",
+      text: `You have access to brane, a deterministic subjective memory system.
+
+USE \`remember\` when:
+- You learn something surprising or non-obvious
+- A task succeeds or fails in an unexpected way
+- You discover a pattern across multiple files/interactions
+- The user shares context you'll need in future conversations
+
+USE \`recall\` when:
+- Starting a new task (check for relevant past experience)
+- Encountering an error (have you seen this before?)
+- Making a design decision (what worked last time?)
+- The user references something from a previous session
+
+USE \`learn\` when:
+- The user points you at new files or codebases
+- You need deep structural understanding of code
+- You want to build a knowledge graph of concepts and relationships
+
+USE \`reflect\` when:
+- You want to check how much you know about a topic
+- Before making recommendations based on accumulated knowledge
+- You need a summary of what you've learned so far
+
+GENERAL PRINCIPLES:
+- Remember outcomes, not just actions
+- Be specific: "auth middleware timeout in CI" > "something broke"
+- Tag observations to enable future filtering
+- Reflect periodically to consolidate scattered episodes into knowledge`
+    }
+  }],
+
+  "pre-task-recall": (args) => [{
+    role: "user",
+    content: {
+      type: "text",
+      text: `Before starting this task, recall any relevant memories from brane.
+
+TASK: ${args.task_description ?? "(no task specified)"}
+
+Steps:
+1. Use \`recall\` with keywords from the task description
+2. Use \`ask\` to search the knowledge graph for related concepts
+3. Review any relevant episodes (past experiences with similar tasks)
+4. Note any patterns, warnings, or successful approaches from past work
+5. Proceed with the task, informed by your recalled context`
+    }
+  }],
+
+  "post-task-remember": (args) => [{
+    role: "user",
+    content: {
+      type: "text",
+      text: `You just completed a task. Remember what you learned for next time.
+
+TASK: ${args.task_description ?? "(no task specified)"}
+OUTCOME: ${args.outcome ?? "(no outcome specified)"}
+
+Remember:
+1. What was the task and what happened?
+2. Were there any surprises or unexpected challenges?
+3. What approach worked (or didn't)?
+4. What would you do differently next time?
+5. Are there any concepts or relationships worth adding to the knowledge graph?
+
+Use \`remember\` to save the key takeaways as episodic memories.
+Use \`learn\` if you discovered structural relationships worth capturing.`
+    }
+  }],
+
+  "codebase-analysis": (args) => [{
+    role: "user",
+    content: {
+      type: "text",
+      text: `Systematically analyze and learn a codebase using brane.
+
+TARGET: ${args.path ?? "(no path specified)"}
+
+Approach:
+1. Start with the entry point (main, index, app)
+2. Identify key modules, services, and their responsibilities
+3. Map dependencies between components
+4. Note any patterns, conventions, or architectural decisions
+5. Identify potential issues (circular deps, tight coupling, etc.)
+
+For each component you discover:
+- Use \`learn\` to add it as a concept with the right type (Entity, Module, Service, etc.)
+- Use \`relate\` to capture relationships (DEPENDS_ON, CONTAINS, IMPLEMENTS)
+- Use \`remember\` for observations about code quality, conventions, or gotchas
+
+End with \`reflect\` to summarize what you've learned.`
+    }
+  }],
+
+  "knowledge-audit": () => [{
+    role: "user",
+    content: {
+      type: "text",
+      text: `Audit your accumulated brane knowledge. Find gaps, stale entries, and consolidation opportunities.
+
+Steps:
+1. Use \`reflect\` to get a high-level summary of what's in the knowledge graph
+2. Review the concept types — are they consistent? Any duplicates?
+3. Check edge relationships — do they accurately represent the codebase?
+4. Look at recent episodes — any that should be consolidated into concepts?
+5. Identify knowledge gaps — what important parts of the system are missing?
+
+Actions:
+- Use \`decay\` (dry run) to see which memories are losing relevance
+- Use \`consolidate\` (dry run) to see which episodes could merge into concepts
+- Clean up duplicates or incorrect relationships
+- Add missing concepts for important system components`
+    }
+  }],
+}
+
+//
 // Max payload size for recall results (bytes). Prevents overflowing agent context windows.
 //
 const MAX_RECALL_PAYLOAD = 32 * 1024  // 32KB
@@ -452,7 +614,7 @@ async function handle_initialize(params: Record<string, unknown>): Promise<unkno
 
   return {
     protocolVersion: MCP_VERSION,
-    capabilities: { tools: {}, resources: {} },
+    capabilities: { tools: {}, resources: {}, prompts: {} },
     serverInfo: { name: SERVER_NAME, version: SERVER_VERSION },
   }
 }
@@ -609,6 +771,35 @@ async function handle_resources_read(params: Record<string, unknown>): Promise<u
   }
 
   throw new McpError(-32602, `Unknown resource URI: ${uri}`)
+}
+
+//
+// Handle prompts/list
+//
+
+function handle_prompts_list(): unknown {
+  return { prompts: PROMPTS }
+}
+
+//
+// Handle prompts/get
+//
+
+function handle_prompts_get(params: Record<string, unknown>): unknown {
+  const name = String(params.name ?? "")
+  const renderer = PROMPT_CONTENT[name]
+
+  if (!renderer) {
+    throw new McpError(-32602, `Unknown prompt: ${name}`)
+  }
+
+  const args = (params.arguments ?? {}) as Record<string, string>
+  const messages = renderer(args)
+
+  return {
+    description: PROMPTS.find(p => p.name === name)?.description ?? "",
+    messages,
+  }
 }
 
 class McpError extends Error {
@@ -1143,6 +1334,12 @@ async function handle_jsonrpc_message(raw: string): Promise<string | null> {
         break
       case "resources/read":
         result = await handle_resources_read(req.params ?? {})
+        break
+      case "prompts/list":
+        result = handle_prompts_list()
+        break
+      case "prompts/get":
+        result = handle_prompts_get(req.params ?? {})
         break
       default: {
         const resp: JsonRpcResponse = {
