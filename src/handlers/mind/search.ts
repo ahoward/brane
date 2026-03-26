@@ -11,6 +11,8 @@ interface SearchParams {
   query?:    string
   limit?:    number
   agent_id?: string
+  after?:    string
+  before?:   string
 }
 
 interface Match {
@@ -103,8 +105,31 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Searc
     if (has_agent_filter) {
       const agent_ids_by_id = new Map(rows.map(([id, , , agent_id]) => [id, agent_id]))
       matches = matches.filter(m => agent_ids_by_id.get(m.id) === p.agent_id)
-      matches = matches.slice(0, limit)
     }
+
+    // Post-filter by time range if specified
+    if (p.after || p.before) {
+      const concept_ids = matches.map(m => m.id)
+      if (concept_ids.length > 0) {
+        const id_list = concept_ids.map(id => `[${id}]`).join(", ")
+        const ts_result = await db.run(`
+          ?[entity_id, created_at] := *entity_timestamps['concept', entity_id, created_at], entity_id in [${concept_ids.join(", ")}]
+        `)
+        const ts_map = new Map<number, string>()
+        for (const [id, created_at] of ts_result.rows as [number, string][]) {
+          ts_map.set(id, created_at)
+        }
+        matches = matches.filter(m => {
+          const created_at = ts_map.get(m.id)
+          if (!created_at) return false  // no timestamp = excluded from time queries
+          if (p.after && created_at <= p.after) return false
+          if (p.before && created_at >= p.before) return false
+          return true
+        })
+      }
+    }
+
+    matches = matches.slice(0, limit)
 
     db.close()
 

@@ -4,7 +4,7 @@
 
 import type { Params, Result, Emit } from "../../../lib/types.ts"
 import { success, error } from "../../../lib/result.ts"
-import { open_mind, is_mind_error, is_valid_edge_relation } from "../../../lib/mind.ts"
+import { open_mind, is_mind_error, is_valid_edge_relation, record_entity_timestamps_batch } from "../../../lib/mind.ts"
 import { update_relation_usage } from "../../../lib/lens.ts"
 
 interface ItemParams {
@@ -186,6 +186,10 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<{ ite
       ?[id, source, target, relation, weight, agent_id] <- [${rows.join(", ")}]
       :put edges { id, source, target, relation, weight, agent_id }
     `)
+
+    // Record creation timestamps for all new edges
+    const new_ids = Array.from({ length: p.items.length }, (_, i) => start_id + i)
+    await record_entity_timestamps_batch(db, "edge", new_ids)
 
     // Track relation usage (deduplicated)
     const unique_relations = [...new Set(p.items.map(item => item.relation!))]

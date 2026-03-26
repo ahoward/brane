@@ -122,6 +122,8 @@ ai/                   # AI agent resources
 - CozoDB mind.db (existing concepts/edges/provenance), SQLite body.db (existing files) (034-extraction-pipeline)
 - TypeScript 5.x (Bun 1.x runtime) + cozo-node (CozoDB with RocksDB backend), existing mind.ts utilities (049-schema-migrations)
 - CozoDB mind.db (RocksDB backend) — schema_meta relation for version tracking (049-schema-migrations)
+- TypeScript 5.x (Bun 1.x runtime) + cozo-node (CozoDB with RocksDB backend), existing mind.ts/embed.ts utilities, migrate.ts (from #49) (034-episodic-memory)
+- CozoDB mind.db (RocksDB backend) — new `episodes` relation + HNSW index (034-episodic-memory)
 
 ## Recent Changes
 - 021-vector-search: Added semantic search via `/mind/search` endpoint with local embeddings (fastembed-js BGESmallEN, 384 dims)

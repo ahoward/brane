@@ -11,6 +11,8 @@ interface SearchParams {
   query?:    string
   limit?:    number
   agent_id?: string
+  after?:    string
+  before?:   string
 }
 
 interface EpisodeMatch {
@@ -119,10 +121,17 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Searc
       }
     })
 
-    // Optional agent_id post-filter (HNSW doesn't support inline filters)
+    // Post-filters (HNSW doesn't support inline filters)
     if (p.agent_id) {
-      matches = matches.filter(m => m.agent_id === p.agent_id).slice(0, limit)
+      matches = matches.filter(m => m.agent_id === p.agent_id)
     }
+    if (p.after) {
+      matches = matches.filter(m => m.timestamp > p.after!)
+    }
+    if (p.before) {
+      matches = matches.filter(m => m.timestamp < p.before!)
+    }
+    matches = matches.slice(0, limit)
 
     db.close()
 

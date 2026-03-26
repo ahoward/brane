@@ -214,6 +214,8 @@ const TOOLS: McpTool[] = [
         query:    { type: "string", description: "Natural language search query" },
         limit:    { type: "number", description: "Max results (default 10)" },
         agent_id: { type: "string", description: "Filter by agent ID" },
+        after:    { type: "string", description: "Only episodes after this ISO timestamp" },
+        before:   { type: "string", description: "Only episodes before this ISO timestamp" },
       },
       required: ["query"],
     },
@@ -230,8 +232,10 @@ const TOOLS: McpTool[] = [
     inputSchema: {
       type: "object",
       properties: {
-        query: { type: "string", description: "Natural language question or topic" },
-        limit: { type: "number", description: "Max concepts to return (default 5)" },
+        query:  { type: "string", description: "Natural language question or topic" },
+        limit:  { type: "number", description: "Max concepts to return (default 5)" },
+        after:  { type: "string", description: "Only concepts created after this ISO timestamp" },
+        before: { type: "string", description: "Only concepts created before this ISO timestamp" },
       },
       required: ["query"],
     },
@@ -284,9 +288,11 @@ const TOOLS: McpTool[] = [
     inputSchema: {
       type: "object",
       properties: {
-        query: { type: "string", description: "What you're trying to remember — describe the topic or situation" },
-        limit: { type: "number", description: "Max memories to return (default 5)" },
-        tag:   { type: "string", description: "Filter to memories with this tag" },
+        query:  { type: "string", description: "What you're trying to remember — describe the topic or situation" },
+        limit:  { type: "number", description: "Max memories to return (default 5)" },
+        tag:    { type: "string", description: "Filter to memories with this tag" },
+        after:  { type: "string", description: "Only memories after this ISO timestamp (e.g. 2026-03-20T00:00:00Z)" },
+        before: { type: "string", description: "Only memories before this ISO timestamp" },
       },
       required: ["query"],
     },
@@ -840,10 +846,14 @@ const CUSTOM_HANDLERS: Record<string, ToolHandler> = {
     const limit = typeof args.limit === "number" ? Math.max(1, Math.min(args.limit, 50)) : 5
 
     // Step 1: Semantic search for relevant concepts
-    const search_result = await sys.call("/mind/search", {
+    const search_params: Record<string, unknown> = {
       query: args.query,
       limit,
-    })
+    }
+    if (args.after && typeof args.after === "string") search_params.after = args.after
+    if (args.before && typeof args.before === "string") search_params.before = args.before
+
+    const search_result = await sys.call("/mind/search", search_params)
 
     if (search_result.status === "error") {
       return {
@@ -1028,6 +1038,10 @@ const CUSTOM_HANDLERS: Record<string, ToolHandler> = {
       // Default to current agent's memories; explicit agent_id overrides
       agent_id: mcp_agent_id,
     }
+
+    // Pass time-range filters if provided
+    if (args.after && typeof args.after === "string") search_args.after = args.after
+    if (args.before && typeof args.before === "string") search_args.before = args.before
 
     const result = await sys.call("/mind/episodes/search", search_args)
 

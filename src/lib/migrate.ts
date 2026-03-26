@@ -14,7 +14,7 @@ import { EMBED_DIM } from "./embed.ts"
 // The latest schema version this binary supports.
 // Bump this when adding a new migration.
 //
-export const LATEST_VERSION = "1.10.0"
+export const LATEST_VERSION = "1.11.0"
 
 //
 // A single migration step: transforms schema from one version to the next.
@@ -263,6 +263,22 @@ const MIGRATIONS: Migration[] = [
           fields: [vector],
           distance: Cosine,
           ef_construction: 100
+        }
+      `)
+    }
+  },
+
+  // v1.10.0 → v1.11.0: add entity_timestamps relation for temporal queries
+  {
+    from: "1.10.0",
+    to:   "1.11.0",
+    apply: async (db: CozoDb) => {
+      await db.run(`
+        :create entity_timestamps {
+          entity_type: String,
+          entity_id: Int
+          =>
+          created_at: String
         }
       `)
     }
