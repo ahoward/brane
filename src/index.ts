@@ -71,6 +71,7 @@ import { handler as mind_episodes_list_handler } from "./handlers/mind/episodes/
 import { handler as mind_episodes_search_handler } from "./handlers/mind/episodes/search.ts"
 import { handler as mind_episodes_delete_handler } from "./handlers/mind/episodes/delete.ts"
 import { handler as mind_agent_lens_init_handler } from "./handlers/mind/agent-lens/init.ts"
+import { handler as calabi_ingest_sessions_handler } from "./handlers/calabi/ingest-sessions.ts"
 
 sys.register("/ping", ping_handler)
 sys.register("/body/init", body_init_handler)
@@ -138,6 +139,7 @@ sys.register("/mind/episodes/list", mind_episodes_list_handler)
 sys.register("/mind/episodes/search", mind_episodes_search_handler)
 sys.register("/mind/episodes/delete", mind_episodes_delete_handler)
 sys.register("/mind/agent-lens/init", mind_agent_lens_init_handler)
+sys.register("/calabi/ingest-sessions", calabi_ingest_sessions_handler)
 
 // export
 export { sys }

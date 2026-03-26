@@ -160,6 +160,18 @@ const TOOLS: McpTool[] = [
     },
   },
   {
+    name: "ingest_sessions",
+    description: "Passively ingest Claude Code session logs into episodic memory. Parses JSONL conversation logs to extract human↔assistant exchanges and store them as episodes. Tracks ingested sessions to avoid duplicates.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path:    { type: "string", description: "Explicit session file (.jsonl) or project directory. Auto-discovers for current project if omitted." },
+        limit:   { type: "number", description: "Max sessions to process (default 10)" },
+        dry_run: { type: "boolean", description: "Preview what would be ingested without creating episodes" },
+      },
+    },
+  },
+  {
     name: "verify",
     description: "Run integrity checks on the knowledge graph (detect cycles, orphans, and custom rules).",
     inputSchema: {
@@ -362,6 +374,7 @@ const TOOL_ROUTES: Record<string, string> = {
   episodes_list:    "/mind/episodes/list",
   episodes_search:  "/mind/episodes/search",
   relate:           "/mind/edges/create",
+  ingest_sessions:  "/calabi/ingest-sessions",
 }
 
 //
@@ -1306,10 +1319,10 @@ async function handle_tools_call(params: Record<string, unknown>): Promise<unkno
   }
 
   // Auto-inject agent_id from MCP client info for tools that support it
-  const AGENT_ID_TOOLS = ["concepts_create", "edges_create", "concepts_list", "edges_list", "search", "relate"]
+  const AGENT_ID_TOOLS = ["concepts_create", "edges_create", "concepts_list", "edges_list", "search", "relate", "ingest_sessions"]
   if (AGENT_ID_TOOLS.includes(name) && !args.agent_id && mcp_agent_id !== "unknown") {
     // For create tools, always inject. For list/search, don't inject (let them show all by default)
-    if (name === "concepts_create" || name === "edges_create" || name === "relate") {
+    if (name === "concepts_create" || name === "edges_create" || name === "relate" || name === "ingest_sessions") {
       args.agent_id = mcp_agent_id
     }
   }
