@@ -31,10 +31,6 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 **Goal:** Transform brane into a deterministic subjective memory layer for AI agents, exposed via MCP.
 
-### In Progress
-
-- [ ] `034-episodic-memory` — Episodes relation + CRUD + semantic search ([#34](https://github.com/ahoward/brane/issues/34), PR [#57](https://github.com/ahoward/brane/pull/57))
-
 ### Next — Agent Memory Critical Path
 
 - [ ] `035-mcp-remember-recall` — MCP tools: remember and recall for episodic memory ([#35](https://github.com/ahoward/brane/issues/35))
@@ -78,6 +74,7 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 | Feature | PR | Date |
 |---------|-----|------|
+| `034-episodic-memory` | #57 | 2026-03-26 |
 | `053-fuzzy-dedup` | #55 | 2026-03-26 |
 | `049-schema-migrations` | #56 | 2026-03-26 |
 | `034-extraction-pipeline` | #32 | 2026-03-06 |

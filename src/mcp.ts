@@ -215,6 +215,47 @@ const TOOLS: McpTool[] = [
       required: ["query"],
     },
   },
+  //
+  // High-level agent memory tools (remember/recall/forget)
+  //
+  {
+    name: "remember",
+    description: "Store a memory about something you observed, learned, or decided. Use this whenever you want to remember something for future conversations.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        observation: { type: "string", description: "What you observed, learned, or decided" },
+        context:     { type: "string", description: "What you were doing when you learned this" },
+        outcome:     { type: "string", description: "What happened as a result" },
+        tags:        { type: "array", items: { type: "string" }, description: "Labels to categorize this memory" },
+      },
+      required: ["observation"],
+    },
+  },
+  {
+    name: "recall",
+    description: "Search your memories for relevant past experiences. Use this when you want to remember something from a previous conversation or task.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        query: { type: "string", description: "What you're trying to remember — describe the topic or situation" },
+        limit: { type: "number", description: "Max memories to return (default 5)" },
+        tag:   { type: "string", description: "Filter to memories with this tag" },
+      },
+      required: ["query"],
+    },
+  },
+  {
+    name: "forget",
+    description: "Remove a memory that is no longer relevant or correct.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "number", description: "Episode ID to forget" },
+      },
+      required: ["id"],
+    },
+  },
 ]
 
 //
@@ -239,6 +280,16 @@ const TOOL_ROUTES: Record<string, string> = {
 }
 
 //
+// Max payload size for recall results (bytes). Prevents overflowing agent context windows.
+//
+const MAX_RECALL_PAYLOAD = 32 * 1024  // 32KB
+
+//
+// MCP client metadata (populated during initialize)
+//
+let mcp_agent_id = "unknown"
+
+//
 // State
 //
 
@@ -248,7 +299,13 @@ let initialized = false
 // Handle initialize
 //
 
-function handle_initialize(_params: Record<string, unknown>): unknown {
+function handle_initialize(params: Record<string, unknown>): unknown {
+  // Extract agent_id from client info
+  const client_info = params.clientInfo as { name?: string } | undefined
+  if (client_info?.name) {
+    mcp_agent_id = client_info.name
+  }
+
   return {
     protocolVersion: MCP_VERSION,
     capabilities: { tools: {} },
@@ -265,16 +322,141 @@ function handle_tools_list(): unknown {
 }
 
 //
-// Handle tools/call — dispatch to sys.call
+// Custom tool handlers for high-level agent memory tools
+//
+
+type ToolHandler = (args: Record<string, unknown>) => Promise<unknown>
+
+function truncate_payload(text: string, max_bytes: number): string {
+  const buf = Buffer.from(text, "utf8")
+  if (buf.length <= max_bytes) return text
+  // Slice raw bytes, avoiding partial UTF-8 sequences
+  const truncated = buf.subarray(0, max_bytes - 50)
+  // toString replaces partial trailing bytes with U+FFFD; strip those
+  return truncated.toString("utf8").replace(/\uFFFD+$/, "") + "\n...(truncated)"
+}
+
+const CUSTOM_HANDLERS: Record<string, ToolHandler> = {
+  //
+  // remember — create an episode with auto-populated agent_id
+  //
+  async remember(args) {
+    const episode_args = {
+      agent_id:    mcp_agent_id,
+      observation: args.observation,
+      context:     args.context ?? "",
+      outcome:     args.outcome ?? "",
+      tags:        args.tags ?? [],
+    }
+
+    const result = await sys.call("/mind/episodes/create", episode_args)
+
+    if (result.status === "error") {
+      return {
+        content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+        isError: true,
+      }
+    }
+
+    const ep = result.result as Record<string, unknown>
+    const summary = `Remembered (id=${ep.id}): ${ep.observation}`
+    return {
+      content: [{ type: "text", text: summary }],
+      isError: false,
+    }
+  },
+
+  //
+  // recall — semantic search with payload truncation
+  //
+  async recall(args) {
+    const search_args: Record<string, unknown> = {
+      query: args.query,
+      limit: args.limit ?? 5,
+      // Default to current agent's memories; explicit agent_id overrides
+      agent_id: mcp_agent_id,
+    }
+
+    const result = await sys.call("/mind/episodes/search", search_args)
+
+    if (result.status === "error") {
+      return {
+        content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+        isError: true,
+      }
+    }
+
+    const raw = (result.result as Record<string, unknown> | null) ?? {}
+    let matches = Array.isArray((raw as { matches?: unknown }).matches)
+      ? (raw as { matches: Record<string, unknown>[] }).matches
+      : []
+
+    // Post-filter by tag if specified
+    if (args.tag && typeof args.tag === "string") {
+      matches = matches.filter(m => {
+        const tags = m.tags as string[] | undefined
+        return tags && tags.includes(args.tag as string)
+      })
+    }
+
+    // Format for agent consumption — concise, readable
+    const memories = matches.map((m, i) => {
+      const parts = [`[${i + 1}] (id=${m.id}, score=${m.score})`]
+      parts.push(`  ${m.observation}`)
+      if (m.context) parts.push(`  context: ${m.context}`)
+      if (m.outcome) parts.push(`  outcome: ${m.outcome}`)
+      const tags = m.tags as string[]
+      if (tags && tags.length > 0) parts.push(`  tags: ${tags.join(", ")}`)
+      parts.push(`  when: ${m.timestamp}`)
+      return parts.join("\n")
+    })
+
+    const header = matches.length > 0
+      ? `Found ${matches.length} relevant memories:`
+      : "No relevant memories found."
+
+    let text = header + "\n\n" + memories.join("\n\n")
+    text = truncate_payload(text, MAX_RECALL_PAYLOAD)
+
+    return {
+      content: [{ type: "text", text }],
+      isError: false,
+    }
+  },
+
+  //
+  // forget — delete an episode by ID
+  //
+  async forget(args) {
+    const result = await sys.call("/mind/episodes/delete", { id: args.id })
+
+    if (result.status === "error") {
+      return {
+        content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+        isError: true,
+      }
+    }
+
+    return {
+      content: [{ type: "text", text: `Forgot memory id=${args.id}` }],
+      isError: false,
+    }
+  },
+}
+
+//
+// Handle tools/call — dispatch to custom handlers or sys.call
 //
 
 async function handle_tools_call(params: Record<string, unknown>): Promise<unknown> {
   const name = String(params.name ?? "")
   const args = (params.arguments ?? {}) as Record<string, unknown>
 
-  // Validate tool exists
+  // Validate tool exists (check both route map and custom handlers)
   const route = TOOL_ROUTES[name]
-  if (!route) {
+  const custom = CUSTOM_HANDLERS[name]
+
+  if (!route && !custom) {
     const available = TOOLS.map(t => t.name).join(", ")
     return {
       content: [{ type: "text", text: `unknown tool: ${name}. Available: ${available}` }],
@@ -296,9 +478,13 @@ async function handle_tools_call(params: Record<string, unknown>): Promise<unkno
     }
   }
 
-  // Dispatch to sys.call
+  // Use custom handler if available, otherwise dispatch via route
   try {
-    const result = await sys.call(route, args)
+    if (custom) {
+      return await custom(args)
+    }
+
+    const result = await sys.call(route!, args)
     const text = JSON.stringify(result, null, 2)
 
     return {
