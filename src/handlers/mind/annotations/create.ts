@@ -75,7 +75,7 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Annot
   }
 
   // Open mind.db
-  const mind = open_mind()
+  const mind = await open_mind()
 
   if (is_mind_error(mind)) {
     return error({

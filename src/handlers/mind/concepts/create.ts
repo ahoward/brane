@@ -7,16 +7,20 @@ import { success, error } from "../../../lib/result.ts"
 import { open_mind, is_mind_error, is_valid_concept_type, get_next_concept_id } from "../../../lib/mind.ts"
 import { generate_embedding } from "../../../lib/embed.ts"
 import { update_type_usage } from "../../../lib/lens.ts"
+import { find_fuzzy_match } from "../../../lib/dedup.ts"
 
 interface CreateParams {
   name?: string
   type?: string
+  fuzzy_dedup?: boolean  // default true
 }
 
 interface Concept {
-  id:   number
-  name: string
-  type: string
+  id:              number
+  name:            string
+  type:            string
+  matched_existing?: boolean
+  match_type?:     string
 }
 
 export async function handler(params: Params, emit?: Emit): Promise<Result<Concept>> {
@@ -52,7 +56,7 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Conce
   }
 
   // Open mind.db
-  const mind = open_mind()
+  const mind = await open_mind()
 
   if (is_mind_error(mind)) {
     return error({
@@ -66,6 +70,22 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Conce
   const { db } = mind
 
   try {
+    // Fuzzy dedup: check for existing concept with similar name
+    const fuzzy = p.fuzzy_dedup !== false  // default true
+    if (fuzzy) {
+      const match = await find_fuzzy_match(db, p.name)
+      if (match) {
+        db.close()
+        return success({
+          id:               match.id,
+          name:             match.name,
+          type:             match.type,
+          matched_existing: true,
+          match_type:       match.match_type,
+        })
+      }
+    }
+
     // Get next ID
     const id = await get_next_concept_id(db)
 

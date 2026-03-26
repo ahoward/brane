@@ -120,6 +120,8 @@ ai/                   # AI agent resources
 - SQLite `.brane/lens/{name}/body.db` (file tracking), CozoDB `.brane/lens/{name}/mind.db` (knowledge graph) — both existing (033-prune)
 - TypeScript 5.x (Bun 1.x runtime) + tree-sitter (web-tree-sitter WASM), existing cozo-node, bun:sqlite, citty CLI, existing LLM CLI shell-out (034-extraction-pipeline)
 - CozoDB mind.db (existing concepts/edges/provenance), SQLite body.db (existing files) (034-extraction-pipeline)
+- TypeScript 5.x (Bun 1.x runtime) + cozo-node (CozoDB with RocksDB backend), existing mind.ts utilities (049-schema-migrations)
+- CozoDB mind.db (RocksDB backend) — schema_meta relation for version tracking (049-schema-migrations)
 
 ## Recent Changes
 - 021-vector-search: Added semantic search via `/mind/search` endpoint with local embeddings (fastembed-js BGESmallEN, 384 dims)

@@ -19,7 +19,7 @@ interface SummaryResult {
 
 export async function handler(_params: Params, _emit?: Emit): Promise<Result<SummaryResult>> {
   // Open mind.db
-  const mind = open_mind()
+  const mind = await open_mind()
 
   if (is_mind_error(mind)) {
     return error({

@@ -109,7 +109,7 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Inges
   const scan = scan_result.result as any
 
   // Step 2: Check mind.db is accessible and load lens config
-  const mind = open_mind()
+  const mind = await open_mind()
   if (is_mind_error(mind)) {
     return error({
       mind: [{
