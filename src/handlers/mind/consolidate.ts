@@ -7,7 +7,7 @@
 
 import type { Params, Result, Emit } from "../../lib/types.ts"
 import { success, error } from "../../lib/result.ts"
-import { open_mind, is_mind_error, get_next_concept_id, get_next_edge_id } from "../../lib/mind.ts"
+import { open_mind, is_mind_error, get_next_concept_id, get_next_edge_id, archive_episode } from "../../lib/mind.ts"
 import { generate_embedding } from "../../lib/embed.ts"
 import { name_cluster } from "../../lib/llm.ts"
 
@@ -169,15 +169,9 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<DryRu
         edges_created++
       }
 
-      // Archive source episodes
+      // Archive source episodes (read-remove-reinsert to avoid CozoDB duplicate row bug)
       for (const ep_id of proposal.episode_ids) {
-        await db.run(`
-          ?[id, agent_id, timestamp, observation, context, outcome, tags, vector, source_concept_id, archived] :=
-            *episodes[id, agent_id, timestamp, observation, context, outcome, tags, vector, source_concept_id, _],
-            id = ${ep_id},
-            archived = true
-          :put episodes { id, agent_id, timestamp, observation, context, outcome, tags, vector, source_concept_id, archived }
-        `)
+        await archive_episode(db, ep_id)
         episodes_archived++
       }
     }
