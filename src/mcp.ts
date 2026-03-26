@@ -592,7 +592,12 @@ Actions:
 //
 // Max payload size for recall results (bytes). Prevents overflowing agent context windows.
 //
-const MAX_RECALL_PAYLOAD = 32 * 1024  // 32KB
+//
+// Max payload sizes (bytes). Prevents overflowing agent context windows.
+// BRANE_MCP_MAX_RESPONSE env var overrides the default.
+//
+const MAX_RESPONSE_BYTES = parseInt(process.env.BRANE_MCP_MAX_RESPONSE ?? "", 10) || (64 * 1024)  // 64KB default
+const MAX_RECALL_PAYLOAD = 32 * 1024  // 32KB (tighter limit for recall, fits within MAX_RESPONSE_BYTES)
 
 //
 // MCP client metadata (populated during initialize)
@@ -1280,17 +1285,29 @@ async function handle_tools_call(params: Record<string, unknown>): Promise<unkno
 
   // Use custom handler if available, otherwise dispatch via route
   try {
+    let response: { content: { type: string; text: string }[]; isError: boolean }
+
     if (custom) {
-      return await custom(args)
+      response = await custom(args) as typeof response
+    } else {
+      const result = await sys.call(route!, args)
+      const text = JSON.stringify(result, null, 2)
+      response = {
+        content: [{ type: "text", text }],
+        isError: result.status === "error",
+      }
     }
 
-    const result = await sys.call(route!, args)
-    const text = JSON.stringify(result, null, 2)
-
-    return {
-      content: [{ type: "text", text }],
-      isError: result.status === "error",
+    // Universal truncation: enforce max response size on all tool outputs (#50)
+    if (response.content && response.content.length > 0) {
+      for (let i = 0; i < response.content.length; i++) {
+        if (response.content[i].text && response.content[i].text.length > MAX_RESPONSE_BYTES) {
+          response.content[i].text = truncate_payload(response.content[i].text, MAX_RESPONSE_BYTES)
+        }
+      }
     }
+
+    return response
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err)
     return {
