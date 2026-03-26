@@ -55,7 +55,7 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 ### Next — Polish & Distribution
 
-- [ ] `043-binary-distribution` — Standalone installable (homebrew, curl) ([#43](https://github.com/ahoward/brane/issues/43))
+- [x] `043-binary-distribution` — Standalone installable (homebrew, curl) ([#43](https://github.com/ahoward/brane/issues/43))
 - [ ] `045-documentation` — Brane as agent memory layer (README, examples) ([#45](https://github.com/ahoward/brane/issues/45))
 - [x] `052-passive-ingestion` — Learn from Claude Code session logs ([#52](https://github.com/ahoward/brane/issues/52))
 - [x] `054-self-reinforcing-retrieval` — Batch-update access metadata on search ([#54](https://github.com/ahoward/brane/issues/54))
@@ -74,6 +74,7 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 | Feature | PR | Date |
 |---------|-----|------|
+| `043-binary-distribution` | #74 | 2026-03-26 |
 | `052-passive-ingestion` | #73 | 2026-03-26 |
 | `054-self-reinforcing-retrieval` | #72 | 2026-03-26 |
 | `055-richer-episode-types` | #71 | 2026-03-26 |
