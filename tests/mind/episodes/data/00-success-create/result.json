@@ -1,0 +1,19 @@
+{
+  "status": "success",
+  "result": {
+    "id": 1,
+    "agent_id": "claude-code",
+    "timestamp": "<timestamp>",
+    "observation": "User prefers snake_case",
+    "context": "code review",
+    "outcome": "applied snake_case",
+    "tags": ["preference", "style"],
+    "source_concept_id": 0
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/episodes/create",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

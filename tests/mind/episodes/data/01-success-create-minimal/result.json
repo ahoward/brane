@@ -1,0 +1,19 @@
+{
+  "status": "success",
+  "result": {
+    "id": 1,
+    "agent_id": "test",
+    "timestamp": "<timestamp>",
+    "observation": "minimal episode",
+    "context": "",
+    "outcome": "",
+    "tags": [],
+    "source_concept_id": 0
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/episodes/create",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

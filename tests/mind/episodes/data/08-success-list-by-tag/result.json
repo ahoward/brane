@@ -1,13 +1,12 @@
 {
   "status": "success",
   "result": {
-    "path": "<string>",
-    "created": true,
-    "schema_version": "1.8.0"
+    "episodes": "<array>",
+    "total": 1
   },
   "errors": null,
   "meta": {
-    "path": "/mind/init",
+    "path": "/mind/episodes/list",
     "timestamp": "<timestamp>",
     "duration_ms": "<number>"
   }

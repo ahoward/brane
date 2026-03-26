@@ -1,0 +1,19 @@
+{
+  "status": "success",
+  "result": {
+    "id": 1,
+    "agent_id": "test",
+    "timestamp": "<timestamp>",
+    "observation": "test observation",
+    "context": "test context",
+    "outcome": "",
+    "tags": ["a", "b"],
+    "source_concept_id": 0
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/episodes/get",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

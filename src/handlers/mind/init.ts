@@ -20,7 +20,7 @@ interface InitResult {
   schema_version: string
 }
 
-const SCHEMA_VERSION = "1.7.0"
+const SCHEMA_VERSION = "1.8.0"
 
 //
 // Built-in rules for graph integrity checks
@@ -154,6 +154,19 @@ const SCHEMA_QUERIES = [
     first_seen: String,
     last_seen: String,
     golden: Bool
+  }`,
+
+  // Episodes - timestamped agent experiences
+  `:create episodes {
+    id: Int,
+    agent_id: String,
+    timestamp: String,
+    observation: String,
+    context: String,
+    outcome: String,
+    tags: String,
+    vector: <F32; ${EMBED_DIM}>?,
+    source_concept_id: Int
   }`
 ]
 
@@ -191,9 +204,21 @@ async function create_schema(db: CozoDb): Promise<void> {
     :put schema_meta { key => value }
   `)
 
-  // Create HNSW index for vector search
+  // Create HNSW index for vector search on concepts
   await db.run(`
     ::hnsw create concepts:semantic {
+      dim: ${EMBED_DIM},
+      m: 50,
+      dtype: F32,
+      fields: [vector],
+      distance: Cosine,
+      ef_construction: 100
+    }
+  `)
+
+  // Create HNSW index for vector search on episodes
+  await db.run(`
+    ::hnsw create episodes:semantic {
       dim: ${EMBED_DIM},
       m: 50,
       dtype: F32,

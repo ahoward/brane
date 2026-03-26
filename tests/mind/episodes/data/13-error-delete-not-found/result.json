@@ -1,0 +1,12 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "id": [{"code": "not_found", "message": "episode not found"}]
+  },
+  "meta": {
+    "path": "/mind/episodes/delete",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

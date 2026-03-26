@@ -1,0 +1,12 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "agent_id": [{"code": "required", "message": "agent_id is required"}]
+  },
+  "meta": {
+    "path": "/mind/episodes/create",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}
