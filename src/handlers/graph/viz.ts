@@ -49,7 +49,7 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<VizOu
     if (p.center !== undefined) {
       // Centered mode: get the center concept and its neighbors
       const center_result = await db.run(`
-        ?[id, name, type] := *concepts[id, name, type, _], id = ${p.center}
+        ?[id, name, type] := *concepts[id, name, type, _, _], id = ${p.center}
       `)
 
       if (center_result.rows.length === 0) {
@@ -64,9 +64,9 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<VizOu
 
       // Get center concept and its direct neighbors
       const concepts_result = await db.run(`
-        center[id, name, type] := *concepts[id, name, type, _], id = ${p.center}
-        neighbors[id, name, type] := *edges[_, ${p.center}, id, _, _], *concepts[id, name, type, _]
-        neighbors[id, name, type] := *edges[_, id, ${p.center}, _, _], *concepts[id, name, type, _]
+        center[id, name, type] := *concepts[id, name, type, _, _], id = ${p.center}
+        neighbors[id, name, type] := *edges[_, ${p.center}, id, _, _, _], *concepts[id, name, type, _, _]
+        neighbors[id, name, type] := *edges[_, id, ${p.center}, _, _, _], *concepts[id, name, type, _, _]
         ?[id, name, type] := center[id, name, type]
         ?[id, name, type] := neighbors[id, name, type]
       `)
@@ -80,7 +80,7 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<VizOu
       const concept_ids = concepts.map(c => c.id)
       const edges_result = await db.run(`
         ?[id, source, target, relation, weight] :=
-          *edges[id, source, target, relation, weight],
+          *edges[id, source, target, relation, weight, _],
           source in [${concept_ids.join(", ")}],
           target in [${concept_ids.join(", ")}]
       `)
@@ -92,7 +92,7 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<VizOu
     } else {
       // Full graph mode
       const concepts_result = await db.run(`
-        ?[id, name, type] := *concepts[id, name, type, _]
+        ?[id, name, type] := *concepts[id, name, type, _, _]
       `)
 
       concepts = concepts_result.rows.map((row) => {
@@ -101,7 +101,7 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<VizOu
       })
 
       const edges_result = await db.run(`
-        ?[id, source, target, relation, weight] := *edges[id, source, target, relation, weight]
+        ?[id, source, target, relation, weight] := *edges[id, source, target, relation, weight, _]
       `)
 
       edges = edges_result.rows.map((row) => {

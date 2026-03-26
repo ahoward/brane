@@ -3,7 +3,8 @@
   "result": {
     "id": 1,
     "name": "AuthService",
-    "type": "Entity"
+    "type": "Entity",
+    "agent_id": null
   },
   "errors": null,
   "meta": {

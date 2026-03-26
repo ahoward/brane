@@ -17,7 +17,7 @@ case "$TC_CASE_NAME" in
   01-success-get-custom)
     init_mind
     # Create a custom rule to retrieve
-    echo '{"name": "my_rule", "description": "My custom rule", "body": "my_rule[id, name] := *concepts[id, name, _]"}' | brane /mind/rules/create > /dev/null 2>&1
+    echo '{"name": "my_rule", "description": "My custom rule", "body": "my_rule[id, name] := *concepts[id, name, _, _, _]"}' | brane /mind/rules/create > /dev/null 2>&1
     ;;
   02-error-not-found)
     init_mind

@@ -3,7 +3,8 @@
   "result": {
     "id": 1,
     "name": "Warning",
-    "type": "Caveat"
+    "type": "Caveat",
+    "agent_id": null
   },
   "errors": null,
   "meta": {

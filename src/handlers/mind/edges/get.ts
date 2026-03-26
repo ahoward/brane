@@ -16,6 +16,7 @@ interface Edge {
   target:   number
   relation: string
   weight:   number
+  agent_id: string | null
 }
 
 export async function handler(params: Params, emit?: Emit): Promise<Result<Edge>> {
@@ -48,10 +49,10 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Edge>
   try {
     // Get edge by ID
     const result = await db.run(`
-      ?[id, source, target, relation, weight] := *edges[id, source, target, relation, weight], id = ${p.id}
+      ?[id, source, target, relation, weight, agent_id] := *edges[id, source, target, relation, weight, agent_id], id = ${p.id}
     `)
 
-    const rows = result.rows as [number, number, number, string, number][]
+    const rows = result.rows as [number, number, number, string, number, string][]
 
     if (rows.length === 0) {
       db.close()
@@ -63,7 +64,7 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Edge>
       })
     }
 
-    const [id, source, target, relation, weight] = rows[0]
+    const [id, source, target, relation, weight, agent_id] = rows[0]
 
     db.close()
 
@@ -72,7 +73,8 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Edge>
       source,
       target,
       relation,
-      weight
+      weight,
+      agent_id: agent_id || null,
     })
   } catch (err) {
     db.close()

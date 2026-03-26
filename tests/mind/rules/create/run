@@ -23,7 +23,7 @@ case "$TC_CASE_NAME" in
   03-error-duplicate-name)
     init_mind
     # Create rule first
-    echo '{"name": "myrule", "description": "test", "body": "myrule[id, name] := *concepts[id, name, _]"}' | brane /mind/rules/create > /dev/null 2>&1
+    echo '{"name": "myrule", "description": "test", "body": "myrule[id, name] := *concepts[id, name, _, _, _]"}' | brane /mind/rules/create > /dev/null 2>&1
     ;;
   04-error-missing-description)
     init_mind

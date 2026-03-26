@@ -15,14 +15,16 @@ interface ItemParams {
 }
 
 interface CreateManyParams {
-  items?: ItemParams[]
+  items?:      ItemParams[]
+  agent_id?:   string
   fuzzy_dedup?: boolean  // default true
 }
 
 interface Concept {
-  id:   number
-  name: string
-  type: string
+  id:       number
+  name:     string
+  type:     string
+  agent_id: string | null
 }
 
 export async function handler(params: Params, emit?: Emit): Promise<Result<{ items: Concept[] }>> {
@@ -94,6 +96,7 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<{ ite
   const { db } = mind
 
   try {
+    const agent_id = (typeof p.agent_id === "string" && p.agent_id.length > 0) ? p.agent_id : ""
     const fuzzy = p.fuzzy_dedup !== false  // default true
     // Each result entry: { name, type, create_index } where create_index >= 0 means "to be created"
     // or { name, type, id } where id > 0 means "matched existing"
@@ -108,7 +111,7 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<{ ite
         // Check DB first
         const db_match = await find_fuzzy_match(db, item.name!)
         if (db_match) {
-          results.push({ id: db_match.id, name: db_match.name, type: db_match.type })
+          results.push({ id: db_match.id, name: db_match.name, type: db_match.type, agent_id: null })
           continue
         }
 
@@ -116,7 +119,7 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<{ ite
         const batch_match = find_fuzzy_match_in_batch(item.name!, pending)
         if (batch_match) {
           // Point to the same pending item — will resolve to same ID
-          results.push({ id: batch_match.id, name: batch_match.name, type: batch_match.type })
+          results.push({ id: batch_match.id, name: batch_match.name, type: batch_match.type, agent_id: agent_id || null })
           continue
         }
 
@@ -124,13 +127,13 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<{ ite
         const prov_id = -(to_create.length + 1)
         to_create.push({ name: item.name!, type: item.type! })
         pending.push({ id: prov_id, name: item.name!, type: item.type! })
-        results.push({ id: prov_id, name: item.name!, type: item.type! })
+        results.push({ id: prov_id, name: item.name!, type: item.type!, agent_id: agent_id || null })
       }
     } else {
       for (const item of p.items) {
         const prov_id = -(to_create.length + 1)
         to_create.push({ name: item.name!, type: item.type! })
-        results.push({ id: prov_id, name: item.name!, type: item.type! })
+        results.push({ id: prov_id, name: item.name!, type: item.type!, agent_id: agent_id || null })
       }
     }
 
@@ -158,16 +161,17 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<{ ite
       const embeddings = await generate_embeddings(names)
 
       // Build single :put
+      const escaped_agent_id = agent_id.replace(/'/g, "''")
       const rows = to_create.map((item, i) => {
         const id = start_id + i
         const escaped_name = item.name.replace(/'/g, "''")
         const vector_str = embeddings[i] !== null ? `vec(${JSON.stringify(embeddings[i])})` : "null"
-        return `[${id}, '${escaped_name}', '${item.type}', ${vector_str}]`
+        return `[${id}, '${escaped_name}', '${item.type}', ${vector_str}, '${escaped_agent_id}']`
       })
 
       await db.run(`
-        ?[id, name, type, vector] <- [${rows.join(", ")}]
-        :put concepts { id, name, type, vector }
+        ?[id, name, type, vector, agent_id] <- [${rows.join(", ")}]
+        :put concepts { id, name, type, vector, agent_id }
       `)
 
       // Build provisional → real ID map

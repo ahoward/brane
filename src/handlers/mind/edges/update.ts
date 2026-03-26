@@ -19,6 +19,7 @@ interface Edge {
   target:   number
   relation: string
   weight:   number
+  agent_id: string | null
 }
 
 export async function handler(params: Params, emit?: Emit): Promise<Result<Edge>> {
@@ -75,10 +76,10 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Edge>
   try {
     // Get existing edge
     const existing = await db.run(`
-      ?[id, source, target, relation, weight] := *edges[id, source, target, relation, weight], id = ${p.id}
+      ?[id, source, target, relation, weight, agent_id] := *edges[id, source, target, relation, weight, agent_id], id = ${p.id}
     `)
 
-    const rows = existing.rows as [number, number, number, string, number][]
+    const rows = existing.rows as [number, number, number, string, number, string][]
 
     if (rows.length === 0) {
       db.close()
@@ -90,7 +91,7 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Edge>
       })
     }
 
-    const [id, source, target, old_relation, old_weight] = rows[0]
+    const [id, source, target, old_relation, old_weight, old_agent_id] = rows[0]
 
     // Apply updates
     const new_relation = (p.relation !== undefined && p.relation !== null && p.relation !== "")
@@ -100,10 +101,10 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Edge>
       ? p.weight
       : old_weight
 
-    // Update edge
+    // Update edge (preserve agent_id)
     await db.run(`
-      ?[id, source, target, relation, weight] <- [[${id}, ${source}, ${target}, '${new_relation}', ${new_weight}]]
-      :put edges { id, source, target, relation, weight }
+      ?[id, source, target, relation, weight, agent_id] <- [[${id}, ${source}, ${target}, '${new_relation}', ${new_weight}, '${old_agent_id.replace(/'/g, "''")}']]
+      :put edges { id, source, target, relation, weight, agent_id }
     `)
 
     // Track relation usage silently if relation changed
@@ -122,7 +123,8 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Edge>
       source,
       target,
       relation: new_relation,
-      weight:   new_weight
+      weight:   new_weight,
+      agent_id: old_agent_id || null,
     })
   } catch (err) {
     db.close()

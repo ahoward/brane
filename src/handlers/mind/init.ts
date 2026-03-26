@@ -20,7 +20,7 @@ interface InitResult {
   schema_version: string
 }
 
-const SCHEMA_VERSION = "1.8.0"
+const SCHEMA_VERSION = "1.9.0"
 
 //
 // Built-in rules for graph integrity checks
@@ -29,15 +29,15 @@ const BUILTIN_RULES = [
   {
     name: "cycles",
     description: "Detects circular dependencies via DEPENDS_ON edges",
-    body: `cycles[id, name] := *concepts[id, name, _, _], reachable[id, id]
-reachable[x, y] := *edges[_, x, y, 'DEPENDS_ON', _]
-reachable[x, y] := *edges[_, x, z, 'DEPENDS_ON', _], reachable[z, y]`,
+    body: `cycles[id, name] := *concepts[id, name, _, _, _], reachable[id, id]
+reachable[x, y] := *edges[_, x, y, 'DEPENDS_ON', _, _]
+reachable[x, y] := *edges[_, x, z, 'DEPENDS_ON', _, _], reachable[z, y]`,
     builtin: true
   },
   {
     name: "orphans",
     description: "Detects concepts with no edges (disconnected)",
-    body: `orphans[id, name] := *concepts[id, name, _, _], not *edges[_, id, _, _, _], not *edges[_, _, id, _, _]`,
+    body: `orphans[id, name] := *concepts[id, name, _, _, _], not *edges[_, id, _, _, _, _], not *edges[_, _, id, _, _, _]`,
     builtin: true
   }
 ]
@@ -59,7 +59,8 @@ const SCHEMA_QUERIES = [
     id: Int,
     name: String,
     type: String,
-    vector: <F32; ${EMBED_DIM}>?
+    vector: <F32; ${EMBED_DIM}>?,
+    agent_id: String default ""
   }`,
 
   // Edges between concepts
@@ -72,7 +73,8 @@ const SCHEMA_QUERIES = [
     source: Int,
     target: Int,
     relation: String,
-    weight: Float default 1.0
+    weight: Float default 1.0,
+    agent_id: String default ""
   }`,
 
   // Provenance linking concepts to body files

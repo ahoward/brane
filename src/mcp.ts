@@ -54,8 +54,9 @@ const TOOLS: McpTool[] = [
     inputSchema: {
       type: "object",
       properties: {
-        query: { type: "string", description: "Natural language search query" },
-        limit: { type: "number", description: "Max results to return (default 10)" },
+        query:    { type: "string", description: "Natural language search query" },
+        limit:    { type: "number", description: "Max results to return (default 10)" },
+        agent_id: { type: "string", description: "Filter by agent ID" },
       },
       required: ["query"],
     },
@@ -94,12 +95,13 @@ const TOOLS: McpTool[] = [
   },
   {
     name: "concepts_list",
-    description: "List all concepts in the knowledge graph, optionally filtered by type.",
+    description: "List all concepts in the knowledge graph, optionally filtered by type or agent.",
     inputSchema: {
       type: "object",
       properties: {
-        type:  { type: "string", description: "Filter by concept type (Entity, Caveat, Rule)" },
-        limit: { type: "number", description: "Max results (default all)" },
+        type:     { type: "string", description: "Filter by concept type (Entity, Caveat, Rule)" },
+        agent_id: { type: "string", description: "Filter by agent ID (e.g., 'claude-code')" },
+        limit:    { type: "number", description: "Max results (default all)" },
       },
     },
   },
@@ -122,6 +124,7 @@ const TOOLS: McpTool[] = [
       type: "object",
       properties: {
         relation: { type: "string", description: "Filter by relation type (DEPENDS_ON, CONFLICTS_WITH, DEFINED_IN)" },
+        agent_id: { type: "string", description: "Filter by agent ID" },
       },
     },
   },
@@ -682,6 +685,15 @@ async function handle_tools_call(params: Record<string, unknown>): Promise<unkno
           isError: true,
         }
       }
+    }
+  }
+
+  // Auto-inject agent_id from MCP client info for tools that support it
+  const AGENT_ID_TOOLS = ["concepts_create", "edges_create", "concepts_list", "edges_list", "search", "relate"]
+  if (AGENT_ID_TOOLS.includes(name) && !args.agent_id && mcp_agent_id !== "unknown") {
+    // For create tools, always inject. For list/search, don't inject (let them show all by default)
+    if (name === "concepts_create" || name === "edges_create" || name === "relate") {
+      args.agent_id = mcp_agent_id
     }
   }
 

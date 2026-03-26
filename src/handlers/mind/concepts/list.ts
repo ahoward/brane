@@ -7,13 +7,15 @@ import { success, error } from "../../../lib/result.ts"
 import { open_mind, is_mind_error, is_valid_concept_type } from "../../../lib/mind.ts"
 
 interface ListParams {
-  type?: string
+  type?:     string
+  agent_id?: string
 }
 
 interface Concept {
-  id:   number
-  name: string
-  type: string
+  id:       number
+  name:     string
+  type:     string
+  agent_id: string | null
 }
 
 interface ListResult {
@@ -51,14 +53,19 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<ListR
   const { db } = mind
 
   try {
-    // Query concepts
-    let query: string
+    // Query concepts with optional filters
+    const conditions: string[] = []
 
     if (p.type) {
-      query = `?[id, name, type] := *concepts[id, name, type, _], type = '${p.type}'`
-    } else {
-      query = `?[id, name, type] := *concepts[id, name, type, _]`
+      conditions.push(`type = '${p.type}'`)
     }
+
+    if (typeof p.agent_id === "string" && p.agent_id.length > 0) {
+      conditions.push(`agent_id = '${p.agent_id.replace(/'/g, "''")}'`)
+    }
+
+    const where_clause = conditions.length > 0 ? `, ${conditions.join(", ")}` : ""
+    const query = `?[id, name, type, agent_id] := *concepts[id, name, type, _, agent_id]${where_clause}`
 
     const result = await db.run(query)
 
@@ -67,9 +74,10 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<ListR
     const rows = result.rows as (number | string)[][]
 
     const concepts: Concept[] = rows.map(row => ({
-      id:   row[0] as number,
-      name: row[1] as string,
-      type: row[2] as string
+      id:       row[0] as number,
+      name:     row[1] as string,
+      type:     row[2] as string,
+      agent_id: (row[3] as string) || null,
     }))
 
     return success({

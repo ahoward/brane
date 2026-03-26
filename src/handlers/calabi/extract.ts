@@ -328,39 +328,39 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Extra
 
       // Remove edges where this concept is source
       const source_edges = await db.run(`
-        ?[id, source, target, relation, weight] := *edges[id, source, target, relation, weight], source = ${old_id}
+        ?[id, source, target, relation, weight, agent_id] := *edges[id, source, target, relation, weight, agent_id], source = ${old_id}
       `)
-      for (const edge of source_edges.rows as [number, number, number, string, number][]) {
-        const [id, source, target, relation, weight] = edge
+      for (const edge of source_edges.rows as [number, number, number, string, number, string][]) {
+        const [id, source, target, relation, weight, agent_id] = edge
         await db.run(`
-          ?[id, source, target, relation, weight] <- [[${id}, ${source}, ${target}, '${relation}', ${weight}]]
-          :rm edges { id, source, target, relation, weight }
+          ?[id, source, target, relation, weight, agent_id] <- [[${id}, ${source}, ${target}, '${relation}', ${weight}, '${agent_id}']]
+          :rm edges { id, source, target, relation, weight, agent_id }
         `)
       }
 
       // Remove edges where this concept is target
       const target_edges = await db.run(`
-        ?[id, source, target, relation, weight] := *edges[id, source, target, relation, weight], target = ${old_id}
+        ?[id, source, target, relation, weight, agent_id] := *edges[id, source, target, relation, weight, agent_id], target = ${old_id}
       `)
-      for (const edge of target_edges.rows as [number, number, number, string, number][]) {
-        const [id, source, target, relation, weight] = edge
+      for (const edge of target_edges.rows as [number, number, number, string, number, string][]) {
+        const [id, source, target, relation, weight, agent_id] = edge
         await db.run(`
-          ?[id, source, target, relation, weight] <- [[${id}, ${source}, ${target}, '${relation}', ${weight}]]
-          :rm edges { id, source, target, relation, weight }
+          ?[id, source, target, relation, weight, agent_id] <- [[${id}, ${source}, ${target}, '${relation}', ${weight}, '${agent_id}']]
+          :rm edges { id, source, target, relation, weight, agent_id }
         `)
       }
 
-      // Get concept data for deletion (including vector)
+      // Get concept data for deletion (including vector and agent_id)
       const concept_data = await db.run(`
-        ?[id, name, type, vector] := *concepts[id, name, type, vector], id = ${old_id}
+        ?[id, name, type, vector, agent_id] := *concepts[id, name, type, vector, agent_id], id = ${old_id}
       `)
       const concept_rows = concept_data.rows as any[][]
       if (concept_rows.length > 0) {
-        const [id, name, type, vector] = concept_rows[0]
+        const [id, name, type, vector, agent_id] = concept_rows[0]
         const vector_str = vector !== null ? JSON.stringify(vector) : "null"
         await db.run(`
-          ?[id, name, type, vector] <- [[${id}, '${escape_string(name)}', '${type}', ${vector_str}]]
-          :rm concepts { id, name, type, vector }
+          ?[id, name, type, vector, agent_id] <- [[${id}, '${escape_string(name)}', '${type}', ${vector_str}, '${agent_id}']]
+          :rm concepts { id, name, type, vector, agent_id }
         `)
       }
 
@@ -404,7 +404,7 @@ function escape_string(s: string): string {
 
 async function find_concept_by_name(db: any, name: string): Promise<number | null> {
   const result = await db.run(`
-    ?[id] := *concepts[id, name, _, _], name = '${escape_string(name)}'
+    ?[id] := *concepts[id, name, _, _, _], name = '${escape_string(name)}'
   `)
   const rows = result.rows as number[][]
   if (rows.length > 0) {
@@ -431,7 +431,7 @@ async function concept_has_provenance(db: any, concept_id: number): Promise<bool
 
 async function is_concept_caveat(db: any, concept_id: number): Promise<boolean> {
   const result = await db.run(`
-    ?[type] := *concepts[id, _, type, _], id = ${concept_id}
+    ?[type] := *concepts[id, _, type, _, _], id = ${concept_id}
   `)
   const rows = result.rows as string[][]
   if (rows.length > 0) {

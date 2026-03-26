@@ -3,7 +3,7 @@
   "result": {
     "name": "my_rule",
     "description": "My custom rule",
-    "body": "my_rule[id, name] := *concepts[id, name, _]",
+    "body": "my_rule[id, name] := *concepts[id, name, _, _, _]",
     "builtin": false
   },
   "errors": null,

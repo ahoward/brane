@@ -12,6 +12,7 @@ import { find_fuzzy_match } from "../../../lib/dedup.ts"
 interface CreateParams {
   name?: string
   type?: string
+  agent_id?: string
   fuzzy_dedup?: boolean  // default true
 }
 
@@ -19,6 +20,7 @@ interface Concept {
   id:              number
   name:            string
   type:            string
+  agent_id:        string | null
   matched_existing?: boolean
   match_type?:     string
 }
@@ -80,6 +82,7 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Conce
           id:               match.id,
           name:             match.name,
           type:             match.type,
+          agent_id:         null,  // existing match — don't know agent
           matched_existing: true,
           match_type:       match.match_type,
         })
@@ -89,14 +92,17 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Conce
     // Get next ID
     const id = await get_next_concept_id(db)
 
+    // Resolve agent_id (empty string = unattributed)
+    const agent_id = (typeof p.agent_id === "string" && p.agent_id.length > 0) ? p.agent_id : ""
+
     // Generate embedding for concept name (graceful degradation - null if fails)
     const embedding = await generate_embedding(p.name)
     const vector_str = embedding !== null ? `vec(${JSON.stringify(embedding)})` : "null"
 
-    // Insert concept with vector
+    // Insert concept with vector and agent_id
     await db.run(`
-      ?[id, name, type, vector] <- [[${id}, '${p.name.replace(/'/g, "''")}', '${p.type}', ${vector_str}]]
-      :put concepts { id, name, type, vector }
+      ?[id, name, type, vector, agent_id] <- [[${id}, '${p.name.replace(/'/g, "''")}', '${p.type}', ${vector_str}, '${agent_id.replace(/'/g, "''")}']]
+      :put concepts { id, name, type, vector, agent_id }
     `)
 
     // Track type usage silently (don't fail on tracking errors)
@@ -109,9 +115,10 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Conce
     db.close()
 
     return success({
-      id:   id,
-      name: p.name,
-      type: p.type
+      id:       id,
+      name:     p.name,
+      type:     p.type,
+      agent_id: agent_id || null,
     })
   } catch (err) {
     db.close()

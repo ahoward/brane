@@ -124,7 +124,7 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Prune
     if (orphan_ids.size > 0) {
       const ids_list = [...orphan_ids].map(id => `[${id}]`).join(", ")
       const concept_result = await db.run(`
-        ?[id, name, type] := *concepts[id, name, type, _], id in [${[...orphan_ids].join(", ")}]
+        ?[id, name, type] := *concepts[id, name, type, _, _], id in [${[...orphan_ids].join(", ")}]
       `)
       for (const row of concept_result.rows as [number, string, string][]) {
         orphan_concepts.push({ id: row[0], name: row[1], type: row[2] })
@@ -135,7 +135,7 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Prune
     const dangling_edges: { id: number; source: number; target: number; relation: string }[] = []
     if (orphan_ids.size > 0) {
       const edges_result = await db.run(`
-        ?[id, source, target, relation] := *edges[id, source, target, relation, _]
+        ?[id, source, target, relation] := *edges[id, source, target, relation, _, _]
       `)
       for (const row of edges_result.rows as [number, number, number, string][]) {
         if (orphan_ids.has(row[1]) || orphan_ids.has(row[2])) {
@@ -146,12 +146,12 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Prune
 
     // Step 8: Delete (unless dry_run)
     if (!dry_run) {
-      // Delete edges
+      // Delete edges (need all columns including agent_id for :rm)
       if (dangling_edges.length > 0) {
-        const edge_data = dangling_edges.map(e => `[${e.id}, ${e.source}, ${e.target}, '${e.relation.replace(/'/g, "''")}', 1.0]`).join(", ")
+        const edge_data = dangling_edges.map(e => `[${e.id}, ${e.source}, ${e.target}, '${e.relation.replace(/'/g, "''")}', 1.0, '']`).join(", ")
         await db.run(`
-          ?[id, source, target, relation, weight] <- [${edge_data}]
-          :rm edges { id, source, target, relation, weight }
+          ?[id, source, target, relation, weight, agent_id] := *edges[id, source, target, relation, weight, agent_id], id in [${dangling_edges.map(e => e.id).join(", ")}]
+          :rm edges { id, source, target, relation, weight, agent_id }
         `)
       }
 
@@ -168,8 +168,8 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Prune
       if (orphan_ids.size > 0) {
         const id_list = [...orphan_ids].join(", ")
         await db.run(`
-          ?[id, name, type, vector] := *concepts[id, name, type, vector], id in [${id_list}]
-          :rm concepts { id, name, type, vector }
+          ?[id, name, type, vector, agent_id] := *concepts[id, name, type, vector, agent_id], id in [${id_list}]
+          :rm concepts { id, name, type, vector, agent_id }
         `)
       }
     }

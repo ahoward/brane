@@ -14,7 +14,7 @@ import { EMBED_DIM } from "./embed.ts"
 // The latest schema version this binary supports.
 // Bump this when adding a new migration.
 //
-export const LATEST_VERSION = "1.8.0"
+export const LATEST_VERSION = "1.9.0"
 
 //
 // A single migration step: transforms schema from one version to the next.
@@ -82,6 +82,114 @@ const MIGRATIONS: Migration[] = [
           ef_construction: 100
         }
       `)
+    }
+  },
+
+  // v1.8.0 → v1.9.0: add agent_id to concepts and edges
+  {
+    from: "1.8.0",
+    to:   "1.9.0",
+    apply: async (db: CozoDb) => {
+      // --- Migrate concepts: add agent_id column ---
+
+      // 1. Drop HNSW index (depends on the relation)
+      await db.run(`::hnsw drop concepts:semantic`)
+
+      // 2. Create temp with new schema
+      await db.run(`
+        :create concepts_tmp {
+          id: Int,
+          name: String,
+          type: String,
+          vector: <F32; ${EMBED_DIM}>?,
+          agent_id: String default ""
+        }
+      `)
+
+      // 3. Copy existing data (agent_id defaults to empty string)
+      await db.run(`
+        ?[id, name, type, vector, agent_id] := *concepts[id, name, type, vector], agent_id = ""
+        :put concepts_tmp { id, name, type, vector, agent_id }
+      `)
+
+      // 4. Drop original
+      await db.run(`::remove concepts`)
+
+      // 5. Create with new schema
+      await db.run(`
+        :create concepts {
+          id: Int,
+          name: String,
+          type: String,
+          vector: <F32; ${EMBED_DIM}>?,
+          agent_id: String default ""
+        }
+      `)
+
+      // 6. Copy data back
+      await db.run(`
+        ?[id, name, type, vector, agent_id] := *concepts_tmp[id, name, type, vector, agent_id]
+        :put concepts { id, name, type, vector, agent_id }
+      `)
+
+      // 7. Drop temp
+      await db.run(`::remove concepts_tmp`)
+
+      // 8. Recreate HNSW index
+      await db.run(`
+        ::hnsw create concepts:semantic {
+          dim: ${EMBED_DIM},
+          m: 50,
+          dtype: F32,
+          fields: [vector],
+          distance: Cosine,
+          ef_construction: 100
+        }
+      `)
+
+      // --- Migrate edges: add agent_id column ---
+
+      // 1. Create temp with new schema
+      await db.run(`
+        :create edges_tmp {
+          id: Int,
+          source: Int,
+          target: Int,
+          relation: String,
+          weight: Float default 1.0,
+          agent_id: String default ""
+        }
+      `)
+
+      // 2. Copy existing data
+      await db.run(`
+        ?[id, source, target, relation, weight, agent_id] := *edges[id, source, target, relation, weight], agent_id = ""
+        :put edges_tmp { id, source, target, relation, weight, agent_id }
+      `)
+
+      // 3. Drop original
+      await db.run(`::remove edges`)
+
+      // 4. Create with new schema
+      await db.run(`
+        :create edges {
+          id: Int,
+          source: Int,
+          target: Int,
+          relation: String,
+          weight: Float default 1.0,
+          agent_id: String default ""
+        }
+      `)
+
+      // 5. Copy data back
+      await db.run(`
+        ?[id, source, target, relation, weight, agent_id] := *edges_tmp[id, source, target, relation, weight, agent_id]
+        :put edges { id, source, target, relation, weight, agent_id }
+      `)
+
+      // 6. Drop temp
+      await db.run(`::remove edges_tmp`)
     }
   },
 ]

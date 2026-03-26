@@ -58,7 +58,7 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Neigh
   try {
     // Get the concept
     const concept_result = await db.run(`
-      ?[id, name, type] := *concepts[id, name, type, _], id = ${p.id}
+      ?[id, name, type] := *concepts[id, name, type, _, _], id = ${p.id}
     `)
 
     if (concept_result.rows.length === 0) {
@@ -76,8 +76,8 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Neigh
     // Get incoming edges (edges where this concept is the target)
     const incoming_result = await db.run(`
       ?[source_id, source_name, source_type, edge_id, relation, weight] :=
-        *edges[edge_id, source_id, target_id, relation, weight],
-        *concepts[source_id, source_name, source_type, _],
+        *edges[edge_id, source_id, target_id, relation, weight, _],
+        *concepts[source_id, source_name, source_type, _, _],
         target_id = ${p.id}
     `)
 
@@ -96,8 +96,8 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Neigh
     // Get outgoing edges (edges where this concept is the source)
     const outgoing_result = await db.run(`
       ?[target_id, target_name, target_type, edge_id, relation, weight] :=
-        *edges[edge_id, source_id, target_id, relation, weight],
-        *concepts[target_id, target_name, target_type, _],
+        *edges[edge_id, source_id, target_id, relation, weight, _],
+        *concepts[target_id, target_name, target_type, _, _],
         source_id = ${p.id}
     `)
 

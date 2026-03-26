@@ -15,7 +15,8 @@ interface ItemParams {
 }
 
 interface CreateManyParams {
-  items?: ItemParams[]
+  items?:    ItemParams[]
+  agent_id?: string
 }
 
 interface Edge {
@@ -24,6 +25,7 @@ interface Edge {
   target:   number
   relation: string
   weight:   number
+  agent_id: string | null
 }
 
 export async function handler(params: Params, emit?: Emit): Promise<Result<{ items: Edge[] }>> {
@@ -124,7 +126,7 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<{ ite
     const id_list = [...all_ids].map(id => `[${id}]`).join(", ")
     const check_result = await db.run(`
       input[id] <- [${id_list}]
-      ?[id] := input[id], *concepts[id, _, _, _]
+      ?[id] := input[id], *concepts[id, _, _, _, _]
     `)
     const found_ids = new Set((check_result.rows as number[][]).map(r => r[0]))
 
@@ -172,15 +174,17 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<{ ite
     `)
 
     // Build single :put with all rows
+    const agent_id = (typeof p.agent_id === "string" && p.agent_id.length > 0) ? p.agent_id : ""
+    const escaped_agent_id = agent_id.replace(/'/g, "''")
     const rows = p.items.map((item, i) => {
       const id = start_id + i
       const weight = item.weight ?? 1.0
-      return `[${id}, ${item.source}, ${item.target}, '${item.relation}', ${weight}]`
+      return `[${id}, ${item.source}, ${item.target}, '${item.relation}', ${weight}, '${escaped_agent_id}']`
     })
 
     await db.run(`
-      ?[id, source, target, relation, weight] <- [${rows.join(", ")}]
-      :put edges { id, source, target, relation, weight }
+      ?[id, source, target, relation, weight, agent_id] <- [${rows.join(", ")}]
+      :put edges { id, source, target, relation, weight, agent_id }
     `)
 
     // Track relation usage (deduplicated)
@@ -200,7 +204,8 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<{ ite
       source:   item.source!,
       target:   item.target!,
       relation: item.relation!,
-      weight:   item.weight ?? 1.0
+      weight:   item.weight ?? 1.0,
+      agent_id: agent_id || null,
     }))
 
     return success({ items })

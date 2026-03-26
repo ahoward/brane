@@ -10,6 +10,7 @@ interface ListParams {
   source?:   number
   target?:   number
   relation?: string
+  agent_id?: string
 }
 
 interface Edge {
@@ -18,6 +19,7 @@ interface Edge {
   target:   number
   relation: string
   weight:   number
+  agent_id: string | null
 }
 
 interface ListResult {
@@ -58,23 +60,28 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<ListR
       conditions.push(`relation = '${p.relation}'`)
     }
 
+    if (typeof p.agent_id === "string" && p.agent_id.length > 0) {
+      conditions.push(`agent_id = '${p.agent_id.replace(/'/g, "''")}'`)
+    }
+
     const where_clause = conditions.length > 0
       ? `, ${conditions.join(", ")}`
       : ""
 
     const query = `
-      ?[id, source, target, relation, weight] := *edges[id, source, target, relation, weight]${where_clause}
+      ?[id, source, target, relation, weight, agent_id] := *edges[id, source, target, relation, weight, agent_id]${where_clause}
     `
 
     const result = await db.run(query)
-    const rows = result.rows as [number, number, number, string, number][]
+    const rows = result.rows as [number, number, number, string, number, string][]
 
-    const edges: Edge[] = rows.map(([id, source, target, relation, weight]) => ({
+    const edges: Edge[] = rows.map(([id, source, target, relation, weight, agent_id]) => ({
       id,
       source,
       target,
       relation,
-      weight
+      weight,
+      agent_id: agent_id || null,
     }))
 
     db.close()

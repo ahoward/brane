@@ -2,9 +2,9 @@
   "status": "success",
   "result": {
     "items": [
-      {"id": 1, "name": "AuthService", "type": "Entity"},
-      {"id": 2, "name": "Database", "type": "Entity"},
-      {"id": 3, "name": "Logger", "type": "Entity"}
+      {"id": 1, "name": "AuthService", "type": "Entity", "agent_id": null},
+      {"id": 2, "name": "Database", "type": "Entity", "agent_id": null},
+      {"id": 3, "name": "Logger", "type": "Entity", "agent_id": null}
     ]
   },
   "errors": null,
