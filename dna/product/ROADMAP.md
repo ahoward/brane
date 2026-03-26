@@ -41,7 +41,7 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 ### Next — MCP & Integration
 
-- [ ] `040-multi-agent-isolation` — Per-agent knowledge spaces via lens isolation ([#40](https://github.com/ahoward/brane/issues/40))
+- [x] `040-multi-agent-isolation` — Per-agent knowledge spaces via lens isolation ([#40](https://github.com/ahoward/brane/issues/40))
 - [ ] `041-mcp-resources` — Expose concepts, episodes, graph as MCP resources ([#41](https://github.com/ahoward/brane/issues/41))
 - [ ] `042-mcp-prompts` — Pre-built reasoning templates for agents ([#42](https://github.com/ahoward/brane/issues/42))
 - [ ] `044-integration-tests` — Brane MCP with Claude Code end-to-end ([#44](https://github.com/ahoward/brane/issues/44))
@@ -74,6 +74,7 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 | Feature | PR | Date |
 |---------|-----|------|
+| `040-multi-agent-isolation` | #63 | 2026-03-26 |
 | `039-intelligent-decay` | #62 | 2026-03-26 |
 | `038-episode-consolidation` | #61 | 2026-03-26 |
 | `037-agent-id-tracking` | #60 | 2026-03-26 |
