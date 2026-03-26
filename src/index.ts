@@ -70,6 +70,7 @@ import { handler as mind_episodes_get_handler } from "./handlers/mind/episodes/g
 import { handler as mind_episodes_list_handler } from "./handlers/mind/episodes/list.ts"
 import { handler as mind_episodes_search_handler } from "./handlers/mind/episodes/search.ts"
 import { handler as mind_episodes_delete_handler } from "./handlers/mind/episodes/delete.ts"
+import { handler as mind_agent_lens_init_handler } from "./handlers/mind/agent-lens/init.ts"
 
 sys.register("/ping", ping_handler)
 sys.register("/body/init", body_init_handler)
@@ -136,6 +137,7 @@ sys.register("/mind/episodes/get", mind_episodes_get_handler)
 sys.register("/mind/episodes/list", mind_episodes_list_handler)
 sys.register("/mind/episodes/search", mind_episodes_search_handler)
 sys.register("/mind/episodes/delete", mind_episodes_delete_handler)
+sys.register("/mind/agent-lens/init", mind_agent_lens_init_handler)
 
 // export
 export { sys }
