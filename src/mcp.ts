@@ -6,6 +6,9 @@
 //
 
 import { sys } from "./index.ts"
+import { resolve_lens_paths } from "./lib/state.ts"
+import { acquire_lock, auto_release_on_exit } from "./lib/lock.ts"
+import { resolve } from "node:path"
 
 //
 // Constants
@@ -616,6 +619,27 @@ async function handle_initialize(params: Record<string, unknown>): Promise<unkno
   // Auto-create per-agent lens for isolation (#40)
   if (mcp_agent_id !== "unknown") {
     await sys.call("/mind/agent-lens/init", { agent_id: mcp_agent_id })
+  }
+
+  // Acquire advisory lock on the active lens directory (#48)
+  try {
+    const paths = resolve_lens_paths()
+    const lens_dir = paths.lens_name === "default"
+      ? resolve(paths.brane_path, "lens", "default")
+      : resolve(paths.brane_path, "lens", paths.lens_name)
+    const lock_path = resolve(lens_dir, ".lock")
+    const lock = acquire_lock(lock_path)
+
+    if (!lock.acquired) {
+      throw new McpError(-32002, lock.error ?? "Failed to acquire lens lock")
+    }
+
+    // Auto-release on process exit/crash
+    auto_release_on_exit(lock_path)
+  } catch (err) {
+    if (err instanceof McpError) throw err
+    // Lock failure is advisory — don't block initialization
+    console.error(`brane: warning: lock acquisition failed: ${err instanceof Error ? err.message : String(err)}`)
   }
 
   return {
