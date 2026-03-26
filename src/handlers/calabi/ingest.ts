@@ -7,6 +7,7 @@ import { success, error } from "../../lib/result.ts"
 import { open_mind, is_mind_error } from "../../lib/mind.ts"
 import { get_golden_types, get_golden_relations } from "../../lib/lens.ts"
 import { extract_from_file } from "../../lib/llm.ts"
+import { check_file_count } from "../../lib/rate-limit.ts"
 import { parse_file } from "../../lib/ast/parse.ts"
 import { generate_sentinels } from "../../lib/ast/sentinels.ts"
 import { compute_coverage } from "../../lib/coverage.ts"
@@ -20,6 +21,7 @@ import { Database } from "bun:sqlite"
 interface IngestParams {
   path?:    string
   dry_run?: boolean
+  force?:   boolean
 }
 
 interface IngestFileResult {
@@ -83,6 +85,7 @@ function looks_binary(buffer: ArrayBuffer): boolean {
 export async function handler(params: Params, emit?: Emit): Promise<Result<IngestResult>> {
   const p = (params ?? {}) as IngestParams
   const dry_run = p.dry_run ?? false
+  const force = p.force ?? false
   const path = p.path ?? "."
 
   // Resolve lens paths
@@ -146,6 +149,19 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Inges
   }
   for (const f of scan.updated ?? []) {
     files_to_extract.push({ url: f.url, status: "updated" })
+  }
+
+  // File count guard (#51) — prevent runaway extraction over huge directories
+  if (!force && files_to_extract.length > 0) {
+    const file_check = check_file_count(files_to_extract.length)
+    if (!file_check.allowed) {
+      return error({
+        files: [{
+          code:    "file_count_exceeded",
+          message: file_check.error!
+        }]
+      })
+    }
   }
 
   // Build results
@@ -214,7 +230,7 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Inges
         file_path,
         golden_types,
         golden_relations
-      })
+      }, force)
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err)
       file_results.push({
@@ -243,7 +259,7 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Inges
           golden_types,
           golden_relations,
           missing_sentinels:  pre_coverage.missing
-        })
+        }, force)
         // Merge re-extracted concepts (dedup by name)
         const existing = new Set(extraction.concepts.map(c => c.name.toLowerCase()))
         for (const c of reextract.concepts) {

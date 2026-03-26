@@ -8,6 +8,7 @@
 import { sys } from "./index.ts"
 import { resolve_lens_paths } from "./lib/state.ts"
 import { acquire_lock, auto_release_on_exit } from "./lib/lock.ts"
+import { reset_rate_limiter, get_session_stats } from "./lib/rate-limit.ts"
 import { resolve } from "node:path"
 
 //
@@ -147,7 +148,7 @@ const TOOLS: McpTool[] = [
   },
   {
     name: "learn",
-    description: "Ingest files or a directory into the knowledge graph. Runs AST extraction + LLM extraction + adversarial re-extraction. Can take significant time for large directories.",
+    description: "Ingest files or a directory into the knowledge graph. Runs AST extraction + LLM extraction + adversarial re-extraction. Rate-limited to prevent runaway costs (configurable via BRANE_LLM_RATE_LIMIT, BRANE_MAX_FILES_PER_LEARN).",
     inputSchema: {
       type: "object",
       properties: {
@@ -615,6 +616,9 @@ let initialized = false
 //
 
 async function handle_initialize(params: Record<string, unknown>): Promise<unknown> {
+  // Reset rate limiter for new session (#51)
+  reset_rate_limiter()
+
   // Extract agent_id from client info
   const client_info = params.clientInfo as { name?: string } | undefined
   if (client_info?.name) {

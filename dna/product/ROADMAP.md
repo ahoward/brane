@@ -51,7 +51,7 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 - [x] `048-concurrency` — Database locking strategy for multi-process MCP ([#48](https://github.com/ahoward/brane/issues/48))
 - [x] `050-context-truncation` — Max payload size on MCP tool responses ([#50](https://github.com/ahoward/brane/issues/50))
-- [ ] `051-cost-control` — Circuit breaker for LLM-backed tools ([#51](https://github.com/ahoward/brane/issues/51))
+- [x] `051-cost-control` — Circuit breaker for LLM-backed tools ([#51](https://github.com/ahoward/brane/issues/51))
 
 ### Next — Polish & Distribution
 
@@ -74,6 +74,7 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 | Feature | PR | Date |
 |---------|-----|------|
+| `051-cost-control` | #70 | 2026-03-26 |
 | `050-context-truncation` | #69 | 2026-03-26 |
 | `048-concurrency` | #68 | 2026-03-26 |
 | `046-temporal-queries` | #67 | 2026-03-26 |
