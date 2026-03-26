@@ -2,7 +2,7 @@
   "status": "success",
   "result": {
     "items": [
-      {"id": 1, "name": "SingleConcept", "type": "Entity"}
+      {"id": 1, "name": "SingleConcept", "type": "Entity", "agent_id": null}
     ]
   },
   "errors": null,

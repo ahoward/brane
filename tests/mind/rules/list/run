@@ -14,7 +14,7 @@ case "$TC_CASE_NAME" in
   00-success-list-all)
     init_mind
     # Create a custom rule to have both built-in and custom
-    echo '{"name": "test_rule", "description": "Test rule", "body": "test_rule[id, name] := *concepts[id, name, _]"}' | brane /mind/rules/create > /dev/null 2>&1
+    echo '{"name": "test_rule", "description": "Test rule", "body": "test_rule[id, name] := *concepts[id, name, _, _, _]"}' | brane /mind/rules/create > /dev/null 2>&1
     ;;
   01-success-list-empty-custom)
     init_mind

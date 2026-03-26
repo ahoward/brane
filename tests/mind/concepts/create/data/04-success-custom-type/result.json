@@ -3,7 +3,8 @@
   "result": {
     "id": 1,
     "name": "Hamlet",
-    "type": "Character"
+    "type": "Character",
+    "agent_id": null
   },
   "errors": null,
   "meta": {

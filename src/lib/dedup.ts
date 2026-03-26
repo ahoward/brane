@@ -114,7 +114,7 @@ export async function find_fuzzy_match(
 ): Promise<DeduplicateMatch | null> {
   // Get all existing concepts (name + id + type)
   const result = await db.run(`
-    ?[id, name, type] := *concepts[id, name, type, _]
+    ?[id, name, type] := *concepts[id, name, type, _, _]
   `)
   const rows = result.rows as [number, string, string][]
 

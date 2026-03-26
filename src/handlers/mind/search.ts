@@ -8,8 +8,9 @@ import { open_mind, is_mind_error } from "../../lib/mind.ts"
 import { generate_embedding, EMBED_DIM } from "../../lib/embed.ts"
 
 interface SearchParams {
-  query?: string
-  limit?: number
+  query?:    string
+  limit?:    number
+  agent_id?: string
 }
 
 interface Match {
@@ -79,20 +80,31 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Searc
     // CozoDB HNSW search syntax uses vec() function for query vector
     const vector_str = JSON.stringify(query_embedding)
 
+    // Over-fetch if agent_id filter is present (HNSW doesn't support WHERE)
+    const has_agent_filter = typeof p.agent_id === "string" && p.agent_id.length > 0
+    const fetch_k = has_agent_filter ? limit * 5 : limit
+
     const result = await db.run(`
-      ?[id, name, type, distance] := ~concepts:semantic{ id, name, type | query: vec(${vector_str}), k: ${limit}, ef: 50, bind_distance: distance }
+      ?[id, name, type, agent_id, distance] := ~concepts:semantic{ id, name, type, agent_id | query: vec(${vector_str}), k: ${fetch_k}, ef: 50, bind_distance: distance }
     `)
 
-    const rows = result.rows as [number, string, string, number][]
+    const rows = result.rows as [number, string, string, string, number][]
 
     // Convert distance to similarity score (cosine distance -> similarity)
     // Cosine distance is 1 - cos(a, b), so similarity = 1 - distance
-    const matches: Match[] = rows.map(([id, name, type, distance]) => ({
+    let matches: Match[] = rows.map(([id, name, type, _agent_id, distance]) => ({
       id,
       name,
       type,
       score: Math.round((1 - distance) * 1000) / 1000  // 3 decimal places
     }))
+
+    // Post-filter by agent_id if specified
+    if (has_agent_filter) {
+      const agent_ids_by_id = new Map(rows.map(([id, , , agent_id]) => [id, agent_id]))
+      matches = matches.filter(m => agent_ids_by_id.get(m.id) === p.agent_id)
+      matches = matches.slice(0, limit)
+    }
 
     db.close()
 

@@ -3,7 +3,7 @@
   "result": {
     "name": "all_entities",
     "description": "All Entity concepts",
-    "body": "all_entities[id, name] := *concepts[id, name, \"Entity\"]",
+    "body": "all_entities[id, name] := *concepts[id, name, \"Entity\", _, _]",
     "builtin": false
   },
   "errors": null,

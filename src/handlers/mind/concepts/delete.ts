@@ -44,7 +44,7 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Delet
   try {
     // First check if concept exists
     const existing = await db.run(`
-      ?[id, name, type] := *concepts[id, name, type, _], id = ${p.id}
+      ?[id, name, type] := *concepts[id, name, type, _, _], id = ${p.id}
     `)
 
     const rows = existing.rows as (number | string)[][]
@@ -61,8 +61,8 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Delet
 
     // Delete the concept (need all fields for :rm)
     await db.run(`
-      ?[id, name, type, vector] := *concepts[id, name, type, vector], id = ${p.id}
-      :rm concepts { id, name, type, vector }
+      ?[id, name, type, vector, agent_id] := *concepts[id, name, type, vector, agent_id], id = ${p.id}
+      :rm concepts { id, name, type, vector, agent_id }
     `)
 
     db.close()

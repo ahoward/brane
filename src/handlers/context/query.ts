@@ -251,7 +251,7 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Conte
     if (node_ids.length > 1) {
       for (const id of node_ids) {
         const edge_result = await mind_db.run(`
-          ?[source, target, relation] := *edges[_, source, target, relation, _], source = ${id}
+          ?[source, target, relation] := *edges[_, source, target, relation, _, _], source = ${id}
         `)
         const edge_rows = edge_result.rows as [number, number, string][]
 
@@ -312,7 +312,7 @@ async function search_exact(
 ): Promise<AnchorMatch[]> {
   const query_lower = query.toLowerCase()
   const result = await db.run(`
-    ?[id, name, type] := *concepts[id, name, type, _]
+    ?[id, name, type] := *concepts[id, name, type, _, _]
   `)
 
   const all_concepts = result.rows as [number, string, string][]
@@ -444,9 +444,9 @@ async function expand_neighbors(
     // Outgoing edges (this concept is source)
     const out_result = await db.run(`
       ?[id, name, type] :=
-        *edges[_, source, target, _, _],
+        *edges[_, source, target, _, _, _],
         source = ${cid},
-        *concepts[id, name, type, _],
+        *concepts[id, name, type, _, _],
         id = target
     `)
     for (const [id, name, type] of out_result.rows as [number, string, string][]) {
@@ -459,9 +459,9 @@ async function expand_neighbors(
     // Incoming edges (this concept is target)
     const in_result = await db.run(`
       ?[id, name, type] :=
-        *edges[_, source, target, _, _],
+        *edges[_, source, target, _, _, _],
         target = ${cid},
-        *concepts[id, name, type, _],
+        *concepts[id, name, type, _, _],
         id = source
     `)
     for (const [id, name, type] of in_result.rows as [number, string, string][]) {

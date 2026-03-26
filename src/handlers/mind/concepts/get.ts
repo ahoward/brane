@@ -11,9 +11,10 @@ interface GetParams {
 }
 
 interface Concept {
-  id:   number
-  name: string
-  type: string
+  id:       number
+  name:     string
+  type:     string
+  agent_id: string | null
 }
 
 export async function handler(params: Params, emit?: Emit): Promise<Result<Concept>> {
@@ -46,7 +47,7 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Conce
   try {
     // Query concept by ID
     const result = await db.run(`
-      ?[id, name, type] := *concepts[id, name, type, _], id = ${p.id}
+      ?[id, name, type, agent_id] := *concepts[id, name, type, _, agent_id], id = ${p.id}
     `)
 
     db.close()
@@ -65,9 +66,10 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Conce
     const row = rows[0]
 
     return success({
-      id:   row[0] as number,
-      name: row[1] as string,
-      type: row[2] as string
+      id:       row[0] as number,
+      name:     row[1] as string,
+      type:     row[2] as string,
+      agent_id: (row[3] as string) || null,
     })
   } catch (err) {
     db.close()

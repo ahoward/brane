@@ -15,9 +15,10 @@ interface UpdateParams {
 }
 
 interface Concept {
-  id:   number
-  name: string
-  type: string
+  id:       number
+  name:     string
+  type:     string
+  agent_id: string | null
 }
 
 export async function handler(params: Params, emit?: Emit): Promise<Result<Concept>> {
@@ -60,9 +61,9 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Conce
   const { db } = mind
 
   try {
-    // First get the existing concept (including vector)
+    // First get the existing concept (including vector and agent_id)
     const existing = await db.run(`
-      ?[id, name, type, vector] := *concepts[id, name, type, vector], id = ${p.id}
+      ?[id, name, type, vector, agent_id] := *concepts[id, name, type, vector, agent_id], id = ${p.id}
     `)
 
     const rows = existing.rows as any[][]
@@ -78,10 +79,11 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Conce
     }
 
     const current = {
-      id:     rows[0][0] as number,
-      name:   rows[0][1] as string,
-      type:   rows[0][2] as string,
-      vector: rows[0][3]
+      id:       rows[0][0] as number,
+      name:     rows[0][1] as string,
+      type:     rows[0][2] as string,
+      vector:   rows[0][3],
+      agent_id: rows[0][4] as string,
     }
 
     // Apply updates
@@ -98,10 +100,10 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Conce
       vector_str = current.vector !== null ? `vec(${JSON.stringify(current.vector)})` : "null"
     }
 
-    // Update the concept
+    // Update the concept (preserve agent_id)
     await db.run(`
-      ?[id, name, type, vector] <- [[${p.id}, '${new_name.replace(/'/g, "''")}', '${new_type}', ${vector_str}]]
-      :put concepts { id, name, type, vector }
+      ?[id, name, type, vector, agent_id] <- [[${p.id}, '${new_name.replace(/'/g, "''")}', '${new_type}', ${vector_str}, '${current.agent_id.replace(/'/g, "''")}']]
+      :put concepts { id, name, type, vector, agent_id }
     `)
 
     // Track type usage silently if type changed
@@ -116,9 +118,10 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Conce
     db.close()
 
     return success({
-      id:   p.id,
-      name: new_name,
-      type: new_type
+      id:       p.id,
+      name:     new_name,
+      type:     new_type,
+      agent_id: current.agent_id || null,
     })
   } catch (err) {
     db.close()

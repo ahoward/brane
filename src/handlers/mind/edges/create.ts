@@ -12,6 +12,7 @@ interface CreateParams {
   target?:   number
   relation?: string
   weight?:   number
+  agent_id?: string
 }
 
 interface Edge {
@@ -20,6 +21,7 @@ interface Edge {
   target:   number
   relation: string
   weight:   number
+  agent_id: string | null
 }
 
 export async function handler(params: Params, emit?: Emit): Promise<Result<Edge>> {
@@ -115,10 +117,13 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Edge>
     // Get next ID
     const id = await get_next_edge_id(db)
 
+    // Resolve agent_id
+    const agent_id = (typeof p.agent_id === "string" && p.agent_id.length > 0) ? p.agent_id : ""
+
     // Insert edge
     await db.run(`
-      ?[id, source, target, relation, weight] <- [[${id}, ${p.source}, ${p.target}, '${p.relation}', ${weight}]]
-      :put edges { id, source, target, relation, weight }
+      ?[id, source, target, relation, weight, agent_id] <- [[${id}, ${p.source}, ${p.target}, '${p.relation}', ${weight}, '${agent_id.replace(/'/g, "''")}']]
+      :put edges { id, source, target, relation, weight, agent_id }
     `)
 
     // Track relation usage silently (don't fail on tracking errors)
@@ -135,7 +140,8 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Edge>
       source:   p.source,
       target:   p.target,
       relation: p.relation,
-      weight:   weight
+      weight:   weight,
+      agent_id: agent_id || null,
     })
   } catch (err) {
     db.close()

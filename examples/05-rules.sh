@@ -23,9 +23,9 @@ brane rule get cycles
 
 # Name: cycles
 # Description: Detects circular dependencies via DEPENDS_ON edges
-# Body: cycles[id, name] := *concepts[id, name, _, _], reachable[id, id]
-#       reachable[x, y] := *edges[_, x, y, 'DEPENDS_ON', _]
-#       reachable[x, y] := *edges[_, x, z, 'DEPENDS_ON', _], reachable[z, y]
+# Body: cycles[id, name] := *concepts[id, name, _, _, _], reachable[id, id]
+#       reachable[x, y] := *edges[_, x, y, 'DEPENDS_ON', _, _]
+#       reachable[x, y] := *edges[_, x, z, 'DEPENDS_ON', _, _], reachable[z, y]
 # Builtin: true
 
 # ─────────────────────────────────────────────────────────────────────────────

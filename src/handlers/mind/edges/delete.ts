@@ -44,10 +44,10 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Delet
   try {
     // Check edge exists
     const existing = await db.run(`
-      ?[id, source, target, relation, weight] := *edges[id, source, target, relation, weight], id = ${p.id}
+      ?[id, source, target, relation, weight, agent_id] := *edges[id, source, target, relation, weight, agent_id], id = ${p.id}
     `)
 
-    const rows = existing.rows as [number, number, number, string, number][]
+    const rows = existing.rows as [number, number, number, string, number, string][]
 
     if (rows.length === 0) {
       db.close()
@@ -59,12 +59,12 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Delet
       })
     }
 
-    const [id, source, target, relation, weight] = rows[0]
+    const [id, source, target, relation, weight, agent_id] = rows[0]
 
     // Delete edge
     await db.run(`
-      ?[id, source, target, relation, weight] <- [[${id}, ${source}, ${target}, '${relation}', ${weight}]]
-      :rm edges { id, source, target, relation, weight }
+      ?[id, source, target, relation, weight, agent_id] <- [[${id}, ${source}, ${target}, '${relation}', ${weight}, '${agent_id}']]
+      :rm edges { id, source, target, relation, weight, agent_id }
     `)
 
     db.close()

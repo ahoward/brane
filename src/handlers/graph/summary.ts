@@ -35,13 +35,13 @@ export async function handler(_params: Params, _emit?: Emit): Promise<Result<Sum
   try {
     // Query concept count
     const concept_count_result = await db.run(`
-      ?[count(id)] := *concepts[id, _, _, _]
+      ?[count(id)] := *concepts[id, _, _, _, _]
     `)
     const concept_total = (concept_count_result.rows[0]?.[0] as number) ?? 0
 
     // Query concepts by type
     const concepts_by_type_result = await db.run(`
-      ?[type, count(id)] := *concepts[id, _, type, _]
+      ?[type, count(id)] := *concepts[id, _, type, _, _]
     `)
     const by_type: Record<string, number> = {}
     for (const row of concepts_by_type_result.rows as [string, number][]) {
@@ -50,13 +50,13 @@ export async function handler(_params: Params, _emit?: Emit): Promise<Result<Sum
 
     // Query edge count
     const edge_count_result = await db.run(`
-      ?[count(id)] := *edges[id, _, _, _, _]
+      ?[count(id)] := *edges[id, _, _, _, _, _]
     `)
     const edge_total = (edge_count_result.rows[0]?.[0] as number) ?? 0
 
     // Query edges by relation
     const edges_by_relation_result = await db.run(`
-      ?[relation, count(id)] := *edges[id, _, _, relation, _]
+      ?[relation, count(id)] := *edges[id, _, _, relation, _, _]
     `)
     const by_relation: Record<string, number> = {}
     for (const row of edges_by_relation_result.rows as [string, number][]) {

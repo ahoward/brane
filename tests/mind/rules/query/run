@@ -38,7 +38,7 @@ case "$TC_CASE_NAME" in
   04-success-custom-rule)
     init_mind
     # Create a custom rule and query it
-    echo '{"name": "all_entities", "description": "All Entity concepts", "body": "all_entities[id, name] := *concepts[id, name, \"Entity\", _]"}' | brane /mind/rules/create > /dev/null 2>&1
+    echo '{"name": "all_entities", "description": "All Entity concepts", "body": "all_entities[id, name] := *concepts[id, name, \"Entity\", _, _]"}' | brane /mind/rules/create > /dev/null 2>&1
     create_concepts '[{"name": "Service", "type": "Entity"}, {"name": "Warning", "type": "Caveat"}]'
     ;;
   05-error-not-found)

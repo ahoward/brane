@@ -5,7 +5,8 @@
     "source": 1,
     "target": 2,
     "relation": "DEPENDS_ON",
-    "weight": 1
+    "weight": 1,
+    "agent_id": null
   },
   "errors": null,
   "meta": {
