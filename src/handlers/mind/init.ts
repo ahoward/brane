@@ -20,7 +20,7 @@ interface InitResult {
   schema_version: string
 }
 
-const SCHEMA_VERSION = "1.9.0"
+const SCHEMA_VERSION = "1.10.0"
 
 //
 // Built-in rules for graph integrity checks
@@ -168,7 +168,8 @@ const SCHEMA_QUERIES = [
     outcome: String,
     tags: String,
     vector: <F32; ${EMBED_DIM}>?,
-    source_concept_id: Int
+    source_concept_id: Int,
+    archived: Bool default false
   }`
 ]
 

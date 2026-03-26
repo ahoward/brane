@@ -335,3 +335,48 @@ export async function ensure_annotations_relation(db: CozoDb): Promise<void> {
     // Relation may already exist, ignore error
   }
 }
+
+//
+// Archive an episode: read data, remove old row, insert with archived=true.
+// CozoDB relations without => treat ALL columns as key, so :put with
+// different archived value creates a duplicate row. Must :rm + :put.
+//
+export async function archive_episode(db: CozoDb, ep_id: number): Promise<void> {
+  const read_result = await db.run(`
+    ?[id, agent_id, timestamp, observation, context, outcome, tags, vector, source_concept_id, archived] :=
+      *episodes[id, agent_id, timestamp, observation, context, outcome, tags, vector, source_concept_id, archived],
+      id = ${ep_id}
+  `)
+
+  if (read_result.rows.length === 0) return
+
+  // Remove the old row
+  await db.run(`
+    ?[id, agent_id, timestamp, observation, context, outcome, tags, vector, source_concept_id, archived] :=
+      *episodes[id, agent_id, timestamp, observation, context, outcome, tags, vector, source_concept_id, archived],
+      id = ${ep_id}
+    :rm episodes { id, agent_id, timestamp, observation, context, outcome, tags, vector, source_concept_id, archived }
+  `)
+
+  // Re-insert with archived=true using captured data
+  const row = read_result.rows[0] as [number, string, string, string, string, string, string, number[] | null, number, boolean]
+  const [id, agent_id, timestamp, observation, context, outcome, tags, vector, source_concept_id] = row
+  const esc = (s: string | null) => s !== null && s !== undefined ? s.replace(/'/g, "''") : ""
+  const vector_str = vector !== null ? `vec(${JSON.stringify(vector)})` : "null"
+
+  await db.run(`
+    ?[id, agent_id, timestamp, observation, context, outcome, tags, vector, source_concept_id, archived] <- [[
+      ${id},
+      '${esc(agent_id)}',
+      '${esc(timestamp)}',
+      '${esc(observation)}',
+      '${esc(context)}',
+      '${esc(outcome)}',
+      '${esc(tags)}',
+      ${vector_str},
+      ${source_concept_id},
+      true
+    ]]
+    :put episodes { id, agent_id, timestamp, observation, context, outcome, tags, vector, source_concept_id, archived }
+  `)
+}

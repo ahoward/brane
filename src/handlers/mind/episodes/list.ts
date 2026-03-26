@@ -7,11 +7,12 @@ import { success, error } from "../../../lib/result.ts"
 import { open_mind, is_mind_error } from "../../../lib/mind.ts"
 
 interface ListParams {
-  agent_id?: string
-  tag?:      string
-  after?:    string
-  before?:   string
-  limit?:    number
+  agent_id?:       string
+  tag?:            string
+  after?:          string
+  before?:         string
+  limit?:          number
+  include_archived?: boolean  // default false
 }
 
 interface Episode {
@@ -60,6 +61,11 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<ListR
     // Build filter conditions
     const conditions: string[] = []
 
+    // Exclude archived by default
+    if (!p.include_archived) {
+      conditions.push(`archived == false`)
+    }
+
     if (p.agent_id) {
       if (typeof p.agent_id !== "string") {
         db.close()
@@ -94,7 +100,7 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<ListR
 
     const result = await db.run(`
       ?[id, agent_id, timestamp, observation, context, outcome, tags, source_concept_id] :=
-        *episodes[id, agent_id, timestamp, observation, context, outcome, tags, _, source_concept_id]${filter_clause}
+        *episodes[id, agent_id, timestamp, observation, context, outcome, tags, _, source_concept_id, archived]${filter_clause}
       :order -timestamp
       :limit ${limit}
     `)

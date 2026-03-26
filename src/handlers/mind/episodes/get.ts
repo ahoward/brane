@@ -58,7 +58,7 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Episo
   try {
     const result = await db.run(`
       ?[id, agent_id, timestamp, observation, context, outcome, tags, source_concept_id] :=
-        *episodes[id, agent_id, timestamp, observation, context, outcome, tags, _, source_concept_id],
+        *episodes[id, agent_id, timestamp, observation, context, outcome, tags, _, source_concept_id, _],
         id = ${p.id}
     `)
 
