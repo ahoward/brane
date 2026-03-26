@@ -372,11 +372,16 @@ let initialized = false
 // Handle initialize
 //
 
-function handle_initialize(params: Record<string, unknown>): unknown {
+async function handle_initialize(params: Record<string, unknown>): Promise<unknown> {
   // Extract agent_id from client info
   const client_info = params.clientInfo as { name?: string } | undefined
   if (client_info?.name) {
     mcp_agent_id = client_info.name
+  }
+
+  // Auto-create per-agent lens for isolation (#40)
+  if (mcp_agent_id !== "unknown") {
+    await sys.call("/mind/agent-lens/init", { agent_id: mcp_agent_id })
   }
 
   return {
@@ -899,7 +904,7 @@ async function handle_jsonrpc_message(raw: string): Promise<string | null> {
 
     switch (req.method) {
       case "initialize":
-        result = handle_initialize(req.params ?? {})
+        result = await handle_initialize(req.params ?? {})
         break
       case "ping":
         result = {}
