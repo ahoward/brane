@@ -45,7 +45,7 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 - [x] `041-mcp-resources` — Expose concepts, episodes, graph as MCP resources ([#41](https://github.com/ahoward/brane/issues/41))
 - [x] `042-mcp-prompts` — Pre-built reasoning templates for agents ([#42](https://github.com/ahoward/brane/issues/42))
 - [x] `044-integration-tests` — Brane MCP with Claude Code end-to-end ([#44](https://github.com/ahoward/brane/issues/44))
-- [ ] `046-temporal-queries` — Time-range filtering across all memory types ([#46](https://github.com/ahoward/brane/issues/46))
+- [x] `046-temporal-queries` — Time-range filtering across all memory types ([#46](https://github.com/ahoward/brane/issues/46))
 
 ### Next — Infrastructure & Safety
 
@@ -74,6 +74,7 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 | Feature | PR | Date |
 |---------|-----|------|
+| `046-temporal-queries` | #67 | 2026-03-26 |
 | `042-mcp-prompts` | #65 | 2026-03-26 |
 | `041-mcp-resources` | #64 | 2026-03-26 |
 | `040-multi-agent-isolation` | #63 | 2026-03-26 |
