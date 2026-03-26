@@ -1,0 +1,12 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "observation": [{"code": "required", "message": "observation is required"}]
+  },
+  "meta": {
+    "path": "/mind/episodes/create",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

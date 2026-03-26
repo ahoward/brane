@@ -8,12 +8,13 @@
 
 import type { CozoDb } from "./cozo"
 import { dirname, resolve } from "node:path"
+import { EMBED_DIM } from "./embed.ts"
 
 //
 // The latest schema version this binary supports.
 // Bump this when adding a new migration.
 //
-export const LATEST_VERSION = "1.7.0"
+export const LATEST_VERSION = "1.8.0"
 
 //
 // A single migration step: transforms schema from one version to the next.
@@ -47,6 +48,40 @@ const MIGRATIONS: Migration[] = [
     apply: async (_db: CozoDb) => {
       // No schema changes — just stamps the version.
       // All v1.7.0 relations already exist (created by /mind/init).
+    }
+  },
+
+  // v1.7.0 → v1.8.0: add episodes relation + HNSW index for episodic memory
+  {
+    from: "1.7.0",
+    to:   "1.8.0",
+    apply: async (db: CozoDb) => {
+      // Create episodes relation
+      await db.run(`
+        :create episodes {
+          id: Int,
+          agent_id: String,
+          timestamp: String,
+          observation: String,
+          context: String,
+          outcome: String,
+          tags: String,
+          vector: <F32; ${EMBED_DIM}>?,
+          source_concept_id: Int
+        }
+      `)
+
+      // Create HNSW index for semantic search on episodes
+      await db.run(`
+        ::hnsw create episodes:semantic {
+          dim: ${EMBED_DIM},
+          m: 50,
+          dtype: F32,
+          fields: [vector],
+          distance: Cosine,
+          ef_construction: 100
+        }
+      `)
     }
   },
 ]

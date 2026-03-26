@@ -273,6 +273,32 @@ export async function get_next_annotation_id(db: CozoDb): Promise<number> {
 // Check if annotation exists
 //
 
+//
+// Get next episode ID (auto-increment)
+//
+
+export async function get_next_episode_id(db: CozoDb): Promise<number> {
+  const result = await db.run(`
+    ?[value] := *schema_meta['episode_next_id', value]
+  `)
+
+  const rows = result.rows as string[][]
+  let next_id = 1
+
+  if (rows.length > 0) {
+    next_id = parseInt(rows[0][0], 10)
+  }
+
+  // Increment counter
+  const new_id = next_id + 1
+  await db.run(`
+    ?[key, value] <- [['episode_next_id', '${new_id}']]
+    :put schema_meta { key => value }
+  `)
+
+  return next_id
+}
+
 export async function annotation_exists(db: CozoDb, id: number): Promise<boolean> {
   const result = await db.run(`
     ?[id] := *annotations[id, _, _, _, _, _], id = ${id}

@@ -172,6 +172,49 @@ const TOOLS: McpTool[] = [
       required: ["query"],
     },
   },
+  {
+    name: "episodes_create",
+    description: "Record an episodic memory — what an agent observed, did, or learned.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        agent_id:          { type: "string", description: "Which agent is recording this (e.g., 'claude-code')" },
+        observation:       { type: "string", description: "What the agent noticed or learned" },
+        context:           { type: "string", description: "What was happening (task, file, conversation)" },
+        outcome:           { type: "string", description: "What happened as a result" },
+        tags:              { type: "array", items: { type: "string" }, description: "Labels for this episode" },
+        source_concept_id: { type: "number", description: "Optional link to a related concept ID" },
+      },
+      required: ["agent_id", "observation"],
+    },
+  },
+  {
+    name: "episodes_list",
+    description: "List episodic memories with optional filters: agent, tag, time range.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        agent_id: { type: "string", description: "Filter by agent ID" },
+        tag:      { type: "string", description: "Filter by tag" },
+        after:    { type: "string", description: "Only episodes after this ISO timestamp" },
+        before:   { type: "string", description: "Only episodes before this ISO timestamp" },
+        limit:    { type: "number", description: "Max results (default 100)" },
+      },
+    },
+  },
+  {
+    name: "episodes_search",
+    description: "Semantic search over episodic memories — find relevant past experiences by meaning.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        query:    { type: "string", description: "Natural language search query" },
+        limit:    { type: "number", description: "Max results (default 10)" },
+        agent_id: { type: "string", description: "Filter by agent ID" },
+      },
+      required: ["query"],
+    },
+  },
 ]
 
 //
@@ -190,6 +233,9 @@ const TOOL_ROUTES: Record<string, string> = {
   learn:            "/calabi/ingest",
   verify:           "/mind/verify",
   context_query:    "/context/query",
+  episodes_create:  "/mind/episodes/create",
+  episodes_list:    "/mind/episodes/list",
+  episodes_search:  "/mind/episodes/search",
 }
 
 //

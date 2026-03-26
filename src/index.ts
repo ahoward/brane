@@ -63,6 +63,11 @@ import { handler as lens_list_handler } from "./handlers/lens/list.ts"
 import { handler as lens_delete_handler } from "./handlers/lens/delete.ts"
 import { handler as lens_migrate_handler } from "./handlers/lens/migrate.ts"
 import { handler as mind_prune_handler } from "./handlers/mind/prune.ts"
+import { handler as mind_episodes_create_handler } from "./handlers/mind/episodes/create.ts"
+import { handler as mind_episodes_get_handler } from "./handlers/mind/episodes/get.ts"
+import { handler as mind_episodes_list_handler } from "./handlers/mind/episodes/list.ts"
+import { handler as mind_episodes_search_handler } from "./handlers/mind/episodes/search.ts"
+import { handler as mind_episodes_delete_handler } from "./handlers/mind/episodes/delete.ts"
 
 sys.register("/ping", ping_handler)
 sys.register("/body/init", body_init_handler)
@@ -122,6 +127,11 @@ sys.register("/lens/list", lens_list_handler)
 sys.register("/lens/delete", lens_delete_handler)
 sys.register("/lens/migrate", lens_migrate_handler)
 sys.register("/mind/prune", mind_prune_handler)
+sys.register("/mind/episodes/create", mind_episodes_create_handler)
+sys.register("/mind/episodes/get", mind_episodes_get_handler)
+sys.register("/mind/episodes/list", mind_episodes_list_handler)
+sys.register("/mind/episodes/search", mind_episodes_search_handler)
+sys.register("/mind/episodes/delete", mind_episodes_delete_handler)
 
 // export
 export { sys }

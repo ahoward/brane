@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+#
+# Test runner for /mind/episodes/*
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+# Helper to create an episode
+create_episode() {
+  echo "$1" | brane /mind/episodes/create > /dev/null 2>&1
+}
+
+case "$TC_CASE_NAME" in
+  00-success-create)
+    init_mind
+    echo "$INPUT" | brane /mind/episodes/create
+    ;;
+  01-success-create-minimal)
+    init_mind
+    echo "$INPUT" | brane /mind/episodes/create
+    ;;
+  02-error-missing-observation)
+    init_mind
+    echo "$INPUT" | brane /mind/episodes/create
+    ;;
+  03-error-missing-agent-id)
+    init_mind
+    echo "$INPUT" | brane /mind/episodes/create
+    ;;
+  04-success-get)
+    init_mind
+    create_episode '{"agent_id": "test", "observation": "test observation", "context": "test context", "tags": ["a", "b"]}'
+    echo "$INPUT" | brane /mind/episodes/get
+    ;;
+  05-error-get-not-found)
+    init_mind
+    echo "$INPUT" | brane /mind/episodes/get
+    ;;
+  06-success-list-all)
+    init_mind
+    create_episode '{"agent_id": "agent1", "observation": "first observation", "tags": ["tag1"]}'
+    create_episode '{"agent_id": "agent2", "observation": "second observation", "tags": ["tag2"]}'
+    echo "$INPUT" | brane /mind/episodes/list
+    ;;
+  07-success-list-by-agent)
+    init_mind
+    create_episode '{"agent_id": "agent1", "observation": "agent1 obs"}'
+    create_episode '{"agent_id": "agent2", "observation": "agent2 obs"}'
+    create_episode '{"agent_id": "agent1", "observation": "agent1 obs2"}'
+    echo "$INPUT" | brane /mind/episodes/list
+    ;;
+  08-success-list-by-tag)
+    init_mind
+    create_episode '{"agent_id": "a", "observation": "obs1", "tags": ["alpha", "beta"]}'
+    create_episode '{"agent_id": "a", "observation": "obs2", "tags": ["gamma"]}'
+    echo "$INPUT" | brane /mind/episodes/list
+    ;;
+  09-success-list-limit)
+    init_mind
+    create_episode '{"agent_id": "a", "observation": "obs1"}'
+    create_episode '{"agent_id": "a", "observation": "obs2"}'
+    create_episode '{"agent_id": "a", "observation": "obs3"}'
+    echo "$INPUT" | brane /mind/episodes/list
+    ;;
+  10-success-search)
+    init_mind
+    create_episode '{"agent_id": "a", "observation": "user likes dark mode theme"}'
+    create_episode '{"agent_id": "a", "observation": "database connection pool exhausted"}'
+    echo "$INPUT" | brane /mind/episodes/search
+    ;;
+  11-error-search-missing-query)
+    init_mind
+    echo "$INPUT" | brane /mind/episodes/search
+    ;;
+  12-success-delete)
+    init_mind
+    create_episode '{"agent_id": "a", "observation": "to be deleted"}'
+    echo "$INPUT" | brane /mind/episodes/delete
+    ;;
+  13-error-delete-not-found)
+    init_mind
+    echo "$INPUT" | brane /mind/episodes/delete
+    ;;
+  14-error-get-missing-id)
+    init_mind
+    echo "$INPUT" | brane /mind/episodes/get
+    ;;
+esac
