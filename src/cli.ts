@@ -10,6 +10,7 @@
 
 import { sys } from "./index.ts"
 import { start_repl } from "./repl.ts"
+import { run_mcp_server } from "./mcp.ts"
 import { runMain } from "citty"
 import { main, subCommandAliases } from "./cli/main.ts"
 
@@ -148,6 +149,12 @@ async function main_entry(): Promise<void> {
   // "repl" command → REPL
   if (args[0] === "repl") {
     await start_repl()
+    return
+  }
+
+  // MCP server mode
+  if (args[0] === "mcp") {
+    await run_mcp_server()
     return
   }
 
