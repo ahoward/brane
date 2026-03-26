@@ -6,6 +6,7 @@ import type { Params, Result, Emit } from "../../lib/types.ts"
 import { success, error } from "../../lib/result.ts"
 import { open_mind, is_mind_error } from "../../lib/mind.ts"
 import { generate_embedding, EMBED_DIM } from "../../lib/embed.ts"
+import { log_access } from "../../lib/access-log.ts"
 
 interface SearchParams {
   query?:    string
@@ -130,6 +131,11 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Searc
     }
 
     matches = matches.slice(0, limit)
+
+    // Log access for retrieval-based reinforcement (#54)
+    if (matches.length > 0) {
+      log_access(matches.map(m => m.id))
+    }
 
     db.close()
 

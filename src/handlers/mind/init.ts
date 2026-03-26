@@ -20,7 +20,7 @@ interface InitResult {
   schema_version: string
 }
 
-const SCHEMA_VERSION = "1.11.0"
+const SCHEMA_VERSION = "1.12.0"
 
 //
 // Built-in rules for graph integrity checks
@@ -181,6 +181,17 @@ const SCHEMA_QUERIES = [
     entity_id: Int
     =>
     created_at: String
+  }`,
+
+  // Concept access tracking - batch-updated from in-memory accumulator
+  // concept_id: the concept being accessed
+  // access_count: cumulative retrieval count
+  // last_accessed: ISO 8601 timestamp of most recent access
+  `:create concept_access {
+    concept_id: Int
+    =>
+    access_count: Int default 0,
+    last_accessed: String default ""
   }`
 ]
 

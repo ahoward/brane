@@ -58,7 +58,7 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 - [ ] `043-binary-distribution` — Standalone installable (homebrew, curl) ([#43](https://github.com/ahoward/brane/issues/43))
 - [ ] `045-documentation` — Brane as agent memory layer (README, examples) ([#45](https://github.com/ahoward/brane/issues/45))
 - [ ] `052-passive-ingestion` — Learn from Claude Code session logs ([#52](https://github.com/ahoward/brane/issues/52))
-- [ ] `054-self-reinforcing-retrieval` — Batch-update access metadata on search ([#54](https://github.com/ahoward/brane/issues/54))
+- [x] `054-self-reinforcing-retrieval` — Batch-update access metadata on search ([#54](https://github.com/ahoward/brane/issues/54))
 - [x] `055-richer-episode-types` — Decision, preference, fact, event tags ([#55](https://github.com/ahoward/brane/issues/55))
 
 ### Deferred
@@ -74,6 +74,7 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 | Feature | PR | Date |
 |---------|-----|------|
+| `054-self-reinforcing-retrieval` | #72 | 2026-03-26 |
 | `055-richer-episode-types` | #71 | 2026-03-26 |
 | `051-cost-control` | #70 | 2026-03-26 |
 | `050-context-truncation` | #69 | 2026-03-26 |

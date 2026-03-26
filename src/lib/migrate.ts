@@ -14,7 +14,7 @@ import { EMBED_DIM } from "./embed.ts"
 // The latest schema version this binary supports.
 // Bump this when adding a new migration.
 //
-export const LATEST_VERSION = "1.11.0"
+export const LATEST_VERSION = "1.12.0"
 
 //
 // A single migration step: transforms schema from one version to the next.
@@ -279,6 +279,22 @@ const MIGRATIONS: Migration[] = [
           entity_id: Int
           =>
           created_at: String
+        }
+      `)
+    }
+  },
+
+  // v1.11.0 → v1.12.0: add concept_access relation for retrieval tracking
+  {
+    from: "1.11.0",
+    to:   "1.12.0",
+    apply: async (db: CozoDb) => {
+      await db.run(`
+        :create concept_access {
+          concept_id: Int
+          =>
+          access_count: Int default 0,
+          last_accessed: String default ""
         }
       `)
     }
