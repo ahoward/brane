@@ -52,7 +52,7 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Delet
   try {
     // Check episode exists
     const check = await db.run(`
-      ?[id] := *episodes[id, _, _, _, _, _, _, _, _], id = ${p.id}
+      ?[id] := *episodes[id, _, _, _, _, _, _, _, _, _], id = ${p.id}
     `)
 
     if ((check.rows as unknown[][]).length === 0) {
@@ -67,11 +67,11 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Delet
 
     // Delete
     await db.run(`
-      ?[id, agent_id, timestamp, observation, context, outcome, tags, vector, source_concept_id] :=
-        *episodes[id, agent_id, timestamp, observation, context, outcome, tags, vector, source_concept_id],
+      ?[id, agent_id, timestamp, observation, context, outcome, tags, vector, source_concept_id, archived] :=
+        *episodes[id, agent_id, timestamp, observation, context, outcome, tags, vector, source_concept_id, archived],
         id = ${p.id}
       :rm episodes {
-        id, agent_id, timestamp, observation, context, outcome, tags, vector, source_concept_id
+        id, agent_id, timestamp, observation, context, outcome, tags, vector, source_concept_id, archived
       }
     `)
 

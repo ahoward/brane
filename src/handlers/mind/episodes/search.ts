@@ -85,9 +85,9 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Searc
 
     // HNSW search on episodes:semantic
     const result = await db.run(`
-      ?[id, agent_id, timestamp, observation, context, outcome, tags, source_concept_id, distance] :=
+      ?[id, agent_id, timestamp, observation, context, outcome, tags, source_concept_id, archived, distance] :=
         ~episodes:semantic{
-          id, agent_id, timestamp, observation, context, outcome, tags, source_concept_id |
+          id, agent_id, timestamp, observation, context, outcome, tags, source_concept_id, archived |
           query: vec(${vector_str}),
           k: ${fetch_k},
           ef: 50,
@@ -95,9 +95,11 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Searc
         }
     `)
 
-    const rows = result.rows as [number, string, string, string, string, string, string, number, number][]
+    const rows = result.rows as [number, string, string, string, string, string, string, number, boolean, number][]
 
-    let matches: EpisodeMatch[] = rows.map(([id, agent_id, timestamp, observation, context, outcome, tags_json, source_concept_id, distance]) => {
+    let matches: EpisodeMatch[] = rows
+      .filter(([_id, _aid, _ts, _obs, _ctx, _out, _tags, _src, archived]) => !archived)
+      .map(([id, agent_id, timestamp, observation, context, outcome, tags_json, source_concept_id, _archived, distance]) => {
       let tags: string[] = []
       try {
         tags = JSON.parse(tags_json)

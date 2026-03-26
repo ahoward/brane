@@ -302,6 +302,18 @@ const TOOLS: McpTool[] = [
       required: ["id"],
     },
   },
+  {
+    name: "consolidate",
+    description: "Review episodic memories for patterns and propose distilling them into semantic concepts. Returns a dry-run diff showing proposed merges. Does NOT auto-apply — present results to user for approval.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        agent_id:  { type: "string", description: "Agent ID to consolidate episodes for (auto-populated)" },
+        threshold: { type: "number", description: "Similarity threshold 0-1 (default 0.85)" },
+        min_size:  { type: "number", description: "Minimum cluster size (default 2)" },
+      },
+    },
+  },
 ]
 
 //
@@ -649,6 +661,56 @@ const CUSTOM_HANDLERS: Record<string, ToolHandler> = {
 
     return {
       content: [{ type: "text", text: `Forgot memory id=${args.id}` }],
+      isError: false,
+    }
+  },
+
+  //
+  // consolidate — dry-run only via MCP (no auto-apply)
+  //
+  async consolidate(args) {
+    const consolidate_args: Record<string, unknown> = {
+      agent_id:  args.agent_id || mcp_agent_id,
+      dry_run:   true,  // Always dry_run via MCP — user must approve
+      threshold: args.threshold ?? 0.85,
+      min_size:  args.min_size ?? 2,
+    }
+
+    const result = await sys.call("/mind/consolidate", consolidate_args)
+
+    if (result.status === "error") {
+      return {
+        content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+        isError: true,
+      }
+    }
+
+    const data = result.result as { clusters?: unknown[] } | null
+    const clusters = data?.clusters ?? []
+
+    if (clusters.length === 0) {
+      return {
+        content: [{ type: "text", text: "No episode clusters found to consolidate." }],
+        isError: false,
+      }
+    }
+
+    // Format clusters for human review
+    const lines: string[] = [`Found ${clusters.length} cluster(s) for consolidation:\n`]
+    for (const [i, cluster] of (clusters as any[]).entries()) {
+      lines.push(`Cluster ${i + 1} (${cluster.episode_ids.length} episodes, similarity ${cluster.similarity}):`)
+      for (const [j, obs] of cluster.observations.entries()) {
+        lines.push(`  - [#${cluster.episode_ids[j]}] "${obs}"`)
+      }
+      lines.push(`  → Proposed concept: ${cluster.proposed_concept.name} (${cluster.proposed_concept.type})`)
+      lines.push("")
+    }
+    lines.push("To apply: run `brane /mind/consolidate` with agent_id (without dry_run).")
+
+    const text = truncate_payload(lines.join("\n"), MAX_RECALL_PAYLOAD)
+
+    return {
+      content: [{ type: "text", text }],
       isError: false,
     }
   },

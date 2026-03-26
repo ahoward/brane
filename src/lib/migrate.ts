@@ -14,7 +14,7 @@ import { EMBED_DIM } from "./embed.ts"
 // The latest schema version this binary supports.
 // Bump this when adding a new migration.
 //
-export const LATEST_VERSION = "1.9.0"
+export const LATEST_VERSION = "1.10.0"
 
 //
 // A single migration step: transforms schema from one version to the next.
@@ -190,6 +190,81 @@ const MIGRATIONS: Migration[] = [
 
       // 6. Drop temp
       await db.run(`::remove edges_tmp`)
+    }
+  },
+
+  // v1.9.0 → v1.10.0: add archived field to episodes for consolidation
+  {
+    from: "1.9.0",
+    to:   "1.10.0",
+    apply: async (db: CozoDb) => {
+      // Drop HNSW index on episodes
+      await db.run(`::hnsw drop episodes:semantic`)
+
+      // Create temp with new schema
+      await db.run(`
+        :create episodes_tmp {
+          id: Int,
+          agent_id: String,
+          timestamp: String,
+          observation: String,
+          context: String,
+          outcome: String,
+          tags: String,
+          vector: <F32; ${EMBED_DIM}>?,
+          source_concept_id: Int,
+          archived: Bool default false
+        }
+      `)
+
+      // Copy existing data
+      await db.run(`
+        ?[id, agent_id, timestamp, observation, context, outcome, tags, vector, source_concept_id, archived] :=
+          *episodes[id, agent_id, timestamp, observation, context, outcome, tags, vector, source_concept_id],
+          archived = false
+        :put episodes_tmp { id, agent_id, timestamp, observation, context, outcome, tags, vector, source_concept_id, archived }
+      `)
+
+      // Drop original
+      await db.run(`::remove episodes`)
+
+      // Create with new schema
+      await db.run(`
+        :create episodes {
+          id: Int,
+          agent_id: String,
+          timestamp: String,
+          observation: String,
+          context: String,
+          outcome: String,
+          tags: String,
+          vector: <F32; ${EMBED_DIM}>?,
+          source_concept_id: Int,
+          archived: Bool default false
+        }
+      `)
+
+      // Copy data back
+      await db.run(`
+        ?[id, agent_id, timestamp, observation, context, outcome, tags, vector, source_concept_id, archived] :=
+          *episodes_tmp[id, agent_id, timestamp, observation, context, outcome, tags, vector, source_concept_id, archived]
+        :put episodes { id, agent_id, timestamp, observation, context, outcome, tags, vector, source_concept_id, archived }
+      `)
+
+      // Drop temp
+      await db.run(`::remove episodes_tmp`)
+
+      // Recreate HNSW index
+      await db.run(`
+        ::hnsw create episodes:semantic {
+          dim: ${EMBED_DIM},
+          m: 50,
+          dtype: F32,
+          fields: [vector],
+          distance: Cosine,
+          ef_construction: 100
+        }
+      `)
     }
   },
 ]

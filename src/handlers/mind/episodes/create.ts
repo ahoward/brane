@@ -123,7 +123,7 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Episo
 
     // Store episode
     await db.run(`
-      ?[id, agent_id, timestamp, observation, context, outcome, tags, vector, source_concept_id] <- [[
+      ?[id, agent_id, timestamp, observation, context, outcome, tags, vector, source_concept_id, archived] <- [[
         ${id},
         '${esc(p.agent_id)}',
         '${esc(timestamp)}',
@@ -132,10 +132,11 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Episo
         '${esc(outcome)}',
         '${esc(tags_json)}',
         ${vector_str},
-        ${source_id}
+        ${source_id},
+        false
       ]]
       :put episodes {
-        id, agent_id, timestamp, observation, context, outcome, tags, vector, source_concept_id
+        id, agent_id, timestamp, observation, context, outcome, tags, vector, source_concept_id, archived
       }
     `)
 

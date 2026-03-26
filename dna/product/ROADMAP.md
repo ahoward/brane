@@ -35,7 +35,7 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 - [x] `035-mcp-remember-recall` — MCP tools: remember and recall for episodic memory ([#35](https://github.com/ahoward/brane/issues/35))
 - [x] `036-mcp-learn-ask-reflect` — MCP tools: learn, ask, reflect for knowledge graph ([#36](https://github.com/ahoward/brane/issues/36))
-- [ ] `037-agent-id-tracking` — Tag concepts, edges, episodes with creator agent ([#37](https://github.com/ahoward/brane/issues/37))
+- [x] `037-agent-id-tracking` — Tag concepts, edges, episodes with creator agent ([#37](https://github.com/ahoward/brane/issues/37))
 - [ ] `038-episode-consolidation` — Distill episodes into semantic knowledge ([#38](https://github.com/ahoward/brane/issues/38))
 - [ ] `039-intelligent-decay` — Automatic memory pruning by recency and relevance ([#39](https://github.com/ahoward/brane/issues/39))
 
@@ -74,6 +74,7 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 | Feature | PR | Date |
 |---------|-----|------|
+| `037-agent-id-tracking` | #60 | 2026-03-26 |
 | `036-mcp-learn-ask-reflect` | #59 | 2026-03-26 |
 | `035-mcp-remember-recall` | #58 | 2026-03-26 |
 | `034-episodic-memory` | #57 | 2026-03-26 |
