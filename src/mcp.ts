@@ -218,6 +218,49 @@ const TOOLS: McpTool[] = [
   //
   // High-level agent memory tools (remember/recall/forget)
   //
+  //
+  // High-level knowledge graph tools (ask/reflect/relate)
+  //
+  {
+    name: "ask",
+    description: "Search the knowledge graph for concepts related to a question. Returns relevant concepts with their connections for richer context.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        query: { type: "string", description: "Natural language question or topic" },
+        limit: { type: "number", description: "Max concepts to return (default 5)" },
+      },
+      required: ["query"],
+    },
+  },
+  {
+    name: "reflect",
+    description: "Get a summary of what brane knows — concept counts, edge counts, type distribution. Optionally render as a graph diagram.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        format: { type: "string", enum: ["summary", "mermaid", "ascii"], description: "Output format (default summary)" },
+        limit:  { type: "number", description: "Max nodes for mermaid/ascii (default 50)" },
+      },
+    },
+  },
+  {
+    name: "relate",
+    description: "Create a relationship between two concepts in the knowledge graph.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        source:   { type: "number", description: "Source concept ID" },
+        target:   { type: "number", description: "Target concept ID" },
+        relation: { type: "string", description: "Relationship type (DEPENDS_ON, CONFLICTS_WITH, DEFINED_IN, or any string)" },
+        weight:   { type: "number", description: "Relationship strength 0-1 (default 1.0)" },
+      },
+      required: ["source", "target", "relation"],
+    },
+  },
+  //
+  // High-level agent memory tools (remember/recall/forget)
+  //
   {
     name: "remember",
     description: "Store a memory about something you observed, learned, or decided. Use this whenever you want to remember something for future conversations.",
@@ -277,6 +320,7 @@ const TOOL_ROUTES: Record<string, string> = {
   episodes_create:  "/mind/episodes/create",
   episodes_list:    "/mind/episodes/list",
   episodes_search:  "/mind/episodes/search",
+  relate:           "/mind/edges/create",
 }
 
 //
@@ -337,6 +381,169 @@ function truncate_payload(text: string, max_bytes: number): string {
 }
 
 const CUSTOM_HANDLERS: Record<string, ToolHandler> = {
+  //
+  // ask — semantic search + graph neighbors for richer context
+  //
+  async ask(args) {
+    if (typeof args.query !== "string" || args.query.trim().length === 0) {
+      return {
+        content: [{ type: "text", text: "missing required parameter: query" }],
+        isError: true,
+      }
+    }
+
+    const limit = typeof args.limit === "number" ? Math.max(1, Math.min(args.limit, 50)) : 5
+
+    // Step 1: Semantic search for relevant concepts
+    const search_result = await sys.call("/mind/search", {
+      query: args.query,
+      limit,
+    })
+
+    if (search_result.status === "error") {
+      return {
+        content: [{ type: "text", text: JSON.stringify(search_result, null, 2) }],
+        isError: true,
+      }
+    }
+
+    const raw = (search_result.result as Record<string, unknown> | null) ?? {}
+    const matches = Array.isArray((raw as { matches?: unknown }).matches)
+      ? (raw as { matches: { id: number; name: string; type: string; score: number }[] }).matches
+      : []
+
+    if (matches.length === 0) {
+      return {
+        content: [{ type: "text", text: "No relevant concepts found in the knowledge graph." }],
+        isError: false,
+      }
+    }
+
+    // Step 2: Get 1-hop neighbors for top results (up to 3) — in parallel
+    const top = matches.slice(0, 3)
+    const neighbor_results = await Promise.allSettled(
+      top.map(m => sys.call("/graph/neighbors", { id: m.id, depth: 1 }))
+    )
+
+    const enriched: string[] = []
+    for (let i = 0; i < top.length; i++) {
+      const match = top[i]
+      const parts = [`[${match.name}] (id=${match.id}, type=${match.type}, score=${match.score})`]
+
+      const nr_settled = neighbor_results[i]
+      if (nr_settled.status === "fulfilled" && nr_settled.value.status === "success") {
+        const nr = nr_settled.value.result as { edges?: { source_name: string; target_name: string; relation: string }[] }
+        if (nr.edges && nr.edges.length > 0) {
+          parts.push("  connections:")
+          for (const edge of nr.edges.slice(0, 5)) {
+            parts.push(`    ${edge.source_name} --${edge.relation}--> ${edge.target_name}`)
+          }
+          if (nr.edges.length > 5) {
+            parts.push(`    ... and ${nr.edges.length - 5} more`)
+          }
+        }
+      }
+
+      enriched.push(parts.join("\n"))
+    }
+
+    // Remaining matches without enrichment
+    for (const match of matches.slice(3)) {
+      enriched.push(`[${match.name}] (id=${match.id}, type=${match.type}, score=${match.score})`)
+    }
+
+    let text = `Found ${matches.length} relevant concepts:\n\n` + enriched.join("\n\n")
+    text = truncate_payload(text, MAX_RECALL_PAYLOAD)
+
+    return {
+      content: [{ type: "text", text }],
+      isError: false,
+    }
+  },
+
+  //
+  // reflect — graph summary or visualization
+  //
+  async reflect(args) {
+    const valid_formats = ["summary", "mermaid", "ascii"]
+    const format = typeof args.format === "string" ? args.format : "summary"
+
+    if (!valid_formats.includes(format)) {
+      return {
+        content: [{ type: "text", text: `invalid format: ${format}. Must be one of: ${valid_formats.join(", ")}` }],
+        isError: true,
+      }
+    }
+
+    if (format === "summary") {
+      const result = await sys.call("/graph/summary", {})
+      if (result.status === "error") {
+        return {
+          content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+          isError: true,
+        }
+      }
+
+      const summary = result.result as {
+        total_concepts?: number
+        total_edges?: number
+        concepts_by_type?: Record<string, number>
+        edges_by_relation?: Record<string, number>
+      } | null
+
+      if (!summary) {
+        return {
+          content: [{ type: "text", text: "Knowledge graph is empty." }],
+          isError: false,
+        }
+      }
+
+      const parts = [`Knowledge Graph Summary:`]
+      parts.push(`  Concepts: ${summary.total_concepts ?? 0}`)
+      parts.push(`  Edges: ${summary.total_edges ?? 0}`)
+
+      if (summary.concepts_by_type) {
+        parts.push(`  Concept types:`)
+        for (const [type, count] of Object.entries(summary.concepts_by_type)) {
+          parts.push(`    ${type}: ${count}`)
+        }
+      }
+
+      if (summary.edges_by_relation) {
+        parts.push(`  Edge relations:`)
+        for (const [rel, count] of Object.entries(summary.edges_by_relation)) {
+          parts.push(`    ${rel}: ${count}`)
+        }
+      }
+
+      return {
+        content: [{ type: "text", text: parts.join("\n") }],
+        isError: false,
+      }
+    }
+
+    // mermaid or ascii
+    const viz_format = format === "ascii" ? "ascii" : "mermaid"
+    const limit = typeof args.limit === "number" ? Math.max(1, Math.min(args.limit, 200)) : 50
+
+    const result = await sys.call("/graph/viz", { format: viz_format, limit })
+
+    if (result.status === "error") {
+      return {
+        content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+        isError: true,
+      }
+    }
+
+    const viz = result.result as { output?: string } | null
+    const text = viz?.output ?? "No graph data to visualize."
+
+    return {
+      content: [{ type: "text", text: truncate_payload(text, MAX_RECALL_PAYLOAD) }],
+      isError: false,
+    }
+  },
+
   //
   // remember — create an episode with auto-populated agent_id
   //
