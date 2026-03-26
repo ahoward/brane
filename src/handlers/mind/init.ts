@@ -20,7 +20,7 @@ interface InitResult {
   schema_version: string
 }
 
-const SCHEMA_VERSION = "1.10.0"
+const SCHEMA_VERSION = "1.11.0"
 
 //
 // Built-in rules for graph integrity checks
@@ -170,6 +170,17 @@ const SCHEMA_QUERIES = [
     vector: <F32; ${EMBED_DIM}>?,
     source_concept_id: Int,
     archived: Bool default false
+  }`,
+
+  // Entity timestamps - tracks creation time for concepts and edges
+  // entity_type: "concept" or "edge"
+  // entity_id: the concept or edge ID
+  // created_at: ISO 8601 timestamp
+  `:create entity_timestamps {
+    entity_type: String,
+    entity_id: Int
+    =>
+    created_at: String
   }`
 ]
 

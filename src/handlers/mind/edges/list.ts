@@ -11,6 +11,8 @@ interface ListParams {
   target?:   number
   relation?: string
   agent_id?: string
+  after?:    string
+  before?:   string
 }
 
 interface Edge {
@@ -64,13 +66,30 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<ListR
       conditions.push(`agent_id = '${p.agent_id.replace(/'/g, "''")}'`)
     }
 
-    const where_clause = conditions.length > 0
-      ? `, ${conditions.join(", ")}`
-      : ""
+    const has_time_filter = p.after || p.before
+    let query: string
 
-    const query = `
-      ?[id, source, target, relation, weight, agent_id] := *edges[id, source, target, relation, weight, agent_id]${where_clause}
-    `
+    if (has_time_filter) {
+      const time_conditions: string[] = []
+      if (p.after) {
+        time_conditions.push(`created_at > '${p.after.replace(/'/g, "''")}'`)
+      }
+      if (p.before) {
+        time_conditions.push(`created_at < '${p.before.replace(/'/g, "''")}'`)
+      }
+      const edge_clause = conditions.length > 0 ? `, ${conditions.join(", ")}` : ""
+      const time_clause = time_conditions.length > 0 ? `, ${time_conditions.join(", ")}` : ""
+      query = `
+        ?[id, source, target, relation, weight, agent_id] := *edges[id, source, target, relation, weight, agent_id]${edge_clause}, *entity_timestamps['edge', id, created_at]${time_clause}
+      `
+    } else {
+      const where_clause = conditions.length > 0
+        ? `, ${conditions.join(", ")}`
+        : ""
+      query = `
+        ?[id, source, target, relation, weight, agent_id] := *edges[id, source, target, relation, weight, agent_id]${where_clause}
+      `
+    }
 
     const result = await db.run(query)
     const rows = result.rows as [number, number, number, string, number, string][]

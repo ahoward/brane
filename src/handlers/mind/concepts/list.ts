@@ -9,6 +9,8 @@ import { open_mind, is_mind_error, is_valid_concept_type } from "../../../lib/mi
 interface ListParams {
   type?:     string
   agent_id?: string
+  after?:    string
+  before?:   string
 }
 
 interface Concept {
@@ -64,8 +66,25 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<ListR
       conditions.push(`agent_id = '${p.agent_id.replace(/'/g, "''")}'`)
     }
 
-    const where_clause = conditions.length > 0 ? `, ${conditions.join(", ")}` : ""
-    const query = `?[id, name, type, agent_id] := *concepts[id, name, type, _, agent_id]${where_clause}`
+    const has_time_filter = p.after || p.before
+    let query: string
+
+    if (has_time_filter) {
+      // Join with entity_timestamps for time-range filtering
+      const time_conditions: string[] = []
+      if (p.after) {
+        time_conditions.push(`created_at > '${p.after.replace(/'/g, "''")}'`)
+      }
+      if (p.before) {
+        time_conditions.push(`created_at < '${p.before.replace(/'/g, "''")}'`)
+      }
+      const concept_clause = conditions.length > 0 ? `, ${conditions.join(", ")}` : ""
+      const time_clause = time_conditions.length > 0 ? `, ${time_conditions.join(", ")}` : ""
+      query = `?[id, name, type, agent_id] := *concepts[id, name, type, _, agent_id]${concept_clause}, *entity_timestamps['concept', id, created_at]${time_clause}`
+    } else {
+      const where_clause = conditions.length > 0 ? `, ${conditions.join(", ")}` : ""
+      query = `?[id, name, type, agent_id] := *concepts[id, name, type, _, agent_id]${where_clause}`
+    }
 
     const result = await db.run(query)
 

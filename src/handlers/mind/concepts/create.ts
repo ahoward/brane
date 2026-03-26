@@ -4,7 +4,7 @@
 
 import type { Params, Result, Emit } from "../../../lib/types.ts"
 import { success, error } from "../../../lib/result.ts"
-import { open_mind, is_mind_error, is_valid_concept_type, get_next_concept_id } from "../../../lib/mind.ts"
+import { open_mind, is_mind_error, is_valid_concept_type, get_next_concept_id, record_entity_timestamp } from "../../../lib/mind.ts"
 import { generate_embedding } from "../../../lib/embed.ts"
 import { update_type_usage } from "../../../lib/lens.ts"
 import { find_fuzzy_match } from "../../../lib/dedup.ts"
@@ -104,6 +104,9 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Conce
       ?[id, name, type, vector, agent_id] <- [[${id}, '${p.name.replace(/'/g, "''")}', '${p.type}', ${vector_str}, '${agent_id.replace(/'/g, "''")}']]
       :put concepts { id, name, type, vector, agent_id }
     `)
+
+    // Record creation timestamp
+    await record_entity_timestamp(db, "concept", id)
 
     // Track type usage silently (don't fail on tracking errors)
     try {

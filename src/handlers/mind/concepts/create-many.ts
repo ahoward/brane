@@ -4,7 +4,7 @@
 
 import type { Params, Result, Emit } from "../../../lib/types.ts"
 import { success, error } from "../../../lib/result.ts"
-import { open_mind, is_mind_error, is_valid_concept_type } from "../../../lib/mind.ts"
+import { open_mind, is_mind_error, is_valid_concept_type, record_entity_timestamps_batch } from "../../../lib/mind.ts"
 import { generate_embeddings } from "../../../lib/embed.ts"
 import { update_type_usage } from "../../../lib/lens.ts"
 import { find_fuzzy_match, find_fuzzy_match_in_batch } from "../../../lib/dedup.ts"
@@ -186,6 +186,10 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<{ ite
           results[i].id = id_map.get(results[i].id) ?? results[i].id
         }
       }
+
+      // Record creation timestamps for all new concepts
+      const new_ids = Array.from({ length: to_create.length }, (_, i) => start_id + i)
+      await record_entity_timestamps_batch(db, "concept", new_ids)
     }
 
     // Track type usage (deduplicated)

@@ -44,7 +44,7 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 - [x] `040-multi-agent-isolation` — Per-agent knowledge spaces via lens isolation ([#40](https://github.com/ahoward/brane/issues/40))
 - [x] `041-mcp-resources` — Expose concepts, episodes, graph as MCP resources ([#41](https://github.com/ahoward/brane/issues/41))
 - [x] `042-mcp-prompts` — Pre-built reasoning templates for agents ([#42](https://github.com/ahoward/brane/issues/42))
-- [ ] `044-integration-tests` — Brane MCP with Claude Code end-to-end ([#44](https://github.com/ahoward/brane/issues/44))
+- [x] `044-integration-tests` — Brane MCP with Claude Code end-to-end ([#44](https://github.com/ahoward/brane/issues/44))
 - [ ] `046-temporal-queries` — Time-range filtering across all memory types ([#46](https://github.com/ahoward/brane/issues/46))
 
 ### Next — Infrastructure & Safety

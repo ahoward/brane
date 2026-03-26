@@ -4,7 +4,7 @@
 
 import type { Params, Result, Emit } from "../../../lib/types.ts"
 import { success, error } from "../../../lib/result.ts"
-import { open_mind, is_mind_error, is_valid_edge_relation, get_next_edge_id, concept_exists } from "../../../lib/mind.ts"
+import { open_mind, is_mind_error, is_valid_edge_relation, get_next_edge_id, concept_exists, record_entity_timestamp } from "../../../lib/mind.ts"
 import { update_relation_usage } from "../../../lib/lens.ts"
 
 interface CreateParams {
@@ -125,6 +125,9 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Edge>
       ?[id, source, target, relation, weight, agent_id] <- [[${id}, ${p.source}, ${p.target}, '${p.relation}', ${weight}, '${agent_id.replace(/'/g, "''")}']]
       :put edges { id, source, target, relation, weight, agent_id }
     `)
+
+    // Record creation timestamp
+    await record_entity_timestamp(db, "edge", id)
 
     // Track relation usage silently (don't fail on tracking errors)
     try {

@@ -341,6 +341,39 @@ export async function ensure_annotations_relation(db: CozoDb): Promise<void> {
 // CozoDB relations without => treat ALL columns as key, so :put with
 // different archived value creates a duplicate row. Must :rm + :put.
 //
+//
+// Record creation timestamp for a concept or edge.
+// Silently ignores errors (timestamp is advisory, not critical).
+//
+export async function record_entity_timestamp(db: CozoDb, entity_type: "concept" | "edge", entity_id: number): Promise<void> {
+  const created_at = new Date().toISOString()
+  try {
+    await db.run(`
+      ?[entity_type, entity_id, created_at] <- [['${entity_type}', ${entity_id}, '${created_at}']]
+      :put entity_timestamps { entity_type, entity_id => created_at }
+    `)
+  } catch {
+    // Silent — timestamp tracking is advisory
+  }
+}
+
+//
+// Batch record creation timestamps for multiple entities.
+//
+export async function record_entity_timestamps_batch(db: CozoDb, entity_type: "concept" | "edge", entity_ids: number[]): Promise<void> {
+  if (entity_ids.length === 0) return
+  const created_at = new Date().toISOString()
+  try {
+    const rows = entity_ids.map(id => `['${entity_type}', ${id}, '${created_at}']`).join(", ")
+    await db.run(`
+      ?[entity_type, entity_id, created_at] <- [${rows}]
+      :put entity_timestamps { entity_type, entity_id => created_at }
+    `)
+  } catch {
+    // Silent — timestamp tracking is advisory
+  }
+}
+
 export async function archive_episode(db: CozoDb, ep_id: number): Promise<void> {
   const read_result = await db.run(`
     ?[id, agent_id, timestamp, observation, context, outcome, tags, vector, source_concept_id, archived] :=
