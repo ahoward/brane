@@ -353,6 +353,72 @@ const TOOL_ROUTES: Record<string, string> = {
 }
 
 //
+// MCP Resource definitions (#41)
+//
+
+interface McpResource {
+  uri:         string
+  name:        string
+  description: string
+  mimeType:    string
+}
+
+interface McpResourceTemplate {
+  uriTemplate: string
+  name:        string
+  description: string
+  mimeType:    string
+}
+
+const RESOURCES: McpResource[] = [
+  {
+    uri:         "brane://concepts",
+    name:        "Concepts",
+    description: "All concepts in the knowledge graph",
+    mimeType:    "application/json",
+  },
+  {
+    uri:         "brane://episodes",
+    name:        "Episodes",
+    description: "Recent episodic memories",
+    mimeType:    "application/json",
+  },
+  {
+    uri:         "brane://graph/summary",
+    name:        "Graph Summary",
+    description: "Knowledge graph statistics (concept count, edge count, types)",
+    mimeType:    "application/json",
+  },
+]
+
+const RESOURCE_TEMPLATES: McpResourceTemplate[] = [
+  {
+    uriTemplate: "brane://concepts/{id}",
+    name:        "Concept by ID",
+    description: "A single concept with its edges and neighbors",
+    mimeType:    "application/json",
+  },
+  {
+    uriTemplate: "brane://episodes/{id}",
+    name:        "Episode by ID",
+    description: "A single episodic memory",
+    mimeType:    "application/json",
+  },
+  {
+    uriTemplate: "brane://search?q={query}",
+    name:        "Semantic Search",
+    description: "Search concepts by semantic similarity",
+    mimeType:    "application/json",
+  },
+  {
+    uriTemplate: "brane://neighbors/{id}",
+    name:        "Neighbors",
+    description: "Graph neighborhood of a concept",
+    mimeType:    "application/json",
+  },
+]
+
+//
 // Max payload size for recall results (bytes). Prevents overflowing agent context windows.
 //
 const MAX_RECALL_PAYLOAD = 32 * 1024  // 32KB
@@ -386,7 +452,7 @@ async function handle_initialize(params: Record<string, unknown>): Promise<unkno
 
   return {
     protocolVersion: MCP_VERSION,
-    capabilities: { tools: {} },
+    capabilities: { tools: {}, resources: {} },
     serverInfo: { name: SERVER_NAME, version: SERVER_VERSION },
   }
 }
@@ -397,6 +463,160 @@ async function handle_initialize(params: Record<string, unknown>): Promise<unkno
 
 function handle_tools_list(): unknown {
   return { tools: TOOLS }
+}
+
+//
+// Handle resources/list
+//
+
+function handle_resources_list(): unknown {
+  return { resources: RESOURCES }
+}
+
+//
+// Handle resources/templates/list
+//
+
+function handle_resources_templates_list(): unknown {
+  return { resourceTemplates: RESOURCE_TEMPLATES }
+}
+
+//
+// Handle resources/read
+//
+
+async function handle_resources_read(params: Record<string, unknown>): Promise<unknown> {
+  const uri = String(params.uri ?? "")
+
+  if (!uri.startsWith("brane://")) {
+    throw new McpError(-32602, `Invalid resource URI: ${uri}`)
+  }
+
+  const path = uri.slice("brane://".length)
+
+  // Static resources
+  if (path === "concepts") {
+    const result = await sys.call("/mind/concepts/list", {})
+    if (result.status === "error") throw new McpError(-32603, "Failed to list concepts")
+    const data = result.result as Record<string, unknown>
+    return {
+      contents: [{
+        uri,
+        mimeType: "application/json",
+        text: JSON.stringify(data, null, 2),
+      }]
+    }
+  }
+
+  if (path === "episodes") {
+    const result = await sys.call("/mind/episodes/list", { agent_id: mcp_agent_id !== "unknown" ? mcp_agent_id : undefined })
+    if (result.status === "error") throw new McpError(-32603, "Failed to list episodes")
+    const data = result.result as Record<string, unknown>
+    return {
+      contents: [{
+        uri,
+        mimeType: "application/json",
+        text: JSON.stringify(data, null, 2),
+      }]
+    }
+  }
+
+  if (path === "graph/summary") {
+    const result = await sys.call("/graph/summary", {})
+    if (result.status === "error") throw new McpError(-32603, "Failed to get graph summary")
+    const data = result.result as Record<string, unknown>
+    return {
+      contents: [{
+        uri,
+        mimeType: "application/json",
+        text: JSON.stringify(data, null, 2),
+      }]
+    }
+  }
+
+  // Parameterized resources: concepts/{id}
+  const concept_match = path.match(/^concepts\/(\d+)$/)
+  if (concept_match) {
+    const id = parseInt(concept_match[1], 10)
+    const result = await sys.call("/mind/concepts/get", { id })
+    if (result.status === "error") throw new McpError(-32603, `Failed to get concept ${id}`)
+    const data = result.result as Record<string, unknown>
+
+    // Enrich with edges (null-safe)
+    if (data && typeof data === "object") {
+      const neighbors = await sys.call("/graph/neighbors", { id })
+      if (neighbors.status === "success") {
+        data.neighbors = (neighbors.result as Record<string, unknown>)
+      }
+    }
+
+    return {
+      contents: [{
+        uri,
+        mimeType: "application/json",
+        text: JSON.stringify(data, null, 2),
+      }]
+    }
+  }
+
+  // Parameterized resources: episodes/{id}
+  const episode_match = path.match(/^episodes\/(\d+)$/)
+  if (episode_match) {
+    const id = parseInt(episode_match[1], 10)
+    const result = await sys.call("/mind/episodes/get", { id })
+    if (result.status === "error") throw new McpError(-32603, `Failed to get episode ${id}`)
+    const data = result.result as Record<string, unknown>
+    return {
+      contents: [{
+        uri,
+        mimeType: "application/json",
+        text: JSON.stringify(data, null, 2),
+      }]
+    }
+  }
+
+  // Parameterized resources: search?q={query}
+  if (path.startsWith("search?")) {
+    const search_params = new URLSearchParams(path.slice("search?".length))
+    const query = search_params.get("q") ?? ""
+    if (!query) throw new McpError(-32602, "Missing required parameter: q")
+    const result = await sys.call("/mind/search", { query, limit: 10 })
+    if (result.status === "error") throw new McpError(-32603, "Failed to search")
+    const data = result.result as Record<string, unknown>
+    return {
+      contents: [{
+        uri,
+        mimeType: "application/json",
+        text: JSON.stringify(data, null, 2),
+      }]
+    }
+  }
+
+  // Parameterized resources: neighbors/{id}
+  const neighbors_match = path.match(/^neighbors\/(\d+)$/)
+  if (neighbors_match) {
+    const id = parseInt(neighbors_match[1], 10)
+    const result = await sys.call("/graph/neighbors", { id })
+    if (result.status === "error") throw new McpError(-32603, `Failed to get neighbors for ${id}`)
+    const data = result.result as Record<string, unknown>
+    return {
+      contents: [{
+        uri,
+        mimeType: "application/json",
+        text: JSON.stringify(data, null, 2),
+      }]
+    }
+  }
+
+  throw new McpError(-32602, `Unknown resource URI: ${uri}`)
+}
+
+class McpError extends Error {
+  code: number
+  constructor(code: number, message: string) {
+    super(message)
+    this.code = code
+  }
 }
 
 //
@@ -915,6 +1135,15 @@ async function handle_jsonrpc_message(raw: string): Promise<string | null> {
       case "tools/call":
         result = await handle_tools_call(req.params ?? {})
         break
+      case "resources/list":
+        result = handle_resources_list()
+        break
+      case "resources/templates/list":
+        result = handle_resources_templates_list()
+        break
+      case "resources/read":
+        result = await handle_resources_read(req.params ?? {})
+        break
       default: {
         const resp: JsonRpcResponse = {
           jsonrpc: "2.0",
@@ -933,10 +1162,11 @@ async function handle_jsonrpc_message(raw: string): Promise<string | null> {
     return JSON.stringify(resp)
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err)
+    const code = err instanceof McpError ? err.code : -32603
     const resp: JsonRpcResponse = {
       jsonrpc: "2.0",
       id: req.id,
-      error: { code: -32603, message },
+      error: { code, message },
     }
     return JSON.stringify(resp)
   }
