@@ -3,6 +3,7 @@
 //
 
 import { defineCommand } from "citty"
+import { get_version } from "../version.ts"
 
 // Import all commands
 import { init } from "./commands/init.ts"
@@ -25,7 +26,7 @@ import { prune } from "./commands/prune.ts"
 export const main = defineCommand({
   meta: {
     name: "brane",
-    version: "0.1.0",
+    version: get_version(),
     description: "Semantic Nervous System - Knowledge Graph CLI",
   },
   subCommands: {

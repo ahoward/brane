@@ -13,6 +13,7 @@ import { start_repl } from "./repl.ts"
 import { run_mcp_server } from "./mcp.ts"
 import { runMain } from "citty"
 import { main, subCommandAliases } from "./cli/main.ts"
+import { get_version } from "./version.ts"
 
 //
 // Read stdin (for API mode)
@@ -143,6 +144,12 @@ async function main_entry(): Promise<void> {
   // No args → REPL
   if (args.length === 0) {
     await start_repl()
+    return
+  }
+
+  // Version flag
+  if (args[0] === "--version" || args[0] === "-V") {
+    console.log(get_version())
     return
   }
 
