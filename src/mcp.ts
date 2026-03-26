@@ -314,6 +314,20 @@ const TOOLS: McpTool[] = [
       },
     },
   },
+  {
+    name: "decay",
+    description: "Score memories by recency and relevance, and identify low-value ones for pruning. Returns scored list with recommendations. Always runs as dry_run via MCP.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        agent_id:               { type: "string", description: "Agent ID (auto-populated)" },
+        mode:                   { type: "string", enum: ["soft", "hard", "capacity"], description: "Decay mode (default: soft)" },
+        min_score:              { type: "number", description: "Minimum retention score (default 0.1)" },
+        max_episodes:           { type: "number", description: "Max episodes to keep (capacity mode, default 1000)" },
+        recency_half_life_days: { type: "number", description: "Half-life in days for recency scoring (default 30)" },
+      },
+    },
+  },
 ]
 
 //
@@ -661,6 +675,57 @@ const CUSTOM_HANDLERS: Record<string, ToolHandler> = {
 
     return {
       content: [{ type: "text", text: `Forgot memory id=${args.id}` }],
+      isError: false,
+    }
+  },
+
+  //
+  // decay — always dry_run via MCP (no auto-apply)
+  //
+  async decay(args) {
+    const decay_args: Record<string, unknown> = {
+      agent_id:               args.agent_id || mcp_agent_id,
+      dry_run:                true,  // Always dry_run via MCP
+      mode:                   args.mode ?? "soft",
+      min_score:              args.min_score ?? 0.1,
+      max_episodes:           args.max_episodes ?? 1000,
+      recency_half_life_days: args.recency_half_life_days ?? 30,
+    }
+
+    const result = await sys.call("/mind/decay", decay_args)
+
+    if (result.status === "error") {
+      return {
+        content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+        isError: true,
+      }
+    }
+
+    const data = result.result as { scored?: any[]; archived?: number; deleted?: number; protected_count?: number } | null
+    const scored = data?.scored ?? []
+
+    if (scored.length === 0) {
+      return {
+        content: [{ type: "text", text: "No episodes to score for decay." }],
+        isError: false,
+      }
+    }
+
+    const lines: string[] = [`Memory decay analysis (${scored.length} episodes scored):\n`]
+
+    for (const ep of scored) {
+      const status = ep.protected ? " [PROTECTED]" : (ep.score < (args.min_score ?? 0.1) ? " [WOULD DECAY]" : "")
+      lines.push(`  [#${ep.id}] score=${ep.score}${status}`)
+      lines.push(`    ${ep.observation.slice(0, 80)}`)
+    }
+
+    lines.push("")
+    lines.push("To apply: run `brane /mind/decay` with agent_id and desired mode.")
+
+    const text = truncate_payload(lines.join("\n"), MAX_RECALL_PAYLOAD)
+
+    return {
+      content: [{ type: "text", text }],
       isError: false,
     }
   },

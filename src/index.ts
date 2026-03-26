@@ -64,6 +64,7 @@ import { handler as lens_delete_handler } from "./handlers/lens/delete.ts"
 import { handler as lens_migrate_handler } from "./handlers/lens/migrate.ts"
 import { handler as mind_prune_handler } from "./handlers/mind/prune.ts"
 import { handler as mind_consolidate_handler } from "./handlers/mind/consolidate.ts"
+import { handler as mind_decay_handler } from "./handlers/mind/decay.ts"
 import { handler as mind_episodes_create_handler } from "./handlers/mind/episodes/create.ts"
 import { handler as mind_episodes_get_handler } from "./handlers/mind/episodes/get.ts"
 import { handler as mind_episodes_list_handler } from "./handlers/mind/episodes/list.ts"
@@ -129,6 +130,7 @@ sys.register("/lens/delete", lens_delete_handler)
 sys.register("/lens/migrate", lens_migrate_handler)
 sys.register("/mind/prune", mind_prune_handler)
 sys.register("/mind/consolidate", mind_consolidate_handler)
+sys.register("/mind/decay", mind_decay_handler)
 sys.register("/mind/episodes/create", mind_episodes_create_handler)
 sys.register("/mind/episodes/get", mind_episodes_get_handler)
 sys.register("/mind/episodes/list", mind_episodes_list_handler)
