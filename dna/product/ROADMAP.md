@@ -27,11 +27,45 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 ---
 
-## Current: MVP Sprint
+## Current: Agent Memory Layer
 
-**Goal:** Complete core CLI functionality before any service/infrastructure work.
+**Goal:** Transform brane into a deterministic subjective memory layer for AI agents, exposed via MCP.
 
-### Next
+### In Progress
+
+- [ ] `034-episodic-memory` — Episodes relation + CRUD + semantic search ([#34](https://github.com/ahoward/brane/issues/34), PR [#57](https://github.com/ahoward/brane/pull/57))
+
+### Next — Agent Memory Critical Path
+
+- [ ] `035-mcp-remember-recall` — MCP tools: remember and recall for episodic memory ([#35](https://github.com/ahoward/brane/issues/35))
+- [ ] `036-mcp-learn-ask-reflect` — MCP tools: learn, ask, reflect for knowledge graph ([#36](https://github.com/ahoward/brane/issues/36))
+- [ ] `037-agent-id-tracking` — Tag concepts, edges, episodes with creator agent ([#37](https://github.com/ahoward/brane/issues/37))
+- [ ] `038-episode-consolidation` — Distill episodes into semantic knowledge ([#38](https://github.com/ahoward/brane/issues/38))
+- [ ] `039-intelligent-decay` — Automatic memory pruning by recency and relevance ([#39](https://github.com/ahoward/brane/issues/39))
+
+### Next — MCP & Integration
+
+- [ ] `040-multi-agent-isolation` — Per-agent knowledge spaces via lens isolation ([#40](https://github.com/ahoward/brane/issues/40))
+- [ ] `041-mcp-resources` — Expose concepts, episodes, graph as MCP resources ([#41](https://github.com/ahoward/brane/issues/41))
+- [ ] `042-mcp-prompts` — Pre-built reasoning templates for agents ([#42](https://github.com/ahoward/brane/issues/42))
+- [ ] `044-integration-tests` — Brane MCP with Claude Code end-to-end ([#44](https://github.com/ahoward/brane/issues/44))
+- [ ] `046-temporal-queries` — Time-range filtering across all memory types ([#46](https://github.com/ahoward/brane/issues/46))
+
+### Next — Infrastructure & Safety
+
+- [ ] `048-concurrency` — Database locking strategy for multi-process MCP ([#48](https://github.com/ahoward/brane/issues/48))
+- [ ] `050-context-truncation` — Max payload size on MCP tool responses ([#50](https://github.com/ahoward/brane/issues/50))
+- [ ] `051-cost-control` — Circuit breaker for LLM-backed tools ([#51](https://github.com/ahoward/brane/issues/51))
+
+### Next — Polish & Distribution
+
+- [ ] `043-binary-distribution` — Standalone installable (homebrew, curl) ([#43](https://github.com/ahoward/brane/issues/43))
+- [ ] `045-documentation` — Brane as agent memory layer (README, examples) ([#45](https://github.com/ahoward/brane/issues/45))
+- [ ] `052-passive-ingestion` — Learn from Claude Code session logs ([#52](https://github.com/ahoward/brane/issues/52))
+- [ ] `054-self-reinforcing-retrieval` — Batch-update access metadata on search ([#54](https://github.com/ahoward/brane/issues/54))
+- [ ] `055-richer-episode-types` — Decision, preference, fact, event tags ([#55](https://github.com/ahoward/brane/issues/55))
+
+### Deferred
 
 - [ ] `028-verifier-node` — Headless verification node
 - [ ] `029-protocol-spec` — CTX token integration spec
@@ -44,6 +78,9 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 | Feature | PR | Date |
 |---------|-----|------|
+| `053-fuzzy-dedup` | #55 | 2026-03-26 |
+| `049-schema-migrations` | #56 | 2026-03-26 |
+| `034-extraction-pipeline` | #32 | 2026-03-06 |
 | `032-corpus` | — | 2026-03-05 |
 | `033-prune` | — | 2026-03-05 |
 | `031-multi-lens` | #31 | 2026-02-18 |
@@ -98,3 +135,5 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 - **031-multi-lens complete!** — Named lenses as independent knowledge graphs, state.db, security hardened, README rewrite, 321 tests
 - **033-prune complete!** — `brane prune` removes orphaned concepts/edges/provenance, Gemini-reviewed safety fix, 328 tests
 - **032-corpus complete!** — Adversarial test material: surveillance, dark patterns, COPPA violations, alignment-washing
+- **049-schema-migrations complete!** — Versioned mind.db upgrades with backup/restore, Gemini-reviewed
+- **053-fuzzy-dedup complete!** — Length-scaled Levenshtein prevents false matches on short concept names
