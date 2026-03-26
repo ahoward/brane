@@ -10,6 +10,7 @@ import { resolve_lens_paths } from "./lib/state.ts"
 import { acquire_lock, auto_release_on_exit } from "./lib/lock.ts"
 import { reset_rate_limiter, get_session_stats } from "./lib/rate-limit.ts"
 import { auto_tag, STANDARD_TAGS } from "./lib/auto-tag.ts"
+import { maybe_flush, auto_flush_on_exit } from "./lib/access-log.ts"
 import { resolve } from "node:path"
 
 //
@@ -656,6 +657,9 @@ async function handle_initialize(params: Record<string, unknown>): Promise<unkno
 
     // Auto-release on process exit/crash
     auto_release_on_exit(lock_path)
+
+    // Auto-flush access log on process exit (#54)
+    auto_flush_on_exit()
   } catch (err) {
     if (err instanceof McpError) throw err
     // Lock failure is advisory — don't block initialization
@@ -1333,6 +1337,9 @@ async function handle_tools_call(params: Record<string, unknown>): Promise<unkno
         }
       }
     }
+
+    // Time-based flush of access log (#54)
+    maybe_flush()
 
     return response
   } catch (err: unknown) {

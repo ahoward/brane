@@ -7,6 +7,7 @@ import { success, error } from "../../lib/result.ts"
 import { resolve_lens_paths } from "../../lib/state.ts"
 import { open_mind, is_mind_error } from "../../lib/mind.ts"
 import { generate_embedding } from "../../lib/embed.ts"
+import { log_access } from "../../lib/access-log.ts"
 import { resolve } from "node:path"
 import { existsSync } from "node:fs"
 import Database from "bun:sqlite"
@@ -261,6 +262,11 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Conte
           }
         }
       }
+    }
+
+    // Log access for retrieval-based reinforcement (#54)
+    if (all_concepts_result.length > 0) {
+      log_access(all_concepts_result.map((c: { id: number }) => c.id))
     }
 
     mind_db.close()

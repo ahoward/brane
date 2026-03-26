@@ -5,6 +5,7 @@
 import type { Params, Result, Emit } from "../../lib/types.ts"
 import { success, error } from "../../lib/result.ts"
 import { open_mind, is_mind_error } from "../../lib/mind.ts"
+import { log_access } from "../../lib/access-log.ts"
 
 interface Neighbor {
   id: number
@@ -112,6 +113,9 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Neigh
         weight
       }
     })
+
+    // Log access for the queried concept (#54)
+    log_access([id])
 
     db.close()
 
