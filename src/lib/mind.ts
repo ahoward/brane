@@ -6,6 +6,7 @@ import { resolve } from "node:path"
 import { existsSync } from "node:fs"
 import { CozoDb } from "./cozo"
 import { resolve_lens_paths } from "./state.ts"
+import { migrate } from "./migrate.ts"
 
 export interface MindDb {
   db:   CozoDb
@@ -22,7 +23,7 @@ export interface MindError {
 // Uses resolve_lens_paths() to find the active lens's mind.db.
 //
 
-export function open_mind(): MindDb | MindError {
+export async function open_mind(): Promise<MindDb | MindError> {
   const paths = resolve_lens_paths()
 
   if (!existsSync(paths.brane_path)) {
@@ -48,6 +49,19 @@ export function open_mind(): MindDb | MindError {
 
   try {
     const db = new CozoDb("rocksdb", paths.mind_db_path)
+
+    // Auto-migrate if schema is behind
+    try {
+      await migrate(db, paths.mind_db_path)
+    } catch (err) {
+      db.close()
+      const message = err instanceof Error ? err.message : String(err)
+      return {
+        code:    "migration_failed",
+        message,
+      }
+    }
+
     return { db, path: paths.mind_db_path }
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err)
