@@ -9,6 +9,7 @@ import { sys } from "./index.ts"
 import { resolve_lens_paths } from "./lib/state.ts"
 import { acquire_lock, auto_release_on_exit } from "./lib/lock.ts"
 import { reset_rate_limiter, get_session_stats } from "./lib/rate-limit.ts"
+import { auto_tag, STANDARD_TAGS } from "./lib/auto-tag.ts"
 import { resolve } from "node:path"
 
 //
@@ -274,14 +275,14 @@ const TOOLS: McpTool[] = [
   //
   {
     name: "remember",
-    description: "Store a memory about something you observed, learned, or decided. Use this whenever you want to remember something for future conversations.",
+    description: "Store a memory about something you observed, learned, or decided. Auto-detects and adds type tags (decision, preference, fact, event, lesson, caveat) from observation text, merged with any tags you provide.",
     inputSchema: {
       type: "object",
       properties: {
         observation: { type: "string", description: "What you observed, learned, or decided" },
         context:     { type: "string", description: "What you were doing when you learned this" },
         outcome:     { type: "string", description: "What happened as a result" },
-        tags:        { type: "array", items: { type: "string" }, description: "Labels to categorize this memory" },
+        tags:        { type: "array", items: { type: "string" }, description: "Standard tags: decision, preference, fact, event, lesson, caveat. Auto-detected if omitted." },
       },
       required: ["observation"],
     },
@@ -498,10 +499,19 @@ USE \`reflect\` when:
 - Before making recommendations based on accumulated knowledge
 - You need a summary of what you've learned so far
 
+TAGGING MEMORIES:
+When using \`remember\`, tags are auto-detected from your observation text. You can also provide them explicitly:
+- "decision" — choices made ("we decided to...", "going with...")
+- "preference" — user preferences ("I prefer...", "always use...", "never...")
+- "fact" — concrete information ("runs on port 3000", "uses PostgreSQL")
+- "event" — things that happened ("deployed v2.3.0", "merged the PR")
+- "lesson" — things learned ("parallel tests cause flaky failures")
+- "caveat" — warnings discovered ("auth has a race condition")
+
 GENERAL PRINCIPLES:
 - Remember outcomes, not just actions
 - Be specific: "auth middleware timeout in CI" > "something broke"
-- Tag observations to enable future filtering
+- Tags enable filtered recall: \`recall\` with tag="decision" finds only decisions
 - Reflect periodically to consolidate scattered episodes into knowledge`
     }
   }],
@@ -540,6 +550,7 @@ Remember:
 5. Are there any concepts or relationships worth adding to the knowledge graph?
 
 Use \`remember\` to save the key takeaways as episodic memories.
+Tags are auto-detected, but you can be explicit: decision, preference, fact, event, lesson, caveat.
 Use \`learn\` if you discovered structural relationships worth capturing.`
     }
   }],
@@ -1033,15 +1044,25 @@ const CUSTOM_HANDLERS: Record<string, ToolHandler> = {
   },
 
   //
-  // remember — create an episode with auto-populated agent_id
+  // remember — create an episode with auto-populated agent_id and auto-tags
   //
   async remember(args) {
+    const observation = String(args.observation ?? "")
+    const outcome = String(args.outcome ?? "")
+    const agent_tags = Array.isArray(args.tags) ? args.tags.map(String) : []
+
+    // Auto-tag: detect tags from observation + outcome text (#55)
+    // Auto-tags are additive — always merged with agent-provided tags
+    const tag_text = [observation, outcome].filter(Boolean).join(" ")
+    const detected_tags = auto_tag(tag_text)
+    const merged_tags = [...new Set([...agent_tags, ...detected_tags])]
+
     const episode_args = {
       agent_id:    mcp_agent_id,
-      observation: args.observation,
+      observation,
       context:     args.context ?? "",
       outcome:     args.outcome ?? "",
-      tags:        args.tags ?? [],
+      tags:        merged_tags,
     }
 
     const result = await sys.call("/mind/episodes/create", episode_args)
@@ -1054,7 +1075,9 @@ const CUSTOM_HANDLERS: Record<string, ToolHandler> = {
     }
 
     const ep = result.result as Record<string, unknown>
-    const summary = `Remembered (id=${ep.id}): ${ep.observation}`
+    const ep_tags = (ep.tags as string[]) ?? merged_tags
+    const tag_info = ep_tags.length > 0 ? ` [${ep_tags.join(", ")}]` : ""
+    const summary = `Remembered (id=${ep.id})${tag_info}: ${ep.observation}`
     return {
       content: [{ type: "text", text: summary }],
       isError: false,
