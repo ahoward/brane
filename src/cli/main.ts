@@ -30,6 +30,7 @@ import { storm } from "./commands/storm.ts"
 import { enhance } from "./commands/enhance.ts"
 import { loop } from "./commands/loop.ts"
 import { rebuild } from "./commands/rebuild.ts"
+import { tldr } from "./commands/tldr.ts"
 
 export const main = defineCommand({
   meta: {
@@ -47,6 +48,7 @@ export const main = defineCommand({
     enhance,
     loop,
     rebuild,
+    tldr,
     search,
     verify,
     prune,

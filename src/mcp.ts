@@ -238,6 +238,17 @@ const TOOLS: McpTool[] = [
     },
   },
   {
+    name: "tldr",
+    description: "Show a structured outline of what brane knows. Groups concepts into topics with one-line synopses and lists recent learnings.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        focus: { type: "string", description: "Focus on a topic area" },
+        limit: { type: "number", description: "Max items to load (default: 50)" },
+      },
+    },
+  },
+  {
     name: "lens_prompt_set",
     description: "Create or update a lens prompt (cognitive filter). Lens prompts shape how digest, storm, enhance, and ask process information. Use lens_prompt_on to activate after creating.",
     inputSchema: {
@@ -494,6 +505,7 @@ const TOOL_ROUTES: Record<string, string> = {
   loop:             "/calabi/loop",
   loop_list:        "/calabi/loop",
   rebuild:          "/calabi/rebuild",
+  tldr:             "/calabi/tldr",
   lens_prompt_set:  "/lens/prompt",
   lens_prompt_on:   "/lens/prompt",
   lens_prompt_off:  "/lens/prompt",
