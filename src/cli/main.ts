@@ -29,6 +29,7 @@ import { ask } from "./commands/ask.ts"
 import { storm } from "./commands/storm.ts"
 import { enhance } from "./commands/enhance.ts"
 import { loop } from "./commands/loop.ts"
+import { rebuild } from "./commands/rebuild.ts"
 
 export const main = defineCommand({
   meta: {
@@ -45,6 +46,7 @@ export const main = defineCommand({
     storm,
     enhance,
     loop,
+    rebuild,
     search,
     verify,
     prune,

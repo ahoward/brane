@@ -227,6 +227,17 @@ const TOOLS: McpTool[] = [
     },
   },
   {
+    name: "rebuild",
+    description: "Re-extract all digested sources through current active lenses. Clears digest records and re-processes each source chronologically. Use after changing active lenses.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        lens:    { type: "string", description: "Override lens prompt for rebuild" },
+        dry_run: { type: "boolean", description: "Show what would be rebuilt" },
+      },
+    },
+  },
+  {
     name: "lens_prompt_set",
     description: "Create or update a lens prompt (cognitive filter). Lens prompts shape how digest, storm, enhance, and ask process information. Use lens_prompt_on to activate after creating.",
     inputSchema: {
@@ -482,6 +493,7 @@ const TOOL_ROUTES: Record<string, string> = {
   enhance:          "/calabi/enhance",
   loop:             "/calabi/loop",
   loop_list:        "/calabi/loop",
+  rebuild:          "/calabi/rebuild",
   lens_prompt_set:  "/lens/prompt",
   lens_prompt_on:   "/lens/prompt",
   lens_prompt_off:  "/lens/prompt",
