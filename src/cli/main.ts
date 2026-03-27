@@ -24,6 +24,7 @@ import { graph } from "./commands/graph.ts"
 import { prune } from "./commands/prune.ts"
 import { memory } from "./commands/memory.ts"
 import { ingestSessions } from "./commands/ingest-sessions.ts"
+import { status } from "./commands/status.ts"
 
 export const main = defineCommand({
   meta: {
@@ -34,6 +35,7 @@ export const main = defineCommand({
   subCommands: {
     // Convenience commands (most used)
     init,
+    status,
     ingest,
     search,
     verify,
