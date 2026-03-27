@@ -25,6 +25,7 @@ import { prune } from "./commands/prune.ts"
 import { memory } from "./commands/memory.ts"
 import { ingestSessions } from "./commands/ingest-sessions.ts"
 import { status } from "./commands/status.ts"
+import { digest } from "./commands/digest.ts"
 
 export const main = defineCommand({
   meta: {
@@ -36,6 +37,7 @@ export const main = defineCommand({
     // Convenience commands (most used)
     init,
     status,
+    digest,
     ingest,
     search,
     verify,
@@ -70,6 +72,7 @@ export const main = defineCommand({
 
 // Alias mapping for short commands
 export const subCommandAliases: Record<string, string> = {
+  d: "digest",
   c: "concept",
   e: "edge",
   r: "rule",

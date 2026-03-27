@@ -160,6 +160,19 @@ const TOOLS: McpTool[] = [
     },
   },
   {
+    name: "digest",
+    description: "Consume a URL, file, directory, or text into the knowledge graph. Extracts concepts, edges, and episodes via LLM. Deduplicates by content hash.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        source:   { type: "string", description: "URL, file path, directory, or \"-\" for stdin" },
+        lens:     { type: "string", description: "Lens prompt to shape extraction (e.g. 'Focus on security concerns')" },
+        dry_run:  { type: "boolean", description: "Preview what would be extracted without writing" },
+      },
+      required: ["source"],
+    },
+  },
+  {
     name: "ingest_sessions",
     description: "Passively ingest Claude Code session logs into episodic memory. Parses JSONL conversation logs to extract human↔assistant exchanges and store them as episodes. Tracks ingested sessions to avoid duplicates.",
     inputSchema: {
@@ -375,6 +388,7 @@ const TOOL_ROUTES: Record<string, string> = {
   episodes_search:  "/mind/episodes/search",
   relate:           "/mind/edges/create",
   ingest_sessions:  "/calabi/ingest-sessions",
+  digest:           "/calabi/digest",
 }
 
 //
