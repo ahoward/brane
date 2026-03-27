@@ -63,9 +63,9 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 ### Next — CLI & Usability
 
-- [ ] `056-cli-memory` — CLI memory commands: remember, recall, forget from terminal ([#76](https://github.com/ahoward/brane/issues/76))
-- [ ] `057-cli-ingest-sessions` — CLI session ingestion command ([#77](https://github.com/ahoward/brane/issues/77))
-- [ ] `058-status-dashboard` — Health dashboard: brane status command ([#78](https://github.com/ahoward/brane/issues/78))
+- [x] `056-cli-memory` — CLI memory commands: remember, recall, forget from terminal ([#76](https://github.com/ahoward/brane/issues/76))
+- [x] `057-cli-ingest-sessions` — CLI session ingestion command ([#77](https://github.com/ahoward/brane/issues/77))
+- [x] `058-status-dashboard` — Health dashboard: brane status command ([#78](https://github.com/ahoward/brane/issues/78))
 
 ### Deferred
 
@@ -80,6 +80,9 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 | Feature | PR | Date |
 |---------|-----|------|
+| `058-status-dashboard` | #81 | 2026-03-27 |
+| `057-cli-ingest-sessions` | #80 | 2026-03-27 |
+| `056-cli-memory` | #79 | 2026-03-27 |
 | `045-documentation` | #75 | 2026-03-27 |
 | `043-binary-distribution` | #74 | 2026-03-26 |
 | `052-passive-ingestion` | #73 | 2026-03-26 |
