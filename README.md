@@ -1,67 +1,129 @@
 # brane
 
-the subjective linter. deterministic subjective bias.
+deterministic subjective memory for AI agents.
 
-encode your values as a knowledge graph. verify code and prose against them. fail the build when they're violated.
+a local-first knowledge graph exposed via MCP. your agent remembers, learns, and reasons across sessions — no cloud, no API keys, no data leaving your machine.
 
 ```
-values (human)  →  knowledge graph  →  violations  →  human review
+agent ↔ MCP ↔ brane (body + mind)
+                ├── body.db  (what exists: files, hashes)
+                └── mind.db  (what it means: concepts, edges, episodes)
 ```
 
-every linter has bias. brane makes the bias explicit, auditable, and deterministic.
+## quick start
 
-## tl;dr
+### install
 
 ```bash
-brane init
-brane ingest src/
-brane verify
+# curl
+curl -fsSL https://raw.githubusercontent.com/ahoward/brane/main/scripts/install.sh | bash
+
+# or build from source
+git clone https://github.com/ahoward/brane.git && cd brane
+bun install && bun run build
+export PATH="$PWD/bin:$PATH"
 ```
 
-that's it. ingest extracts structure. verify checks rules. three commands.
+### connect to Claude Code
 
-```
-$ brane verify
-
-✗ unguarded_minor_data
-  LocationTracker processes MinorUserData and calls AdNetworkAPI
-  — no consent verification in the pipeline.
-  Provenance: src/tracking/location.ts
-
-✗ unbalanced_framing
-  Claim "AI Monitoring improves public safety" references
-  SurveillanceTechnology but has no ACKNOWLEDGES edge to
-  civil liberties concerns.
-  Provenance: drafts/ai-safety-post.md
-
-2 violations found
+```bash
+# Add to ~/.claude/settings.json
+cat <<'JSON'
+{
+  "mcpServers": {
+    "brane": {
+      "command": "brane",
+      "args": ["mcp"]
+    }
+  }
+}
+JSON
 ```
 
-## what this is
+### connect to Cursor
 
-- **not a syntax checker.** a semantic checker. meaning, not form.
-- **not objective.** subjective by design. your values, your rules, your graph.
-- **not a cloud service.** single binary. `.brane/` in your repo. works offline.
+Settings → MCP Servers → Add:
+```json
+{
+  "mcpServers": {
+    "brane": {
+      "command": "brane",
+      "args": ["mcp"]
+    }
+  }
+}
+```
+
+### use it
+
+Your agent now has these tools:
+
+| tool | what it does |
+|------|-------------|
+| `remember` | Store a memory (auto-tagged: decision, preference, fact, event, lesson, caveat) |
+| `recall` | Search memories by meaning |
+| `learn` | Ingest files into the knowledge graph (AST + LLM extraction) |
+| `ask` | Query the knowledge graph with natural language |
+| `reflect` | Summarize what brane knows |
+| `relate` | Create relationships between concepts |
+| `search` | Semantic vector search over concepts |
+| `ingest_sessions` | Learn from Claude Code session logs |
+| `consolidate` | Merge similar episodes into knowledge |
+| `decay` | Score memories by relevance, prune stale ones |
+| `forget` | Remove a specific memory |
+
+The agent uses them automatically. No prompting required — brane exposes MCP prompts that teach the agent when to remember, recall, learn, and reflect.
+
+## what makes brane different
+
+| | brane | Mem0 | Letta | Zep | Anthropic MCP memory |
+|---|---|---|---|---|---|
+| **runs where** | local binary | cloud API | cloud/local | cloud API | local |
+| **data stays** | on your machine | their servers | depends | their servers | on your machine |
+| **storage** | knowledge graph (CozoDB) | vector DB | vector + relational | vector + graph | file-based |
+| **provenance** | full (file → concept → edge) | none | partial | partial | none |
+| **verification** | Datalog rules | none | none | none | none |
+| **multi-agent** | per-agent lenses | shared | shared | shared | per-project |
+| **auto-tagging** | yes (6 types) | no | no | no | no |
+| **code extraction** | AST + LLM + adversarial | LLM only | LLM only | LLM only | none |
+| **offline** | yes | no | depends | no | yes |
+| **cost** | free (local embeddings) | per-API-call | per-API-call | per-API-call | free |
 
 ## how it works
 
-extract meaning from files into a knowledge graph. run Datalog rules against it.
+### episodic memory (remember / recall)
 
-extraction is an ensemble pipeline — not just "ask an LLM and hope":
+Agents store observations as episodes with auto-detected type tags:
 
 ```
-source file → AST parse (tree-sitter)     → ground truth symbols
-            → sentinel generation          → mandatory concepts (classes, interfaces, types)
-            → LLM extraction (lens-guided) → semantic concepts + edges
-            → adversarial re-extraction    → critique pass for missed sentinels
-            → merge + coverage check       → high-confidence graph with metrics
+agent → "We decided to use PostgreSQL for the new service"
+brane → stored as episode, auto-tagged: [decision]
+
+agent → recall("database choice")
+brane → [decision] "We decided to use PostgreSQL..." (similarity: 0.89)
 ```
 
-AST parsing gives you ground truth. sentinels hold the LLM accountable. if the LLM misses a class that tree-sitter found, the pipeline re-extracts with explicit hints. coverage tells you exactly what percentage of your codebase the graph actually represents.
+### semantic knowledge (learn / ask)
 
-no LLM? AST extraction still works. manual curation works too. the LLM is one signal in an ensemble, not the whole story.
+Ingest files to build a knowledge graph:
 
-a rule is 3-6 lines of Datalog:
+```
+brane learn ./src/
+  → AST parse (tree-sitter)
+  → sentinel generation (mandatory concepts)
+  → LLM extraction (guided by lens)
+  → adversarial re-extraction (missed sentinels)
+  → coverage check
+
+brane ask "how does authentication work?"
+  → [AuthService] (score: 0.91)
+  →   AuthService --DEPENDS_ON--> JwtTokenValidator
+  →   AuthService --CALLS--> UserRepository
+```
+
+### verification (rules)
+
+Datalog rules check structural properties:
 
 ```datalog
 unguarded_minor_data[id, name] :=
@@ -73,51 +135,16 @@ unguarded_minor_data[id, name] :=
   not *edges[_, id, _, 'VERIFIED_BY', _]
 ```
 
-this isn't grep. grep finds strings. brane finds structural violations across relationships. you can't grep for what isn't there.
+### passive ingestion
 
-## what it catches
+Brane can learn from Claude Code session logs — extracting conversation turns and storing them as tagged episodic memories:
 
-| content | extract | verify |
-|---------|---------|--------|
-| source code | services, data flows, APIs | safety, architecture, access control |
-| prose / content | claims, entities, framing | brand alignment, ethical guidelines |
-| policy docs | rights, obligations, processes | completeness, consistency |
-| AI/ML systems | models, datasets, decisions | bias, consent, human oversight |
-| LLM output | claims, agents, incentives | adversarial robustness, accuracy |
-
-## lenses
-
-different domains have different values. lenses are independent knowledge graphs.
-
-```bash
-brane lens create child-safety
-brane lens use child-safety
-brane ingest src/
-brane verify
-
-brane lens create content-ethics
-brane lens use content-ethics
-brane ingest drafts/
-brane verify
 ```
-
-| lens | domain | checks |
-|------|--------|--------|
-| `child-safety` | COPPA / minor protection | data collection, consent, age gating |
-| `content-ethics` | editorial guidelines | framing, balance, accuracy |
-| `adversarial` | LLM output robustness | unchallenged claims, missing counterparties |
-| `ethics-ic` | Intelligence Community | human oversight, bias assessment |
-| `ethics-gdpr` | EU Data Protection | legal basis, data minimization |
-| `arch-clean` | software architecture | dependency rules, layer violations |
-| `security-owasp` | application security | injection, access control |
-
-## ci/cd
-
-```yaml
-- name: Verify values alignment
-  run: |
-    brane ingest src/
-    brane verify --exit-code
+brane ingest_sessions
+  → parses JSONL session logs
+  → extracts human↔assistant exchanges
+  → auto-tags and stores as episodes
+  → tracks ingested sessions (no duplicates)
 ```
 
 ## architecture
@@ -130,82 +157,73 @@ split-brain. two databases.
 └── lens/
     ├── default/
     │   ├── body.db              # sqlite — files, hashes, FTS
-    │   └── mind.db              # cozodb — concepts, edges, rules
-    └── child-safety/
+    │   └── mind.db              # cozodb — concepts, edges, rules, episodes
+    └── my-project/
         ├── body.db
         └── mind.db
 ```
 
 **body** knows what exists. **mind** knows what it means. the CLI is the corpus callosum.
 
+### lenses
+
+different domains get different knowledge graphs:
+
+```bash
+brane lens create my-project
+brane lens use my-project
+brane ingest src/
+```
+
+agents get auto-isolated lenses via MCP (per `clientInfo.name`).
+
+## cli
+
+```
+brane init                     initialize body + mind
+brane ingest <path>            scan + extract + graph
+brane search <query>           semantic concept search
+brane verify                   run all rules
+brane prune                    remove orphans
+brane mcp                      start MCP server (stdio)
+brane --version                print version
+
+brane concept list|get|create|update|delete
+brane edge list|get|create|delete
+brane rule list|get|query
+brane graph summary|neighbors|viz
+brane lens create|use|list|show|delete
+brane context query <q>
+brane pr-verify
+```
+
+api mode: `echo '{"query":"auth"}' | brane /mind/search`
+
 ## stack
 
 - **runtime:** [bun](https://bun.sh) — typescript
 - **body:** bun:sqlite (WAL mode)
-- **mind:** CozoDB (Datalog + vector)
-- **AST:** web-tree-sitter + tree-sitter-wasms (multi-language WASM grammars)
-- **embeddings:** model2vec (pure TypeScript, no ONNX, no GPU)
+- **mind:** CozoDB (Datalog + vector search)
+- **AST:** web-tree-sitter + tree-sitter-wasms
+- **embeddings:** model2vec (pure TypeScript, local, no GPU)
 - **LLM:** optional. shells out to CLI tools. no SDKs.
-- **binary:** ~85 MB. zero runtime deps. works offline.
+- **binary:** single file. zero runtime deps. works offline.
 
-## quick start
+## safety
 
-```bash
-git clone https://github.com/ahoward/brane.git
-cd brane
-bun install
-bun run build
-export PATH="$PWD/bin:$PATH"
-brane --help
-```
-
-## commands
-
-```
-brane init                     initialize body + mind
-brane ingest <path>            scan + AST parse + LLM extract + coverage
-brane search <query>           semantic concept search
-brane verify                   run all rules
-
-brane concept                  manage concepts
-  create --name --type
-  list [--type]
-  get <id>
-  update <id>
-  delete <id>
-
-brane edge                     manage relationships
-  create --from <id|name> --to <id|name> --rel <rel>
-  list [--from] [--to] [--rel]
-  get <id>
-  delete <id>
-
-brane rule                     manage verification rules
-  list
-  get <name>
-  query <name>
-
-brane graph                    explore the graph
-  summary | concepts | edges | neighbors | viz
-
-brane lens                     manage lenses
-  create <name> | use <name> | list | show [name] | delete <name>
-
-brane prune                    remove orphaned concepts from deleted files
-brane context query <q>        graph-aware context retrieval
-brane pr-verify                verify PR changes against rules
-```
-
-short aliases: `brane c list`, `brane e list`, `brane r list`, `brane g viz`
-
-api mode: `echo '{"query":"auth"}' | brane /mind/search`
+- **rate limiting:** circuit breaker for LLM-backed tools (configurable)
+- **agent isolation:** per-agent lenses prevent cross-contamination
+- **cost control:** `BRANE_LLM_RATE_LIMIT`, `BRANE_MAX_FILES_PER_LEARN` env vars
+- **force override:** CLI only — agents cannot bypass circuit breakers via MCP
+- **advisory locking:** prevents concurrent writes from multiple MCP servers
 
 ## development
 
 ```bash
-bun run test          # 334 tests
-bun run repl          # interactive mode
+bun install
+bun run test:tc       # 349 tests
 bun run build         # compile binary
+bun run repl          # interactive mode
 ```
 
 ## more
@@ -225,11 +243,9 @@ Good. Now you know something.
 
 ## references
 
+- [MCP Specification](https://modelcontextprotocol.io)
 - [IC Principles of AI Ethics](https://www.intel.gov/principles-of-artificial-intelligence-ethics-for-the-intelligence-community)
-- [ICD-505: Artificial Intelligence](https://www.dni.gov/files/documents/ICD/ICD-505-Artificial-Intelligence.pdf)
-- [NSM-25 AI Framework](https://bidenwhitehouse.archives.gov/briefing-room/statements-releases/2024/10/24/fact-sheet-biden-harris-administration-outlines-coordinated-approach-to-harness-power-of-ai-for-u-s-national-security/)
 - [COPPA](https://www.ftc.gov/legal-library/browse/rules/childrens-online-privacy-protection-rule-coppa)
-- [Experts Have World Models. LLMs Have Word Models.](https://www.latent.space/p/adversarial-reasoning)
 
 ## license
 
