@@ -205,6 +205,41 @@ const TOOLS: McpTool[] = [
     },
   },
   {
+    name: "lens_prompt_set",
+    description: "Create or update a lens prompt (cognitive filter). Lens prompts shape how digest, storm, enhance, and ask process information. Use lens_prompt_on to activate after creating.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        name:        { type: "string", description: "Lens name" },
+        prompt:      { type: "string", description: "The lens prompt text" },
+        description: { type: "string", description: "Optional description" },
+      },
+      required: ["name", "prompt"],
+    },
+  },
+  {
+    name: "lens_prompt_on",
+    description: "Activate a lens prompt. Active lenses shape all future digest/storm/enhance/ask operations. Multiple lenses can be active simultaneously.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        name: { type: "string", description: "Lens name to activate" },
+      },
+      required: ["name"],
+    },
+  },
+  {
+    name: "lens_prompt_off",
+    description: "Deactivate a lens prompt.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        name: { type: "string", description: "Lens name to deactivate" },
+      },
+      required: ["name"],
+    },
+  },
+  {
     name: "ingest_sessions",
     description: "Passively ingest Claude Code session logs into episodic memory. Parses JSONL conversation logs to extract human↔assistant exchanges and store them as episodes. Tracks ingested sessions to avoid duplicates.",
     inputSchema: {
@@ -423,6 +458,9 @@ const TOOL_ROUTES: Record<string, string> = {
   ask:              "/calabi/ask",
   storm:            "/calabi/storm",
   enhance:          "/calabi/enhance",
+  lens_prompt_set:  "/lens/prompt",
+  lens_prompt_on:   "/lens/prompt",
+  lens_prompt_off:  "/lens/prompt",
 }
 
 //
@@ -1374,6 +1412,11 @@ async function handle_tools_call(params: Record<string, unknown>): Promise<unkno
       args.agent_id = mcp_agent_id
     }
   }
+
+  // Inject action for lens_prompt_* tools
+  if (name === "lens_prompt_set") args.action = "set"
+  else if (name === "lens_prompt_on") args.action = "on"
+  else if (name === "lens_prompt_off") args.action = "off"
 
   // Use custom handler if available, otherwise dispatch via route
   try {

@@ -16,6 +16,8 @@ export const lens = defineCommand({
       meta: { name: "create", description: "Create a new named lens" },
       args: {
         name: { type: "positional", description: "Lens name", required: true },
+        prompt: { type: "string", alias: "p", description: "Lens prompt (cognitive filter for extraction)" },
+        description: { type: "string", alias: "d", description: "Description of the lens" },
         config: { type: "string", alias: "c", description: "YAML config file to pre-load" },
         json: { type: "boolean", alias: "j", description: "Output as JSON" },
       },
@@ -25,14 +27,30 @@ export const lens = defineCommand({
 
         const result = await sys.call("/lens/create", params)
 
+        if (result.status !== "success") {
+          if (args.json) { output(result, { json: true }) } else { output(result, {}) }
+          return
+        }
+
+        // If --prompt was provided, save the lens prompt
+        if (args.prompt) {
+          await sys.call("/lens/prompt", {
+            action: "set",
+            name: args.name,
+            prompt: args.prompt,
+            description: args.description ?? "",
+          })
+        }
+
         if (args.json) {
           output(result, { json: true })
-        } else if (result.status === "success" && result.result) {
+        } else {
           const r = result.result as any
           console.log(`created ${r.path}/body.db`)
           console.log(`created ${r.path}/mind.db`)
-        } else {
-          output(result, {})
+          if (args.prompt) {
+            console.log(`prompt: ${args.prompt.slice(0, 60)}${args.prompt.length > 60 ? "..." : ""}`)
+          }
         }
       },
     }),
@@ -281,6 +299,82 @@ export const lens = defineCommand({
           }
         } else {
           output(result, {})
+        }
+      },
+    }),
+
+    on: defineCommand({
+      meta: { name: "on", description: "Activate a lens prompt (shapes future digest/storm/enhance/ask)" },
+      args: {
+        name: { type: "positional", description: "Lens prompt name", required: true },
+        json: { type: "boolean", alias: "j", description: "Output as JSON" },
+      },
+      async run({ args }) {
+        const result = await sys.call("/lens/prompt", { action: "on", name: args.name })
+        if (args.json) {
+          output(result, { json: true })
+        } else if (result.status === "success") {
+          console.log(`activated lens: ${args.name}`)
+        } else {
+          output(result, {})
+        }
+      },
+    }),
+
+    off: defineCommand({
+      meta: { name: "off", description: "Deactivate a lens prompt" },
+      args: {
+        name: { type: "positional", description: "Lens prompt name", required: true },
+        json: { type: "boolean", alias: "j", description: "Output as JSON" },
+      },
+      async run({ args }) {
+        const result = await sys.call("/lens/prompt", { action: "off", name: args.name })
+        if (args.json) {
+          output(result, { json: true })
+        } else if (result.status === "success") {
+          console.log(`deactivated lens: ${args.name}`)
+        } else {
+          output(result, {})
+        }
+      },
+    }),
+
+    prompt: defineCommand({
+      meta: { name: "prompt", description: "Set or view a lens prompt" },
+      args: {
+        name: { type: "positional", description: "Lens prompt name", required: true },
+        set: { type: "string", alias: "s", description: "Set the prompt text" },
+        description: { type: "string", alias: "d", description: "Lens description" },
+        json: { type: "boolean", alias: "j", description: "Output as JSON" },
+      },
+      async run({ args }) {
+        if (args.set) {
+          const result = await sys.call("/lens/prompt", {
+            action: "set",
+            name: args.name,
+            prompt: args.set,
+            description: args.description ?? "",
+          })
+          if (args.json) {
+            output(result, { json: true })
+          } else if (result.status === "success") {
+            console.log(`saved lens prompt: ${args.name}`)
+          } else {
+            output(result, {})
+          }
+        } else {
+          const result = await sys.call("/lens/prompt", { action: "get", name: args.name })
+          if (args.json) {
+            output(result, { json: true })
+          } else if (result.status === "success" && result.result) {
+            const r = result.result as { name: string; prompt: string; description: string; active: boolean }
+            console.log(`Name: ${r.name}`)
+            console.log(`Active: ${r.active ? "yes" : "no"}`)
+            if (r.description) console.log(`Description: ${r.description}`)
+            console.log(`Prompt: ${r.prompt}`)
+          } else {
+            output(result, {})
+          }
         }
       },
     }),

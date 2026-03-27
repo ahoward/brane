@@ -19,6 +19,7 @@ export interface EnhanceRequest {
   focus?:      string
   round:       number
   total_rounds: number
+  lens_prompt?: string
 }
 
 export interface EnhanceResult {
@@ -232,7 +233,10 @@ function mock_enhance(request: EnhanceRequest): EnhanceResult {
 //
 async function cli_enhance(request: EnhanceRequest): Promise<EnhanceResult> {
   const cli = process.env.BRANE_LLM_CLI ?? "claude"
-  const system_prompt = build_system_prompt()
+  let system_prompt = build_system_prompt()
+  if (request.lens_prompt) {
+    system_prompt += `\n\n## Active Lens\n${request.lens_prompt}`
+  }
   const user_prompt = build_user_prompt(request)
 
   const args = [

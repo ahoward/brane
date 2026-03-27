@@ -17,6 +17,7 @@ export interface StormRequest {
   episodes:    { id: number; observation: string; context?: string; tags?: string[] }[]
   round:       number     // current round (1-based)
   total_rounds: number
+  lens_prompt?: string
 }
 
 export interface StormResult {
@@ -148,6 +149,11 @@ You are NOT retrieving or summarizing — you are GENERATING new knowledge by th
 Return your brainstorm as structured JSON.`
 }
 
+function append_lens(base: string, lens_prompt?: string): string {
+  if (!lens_prompt) return base
+  return base + `\n\n## Active Lens\n${lens_prompt}`
+}
+
 function build_user_prompt(request: StormRequest): string {
   const parts: string[] = []
 
@@ -244,7 +250,7 @@ function mock_storm(request: StormRequest): StormResult {
 //
 async function cli_storm(request: StormRequest): Promise<StormResult> {
   const cli = process.env.BRANE_LLM_CLI ?? "claude"
-  const system_prompt = build_system_prompt()
+  const system_prompt = append_lens(build_system_prompt(), request.lens_prompt)
   const user_prompt = build_user_prompt(request)
 
   const args = [

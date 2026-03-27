@@ -10,7 +10,7 @@
 
 import type { Params, Result, Emit } from "../../lib/types.ts"
 import { success, error } from "../../lib/result.ts"
-import { open_state, resolve_lens_paths } from "../../lib/state.ts"
+import { open_state, resolve_lens_paths, get_active_lens_prompts } from "../../lib/state.ts"
 import { load_source } from "../../lib/source-loader.ts"
 import { digest_content } from "../../lib/llm/digest.ts"
 import { auto_tag } from "../../lib/auto-tag.ts"
@@ -122,7 +122,7 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Diges
   const source = p.source.trim()
   const dry_run = p.dry_run === true
   const agent_id = typeof p.agent_id === "string" && p.agent_id.trim() ? p.agent_id.trim() : "cli"
-  const lens_prompt = typeof p.lens === "string" && p.lens.trim() ? p.lens.trim() : undefined
+  const lens_prompt = typeof p.lens === "string" && p.lens.trim() ? p.lens.trim() : get_active_lens_prompts()
 
   // Local code directories delegate to the ingest pipeline
   // (AST parsing, body.db tracking, provenance, change detection)

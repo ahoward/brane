@@ -181,3 +181,140 @@ export function resolve_lens_paths(lens_name?: string): LensPaths {
     lens_name:    name
   }
 }
+
+//
+// Lens prompt management
+//
+
+export interface LensPromptInfo {
+  name:        string
+  prompt:      string
+  description: string
+  active:      boolean
+  created_at:  string
+}
+
+// Ensure lens_prompts table exists (idempotent, for cases where state.db was created before this feature)
+function ensure_lens_prompts_table(db: Database): void {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS lens_prompts (
+      name        TEXT PRIMARY KEY,
+      prompt      TEXT NOT NULL,
+      description TEXT NOT NULL DEFAULT '',
+      active      INTEGER NOT NULL DEFAULT 0,
+      created_at  TEXT NOT NULL DEFAULT (datetime('now'))
+    )
+  `)
+}
+
+// Save or update a lens prompt
+export function set_lens_prompt(name: string, prompt: string, description?: string): boolean {
+  const db = open_state()
+  if (!db) return false
+  try {
+    ensure_lens_prompts_table(db)
+    db.run(
+      "INSERT OR REPLACE INTO lens_prompts (name, prompt, description, active, created_at) VALUES (?, ?, ?, COALESCE((SELECT active FROM lens_prompts WHERE name = ?), 0), datetime('now'))",
+      [name, prompt, description ?? "", name],
+    )
+    db.close()
+    return true
+  } catch {
+    db.close()
+    return false
+  }
+}
+
+// Get a single lens prompt
+export function get_lens_prompt(name: string): LensPromptInfo | null {
+  const db = open_state()
+  if (!db) return null
+  try {
+    ensure_lens_prompts_table(db)
+    const row = db.query("SELECT name, prompt, description, active, created_at FROM lens_prompts WHERE name = ?").get(name) as any
+    db.close()
+    if (!row) return null
+    return { name: row.name, prompt: row.prompt, description: row.description, active: !!row.active, created_at: row.created_at }
+  } catch {
+    db.close()
+    return null
+  }
+}
+
+// Delete a lens prompt
+export function delete_lens_prompt(name: string): boolean {
+  const db = open_state()
+  if (!db) return false
+  try {
+    ensure_lens_prompts_table(db)
+    db.run("DELETE FROM lens_prompts WHERE name = ?", [name])
+    db.close()
+    return true
+  } catch {
+    db.close()
+    return false
+  }
+}
+
+// Activate a lens prompt
+export function activate_lens_prompt(name: string): boolean {
+  const db = open_state()
+  if (!db) return false
+  try {
+    ensure_lens_prompts_table(db)
+    const row = db.query("SELECT 1 FROM lens_prompts WHERE name = ?").get(name)
+    if (!row) { db.close(); return false }
+    db.run("UPDATE lens_prompts SET active = 1 WHERE name = ?", [name])
+    db.close()
+    return true
+  } catch {
+    db.close()
+    return false
+  }
+}
+
+// Deactivate a lens prompt
+export function deactivate_lens_prompt(name: string): boolean {
+  const db = open_state()
+  if (!db) return false
+  try {
+    ensure_lens_prompts_table(db)
+    db.run("UPDATE lens_prompts SET active = 0 WHERE name = ?", [name])
+    db.close()
+    return true
+  } catch {
+    db.close()
+    return false
+  }
+}
+
+// List all lens prompts
+export function list_lens_prompts(): LensPromptInfo[] {
+  const db = open_state()
+  if (!db) return []
+  try {
+    ensure_lens_prompts_table(db)
+    const rows = db.query("SELECT name, prompt, description, active, created_at FROM lens_prompts ORDER BY name").all() as any[]
+    db.close()
+    return rows.map(r => ({ name: r.name, prompt: r.prompt, description: r.description, active: !!r.active, created_at: r.created_at }))
+  } catch {
+    db.close()
+    return []
+  }
+}
+
+// Get combined prompt from all active lens prompts
+export function get_active_lens_prompts(): string | undefined {
+  const db = open_state()
+  if (!db) return undefined
+  try {
+    ensure_lens_prompts_table(db)
+    const rows = db.query("SELECT name, prompt FROM lens_prompts WHERE active = 1 ORDER BY name").all() as { name: string; prompt: string }[]
+    db.close()
+    if (rows.length === 0) return undefined
+    return rows.map(r => `## Lens: ${r.name}\n${r.prompt}`).join("\n\n")
+  } catch {
+    db.close()
+    return undefined
+  }
+}

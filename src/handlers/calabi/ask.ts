@@ -11,6 +11,7 @@ import { ask_knowledge } from "../../lib/llm/ask.ts"
 import { consume_llm_call } from "../../lib/rate-limit.ts"
 import { is_mock_mode } from "../../lib/llm/index.ts"
 import { sys } from "../../index.ts"
+import { get_active_lens_prompts } from "../../lib/state.ts"
 
 interface AskParams {
   question:  string
@@ -45,7 +46,7 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<AskRe
   const question = p.question.trim()
   const limit = typeof p.limit === "number" && p.limit > 0 ? p.limit : 20
   const half = Math.ceil(limit / 2)
-  const lens_prompt = typeof p.lens === "string" && p.lens.trim() ? p.lens.trim() : undefined
+  const lens_prompt = typeof p.lens === "string" && p.lens.trim() ? p.lens.trim() : get_active_lens_prompts()
 
   emit?.("progress", { phase: "searching", question })
 

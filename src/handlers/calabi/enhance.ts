@@ -16,6 +16,7 @@ import { consume_llm_call } from "../../lib/rate-limit.ts"
 import { is_mock_mode } from "../../lib/llm/index.ts"
 import { auto_tag } from "../../lib/auto-tag.ts"
 import { sys } from "../../index.ts"
+import { get_active_lens_prompts } from "../../lib/state.ts"
 
 interface EnhanceParams {
   focus?:    string    // topic to focus refinement on
@@ -50,6 +51,7 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Enhan
   const dry_run = p.dry_run === true
   const agent_id = typeof p.agent_id === "string" && p.agent_id.trim() ? p.agent_id.trim() : "cli"
   const focus = typeof p.focus === "string" && p.focus.trim() ? p.focus.trim() : undefined
+  const lens_prompt = get_active_lens_prompts()
 
   const all_rounds: EnhanceRoundResult[] = []
   let total_merges = 0
@@ -133,6 +135,7 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Enhan
         focus,
         round,
         total_rounds: rounds,
+        lens_prompt,
       })
     } catch (e: any) {
       return error({ llm: [{ code: "enhance_failed", message: e.message ?? "LLM refinement failed" }] })
