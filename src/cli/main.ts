@@ -22,6 +22,7 @@ import { prVerify } from "./commands/pr-verify.ts"
 import { lens } from "./commands/lens.ts"
 import { graph } from "./commands/graph.ts"
 import { prune } from "./commands/prune.ts"
+import { memory } from "./commands/memory.ts"
 
 export const main = defineCommand({
   meta: {
@@ -55,6 +56,9 @@ export const main = defineCommand({
     // Lens commands
     lens,
 
+    // Memory commands
+    memory,
+
     // Graph exploration
     graph,
   },
@@ -71,4 +75,5 @@ export const subCommandAliases: Record<string, string> = {
   f: "fts",
   l: "lens",
   g: "graph",
+  m: "memory",
 }
