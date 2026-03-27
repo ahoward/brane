@@ -149,19 +149,8 @@ const TOOLS: McpTool[] = [
     },
   },
   {
-    name: "learn",
-    description: "Ingest files or a directory into the knowledge graph. Runs AST extraction + LLM extraction + adversarial re-extraction. Rate-limited to prevent runaway costs (configurable via BRANE_LLM_RATE_LIMIT, BRANE_MAX_FILES_PER_LEARN).",
-    inputSchema: {
-      type: "object",
-      properties: {
-        path:    { type: "string", description: "File or directory path to ingest (default: current directory)" },
-        dry_run: { type: "boolean", description: "Preview what would be ingested without modifying the graph" },
-      },
-    },
-  },
-  {
     name: "digest",
-    description: "Consume a URL, file, directory, or text into the knowledge graph. Extracts concepts, edges, and episodes via LLM. Deduplicates by content hash.",
+    description: "Universal intake: consume a URL, file, directory, or text into the knowledge graph. For local code directories, runs AST + LLM extraction with provenance. For URLs/files/stdin, extracts concepts, edges, and episodes via LLM. Deduplicates by content hash. Rate-limited.",
     inputSchema: {
       type: "object",
       properties: {
@@ -380,7 +369,6 @@ const TOOL_ROUTES: Record<string, string> = {
   concepts_create:  "/mind/concepts/create",
   edges_list:       "/mind/edges/list",
   edges_create:     "/mind/edges/create",
-  learn:            "/calabi/ingest",
   verify:           "/mind/verify",
   context_query:    "/context/query",
   episodes_create:  "/mind/episodes/create",
@@ -470,7 +458,7 @@ interface McpPromptDef {
 const PROMPTS: McpPromptDef[] = [
   {
     name:        "memory-protocol",
-    description: "System prompt for how to use brane as memory — when to remember, recall, learn, and reflect",
+    description: "System prompt for how to use brane as memory — when to remember, recall, digest, and reflect",
   },
   {
     name:        "pre-task-recall",
@@ -517,9 +505,9 @@ USE \`recall\` when:
 - Making a design decision (what worked last time?)
 - The user references something from a previous session
 
-USE \`learn\` when:
-- The user points you at new files or codebases
-- You need deep structural understanding of code
+USE \`digest\` when:
+- The user points you at new files, codebases, URLs, or documents
+- You need deep structural understanding of code or content
 - You want to build a knowledge graph of concepts and relationships
 
 USE \`reflect\` when:
@@ -579,7 +567,7 @@ Remember:
 
 Use \`remember\` to save the key takeaways as episodic memories.
 Tags are auto-detected, but you can be explicit: decision, preference, fact, event, lesson, caveat.
-Use \`learn\` if you discovered structural relationships worth capturing.`
+Use \`digest\` if you discovered structural relationships worth capturing.`
     }
   }],
 
@@ -599,7 +587,7 @@ Approach:
 5. Identify potential issues (circular deps, tight coupling, etc.)
 
 For each component you discover:
-- Use \`learn\` to add it as a concept with the right type (Entity, Module, Service, etc.)
+- Use \`digest\` to ingest the codebase path and extract concepts with the right types
 - Use \`relate\` to capture relationships (DEPENDS_ON, CONTAINS, IMPLEMENTS)
 - Use \`remember\` for observations about code quality, conventions, or gotchas
 

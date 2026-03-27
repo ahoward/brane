@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 #
-# 02-ingest.sh — ingest files into brane (scan + extract)
+# 02-scan.sh — digest code directories (scan + extract)
+#
+# When you `brane digest` a local code directory, it runs the full
+# AST + LLM extraction pipeline with provenance and change detection.
 #
 
 set -e
@@ -13,19 +16,17 @@ echo "export const VERSION = '1.0'" > src/version.ts
 
 brane_q init > /dev/null
 
-brane ingest src/
+brane digest src/
 
-# ingesting: /tmp/.../src/auth.ts (added)
+# digesting: src/auth.ts (added)
 #   concepts: 1 extracted (1 created, 0 reused)
-#   edges: 0 extracted (0 created)
-#   provenance: 1 links
-# ingesting: /tmp/.../src/version.ts (added)
+# digesting: src/version.ts (added)
 #   ...
 # summary: 2 files scanned, 2 extracted
 
-# modify a file and re-ingest
+# modify a file and re-digest
 echo "// updated" >> src/auth.ts
 
-brane ingest src/
+brane digest src/
 
 # auth.ts is re-extracted (updated), version.ts is skipped (unchanged)

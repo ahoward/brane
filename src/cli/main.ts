@@ -17,7 +17,6 @@ import { fts } from "./commands/fts.ts"
 import { annotation } from "./commands/annotation.ts"
 import { provenance } from "./commands/provenance.ts"
 import { context } from "./commands/context.ts"
-import { ingest } from "./commands/ingest.ts"
 import { prVerify } from "./commands/pr-verify.ts"
 import { lens } from "./commands/lens.ts"
 import { graph } from "./commands/graph.ts"
@@ -38,7 +37,6 @@ export const main = defineCommand({
     init,
     status,
     digest,
-    ingest,
     search,
     verify,
     prune,

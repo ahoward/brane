@@ -1,25 +1,56 @@
 //
-// digest.ts - consume arbitrary content into the knowledge graph
+// digest.ts - universal intake: consume anything into the knowledge graph
 //
-// Loads URLs, files, directories, or stdin. Extracts concepts, edges,
-// and episodes via LLM. Tracks digested sources in state.db for dedup.
+// Single entry point for all knowledge ingestion:
+//   - Local code directories → delegates to /calabi/ingest (AST + LLM + provenance)
+//   - URLs, files, stdin → LLM extraction of concepts + edges + episodes
+//
+// Tracks digested sources in state.db for dedup.
 //
 
 import type { Params, Result, Emit } from "../../lib/types.ts"
 import { success, error } from "../../lib/result.ts"
-import { open_state } from "../../lib/state.ts"
+import { open_state, resolve_lens_paths } from "../../lib/state.ts"
 import { load_source } from "../../lib/source-loader.ts"
 import { digest_content } from "../../lib/llm/digest.ts"
 import { auto_tag } from "../../lib/auto-tag.ts"
 import { consume_llm_call, record_llm_call } from "../../lib/rate-limit.ts"
 import { is_mock_mode } from "../../lib/llm/index.ts"
 import { sys } from "../../index.ts"
+import { existsSync, statSync } from "node:fs"
+import { resolve } from "node:path"
 
 interface DigestParams {
   source:    string    // file path, URL, directory, or "-" for stdin
   lens?:     string    // lens prompt to shape extraction
   agent_id?: string    // agent ID for created items (default: "cli")
   dry_run?:  boolean   // preview without writing
+}
+
+//
+// Detect if a source is a local code directory that should use the
+// ingest pipeline (AST + LLM + provenance + change detection).
+//
+function should_use_ingest_pipeline(source: string): boolean {
+  if (source === "-") return false
+  if (source.startsWith("http://") || source.startsWith("https://")) return false
+
+  try {
+    const abs = resolve(source)
+    if (!existsSync(abs)) return false
+    const stat = statSync(abs)
+    if (!stat.isDirectory()) return false
+
+    // Check if brane is initialized (ingest requires body.db)
+    try {
+      const paths = resolve_lens_paths()
+      if (existsSync(paths.brane_path)) return true
+    } catch {}
+
+    return false
+  } catch {
+    return false
+  }
 }
 
 interface DigestSourceResult {
@@ -92,6 +123,42 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Diges
   const dry_run = p.dry_run === true
   const agent_id = typeof p.agent_id === "string" && p.agent_id.trim() ? p.agent_id.trim() : "cli"
   const lens_prompt = typeof p.lens === "string" && p.lens.trim() ? p.lens.trim() : undefined
+
+  // Local code directories delegate to the ingest pipeline
+  // (AST parsing, body.db tracking, provenance, change detection)
+  if (should_use_ingest_pipeline(source)) {
+    const ingest_result = await sys.call("/calabi/ingest", {
+      path: source,
+      dry_run,
+      force: false,
+    }, emit)
+
+    if (ingest_result.status === "error") {
+      return ingest_result as any
+    }
+
+    // Translate ingest result shape to digest result shape
+    const data = ingest_result.result as any
+    const t = data?.totals ?? {}
+    return success({
+      sources_found: t.files_scanned ?? 0,
+      sources_digested: t.files_extracted ?? 0,
+      sources_skipped: t.files_unchanged ?? 0,
+      concepts_created: t.concepts_created ?? 0,
+      edges_created: t.edges_created ?? 0,
+      episodes_created: 0,  // ingest doesn't create episodes
+      dry_run,
+      details: (data?.files ?? []).map((f: any) => ({
+        label: f.file_url?.replace("file://", "") ?? f.file_url,
+        hash: "",
+        concepts_created: f.concepts_created ?? 0,
+        edges_created: f.edges_created ?? 0,
+        episodes_created: 0,
+        skipped: f.status === "unchanged",
+        reason: f.status === "unchanged" ? "unchanged" : f.error,
+      })),
+    })
+  }
 
   // Load source(s)
   emit?.("progress", { phase: "loading", source })
