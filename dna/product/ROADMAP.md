@@ -61,6 +61,12 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 - [x] `054-self-reinforcing-retrieval` — Batch-update access metadata on search ([#54](https://github.com/ahoward/brane/issues/54))
 - [x] `055-richer-episode-types` — Decision, preference, fact, event tags ([#55](https://github.com/ahoward/brane/issues/55))
 
+### Next — CLI & Usability
+
+- [ ] `056-cli-memory` — CLI memory commands: remember, recall, forget from terminal ([#76](https://github.com/ahoward/brane/issues/76))
+- [ ] `057-cli-ingest-sessions` — CLI session ingestion command ([#77](https://github.com/ahoward/brane/issues/77))
+- [ ] `058-status-dashboard` — Health dashboard: brane status command ([#78](https://github.com/ahoward/brane/issues/78))
+
 ### Deferred
 
 - [ ] `028-verifier-node` — Headless verification node
