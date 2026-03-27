@@ -77,6 +77,7 @@ import { handler as calabi_ask_handler } from "./handlers/calabi/ask.ts"
 import { handler as calabi_storm_handler } from "./handlers/calabi/storm.ts"
 import { handler as calabi_enhance_handler } from "./handlers/calabi/enhance.ts"
 import { handler as lens_prompt_handler } from "./handlers/lens/prompt.ts"
+import { handler as calabi_loop_handler } from "./handlers/calabi/loop.ts"
 
 sys.register("/ping", ping_handler)
 sys.register("/body/init", body_init_handler)
@@ -150,6 +151,7 @@ sys.register("/calabi/ask", calabi_ask_handler)
 sys.register("/calabi/storm", calabi_storm_handler)
 sys.register("/calabi/enhance", calabi_enhance_handler)
 sys.register("/lens/prompt", lens_prompt_handler)
+sys.register("/calabi/loop", calabi_loop_handler)
 
 // export
 export { sys }

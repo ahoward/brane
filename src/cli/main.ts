@@ -28,6 +28,7 @@ import { digest } from "./commands/digest.ts"
 import { ask } from "./commands/ask.ts"
 import { storm } from "./commands/storm.ts"
 import { enhance } from "./commands/enhance.ts"
+import { loop } from "./commands/loop.ts"
 
 export const main = defineCommand({
   meta: {
@@ -43,6 +44,7 @@ export const main = defineCommand({
     ask,
     storm,
     enhance,
+    loop,
     search,
     verify,
     prune,

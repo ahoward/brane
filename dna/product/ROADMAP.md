@@ -74,7 +74,7 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 - [x] `061-storm` — Divergent exploration and idea generation ([#84](https://github.com/ahoward/brane/issues/84))
 - [x] `062-enhance` — Convergent refinement of existing knowledge ([#85](https://github.com/ahoward/brane/issues/85))
 - [x] `063-active-lenses` — Lens prompts that shape LLM extraction ([#86](https://github.com/ahoward/brane/issues/86))
-- [ ] `064-loop` — Autonomous goal-directed research ([#87](https://github.com/ahoward/brane/issues/87))
+- [x] `064-loop` — Autonomous goal-directed research ([#87](https://github.com/ahoward/brane/issues/87))
 - [ ] `065-rebuild` — Re-extract all sources through current lenses ([#88](https://github.com/ahoward/brane/issues/88))
 - [ ] `066-tldr` — Knowledge outline with synopses ([#89](https://github.com/ahoward/brane/issues/89))
 

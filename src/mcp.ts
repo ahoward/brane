@@ -205,6 +205,28 @@ const TOOLS: McpTool[] = [
     },
   },
   {
+    name: "loop",
+    description: "Autonomous goal-directed research. Give a goal and brane reflects on gaps, searches the web, digests findings, and repeats until convergent. Rate-limited.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        goal:    { type: "string", description: "Research goal" },
+        rounds:  { type: "number", description: "Max rounds (default 5, max 10)" },
+        resume:  { type: "string", description: "Resume a paused loop by ID" },
+        dry_run: { type: "boolean", description: "Preview without searching/digesting" },
+      },
+      required: ["goal"],
+    },
+  },
+  {
+    name: "loop_list",
+    description: "List all research loops with their status.",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
+  {
     name: "lens_prompt_set",
     description: "Create or update a lens prompt (cognitive filter). Lens prompts shape how digest, storm, enhance, and ask process information. Use lens_prompt_on to activate after creating.",
     inputSchema: {
@@ -458,6 +480,8 @@ const TOOL_ROUTES: Record<string, string> = {
   ask:              "/calabi/ask",
   storm:            "/calabi/storm",
   enhance:          "/calabi/enhance",
+  loop:             "/calabi/loop",
+  loop_list:        "/calabi/loop",
   lens_prompt_set:  "/lens/prompt",
   lens_prompt_on:   "/lens/prompt",
   lens_prompt_off:  "/lens/prompt",
@@ -1414,7 +1438,8 @@ async function handle_tools_call(params: Record<string, unknown>): Promise<unkno
   }
 
   // Inject action for lens_prompt_* tools
-  if (name === "lens_prompt_set") args.action = "set"
+  if (name === "loop_list") args.action = "list"
+  else if (name === "lens_prompt_set") args.action = "set"
   else if (name === "lens_prompt_on") args.action = "on"
   else if (name === "lens_prompt_off") args.action = "off"
 
