@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "brane": {
+      "command": "brane",
+      "args": ["mcp"]
+    }
+  }
+}
