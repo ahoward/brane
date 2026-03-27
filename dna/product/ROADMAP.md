@@ -70,7 +70,7 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 ### Next — Cognitive Layer (subsume bny brane)
 
 - [ ] `059-digest` — Consume URLs, files, directories, stdin into knowledge graph ([#82](https://github.com/ahoward/brane/issues/82))
-- [ ] `060-ask` — Conversational synthesis over accumulated knowledge ([#83](https://github.com/ahoward/brane/issues/83))
+- [x] `060-ask` — Conversational synthesis over accumulated knowledge ([#83](https://github.com/ahoward/brane/issues/83))
 - [ ] `061-storm` — Divergent exploration and idea generation ([#84](https://github.com/ahoward/brane/issues/84))
 - [ ] `062-enhance` — Convergent refinement of existing knowledge ([#85](https://github.com/ahoward/brane/issues/85))
 - [ ] `063-active-lenses` — Lens prompts that shape LLM extraction ([#86](https://github.com/ahoward/brane/issues/86))

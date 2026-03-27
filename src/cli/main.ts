@@ -25,6 +25,7 @@ import { memory } from "./commands/memory.ts"
 import { ingestSessions } from "./commands/ingest-sessions.ts"
 import { status } from "./commands/status.ts"
 import { digest } from "./commands/digest.ts"
+import { ask } from "./commands/ask.ts"
 
 export const main = defineCommand({
   meta: {
@@ -37,6 +38,7 @@ export const main = defineCommand({
     init,
     status,
     digest,
+    ask,
     search,
     verify,
     prune,

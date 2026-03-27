@@ -162,6 +162,22 @@ const TOOLS: McpTool[] = [
     },
   },
   {
+    name: "ask",
+    description: "Ask a question and get a synthesized answer from the knowledge graph. Vector-searches concepts and episodes for relevant context, enriches with graph neighbors, then uses LLM to synthesize an answer with citations. Rate-limited.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        question: { type: "string", description: "The question to answer" },
+        limit:    { type: "number", description: "Max context items to load (default 20)" },
+        agent_id: { type: "string", description: "Filter by agent ID" },
+        after:    { type: "string", description: "Only use knowledge after this ISO timestamp" },
+        before:   { type: "string", description: "Only use knowledge before this ISO timestamp" },
+        lens:     { type: "string", description: "Lens prompt to shape the answer" },
+      },
+      required: ["question"],
+    },
+  },
+  {
     name: "ingest_sessions",
     description: "Passively ingest Claude Code session logs into episodic memory. Parses JSONL conversation logs to extract human↔assistant exchanges and store them as episodes. Tracks ingested sessions to avoid duplicates.",
     inputSchema: {
@@ -377,6 +393,7 @@ const TOOL_ROUTES: Record<string, string> = {
   relate:           "/mind/edges/create",
   ingest_sessions:  "/calabi/ingest-sessions",
   digest:           "/calabi/digest",
+  ask:              "/calabi/ask",
 }
 
 //
