@@ -23,6 +23,7 @@ import { lens } from "./commands/lens.ts"
 import { graph } from "./commands/graph.ts"
 import { prune } from "./commands/prune.ts"
 import { memory } from "./commands/memory.ts"
+import { ingestSessions } from "./commands/ingest-sessions.ts"
 
 export const main = defineCommand({
   meta: {
@@ -58,6 +59,7 @@ export const main = defineCommand({
 
     // Memory commands
     memory,
+    "ingest-sessions": ingestSessions,
 
     // Graph exploration
     graph,
