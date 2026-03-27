@@ -85,7 +85,7 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Storm
 
     const concept_result = await sys.call("/mind/concepts/list", { limit: half })
     const concepts = concept_result.status === "success"
-      ? ((concept_result.result as any)?.items ?? []) as { id: number; name: string; type: string }[]
+      ? ((concept_result.result as any)?.concepts ?? []) as { id: number; name: string; type: string }[]
       : []
 
     // Also vector search if we have a seed
@@ -107,7 +107,7 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Storm
     // Load edges for context
     const edge_result = await sys.call("/mind/edges/list", { limit: half })
     const edges = edge_result.status === "success"
-      ? ((edge_result.result as any)?.items ?? []).map((e: any) => ({
+      ? ((edge_result.result as any)?.edges ?? []).map((e: any) => ({
           id: e.id,
           source_name: e.source_name ?? `concept#${e.source}`,
           target_name: e.target_name ?? `concept#${e.target}`,
@@ -118,7 +118,7 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Storm
     // Load episodes
     const episode_result = await sys.call("/mind/episodes/list", { limit: half })
     const episodes = episode_result.status === "success"
-      ? ((episode_result.result as any)?.items ?? []) as { id: number; observation: string; context?: string; tags?: string[] }[]
+      ? ((episode_result.result as any)?.episodes ?? []) as { id: number; observation: string; context?: string; tags?: string[] }[]
       : []
 
     // Rate limit check
@@ -235,7 +235,7 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Storm
 async function resolve_concept_id(name: string): Promise<number | null> {
   const result = await sys.call("/mind/concepts/list", { limit: 200 })
   if (result.status !== "success") return null
-  const items = (result.result as any)?.items ?? []
+  const items = (result.result as any)?.concepts ?? []
   const match = items.find((c: any) => c.name === name)
   return match?.id ?? null
 }

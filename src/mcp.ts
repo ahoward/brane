@@ -192,6 +192,19 @@ const TOOLS: McpTool[] = [
     },
   },
   {
+    name: "enhance",
+    description: "Convergent refinement of existing knowledge. Merges duplicate concepts, adds missing edges between related concepts, and surfaces contradictions and quality issues. Does NOT add new topics — only refines what's there. Rate-limited.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        focus:   { type: "string", description: "Topic to focus refinement on (optional)" },
+        rounds:  { type: "number", description: "Iterative refinement rounds (default 1, max 5)" },
+        limit:   { type: "number", description: "Max context items (default 30)" },
+        dry_run: { type: "boolean", description: "Preview without writing" },
+      },
+    },
+  },
+  {
     name: "ingest_sessions",
     description: "Passively ingest Claude Code session logs into episodic memory. Parses JSONL conversation logs to extract human↔assistant exchanges and store them as episodes. Tracks ingested sessions to avoid duplicates.",
     inputSchema: {
@@ -409,6 +422,7 @@ const TOOL_ROUTES: Record<string, string> = {
   digest:           "/calabi/digest",
   ask:              "/calabi/ask",
   storm:            "/calabi/storm",
+  enhance:          "/calabi/enhance",
 }
 
 //
