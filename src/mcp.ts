@@ -178,6 +178,20 @@ const TOOLS: McpTool[] = [
     },
   },
   {
+    name: "storm",
+    description: "Divergent brainstorming over accumulated knowledge. Finds gaps, surfaces blind spots, proposes new connections, and suggests next actions. Generates new concepts, edges, and episodes. Supports multi-round deepening. Rate-limited.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        seed:    { type: "string", description: "Topic to seed brainstorming (optional — omit for broad brainstorm)" },
+        input:   { type: "string", description: "File path to brainstorm against" },
+        rounds:  { type: "number", description: "Iterative deepening rounds (default 1, max 5)" },
+        limit:   { type: "number", description: "Max context items per round (default 20)" },
+        dry_run: { type: "boolean", description: "Preview without writing to graph" },
+      },
+    },
+  },
+  {
     name: "ingest_sessions",
     description: "Passively ingest Claude Code session logs into episodic memory. Parses JSONL conversation logs to extract human↔assistant exchanges and store them as episodes. Tracks ingested sessions to avoid duplicates.",
     inputSchema: {
@@ -394,6 +408,7 @@ const TOOL_ROUTES: Record<string, string> = {
   ingest_sessions:  "/calabi/ingest-sessions",
   digest:           "/calabi/digest",
   ask:              "/calabi/ask",
+  storm:            "/calabi/storm",
 }
 
 //

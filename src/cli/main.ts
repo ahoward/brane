@@ -26,6 +26,7 @@ import { ingestSessions } from "./commands/ingest-sessions.ts"
 import { status } from "./commands/status.ts"
 import { digest } from "./commands/digest.ts"
 import { ask } from "./commands/ask.ts"
+import { storm } from "./commands/storm.ts"
 
 export const main = defineCommand({
   meta: {
@@ -39,6 +40,7 @@ export const main = defineCommand({
     status,
     digest,
     ask,
+    storm,
     search,
     verify,
     prune,
@@ -73,6 +75,7 @@ export const main = defineCommand({
 // Alias mapping for short commands
 export const subCommandAliases: Record<string, string> = {
   d: "digest",
+  s: "storm",
   c: "concept",
   e: "edge",
   r: "rule",
