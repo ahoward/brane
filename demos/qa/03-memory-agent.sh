@@ -273,7 +273,7 @@ echo ""
 echo "── 10: Verify ──"
 OUT=$(BJ verify)
 STATUS=$(echo "$OUT" | jq -r '.status' 2>/dev/null)
-VALID=$(echo "$OUT" | jq -r '.result.valid // "null"' 2>/dev/null)
+VALID=$(echo "$OUT" | jq -r '.result.passed // "null"' 2>/dev/null)
 if [ "$STATUS" = "success" ]; then
   pass "verify: valid=$VALID"
 else
