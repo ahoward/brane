@@ -1,7 +1,12 @@
 {
   "status": "success",
   "result": {
-    "deleted": true
+    "deleted": true,
+    "cascade": {
+      "edges_removed": "<number>",
+      "annotations_removed": "<number>",
+      "provenance_removed": "<number>"
+    }
   },
   "errors": null,
   "meta": {
