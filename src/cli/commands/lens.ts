@@ -340,15 +340,25 @@ export const lens = defineCommand({
     }),
 
     prompt: defineCommand({
-      meta: { name: "prompt", description: "Set or view a lens prompt" },
+      meta: { name: "prompt", description: "Set, view, or delete a lens prompt" },
       args: {
         name: { type: "positional", description: "Lens prompt name", required: true },
         set: { type: "string", alias: "s", description: "Set the prompt text" },
+        delete: { type: "boolean", description: "Delete the prompt" },
         description: { type: "string", alias: "d", description: "Lens description" },
         json: { type: "boolean", alias: "j", description: "Output as JSON" },
       },
       async run({ args }) {
-        if (args.set) {
+        if (args.delete) {
+          const result = await sys.call("/lens/prompt", { action: "delete", name: args.name })
+          if (args.json) {
+            output(result, { json: true })
+          } else if (result.status === "success") {
+            console.log(`deleted lens prompt: ${args.name}`)
+          } else {
+            output(result, {})
+          }
+        } else if (args.set) {
           const result = await sys.call("/lens/prompt", {
             action: "set",
             name: args.name,
@@ -375,6 +385,32 @@ export const lens = defineCommand({
           } else {
             output(result, {})
           }
+        }
+      },
+    }),
+
+    prompts: defineCommand({
+      meta: { name: "prompts", description: "List all lens prompts" },
+      args: {
+        json: { type: "boolean", alias: "j", description: "Output as JSON" },
+      },
+      async run({ args }) {
+        const result = await sys.call("/lens/prompt", { action: "list" })
+        if (args.json) {
+          output(result, { json: true })
+        } else if (result.status === "success" && result.result) {
+          const r = result.result as { prompts: Array<{ name: string; prompt: string; active: boolean; description: string }> }
+          if (r.prompts.length === 0) {
+            console.log("(no lens prompts)")
+          } else {
+            for (const p of r.prompts) {
+              const marker = p.active ? "* " : "  "
+              const desc = p.description ? ` — ${p.description}` : ""
+              console.log(`${marker}${p.name}${desc}`)
+            }
+          }
+        } else {
+          output(result, {})
         }
       },
     }),
