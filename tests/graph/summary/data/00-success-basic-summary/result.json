@@ -1,6 +1,8 @@
 {
   "status": "success",
   "result": {
+    "total_concepts": 3,
+    "total_edges": 2,
     "concepts": {
       "total": 3,
       "by_type": {
