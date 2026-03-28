@@ -22,7 +22,7 @@ export const annotation = defineCommand({
       },
       async run({ args }) {
         const result = await sys.call("/mind/annotations/create", {
-          concept_id: parseInt(args.concept),
+          target: parseInt(args.concept),
           type: args.type,
           text: args.text,
         })
@@ -39,7 +39,7 @@ export const annotation = defineCommand({
       },
       async run({ args }) {
         const params: any = {}
-        if (args.concept) params.concept_id = parseInt(args.concept)
+        if (args.concept) params.target = parseInt(args.concept)
         if (args.type) params.type = args.type
 
         const result = await sys.call("/mind/annotations/list", params)
