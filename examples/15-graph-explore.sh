@@ -1,83 +1,91 @@
 #!/usr/bin/env bash
 #
-# 00-quickstart.sh — brane in 60 seconds
+# 15-graph-explore.sh — navigate the knowledge graph
 #
-# Agent memory layer: init → remember → recall → knowledge graph → status
+# summary, neighbors, and viz — the tools agents use to understand structure.
 #
 
 set -e
 source "$(dirname "$0")/lib/common.sh"
 setup_workspace
 
-# ─────────────────────────────────────────────────────────────────────────────
-# initialize
-# ─────────────────────────────────────────────────────────────────────────────
-
 brane init
 
-# body: created .brane
-# mind: created .brane/mind.db
-
 # ─────────────────────────────────────────────────────────────────────────────
-# remember — agents store observations as episodic memory
+# build a small service graph
 # ─────────────────────────────────────────────────────────────────────────────
 
-brane memory remember "JWT tokens expire after 15 minutes" \
-  -c "debugging auth failures in staging" \
-  -o "added token refresh logic to middleware"
-
-# remembered (id: 1) [debugging, auth]
-
-brane memory remember "The user table has a unique index on email" \
-  -c "investigating duplicate registration bug"
-
-# remembered (id: 2) [debugging]
-
-# ─────────────────────────────────────────────────────────────────────────────
-# recall — semantic search finds relevant memories
-# ─────────────────────────────────────────────────────────────────────────────
-
-brane memory recall "authentication"
-
-# 0.543  #1  JWT tokens expire after 15 minutes [debugging, auth]
-
-# ─────────────────────────────────────────────────────────────────────────────
-# knowledge graph — structured concepts and relationships
-# ─────────────────────────────────────────────────────────────────────────────
-
+brane concept create --name ApiGateway --type Entity
 brane concept create --name AuthService --type Entity
 brane concept create --name UserDB --type Entity
+brane concept create --name PaymentService --type Entity
+brane concept create --name StripeAPI --type Entity
+
+brane edge create --from ApiGateway --to AuthService --rel DEPENDS_ON
+brane edge create --from ApiGateway --to PaymentService --rel DEPENDS_ON
 brane edge create --from AuthService --to UserDB --rel DEPENDS_ON
+brane edge create --from PaymentService --to UserDB --rel DEPENDS_ON
+brane edge create --from PaymentService --to StripeAPI --rel DEPENDS_ON
 
 # ─────────────────────────────────────────────────────────────────────────────
-# search — find concepts by meaning
+# summary — totals and type breakdowns
 # ─────────────────────────────────────────────────────────────────────────────
 
-brane search "authentication"
+brane graph summary
 
-# ID    NAME          TYPE     SCORE
-# 1     AuthService   Entity   0.412
-
-# ─────────────────────────────────────────────────────────────────────────────
-# verify — check architectural rules
-# ─────────────────────────────────────────────────────────────────────────────
-
-brane verify
-
-# OK: all rules passed
-
-# ─────────────────────────────────────────────────────────────────────────────
-# status — one-glance health dashboard
-# ─────────────────────────────────────────────────────────────────────────────
-
-brane status
-
-# brane 0.x.x
+# Concepts: 5
+#   Entity: 5
 #
-#   Lens:     default
-#   Concepts: 2
-#   Edges:    1
+# Edges: 5
+#   DEPENDS_ON: 5
+
+# ─────────────────────────────────────────────────────────────────────────────
+# neighbors — what connects to PaymentService?
+# ─────────────────────────────────────────────────────────────────────────────
+
+brane graph neighbors PaymentService
+
+# [PaymentService] Entity
 #
-#   Recent memories (2):
-#     #1  2026-03-27  JWT tokens expire after 15 minutes [debugging, auth]
-#     #2  2026-03-27  The user table has a unique index... [debugging]
+# Incoming:
+#   <- DEPENDS_ON [ApiGateway] Entity (edge 2)
+#
+# Outgoing:
+#   -> DEPENDS_ON [UserDB] Entity (edge 4)
+#   -> DEPENDS_ON [StripeAPI] Entity (edge 5)
+#
+# Total: 3 neighbors
+
+# ─────────────────────────────────────────────────────────────────────────────
+# viz — ASCII graph
+# ─────────────────────────────────────────────────────────────────────────────
+
+brane graph viz
+
+# [ApiGateway]
+#   |--DEPENDS_ON--> [AuthService]
+#   |--DEPENDS_ON--> [PaymentService]
+# [AuthService]
+#   |--DEPENDS_ON--> [UserDB]
+# [PaymentService]
+#   |--DEPENDS_ON--> [UserDB]
+#   |--DEPENDS_ON--> [StripeAPI]
+
+# ─────────────────────────────────────────────────────────────────────────────
+# viz centered on a node
+# ─────────────────────────────────────────────────────────────────────────────
+
+brane graph viz -c UserDB
+
+# centered view showing only UserDB's neighborhood
+
+# ─────────────────────────────────────────────────────────────────────────────
+# mermaid output — paste into any markdown renderer
+# ─────────────────────────────────────────────────────────────────────────────
+
+brane graph viz -f mermaid
+
+# graph LR
+#   ApiGateway -->|DEPENDS_ON| AuthService
+#   ApiGateway -->|DEPENDS_ON| PaymentService
+#   ...

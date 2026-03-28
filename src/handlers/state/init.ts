@@ -39,6 +39,16 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<InitR
           value TEXT NOT NULL
         )
       `)
+      // Ensure lens_prompts table exists (idempotent)
+      db.exec(`
+        CREATE TABLE IF NOT EXISTS lens_prompts (
+          name        TEXT PRIMARY KEY,
+          prompt      TEXT NOT NULL,
+          description TEXT NOT NULL DEFAULT '',
+          active      INTEGER NOT NULL DEFAULT 0,
+          created_at  TEXT NOT NULL DEFAULT (datetime('now'))
+        )
+      `)
       // Do NOT reset active_lens if already set (init idempotency)
       const row = db.query("SELECT value FROM config WHERE key = ?").get("active_lens")
       if (!row) {
@@ -69,6 +79,15 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<InitR
       CREATE TABLE IF NOT EXISTS config (
         key   TEXT PRIMARY KEY,
         value TEXT NOT NULL
+      )
+    `)
+    db.exec(`
+      CREATE TABLE IF NOT EXISTS lens_prompts (
+        name        TEXT PRIMARY KEY,
+        prompt      TEXT NOT NULL,
+        description TEXT NOT NULL DEFAULT '',
+        active      INTEGER NOT NULL DEFAULT 0,
+        created_at  TEXT NOT NULL DEFAULT (datetime('now'))
       )
     `)
     db.run("INSERT INTO config (key, value) VALUES (?, ?)", ["active_lens", "default"])

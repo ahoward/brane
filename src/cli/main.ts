@@ -17,7 +17,6 @@ import { fts } from "./commands/fts.ts"
 import { annotation } from "./commands/annotation.ts"
 import { provenance } from "./commands/provenance.ts"
 import { context } from "./commands/context.ts"
-import { ingest } from "./commands/ingest.ts"
 import { prVerify } from "./commands/pr-verify.ts"
 import { lens } from "./commands/lens.ts"
 import { graph } from "./commands/graph.ts"
@@ -25,6 +24,13 @@ import { prune } from "./commands/prune.ts"
 import { memory } from "./commands/memory.ts"
 import { ingestSessions } from "./commands/ingest-sessions.ts"
 import { status } from "./commands/status.ts"
+import { digest } from "./commands/digest.ts"
+import { ask } from "./commands/ask.ts"
+import { storm } from "./commands/storm.ts"
+import { enhance } from "./commands/enhance.ts"
+import { loop } from "./commands/loop.ts"
+import { rebuild } from "./commands/rebuild.ts"
+import { tldr } from "./commands/tldr.ts"
 
 export const main = defineCommand({
   meta: {
@@ -36,7 +42,13 @@ export const main = defineCommand({
     // Convenience commands (most used)
     init,
     status,
-    ingest,
+    digest,
+    ask,
+    storm,
+    enhance,
+    loop,
+    rebuild,
+    tldr,
     search,
     verify,
     prune,
@@ -70,6 +82,8 @@ export const main = defineCommand({
 
 // Alias mapping for short commands
 export const subCommandAliases: Record<string, string> = {
+  d: "digest",
+  s: "storm",
   c: "concept",
   e: "edge",
   r: "rule",

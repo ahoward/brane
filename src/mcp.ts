@@ -149,14 +149,138 @@ const TOOLS: McpTool[] = [
     },
   },
   {
-    name: "learn",
-    description: "Ingest files or a directory into the knowledge graph. Runs AST extraction + LLM extraction + adversarial re-extraction. Rate-limited to prevent runaway costs (configurable via BRANE_LLM_RATE_LIMIT, BRANE_MAX_FILES_PER_LEARN).",
+    name: "digest",
+    description: "Universal intake: consume a URL, file, directory, or text into the knowledge graph. For local code directories, runs AST + LLM extraction with provenance. For URLs/files/stdin, extracts concepts, edges, and episodes via LLM. Deduplicates by content hash. Rate-limited.",
     inputSchema: {
       type: "object",
       properties: {
-        path:    { type: "string", description: "File or directory path to ingest (default: current directory)" },
-        dry_run: { type: "boolean", description: "Preview what would be ingested without modifying the graph" },
+        source:   { type: "string", description: "URL, file path, directory, or \"-\" for stdin" },
+        lens:     { type: "string", description: "Lens prompt to shape extraction (e.g. 'Focus on security concerns')" },
+        dry_run:  { type: "boolean", description: "Preview what would be extracted without writing" },
       },
+      required: ["source"],
+    },
+  },
+  {
+    name: "ask",
+    description: "Ask a question and get a synthesized answer from the knowledge graph. Vector-searches concepts and episodes for relevant context, enriches with graph neighbors, then uses LLM to synthesize an answer with citations. Rate-limited.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        question: { type: "string", description: "The question to answer" },
+        limit:    { type: "number", description: "Max context items to load (default 20)" },
+        agent_id: { type: "string", description: "Filter by agent ID" },
+        after:    { type: "string", description: "Only use knowledge after this ISO timestamp" },
+        before:   { type: "string", description: "Only use knowledge before this ISO timestamp" },
+        lens:     { type: "string", description: "Lens prompt to shape the answer" },
+      },
+      required: ["question"],
+    },
+  },
+  {
+    name: "storm",
+    description: "Divergent brainstorming over accumulated knowledge. Finds gaps, surfaces blind spots, proposes new connections, and suggests next actions. Generates new concepts, edges, and episodes. Supports multi-round deepening. Rate-limited.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        seed:    { type: "string", description: "Topic to seed brainstorming (optional — omit for broad brainstorm)" },
+        input:   { type: "string", description: "File path to brainstorm against" },
+        rounds:  { type: "number", description: "Iterative deepening rounds (default 1, max 5)" },
+        limit:   { type: "number", description: "Max context items per round (default 20)" },
+        dry_run: { type: "boolean", description: "Preview without writing to graph" },
+      },
+    },
+  },
+  {
+    name: "enhance",
+    description: "Convergent refinement of existing knowledge. Merges duplicate concepts, adds missing edges between related concepts, and surfaces contradictions and quality issues. Does NOT add new topics — only refines what's there. Rate-limited.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        focus:   { type: "string", description: "Topic to focus refinement on (optional)" },
+        rounds:  { type: "number", description: "Iterative refinement rounds (default 1, max 5)" },
+        limit:   { type: "number", description: "Max context items (default 30)" },
+        dry_run: { type: "boolean", description: "Preview without writing" },
+      },
+    },
+  },
+  {
+    name: "loop",
+    description: "Autonomous goal-directed research. Give a goal and brane reflects on gaps, searches the web, digests findings, and repeats until convergent. Rate-limited.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        goal:    { type: "string", description: "Research goal" },
+        rounds:  { type: "number", description: "Max rounds (default 5, max 10)" },
+        resume:  { type: "string", description: "Resume a paused loop by ID" },
+        dry_run: { type: "boolean", description: "Preview without searching/digesting" },
+      },
+      required: ["goal"],
+    },
+  },
+  {
+    name: "loop_list",
+    description: "List all research loops with their status.",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
+  {
+    name: "rebuild",
+    description: "Re-extract all digested sources through current active lenses. Clears digest records and re-processes each source chronologically. Use after changing active lenses.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        lens:    { type: "string", description: "Override lens prompt for rebuild" },
+        dry_run: { type: "boolean", description: "Show what would be rebuilt" },
+      },
+    },
+  },
+  {
+    name: "tldr",
+    description: "Show a structured outline of what brane knows. Groups concepts into topics with one-line synopses and lists recent learnings.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        focus: { type: "string", description: "Focus on a topic area" },
+        limit: { type: "number", description: "Max items to load (default: 50)" },
+      },
+    },
+  },
+  {
+    name: "lens_prompt_set",
+    description: "Create or update a lens prompt (cognitive filter). Lens prompts shape how digest, storm, enhance, and ask process information. Use lens_prompt_on to activate after creating.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        name:        { type: "string", description: "Lens name" },
+        prompt:      { type: "string", description: "The lens prompt text" },
+        description: { type: "string", description: "Optional description" },
+      },
+      required: ["name", "prompt"],
+    },
+  },
+  {
+    name: "lens_prompt_on",
+    description: "Activate a lens prompt. Active lenses shape all future digest/storm/enhance/ask operations. Multiple lenses can be active simultaneously.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        name: { type: "string", description: "Lens name to activate" },
+      },
+      required: ["name"],
+    },
+  },
+  {
+    name: "lens_prompt_off",
+    description: "Deactivate a lens prompt.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        name: { type: "string", description: "Lens name to deactivate" },
+      },
+      required: ["name"],
     },
   },
   {
@@ -367,7 +491,6 @@ const TOOL_ROUTES: Record<string, string> = {
   concepts_create:  "/mind/concepts/create",
   edges_list:       "/mind/edges/list",
   edges_create:     "/mind/edges/create",
-  learn:            "/calabi/ingest",
   verify:           "/mind/verify",
   context_query:    "/context/query",
   episodes_create:  "/mind/episodes/create",
@@ -375,6 +498,17 @@ const TOOL_ROUTES: Record<string, string> = {
   episodes_search:  "/mind/episodes/search",
   relate:           "/mind/edges/create",
   ingest_sessions:  "/calabi/ingest-sessions",
+  digest:           "/calabi/digest",
+  ask:              "/calabi/ask",
+  storm:            "/calabi/storm",
+  enhance:          "/calabi/enhance",
+  loop:             "/calabi/loop",
+  loop_list:        "/calabi/loop",
+  rebuild:          "/calabi/rebuild",
+  tldr:             "/calabi/tldr",
+  lens_prompt_set:  "/lens/prompt",
+  lens_prompt_on:   "/lens/prompt",
+  lens_prompt_off:  "/lens/prompt",
 }
 
 //
@@ -456,7 +590,7 @@ interface McpPromptDef {
 const PROMPTS: McpPromptDef[] = [
   {
     name:        "memory-protocol",
-    description: "System prompt for how to use brane as memory — when to remember, recall, learn, and reflect",
+    description: "System prompt for how to use brane as memory — when to remember, recall, digest, and reflect",
   },
   {
     name:        "pre-task-recall",
@@ -503,9 +637,9 @@ USE \`recall\` when:
 - Making a design decision (what worked last time?)
 - The user references something from a previous session
 
-USE \`learn\` when:
-- The user points you at new files or codebases
-- You need deep structural understanding of code
+USE \`digest\` when:
+- The user points you at new files, codebases, URLs, or documents
+- You need deep structural understanding of code or content
 - You want to build a knowledge graph of concepts and relationships
 
 USE \`reflect\` when:
@@ -565,7 +699,7 @@ Remember:
 
 Use \`remember\` to save the key takeaways as episodic memories.
 Tags are auto-detected, but you can be explicit: decision, preference, fact, event, lesson, caveat.
-Use \`learn\` if you discovered structural relationships worth capturing.`
+Use \`digest\` if you discovered structural relationships worth capturing.`
     }
   }],
 
@@ -585,7 +719,7 @@ Approach:
 5. Identify potential issues (circular deps, tight coupling, etc.)
 
 For each component you discover:
-- Use \`learn\` to add it as a concept with the right type (Entity, Module, Service, etc.)
+- Use \`digest\` to ingest the codebase path and extract concepts with the right types
 - Use \`relate\` to capture relationships (DEPENDS_ON, CONTAINS, IMPLEMENTS)
 - Use \`remember\` for observations about code quality, conventions, or gotchas
 
@@ -1326,6 +1460,12 @@ async function handle_tools_call(params: Record<string, unknown>): Promise<unkno
       args.agent_id = mcp_agent_id
     }
   }
+
+  // Inject action for lens_prompt_* tools
+  if (name === "loop_list") args.action = "list"
+  else if (name === "lens_prompt_set") args.action = "set"
+  else if (name === "lens_prompt_on") args.action = "on"
+  else if (name === "lens_prompt_off") args.action = "off"
 
   // Use custom handler if available, otherwise dispatch via route
   try {

@@ -67,6 +67,17 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 - [x] `057-cli-ingest-sessions` — CLI session ingestion command ([#77](https://github.com/ahoward/brane/issues/77))
 - [x] `058-status-dashboard` — Health dashboard: brane status command ([#78](https://github.com/ahoward/brane/issues/78))
 
+### Next — Cognitive Layer (subsume bny brane)
+
+- [x] `059-digest` — Consume URLs, files, directories, stdin into knowledge graph ([#82](https://github.com/ahoward/brane/issues/82))
+- [x] `060-ask` — Conversational synthesis over accumulated knowledge ([#83](https://github.com/ahoward/brane/issues/83))
+- [x] `061-storm` — Divergent exploration and idea generation ([#84](https://github.com/ahoward/brane/issues/84))
+- [x] `062-enhance` — Convergent refinement of existing knowledge ([#85](https://github.com/ahoward/brane/issues/85))
+- [x] `063-active-lenses` — Lens prompts that shape LLM extraction ([#86](https://github.com/ahoward/brane/issues/86))
+- [x] `064-loop` — Autonomous goal-directed research ([#87](https://github.com/ahoward/brane/issues/87))
+- [x] `065-rebuild` — Re-extract all sources through current lenses ([#88](https://github.com/ahoward/brane/issues/88))
+- [x] `066-tldr` — Knowledge outline with synopses ([#89](https://github.com/ahoward/brane/issues/89))
+
 ### Deferred
 
 - [ ] `028-verifier-node` — Headless verification node
