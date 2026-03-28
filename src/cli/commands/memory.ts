@@ -5,7 +5,7 @@
 import { defineCommand } from "citty"
 import { sys } from "../../index.ts"
 import { auto_tag } from "../../lib/auto-tag.ts"
-import { output } from "../output.ts"
+import { output, cli_error } from "../output.ts"
 
 const remember = defineCommand({
   meta: {
@@ -108,8 +108,7 @@ const forget = defineCommand({
   async run({ args }) {
     const raw_id = String(args.id)
     if (!/^\d+$/.test(raw_id)) {
-      console.error("error: id must be a positive integer")
-      process.exit(1)
+      cli_error("id", "invalid", "id must be a positive integer", { json: args.json })
     }
     const id = parseInt(raw_id, 10)
 

@@ -6,7 +6,7 @@
 
 import { defineCommand } from "citty"
 import { sys } from "../../index.ts"
-import { output } from "../output.ts"
+import { output, cli_error } from "../output.ts"
 
 const loopRun = defineCommand({
   meta: {
@@ -30,8 +30,7 @@ const loopRun = defineCommand({
     if (args["dry-run"]) params.dry_run = true
 
     if (!args.goal && !args.resume) {
-      console.error("error: goal is required (or --resume <id>)")
-      process.exit(1)
+      cli_error("goal", "required", "goal is required (or --resume <id>)", { json: args.json })
     }
 
     const result = await sys.call("/calabi/loop", params)

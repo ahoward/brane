@@ -4,7 +4,7 @@
 
 import { defineCommand } from "citty"
 import { sys } from "../../index.ts"
-import { output } from "../output.ts"
+import { output, cli_error } from "../output.ts"
 import { resolve_concept_ref } from "../resolve.ts"
 
 export const edge = defineCommand({
@@ -25,14 +25,12 @@ export const edge = defineCommand({
       async run({ args }) {
         const source = await resolve_concept_ref(args.from)
         if (source === null) {
-          console.error(`error: concept not found: ${args.from}`)
-          process.exit(1)
+          cli_error("from", "not_found", `concept not found: ${args.from}`, { json: args.json })
         }
 
         const target = await resolve_concept_ref(args.to)
         if (target === null) {
-          console.error(`error: concept not found: ${args.to}`)
-          process.exit(1)
+          cli_error("to", "not_found", `concept not found: ${args.to}`, { json: args.json })
         }
 
         const params: any = {
