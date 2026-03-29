@@ -89,6 +89,21 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Conce
       }
     }
 
+    // Check for exact name match (CozoDB put is an upsert — detect and report)
+    const exact = await db.run(`?[id, name, type, agent_id] := *concepts[id, name, type, _, agent_id], name = '${p.name.replace(/'/g, "''")}'`)
+    if (exact.rows.length > 0) {
+      const row = exact.rows[0]
+      db.close()
+      return success({
+        id:               row[0] as number,
+        name:             row[1] as string,
+        type:             row[2] as string,
+        agent_id:         (row[3] as string) || null,
+        matched_existing: true,
+        match_type:       "exact",
+      })
+    }
+
     // Get next ID
     const id = await get_next_concept_id(db)
 

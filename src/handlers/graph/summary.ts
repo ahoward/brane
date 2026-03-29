@@ -7,6 +7,8 @@ import { success, error } from "../../lib/result.ts"
 import { open_mind, is_mind_error } from "../../lib/mind.ts"
 
 interface SummaryResult {
+  total_concepts: number
+  total_edges: number
   concepts: {
     total: number
     by_type: Record<string, number>
@@ -66,6 +68,8 @@ export async function handler(_params: Params, _emit?: Emit): Promise<Result<Sum
     db.close()
 
     return success({
+      total_concepts: concept_total,
+      total_edges: edge_total,
       concepts: {
         total: concept_total,
         by_type

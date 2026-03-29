@@ -3,6 +3,7 @@
 //
 
 import type { Result } from "../lib/types.ts"
+import { error as make_error } from "../lib/result.ts"
 
 export interface OutputOptions {
   json?: boolean
@@ -210,6 +211,15 @@ function format_object(data: any): void {
       console.log(`${capitalize(key)}: ${value}`)
     }
   }
+}
+
+//
+// CLI error helper — creates a proper Result error and outputs it
+//
+export function cli_error(field: string, code: string, message: string, options: OutputOptions = {}): never {
+  const result = make_error({ [field]: [{ code, message }] })
+  output(result, options)
+  process.exit(1) // fallback — output() already exits on error
 }
 
 function capitalize(s: string): string {
