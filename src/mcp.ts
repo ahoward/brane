@@ -148,6 +148,254 @@ const TOOLS: McpTool[] = [
       required: ["source", "target", "relation"],
     },
   },
+  //
+  // Full CRUD for concepts, edges, annotations, provenance, rules
+  //
+  {
+    name: "concepts_get",
+    description: "Get a single concept by ID.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "number", description: "Concept ID" },
+      },
+      required: ["id"],
+    },
+  },
+  {
+    name: "concepts_update",
+    description: "Update an existing concept's name or type.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id:   { type: "number", description: "Concept ID to update" },
+        name: { type: "string", description: "New concept name" },
+        type: { type: "string", description: "New concept type" },
+      },
+      required: ["id"],
+    },
+  },
+  {
+    name: "concepts_delete",
+    description: "Delete a concept and cascade-remove its edges, annotations, and provenance.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "number", description: "Concept ID to delete" },
+      },
+      required: ["id"],
+    },
+  },
+  {
+    name: "edges_get",
+    description: "Get a single edge by ID.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "number", description: "Edge ID" },
+      },
+      required: ["id"],
+    },
+  },
+  {
+    name: "edges_update",
+    description: "Update an existing edge's relation or weight.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id:       { type: "number", description: "Edge ID to update" },
+        relation: { type: "string", description: "New relation type" },
+        weight:   { type: "number", description: "New weight (0-1)" },
+      },
+      required: ["id"],
+    },
+  },
+  {
+    name: "edges_delete",
+    description: "Delete an edge by ID.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "number", description: "Edge ID to delete" },
+      },
+      required: ["id"],
+    },
+  },
+  {
+    name: "annotations_create",
+    description: "Annotate a concept with a note, caveat, or todo.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        target: { type: "number", description: "Concept ID to annotate" },
+        text:   { type: "string", description: "Annotation text (max 4096 chars)" },
+        type:   { type: "string", enum: ["note", "caveat", "todo"], description: "Annotation type" },
+      },
+      required: ["target", "text", "type"],
+    },
+  },
+  {
+    name: "annotations_list",
+    description: "List annotations, optionally filtered by concept or type.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        target: { type: "number", description: "Filter by concept ID" },
+        type:   { type: "string", enum: ["note", "caveat", "todo"], description: "Filter by annotation type" },
+      },
+    },
+  },
+  {
+    name: "annotations_get",
+    description: "Get a single annotation by ID.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "number", description: "Annotation ID" },
+      },
+      required: ["id"],
+    },
+  },
+  {
+    name: "annotations_delete",
+    description: "Delete an annotation by ID.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "number", description: "Annotation ID to delete" },
+      },
+      required: ["id"],
+    },
+  },
+  {
+    name: "provenance_create",
+    description: "Link a concept to its source file for traceability.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        concept_id: { type: "number", description: "Concept ID" },
+        file_url:   { type: "string", description: "Source file path" },
+      },
+      required: ["concept_id", "file_url"],
+    },
+  },
+  {
+    name: "provenance_list",
+    description: "List provenance links, optionally filtered by concept or file.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        concept_id: { type: "number", description: "Filter by concept ID" },
+        file_url:   { type: "string", description: "Filter by file path" },
+      },
+    },
+  },
+  {
+    name: "provenance_delete",
+    description: "Delete a provenance link.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        concept_id: { type: "number", description: "Concept ID" },
+        file_url:   { type: "string", description: "File path" },
+      },
+      required: ["concept_id", "file_url"],
+    },
+  },
+  {
+    name: "rules_create",
+    description: "Create a Datalog integrity rule for the knowledge graph.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        name:        { type: "string", description: "Rule name (e.g., 'no_self_edges')" },
+        description: { type: "string", description: "Human-readable description" },
+        body:        { type: "string", description: "Datalog rule body" },
+      },
+      required: ["name", "description", "body"],
+    },
+  },
+  {
+    name: "rules_list",
+    description: "List all integrity rules.",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
+  {
+    name: "rules_get",
+    description: "Get a single rule by name.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        name: { type: "string", description: "Rule name" },
+      },
+      required: ["name"],
+    },
+  },
+  {
+    name: "rules_delete",
+    description: "Delete an integrity rule by name.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        name: { type: "string", description: "Rule name to delete" },
+      },
+      required: ["name"],
+    },
+  },
+  {
+    name: "prune",
+    description: "Remove orphaned concepts (no edges) and their provenance/annotations. Returns what was removed.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        dry_run: { type: "boolean", description: "Preview what would be pruned without deleting" },
+      },
+    },
+  },
+  {
+    name: "lens_create",
+    description: "Create a new lens (isolated knowledge graph).",
+    inputSchema: {
+      type: "object",
+      properties: {
+        name: { type: "string", description: "Lens name" },
+      },
+      required: ["name"],
+    },
+  },
+  {
+    name: "lens_use",
+    description: "Switch to a lens (activate it as the current knowledge graph).",
+    inputSchema: {
+      type: "object",
+      properties: {
+        name: { type: "string", description: "Lens name to activate" },
+      },
+      required: ["name"],
+    },
+  },
+  {
+    name: "lens_list",
+    description: "List all available lenses.",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
+  {
+    name: "lens_delete",
+    description: "Delete a lens and its databases.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        name: { type: "string", description: "Lens name to delete" },
+      },
+      required: ["name"],
+    },
+  },
   {
     name: "digest",
     description: "Universal intake: consume a URL, file, directory, or text into the knowledge graph. For local code directories, runs AST + LLM extraction with provenance. For URLs/files/stdin, extracts concepts, edges, and episodes via LLM. Deduplicates by content hash. Rate-limited.",
@@ -483,32 +731,54 @@ const TOOLS: McpTool[] = [
 //
 
 const TOOL_ROUTES: Record<string, string> = {
-  search:           "/mind/search",
-  graph_summary:    "/graph/summary",
-  graph_viz:        "/graph/viz",
-  graph_neighbors:  "/graph/neighbors",
-  concepts_list:    "/mind/concepts/list",
-  concepts_create:  "/mind/concepts/create",
-  edges_list:       "/mind/edges/list",
-  edges_create:     "/mind/edges/create",
-  verify:           "/mind/verify",
-  context_query:    "/context/query",
-  episodes_create:  "/mind/episodes/create",
-  episodes_list:    "/mind/episodes/list",
-  episodes_search:  "/mind/episodes/search",
-  relate:           "/mind/edges/create",
-  ingest_sessions:  "/calabi/ingest-sessions",
-  digest:           "/calabi/digest",
-  ask:              "/calabi/ask",
-  storm:            "/calabi/storm",
-  enhance:          "/calabi/enhance",
-  loop:             "/calabi/loop",
-  loop_list:        "/calabi/loop",
-  rebuild:          "/calabi/rebuild",
-  tldr:             "/calabi/tldr",
-  lens_prompt_set:  "/lens/prompt",
-  lens_prompt_on:   "/lens/prompt",
-  lens_prompt_off:  "/lens/prompt",
+  search:              "/mind/search",
+  graph_summary:       "/graph/summary",
+  graph_viz:           "/graph/viz",
+  graph_neighbors:     "/graph/neighbors",
+  concepts_list:       "/mind/concepts/list",
+  concepts_create:     "/mind/concepts/create",
+  concepts_get:        "/mind/concepts/get",
+  concepts_update:     "/mind/concepts/update",
+  concepts_delete:     "/mind/concepts/delete",
+  edges_list:          "/mind/edges/list",
+  edges_create:        "/mind/edges/create",
+  edges_get:           "/mind/edges/get",
+  edges_update:        "/mind/edges/update",
+  edges_delete:        "/mind/edges/delete",
+  annotations_create:  "/mind/annotations/create",
+  annotations_list:    "/mind/annotations/list",
+  annotations_get:     "/mind/annotations/get",
+  annotations_delete:  "/mind/annotations/delete",
+  provenance_create:   "/mind/provenance/create",
+  provenance_list:     "/mind/provenance/list",
+  provenance_delete:   "/mind/provenance/delete",
+  rules_create:        "/mind/rules/create",
+  rules_list:          "/mind/rules/list",
+  rules_get:           "/mind/rules/get",
+  rules_delete:        "/mind/rules/delete",
+  prune:               "/mind/prune",
+  lens_create:         "/lens/create",
+  lens_use:            "/lens/use",
+  lens_list:           "/lens/list",
+  lens_delete:         "/lens/delete",
+  verify:              "/mind/verify",
+  context_query:       "/context/query",
+  episodes_create:     "/mind/episodes/create",
+  episodes_list:       "/mind/episodes/list",
+  episodes_search:     "/mind/episodes/search",
+  relate:              "/mind/edges/create",
+  ingest_sessions:     "/calabi/ingest-sessions",
+  digest:              "/calabi/digest",
+  ask:                 "/calabi/ask",
+  storm:               "/calabi/storm",
+  enhance:             "/calabi/enhance",
+  loop:                "/calabi/loop",
+  loop_list:           "/calabi/loop",
+  rebuild:             "/calabi/rebuild",
+  tldr:                "/calabi/tldr",
+  lens_prompt_set:     "/lens/prompt",
+  lens_prompt_on:      "/lens/prompt",
+  lens_prompt_off:     "/lens/prompt",
 }
 
 //
@@ -1453,10 +1723,10 @@ async function handle_tools_call(params: Record<string, unknown>): Promise<unkno
   }
 
   // Auto-inject agent_id from MCP client info for tools that support it
-  const AGENT_ID_TOOLS = ["concepts_create", "edges_create", "concepts_list", "edges_list", "search", "relate", "ingest_sessions"]
+  const AGENT_ID_TOOLS = ["concepts_create", "concepts_update", "edges_create", "edges_update", "concepts_list", "edges_list", "search", "relate", "ingest_sessions"]
   if (AGENT_ID_TOOLS.includes(name) && !args.agent_id && mcp_agent_id !== "unknown") {
-    // For create tools, always inject. For list/search, don't inject (let them show all by default)
-    if (name === "concepts_create" || name === "edges_create" || name === "relate" || name === "ingest_sessions") {
+    // For create/update tools, always inject. For list/search, don't inject (let them show all by default)
+    if (name === "concepts_create" || name === "concepts_update" || name === "edges_create" || name === "edges_update" || name === "relate" || name === "ingest_sessions") {
       args.agent_id = mcp_agent_id
     }
   }

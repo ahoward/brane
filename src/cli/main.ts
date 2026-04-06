@@ -31,6 +31,8 @@ import { enhance } from "./commands/enhance.ts"
 import { loop } from "./commands/loop.ts"
 import { rebuild } from "./commands/rebuild.ts"
 import { tldr } from "./commands/tldr.ts"
+import { consolidate } from "./commands/consolidate.ts"
+import { decay } from "./commands/decay.ts"
 
 export const main = defineCommand({
   meta: {
@@ -73,6 +75,8 @@ export const main = defineCommand({
 
     // Memory commands
     memory,
+    consolidate,
+    decay,
     "ingest-sessions": ingestSessions,
 
     // Graph exploration
