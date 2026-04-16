@@ -34,7 +34,7 @@ const MCP_MODE = process.env.BRANE_MCP_MODE ?? "simple"
 const HIPPOCAMPUS_TOOLS: McpTool[] = [
   {
     name: "remember",
-    description: "Store a memory. Auto-tags from text (decision, preference, fact, event, lesson, caveat). Dual-writes to graph + audit trail.",
+    description: "Store a memory. Auto-tags from text (decision, preference, fact, event, lesson, caveat). Dual-writes to graph + audit trail. Trust tier derived from `from` source.",
     inputSchema: {
       type: "object",
       properties: {
@@ -42,6 +42,7 @@ const HIPPOCAMPUS_TOOLS: McpTool[] = [
         context:     { type: "string", description: "What you were doing when you learned this" },
         outcome:     { type: "string", description: "What happened as a result" },
         tags:        { type: "array", items: { type: "string" }, description: "Tags: decision, preference, fact, event, lesson, caveat. Auto-detected if omitted." },
+        from:        { type: "string", description: "Source of this knowledge: 'self' (default), file path, URL, or 'stdin'. Determines trust tier." },
       },
       required: ["observation"],
     },
@@ -721,6 +722,7 @@ const TOOLS: McpTool[] = [
         context:     { type: "string", description: "What you were doing when you learned this" },
         outcome:     { type: "string", description: "What happened as a result" },
         tags:        { type: "array", items: { type: "string" }, description: "Standard tags: decision, preference, fact, event, lesson, caveat. Auto-detected if omitted." },
+        from:        { type: "string", description: "Source of this knowledge: 'self' (default), file path, URL, or 'stdin'. Determines trust tier." },
       },
       required: ["observation"],
     },
@@ -1419,12 +1421,28 @@ function truncate_payload(text: string, max_bytes: number): string {
 }
 
 //
-// Trust tier derivation from from_source (#106 foundation)
+// Trust tier derivation from from_source (#106)
 //
 function derive_trust(from_source: string): "high" | "medium" | "low" {
   if (from_source === "self") return "high"
   if (from_source.startsWith("file://") || from_source.startsWith("/")) return "medium"
   return "low"  // url, stdin, etc.
+}
+
+//
+// Derive from_source: explicit param > auto-detect from observation text > "self"
+//
+function derive_from_source(explicit?: string, observation?: string): string {
+  if (explicit && explicit.trim()) return explicit.trim()
+  if (observation) {
+    // Auto-detect URLs
+    const url_match = observation.match(/https?:\/\/\S+/)
+    if (url_match) return url_match[0]
+    // Auto-detect file paths
+    const file_match = observation.match(/(?:^|\s)(\/[\w./-]+|file:\/\/[\w./-]+)/)
+    if (file_match) return file_match[1]
+  }
+  return "self"
 }
 
 const CUSTOM_HANDLERS: Record<string, ToolHandler> = {
@@ -1603,6 +1621,9 @@ const CUSTOM_HANDLERS: Record<string, ToolHandler> = {
     const outcome = String(args.outcome ?? "")
     const agent_tags = Array.isArray(args.tags) ? args.tags.map(String) : []
 
+    // Determine from_source: explicit `from` param, or auto-detect (#106)
+    const from_source = derive_from_source(args.from as string | undefined, observation)
+
     // Auto-tag: detect tags from observation + outcome text (#55)
     const tag_text = [observation, outcome].filter(Boolean).join(" ")
     const detected_tags = auto_tag(tag_text)
@@ -1629,14 +1650,14 @@ const CUSTOM_HANDLERS: Record<string, ToolHandler> = {
     const ep = result.result as Record<string, unknown>
     const ep_id = ep.id as number
 
-    // 2. Dual-write to memories.db audit trail
+    // 2. Dual-write to memories.db audit trail with trust-relevant from_source
     let memory_id: string | undefined
     try {
       const mdb = open_memories()
       if (mdb) {
         const mem = record_memory(mdb, {
           what:        observation,
-          from_source: "self",
+          from_source,
           tags:        merged_tags,
           agent:       mcp_agent_id,
           graph_id:    ep_id,

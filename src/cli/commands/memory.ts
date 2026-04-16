@@ -18,6 +18,7 @@ const remember = defineCommand({
     context:     { type: "string", alias: "c", description: "What was happening" },
     outcome:     { type: "string", alias: "o", description: "What happened as a result" },
     tags:        { type: "string", alias: "t", description: "Comma-separated tags (auto-detected if omitted)" },
+    from:        { type: "string", alias: "f", description: "Source: self (default), file path, URL, or stdin. Determines trust tier." },
     agent:       { type: "string", alias: "a", description: "Agent ID (default: cli)" },
     json:        { type: "boolean", alias: "j", description: "Output as JSON" },
   },
@@ -46,9 +47,10 @@ const remember = defineCommand({
       try {
         const mdb = open_memories()
         if (mdb) {
+          const from_source = args.from ? String(args.from) : "self"
           const mem = record_memory(mdb, {
             what:        observation,
-            from_source: "self",
+            from_source,
             tags:        merged_tags,
             agent:       args.agent ?? "cli",
             graph_id:    ep.id,
