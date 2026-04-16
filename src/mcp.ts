@@ -1567,10 +1567,29 @@ const CUSTOM_HANDLERS: Record<string, ToolHandler> = {
       // Audit trail failure is non-fatal — graph write succeeded
     }
 
+    // 3. Auto-connect: find related concepts in graph (#108)
+    let connections: string[] = []
+    try {
+      const search_result = await sys.call("/mind/search", { query: observation, limit: 3 })
+      if (search_result.status === "success") {
+        const raw = (search_result.result as Record<string, unknown> | null) ?? {}
+        const matches = Array.isArray((raw as { matches?: unknown }).matches)
+          ? (raw as { matches: { id: number; name: string; score: number }[] }).matches
+          : []
+        // Report connections with score > 0.3 (meaningful similarity)
+        connections = matches
+          .filter(m => m.score > 0.3)
+          .map(m => `${m.name} (score=${m.score})`)
+      }
+    } catch {
+      // Non-fatal — connections are informational
+    }
+
     const ep_tags = (ep.tags as string[]) ?? merged_tags
     const tag_info = ep_tags.length > 0 ? ` [${ep_tags.join(", ")}]` : ""
     const audit = memory_id ? ` audit=${memory_id}` : ""
-    const summary = `Remembered (id=${ep_id}${audit})${tag_info}: ${ep.observation}`
+    const conn_info = connections.length > 0 ? `\n  related: ${connections.join(", ")}` : ""
+    const summary = `Remembered (id=${ep_id}${audit})${tag_info}: ${ep.observation}${conn_info}`
     return {
       content: [{ type: "text", text: summary }],
       isError: false,
@@ -1642,11 +1661,49 @@ const CUSTOM_HANDLERS: Record<string, ToolHandler> = {
 
     if (mdb) try { mdb.close() } catch { /* ignore */ }
 
+    // Graph-backed recall: also search concepts for related knowledge (#108)
+    let concept_section = ""
+    try {
+      const concept_search = await sys.call("/mind/search", {
+        query: args.query as string,
+        limit: 3,
+      })
+      if (concept_search.status === "success") {
+        const craw = (concept_search.result as Record<string, unknown> | null) ?? {}
+        const cmatches = Array.isArray((craw as { matches?: unknown }).matches)
+          ? (craw as { matches: { id: number; name: string; type: string; score: number }[] }).matches
+          : []
+        // Only include meaningful matches
+        const relevant = cmatches.filter(c => c.score > 0.2)
+        if (relevant.length > 0) {
+          const concept_lines = relevant.map(c => `  - ${c.name} (${c.type}, score=${c.score})`)
+
+          // Get 1-hop neighbors for top concept
+          let neighbor_info = ""
+          try {
+            const nbr = await sys.call("/graph/neighbors", { id: relevant[0].id, depth: 1 })
+            if (nbr.status === "success") {
+              const nr = nbr.result as { edges?: { source_name: string; target_name: string; relation: string }[] }
+              if (nr.edges && nr.edges.length > 0) {
+                const edge_lines = nr.edges.slice(0, 3).map(e =>
+                  `    ${e.source_name} --${e.relation}--> ${e.target_name}`)
+                neighbor_info = "\n  graph context:\n" + edge_lines.join("\n")
+              }
+            }
+          } catch { /* non-fatal */ }
+
+          concept_section = "\n\nRelated concepts:\n" + concept_lines.join("\n") + neighbor_info
+        }
+      }
+    } catch {
+      // Non-fatal — concept search is supplementary
+    }
+
     const header = matches.length > 0
       ? `Found ${matches.length} relevant memories:`
       : "No relevant memories found."
 
-    let text = header + "\n\n" + memories.join("\n\n")
+    let text = header + "\n\n" + memories.join("\n\n") + concept_section
     text = truncate_payload(text, MAX_RECALL_PAYLOAD)
 
     return {
