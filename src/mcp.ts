@@ -11,6 +11,7 @@ import { acquire_lock, auto_release_on_exit } from "./lib/lock.ts"
 import { reset_rate_limiter, get_session_stats } from "./lib/rate-limit.ts"
 import { auto_tag, STANDARD_TAGS } from "./lib/auto-tag.ts"
 import { maybe_flush, auto_flush_on_exit } from "./lib/access-log.ts"
+import { open_memories, record_memory, tombstone_by_graph_id, get_memory_by_graph_id } from "./lib/memories.ts"
 import { resolve } from "node:path"
 
 //
@@ -19,7 +20,59 @@ import { resolve } from "node:path"
 
 const MCP_VERSION = "2024-11-05"
 const SERVER_NAME = "brane"
-const SERVER_VERSION = "0.2.0"
+const SERVER_VERSION = "0.3.0"
+
+//
+// MCP mode: "simple" (default) exposes only 3 hippocampus verbs.
+// "full" exposes all tools for power users / admin.
+//
+const MCP_MODE = process.env.BRANE_MCP_MODE ?? "simple"
+
+//
+// Hippocampus tools — the 3 verbs agents see by default
+//
+const HIPPOCAMPUS_TOOLS: McpTool[] = [
+  {
+    name: "remember",
+    description: "Store a memory. Auto-tags from text (decision, preference, fact, event, lesson, caveat). Dual-writes to graph + audit trail.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        observation: { type: "string", description: "What you observed, learned, or decided" },
+        context:     { type: "string", description: "What you were doing when you learned this" },
+        outcome:     { type: "string", description: "What happened as a result" },
+        tags:        { type: "array", items: { type: "string" }, description: "Tags: decision, preference, fact, event, lesson, caveat. Auto-detected if omitted." },
+      },
+      required: ["observation"],
+    },
+  },
+  {
+    name: "recall",
+    description: "Search your memories by meaning. Returns relevant past experiences with trust tiers (self/file/external).",
+    inputSchema: {
+      type: "object",
+      properties: {
+        query:  { type: "string", description: "What you're trying to remember" },
+        limit:  { type: "number", description: "Max memories to return (default 5)" },
+        tag:    { type: "string", description: "Filter to memories with this tag" },
+        after:  { type: "string", description: "Only memories after this ISO timestamp" },
+        before: { type: "string", description: "Only memories before this ISO timestamp" },
+      },
+      required: ["query"],
+    },
+  },
+  {
+    name: "forget",
+    description: "Remove a memory that is no longer relevant or correct. Dual-deletes from graph + audit trail.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "number", description: "Episode ID to forget" },
+      },
+      required: ["id"],
+    },
+  },
+]
 
 //
 // JSON-RPC types
@@ -893,44 +946,28 @@ const PROMPT_CONTENT: Record<string, PromptRenderer> = {
     role: "user",
     content: {
       type: "text",
-      text: `You have access to brane, a deterministic subjective memory system.
+      text: `You have access to brane — 3 verbs, that's it.
 
-USE \`remember\` when:
-- You learn something surprising or non-obvious
-- A task succeeds or fails in an unexpected way
-- You discover a pattern across multiple files/interactions
-- The user shares context you'll need in future conversations
+## remember
+Store what you learned. Tags auto-detected (decision, preference, fact, event, lesson, caveat).
+- Something surprising or non-obvious happened
+- The user shared context you'll need later
+- A task succeeded or failed unexpectedly
 
-USE \`recall\` when:
-- Starting a new task (check for relevant past experience)
-- Encountering an error (have you seen this before?)
-- Making a design decision (what worked last time?)
-- The user references something from a previous session
+## recall
+Search by meaning. Results include trust tiers (high=self, medium=file, low=external).
+- Starting a task — check for relevant past experience
+- Hitting an error — have you seen this before?
+- Making a decision — what worked last time?
 
-USE \`digest\` when:
-- The user points you at new files, codebases, URLs, or documents
-- You need deep structural understanding of code or content
-- You want to build a knowledge graph of concepts and relationships
+## forget
+Remove a memory by ID. Use when a memory is wrong or stale.
 
-USE \`reflect\` when:
-- You want to check how much you know about a topic
-- Before making recommendations based on accumulated knowledge
-- You need a summary of what you've learned so far
-
-TAGGING MEMORIES:
-When using \`remember\`, tags are auto-detected from your observation text. You can also provide them explicitly:
-- "decision" — choices made ("we decided to...", "going with...")
-- "preference" — user preferences ("I prefer...", "always use...", "never...")
-- "fact" — concrete information ("runs on port 3000", "uses PostgreSQL")
-- "event" — things that happened ("deployed v2.3.0", "merged the PR")
-- "lesson" — things learned ("parallel tests cause flaky failures")
-- "caveat" — warnings discovered ("auth has a race condition")
-
-GENERAL PRINCIPLES:
-- Remember outcomes, not just actions
-- Be specific: "auth middleware timeout in CI" > "something broke"
-- Tags enable filtered recall: \`recall\` with tag="decision" finds only decisions
-- Reflect periodically to consolidate scattered episodes into knowledge`
+## Principles
+- Remember outcomes, not actions: "auth timeout in CI" > "something broke"
+- Be specific: one clear sentence per memory
+- Trust the tiers: high-trust memories can be acted on, low-trust should be verified
+- Tags enable filtered recall: recall with tag="decision" finds only decisions`
     }
   }],
 
@@ -1095,7 +1132,11 @@ async function handle_initialize(params: Record<string, unknown>): Promise<unkno
 //
 
 function handle_tools_list(): unknown {
-  return { tools: TOOLS }
+  if (MCP_MODE === "full") {
+    return { tools: TOOLS }
+  }
+  // Default: only the 3 hippocampus verbs
+  return { tools: HIPPOCAMPUS_TOOLS }
 }
 
 //
@@ -1296,6 +1337,15 @@ function truncate_payload(text: string, max_bytes: number): string {
   return truncated.toString("utf8").replace(/\uFFFD+$/, "") + "\n...(truncated)"
 }
 
+//
+// Trust tier derivation from from_source (#106 foundation)
+//
+function derive_trust(from_source: string): "high" | "medium" | "low" {
+  if (from_source === "self") return "high"
+  if (from_source.startsWith("file://") || from_source.startsWith("/")) return "medium"
+  return "low"  // url, stdin, etc.
+}
+
 const CUSTOM_HANDLERS: Record<string, ToolHandler> = {
   //
   // ask — semantic search + graph neighbors for richer context
@@ -1465,7 +1515,7 @@ const CUSTOM_HANDLERS: Record<string, ToolHandler> = {
   },
 
   //
-  // remember — create an episode with auto-populated agent_id and auto-tags
+  // remember — dual-write: graph episode + memories.db audit trail (#103)
   //
   async remember(args) {
     const observation = String(args.observation ?? "")
@@ -1473,7 +1523,6 @@ const CUSTOM_HANDLERS: Record<string, ToolHandler> = {
     const agent_tags = Array.isArray(args.tags) ? args.tags.map(String) : []
 
     // Auto-tag: detect tags from observation + outcome text (#55)
-    // Auto-tags are additive — always merged with agent-provided tags
     const tag_text = [observation, outcome].filter(Boolean).join(" ")
     const detected_tags = auto_tag(tag_text)
     const merged_tags = [...new Set([...agent_tags, ...detected_tags])]
@@ -1486,6 +1535,7 @@ const CUSTOM_HANDLERS: Record<string, ToolHandler> = {
       tags:        merged_tags,
     }
 
+    // 1. Write to graph (episodes)
     const result = await sys.call("/mind/episodes/create", episode_args)
 
     if (result.status === "error") {
@@ -1496,9 +1546,31 @@ const CUSTOM_HANDLERS: Record<string, ToolHandler> = {
     }
 
     const ep = result.result as Record<string, unknown>
+    const ep_id = ep.id as number
+
+    // 2. Dual-write to memories.db audit trail
+    let memory_id: string | undefined
+    try {
+      const mdb = open_memories()
+      if (mdb) {
+        const mem = record_memory(mdb, {
+          what:        observation,
+          from_source: "self",
+          tags:        merged_tags,
+          agent:       mcp_agent_id,
+          graph_id:    ep_id,
+        })
+        memory_id = mem.id
+        mdb.close()
+      }
+    } catch {
+      // Audit trail failure is non-fatal — graph write succeeded
+    }
+
     const ep_tags = (ep.tags as string[]) ?? merged_tags
     const tag_info = ep_tags.length > 0 ? ` [${ep_tags.join(", ")}]` : ""
-    const summary = `Remembered (id=${ep.id})${tag_info}: ${ep.observation}`
+    const audit = memory_id ? ` audit=${memory_id}` : ""
+    const summary = `Remembered (id=${ep_id}${audit})${tag_info}: ${ep.observation}`
     return {
       content: [{ type: "text", text: summary }],
       isError: false,
@@ -1506,13 +1578,13 @@ const CUSTOM_HANDLERS: Record<string, ToolHandler> = {
   },
 
   //
-  // recall — semantic search with payload truncation
+  // recall — semantic search + trust tier enrichment from memories.db (#103)
   //
   async recall(args) {
     const search_args: Record<string, unknown> = {
       query: args.query,
       limit: args.limit ?? 5,
-      // Default to current agent's memories; explicit agent_id overrides
+      // Blood-brain barrier: always scoped to current agent (#105)
       agent_id: mcp_agent_id,
     }
 
@@ -1542,7 +1614,11 @@ const CUSTOM_HANDLERS: Record<string, ToolHandler> = {
       })
     }
 
-    // Format for agent consumption — concise, readable
+    // Enrich with trust tier from memories.db audit trail
+    let mdb: ReturnType<typeof open_memories> = null
+    try { mdb = open_memories() } catch { /* non-fatal */ }
+
+    // Format for agent consumption — concise, readable, trust-annotated
     const memories = matches.map((m, i) => {
       const parts = [`[${i + 1}] (id=${m.id}, score=${m.score})`]
       parts.push(`  ${m.observation}`)
@@ -1550,9 +1626,21 @@ const CUSTOM_HANDLERS: Record<string, ToolHandler> = {
       if (m.outcome) parts.push(`  outcome: ${m.outcome}`)
       const tags = m.tags as string[]
       if (tags && tags.length > 0) parts.push(`  tags: ${tags.join(", ")}`)
+
+      // Trust tier from memories.db cross-reference
+      if (mdb && typeof m.id === "number") {
+        const audit = get_memory_by_graph_id(mdb, m.id)
+        if (audit) {
+          const trust = derive_trust(audit.from_source)
+          parts.push(`  trust: ${trust} (from: ${audit.from_source})`)
+        }
+      }
+
       parts.push(`  when: ${m.timestamp}`)
       return parts.join("\n")
     })
+
+    if (mdb) try { mdb.close() } catch { /* ignore */ }
 
     const header = matches.length > 0
       ? `Found ${matches.length} relevant memories:`
@@ -1568,10 +1656,13 @@ const CUSTOM_HANDLERS: Record<string, ToolHandler> = {
   },
 
   //
-  // forget — delete an episode by ID
+  // forget — dual-delete: graph episode + memories.db tombstone (#103)
   //
   async forget(args) {
-    const result = await sys.call("/mind/episodes/delete", { id: args.id })
+    const graph_id = args.id as number
+
+    // 1. Delete from graph
+    const result = await sys.call("/mind/episodes/delete", { id: graph_id })
 
     if (result.status === "error") {
       return {
@@ -1580,8 +1671,21 @@ const CUSTOM_HANDLERS: Record<string, ToolHandler> = {
       }
     }
 
+    // 2. Tombstone in memories.db audit trail
+    let tombstoned_id: string | null = null
+    try {
+      const mdb = open_memories()
+      if (mdb) {
+        tombstoned_id = tombstone_by_graph_id(mdb, graph_id)
+        mdb.close()
+      }
+    } catch {
+      // Audit trail failure is non-fatal — graph delete succeeded
+    }
+
+    const audit = tombstoned_id ? ` (audit ${tombstoned_id} tombstoned)` : ""
     return {
-      content: [{ type: "text", text: `Forgot memory id=${args.id}` }],
+      content: [{ type: "text", text: `Forgot memory id=${graph_id}${audit}` }],
       isError: false,
     }
   },
@@ -1701,15 +1805,16 @@ async function handle_tools_call(params: Record<string, unknown>): Promise<unkno
   const custom = CUSTOM_HANDLERS[name]
 
   if (!route && !custom) {
-    const available = TOOLS.map(t => t.name).join(", ")
+    const active_tools = MCP_MODE === "full" ? TOOLS : HIPPOCAMPUS_TOOLS
+    const available = active_tools.map(t => t.name).join(", ")
     return {
       content: [{ type: "text", text: `unknown tool: ${name}. Available: ${available}` }],
       isError: true,
     }
   }
 
-  // Validate required params from schema
-  const tool_def = TOOLS.find(t => t.name === name)
+  // Validate required params from schema (check both tool lists)
+  const tool_def = TOOLS.find(t => t.name === name) ?? HIPPOCAMPUS_TOOLS.find(t => t.name === name)
   if (tool_def) {
     const required = (tool_def.inputSchema as { required?: string[] }).required ?? []
     for (const param of required) {
