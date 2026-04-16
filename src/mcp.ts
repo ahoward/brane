@@ -11,7 +11,7 @@ import { acquire_lock, auto_release_on_exit } from "./lib/lock.ts"
 import { reset_rate_limiter, get_session_stats } from "./lib/rate-limit.ts"
 import { auto_tag, STANDARD_TAGS } from "./lib/auto-tag.ts"
 import { maybe_flush, auto_flush_on_exit } from "./lib/access-log.ts"
-import { open_memories, record_memory, tombstone_by_graph_id, get_memory_by_graph_id } from "./lib/memories.ts"
+import { open_memories, record_memory, tombstone_by_graph_id, get_memory_by_graph_id, count_by_agent } from "./lib/memories.ts"
 import { resolve } from "node:path"
 
 //
@@ -854,6 +854,12 @@ interface McpResourceTemplate {
 
 const RESOURCES: McpResource[] = [
   {
+    uri:         "brane://context",
+    name:        "Context",
+    description: "Auto-recall: last 5 memories + project summary for the current agent. Read this on connect.",
+    mimeType:    "text/plain",
+  },
+  {
     uri:         "brane://concepts",
     name:        "Concepts",
     description: "All concepts in the knowledge graph",
@@ -1167,6 +1173,81 @@ async function handle_resources_read(params: Record<string, unknown>): Promise<u
   }
 
   const path = uri.slice("brane://".length)
+
+  // Auto-recall context: last 5 memories + project summary (#104)
+  if (path === "context") {
+    const sections: string[] = []
+
+    // Recent memories for this agent
+    try {
+      const ep_result = await sys.call("/mind/episodes/list", {
+        agent_id: mcp_agent_id !== "unknown" ? mcp_agent_id : undefined,
+        limit: 5,
+      })
+      if (ep_result.status === "success") {
+        const data = ep_result.result as { episodes?: { id: number; observation: string; timestamp: string; tags?: string[] }[] } | null
+        const episodes = data?.episodes ?? []
+        if (episodes.length > 0) {
+          sections.push("## Recent memories")
+          for (const ep of episodes) {
+            const tag_str = ep.tags && ep.tags.length > 0 ? ` [${ep.tags.join(", ")}]` : ""
+            sections.push(`- (id=${ep.id}) ${ep.observation}${tag_str}`)
+          }
+        } else {
+          sections.push("## Recent memories\nNo memories yet. Use `remember` to start building context.")
+        }
+      }
+    } catch { /* non-fatal */ }
+
+    // Project summary from graph
+    try {
+      const summary_result = await sys.call("/graph/summary", {})
+      if (summary_result.status === "success") {
+        const summary = summary_result.result as {
+          total_concepts?: number
+          total_edges?: number
+          concepts_by_type?: Record<string, number>
+        } | null
+        if (summary && (summary.total_concepts ?? 0) > 0) {
+          sections.push("\n## Knowledge graph")
+          sections.push(`${summary.total_concepts} concepts, ${summary.total_edges} edges`)
+          if (summary.concepts_by_type) {
+            const types = Object.entries(summary.concepts_by_type)
+              .map(([t, c]) => `${t}: ${c}`)
+              .join(", ")
+            sections.push(`Types: ${types}`)
+          }
+        }
+      }
+    } catch { /* non-fatal */ }
+
+    // Audit trail stats from memories.db
+    try {
+      const mdb = open_memories()
+      if (mdb) {
+        const counts = count_by_agent(mdb)
+        if (counts.length > 0) {
+          sections.push("\n## Memory audit trail")
+          for (const { agent, count } of counts) {
+            sections.push(`- ${agent}: ${count} memories`)
+          }
+        }
+        mdb.close()
+      }
+    } catch { /* non-fatal */ }
+
+    const text = sections.length > 0
+      ? sections.join("\n")
+      : "No context available yet. Use `remember` to start building your memory."
+
+    return {
+      contents: [{
+        uri,
+        mimeType: "text/plain",
+        text,
+      }]
+    }
+  }
 
   // Static resources
   if (path === "concepts") {
