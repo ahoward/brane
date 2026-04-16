@@ -2,7 +2,8 @@
   "status": "success",
   "result": {
     "path": "<string>",
-    "created": false
+    "created": false,
+    "memories_db": "<string>"
   },
   "errors": null,
   "meta": {

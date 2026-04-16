@@ -7,10 +7,12 @@ import { success, error } from "../../lib/result.ts"
 import { resolve } from "node:path"
 import { existsSync, mkdirSync } from "node:fs"
 import { Database } from "bun:sqlite"
+import { open_memories } from "../../lib/memories.ts"
 
 interface InitResult {
-  path:    string
-  created: boolean
+  path:         string
+  created:      boolean
+  memories_db?: string
 }
 
 export async function handler(params: Params, emit?: Emit): Promise<Result<InitResult>> {
@@ -65,9 +67,14 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<InitR
       })
     }
 
+    // Ensure memories.db exists (idempotent — open_memories creates schema)
+    const mdb = open_memories()
+    if (mdb) mdb.close()
+
     return success({
-      path:    state_db_path,
-      created: false
+      path:         state_db_path,
+      created:      false,
+      memories_db:  resolve(brane_path, "memories.db"),
     })
   }
 
@@ -102,8 +109,13 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<InitR
     })
   }
 
+  // Create memories.db audit trail
+  const mdb = open_memories()
+  if (mdb) mdb.close()
+
   return success({
-    path:    state_db_path,
-    created: true
+    path:         state_db_path,
+    created:      true,
+    memories_db:  resolve(brane_path, "memories.db"),
   })
 }
