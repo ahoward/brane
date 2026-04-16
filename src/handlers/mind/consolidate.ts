@@ -2,12 +2,13 @@
 // consolidate.ts - distill episodes into semantic knowledge
 //
 // Groups similar episodes by vector similarity, proposes concept names
-// via LLM, creates concepts + DERIVED_FROM edges, archives source episodes.
+// via LLM, creates concepts + CAUSED_BY edges. Append-only: source
+// episodes are never mutated or archived (#109).
 //
 
 import type { Params, Result, Emit } from "../../lib/types.ts"
 import { success, error } from "../../lib/result.ts"
-import { open_mind, is_mind_error, get_next_concept_id, get_next_edge_id, archive_episode } from "../../lib/mind.ts"
+import { open_mind, is_mind_error, get_next_concept_id, get_next_edge_id } from "../../lib/mind.ts"
 import { generate_embedding } from "../../lib/embed.ts"
 import { name_cluster } from "../../lib/llm.ts"
 
@@ -36,7 +37,6 @@ interface ApplyResult {
   clusters:          ClusterProposal[]
   concepts_created:  number
   edges_created:     number
-  episodes_archived: number
 }
 
 export async function handler(params: Params, emit?: Emit): Promise<Result<DryRunResult | ApplyResult>> {
@@ -100,7 +100,7 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<DryRu
       db.close()
       return success(dry_run
         ? { clusters: [] }
-        : { clusters: [], concepts_created: 0, edges_created: 0, episodes_archived: 0 }
+        : { clusters: [], concepts_created: 0, edges_created: 0 }
       )
     }
 
@@ -111,7 +111,7 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<DryRu
       db.close()
       return success(dry_run
         ? { clusters: [] }
-        : { clusters: [], concepts_created: 0, edges_created: 0, episodes_archived: 0 }
+        : { clusters: [], concepts_created: 0, edges_created: 0 }
       )
     }
 
@@ -134,10 +134,10 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<DryRu
       return success({ clusters: proposals })
     }
 
-    // Step 5: Apply — create concepts, DERIVED_FROM edges, archive episodes
+    // Step 5: Apply — append-only: create concepts + CAUSED_BY edges (#109)
+    // Source episodes are NEVER mutated or archived.
     let concepts_created = 0
     let edges_created = 0
-    let episodes_archived = 0
 
     for (const proposal of proposals) {
       // Create concept
@@ -155,24 +155,16 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<DryRu
       `)
       concepts_created++
 
-      // Create DERIVED_FROM edges from concept to each source episode's concept
-      // Since episodes aren't concepts themselves, we create edges FROM the new concept
-      // TO indicate it was DERIVED_FROM episodes. We store the episode IDs as edge metadata.
+      // Create CAUSED_BY edges: new concept was caused by these episodes
+      // Episode IDs as targets for traceability (episodes aren't concepts,
+      // but the edge records the provenance chain)
       for (const ep_id of proposal.episode_ids) {
         const edge_id = await get_next_edge_id(db)
-        // Edge: concept_id DERIVED_FROM episode (using ep_id as target — episode isn't a concept,
-        // but the edge records the relationship for traceability)
         await db.run(`
-          ?[id, source, target, relation, weight, agent_id] <- [[${edge_id}, ${concept_id}, ${ep_id}, 'DERIVED_FROM', 1.0, '${esc(p.agent_id)}']]
+          ?[id, source, target, relation, weight, agent_id] <- [[${edge_id}, ${concept_id}, ${ep_id}, 'CAUSED_BY', 1.0, '${esc(p.agent_id)}']]
           :put edges { id, source, target, relation, weight, agent_id }
         `)
         edges_created++
-      }
-
-      // Archive source episodes (read-remove-reinsert to avoid CozoDB duplicate row bug)
-      for (const ep_id of proposal.episode_ids) {
-        await archive_episode(db, ep_id)
-        episodes_archived++
       }
     }
 
@@ -182,7 +174,6 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<DryRu
       clusters: proposals,
       concepts_created,
       edges_created,
-      episodes_archived,
     })
   } catch (err) {
     db.close()
