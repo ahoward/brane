@@ -37,10 +37,35 @@ done
 
 # ── Dual-use: slop OR exact depending on context ─────────────────────────────
 # A substring match can't tell "navigate to src/" (fine) from "navigate the
-# landscape" (slop). The hook spares these unless they sit next to slop-context
-# trigger words. We tag them so the policy itself records the distinction.
+# landscape" (slop). These are judged SEMANTICALLY at scan time (embed-then-LLM,
+# see classify-usage.ts) — never by pattern. We tag them so the policy records
+# the distinction.
 for w in robust navigate leverage seamless unlock empower elevate; do
   remember "$w" "dual-use,allow-in-engineering"
+done
+
+# ── Exemplars: the training signal for the semantic discriminator ────────────
+# The classifier embeds the offending sentence and compares it to two centroids
+# built from these. They live in brane too — to sharpen the judge, add more
+# exemplars; no code change. Decorative = vague/promotional. Technical = precise.
+exemplar() { "$BRANE" remember "$1" --from "no-slop-exemplar" -t "$2" >/dev/null; }
+
+for s in \
+  "We navigate the evolving landscape of modern solutions." \
+  "A robust, seamless platform that empowers teams to unlock their potential." \
+  "Leverage cutting-edge synergies to elevate your brand journey." \
+  "This holistic ecosystem resonates across the entire paradigm." \
+  "Unlock seamless value in a rapidly shifting marketplace."; do
+  exemplar "$s" "exemplar,decorative"
+done
+
+for s in \
+  "Navigate to src/handlers and re-run the failing test." \
+  "The retry logic is robust to transient network errors." \
+  "We leverage the existing HNSW index to avoid a full table scan." \
+  "Empower the worker pool with two extra threads under load." \
+  "Elevate the log level to debug before reproducing the crash."; do
+  exemplar "$s" "exemplar,technical"
 done
 
 echo "Done. Inspect the policy:"

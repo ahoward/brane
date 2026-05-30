@@ -13,26 +13,37 @@ That last sentence is the whole game. Banning `honestly` is trivial. The interes
 ## The fix — three moving parts
 
 ```
-┌─────────────────┐   policy lives in    ┌──────────────────────────┐
-│  brane memory   │ ◀────────────────────│  seed-policy.sh          │
-│  (the policy)   │                       │  remember each word w/   │
-│                 │                       │  a tier tag              │
-│  honestly  ───────── tag: banned-word                             │
-│  navigate  ───────── tag: dual-use                                │
-└────────┬────────┘                       └──────────────────────────┘
+┌─────────────────┐   policy + exemplars  ┌──────────────────────────┐
+│  brane memory   │ ◀─────────────────────│  seed-policy.sh          │
+│                 │                        │  remember each word +    │
+│  honestly ──── banned-word               │  exemplar sentences w/   │
+│  navigate ──── dual-use                  │  tier tags               │
+│  "navigate to src/" ── exemplar,technical                          │
+│  "navigate the landscape" ── exemplar,decorative                   │
+└────────┬────────┘                        └──────────────────────────┘
          │ brane admin memory list --json
          ▼
-┌─────────────────────────────────────────┐   blocks the turn   ┌──────────┐
-│  .claude/hooks/no-slop.sh   (Stop hook)  │ ──────────────────▶ │  Claude  │
-│  reads last message, scans, decides      │   reason = rewrite  │  rewrites│
-└─────────────────────────────────────────┘                     └──────────┘
+┌─────────────────────────────────────────┐
+│  .claude/hooks/no-slop.sh   (Stop hook)  │
+│  reads last message, scans:              │
+│   • banned-word → violation              │      ┌───────────────────────┐
+│   • dual-use    → ask the judge ─────────┼─────▶│ classify-usage.ts     │
+│                                          │      │ 1. embed vs centroids │
+│                                          │◀─────┤ 2. LLM if uncertain   │
+│   any violation → block + rewrite        │ dec/ │ 3. else fail-open     │
+└────────────────────┬─────────────────────┘ tech└───────────────────────┘
+                     │ {"decision":"block","reason":"…rewrite…"}
+                     ▼
+                 ┌──────────┐
+                 │  Claude  │  rewrites (does not get to argue)
+                 └──────────┘
 ```
 
 1. **The policy is a brane memory, not a hardcoded list.** Each banned word is a memory tagged `banned-word` (hard ban) or `dual-use` (context-aware). To change the policy you don't edit code — you `brane remember` a word. The policy is queryable (`brane recall "banned"`), auditable (every entry has a source and timestamp), and lives in a system of record.
 
 2. **A `Stop` hook gives the rule teeth.** It fires when Claude finishes a turn, reads the last message from the transcript, fetches the policy from brane, and scans. Clean message → the turn ends. A violation → the hook returns `{"decision":"block","reason":"…rewrite without these…"}`, and Claude rewrites. It does not get to argue.
 
-3. **Dual-use words are spared in real engineering use.** `navigate to src/` is fine. `navigate the landscape` is slop. The hook only flags a `dual-use` word when it sits next to slop-context trigger words (`landscape`, `journey`, `ecosystem`, `seamless`, `synergy`, …). Otherwise the word earns its keep, untouched.
+3. **Dual-use words are judged by meaning, not pattern.** `navigate to src/` is fine. `navigate the landscape` is slop. The hook hands each dual-use occurrence to a semantic discriminator (`classify-usage.ts`) and only flags a **decorative** verdict. A technical use earns its keep, untouched.
 
 ## Why this is the "determinism" Brad wanted
 
@@ -71,9 +82,36 @@ brane remember "robust"   --from no-slop-policy -t dual-use,allow-in-engineering
 |------|------------|
 | `.claude/hooks/no-slop.sh` | The `Stop` hook. Reads the transcript, fetches the brane policy, decides block/allow. The heart of the thing. |
 | `.claude/settings.json` | Wires the hook to the `Stop` event. |
-| `seed-policy.sh` | Loads the two-tier policy into brane as tagged memories. |
-| `demo.sh` | End-to-end proof against forged transcripts. |
+| `classify-usage.ts` | The semantic discriminator: embed-then-LLM judgment of decorative vs technical use. |
+| `seed-policy.sh` | Loads the two-tier policy **and the exemplars** into brane as tagged memories. |
+| `demo.sh` | Narrative end-to-end proof against forged transcripts. |
+| `test.sh` | Asserts the three discriminator tiers. Exit 0 = green. |
 
-## Tuning the context heuristic
+## The semantic discriminator (`classify-usage.ts`)
 
-The dual-use logic in `no-slop.sh` uses a `SLOP_CONTEXT` regex of trigger words — the abstract-noun company that slop keeps. It's a heuristic, deliberately: cheap, deterministic, no model call on every turn. Tighten it for your taste, or, if you want true semantic judgment, swap the regex check for a `brane recall` against a lens of known-slop phrases. The architecture doesn't change — only the discriminator does.
+The interesting word is "navigate." Same word, opposite verdicts, decided by **meaning**:
+
+```
+$ echo '{"word":"navigate","sentence":"navigate to src/handlers and re-run the tests","exemplars":…}' | bun classify-usage.ts
+{"verdict":"technical","how":"embed","reason":"embed: decorative=0.250 technical=0.580 (gap 0.331 ≥ 0.06)"}
+
+$ echo '{"word":"navigate","sentence":"navigate the evolving landscape of robust seamless solutions","exemplars":…}' | bun classify-usage.ts
+{"verdict":"decorative","how":"embed","reason":"embed: decorative=0.759 technical=0.351 (gap 0.408 ≥ 0.06)"}
+```
+
+Two tiers, cheap-first:
+
+1. **Embed** — embed the offending sentence with brane's own local model (model2vec, 256-dim, **no API key**, ~200ms) and compare cosine similarity to two centroids: one built from known-**decorative** exemplar sentences, one from known-**technical** ones. If a clear winner emerges (`gap ≥ NOSLOP_MARGIN`, default 0.06), that's the verdict. No model call.
+
+2. **LLM** — only when the margin is too small to trust does it escalate to a single `claude -p --json-schema` call (brane's existing shell-out pattern: `--output-format json`, structured output, nesting-env stripped) for a `{verdict, reason}` judgment.
+
+**Fail-open, never guess.** If embeddings can't run *and* the LLM can't run, a dual-use word is **allowed**. We removed the old regex heuristic entirely — a dual-use word is innocent until a semantic judge convicts it. The price is honesty: real semantic judgment needs real embeddings or a real model, so `demo.sh` runs with real (local) embeddings rather than `BRANE_EMBED_MOCK` (which is random hashes with no meaning).
+
+**The exemplars live in brane.** They're memories tagged `exemplar,decorative` / `exemplar,technical`. To sharpen the judge, add exemplars — no code change:
+
+```bash
+brane remember "Harden the parser to be robust against malformed input." \
+  --from no-slop-exemplar -t exemplar,technical
+```
+
+That's the thesis in miniature: not just the *policy* but the *training signal* for the judgment lives in the agent's memory, queryable and auditable.
