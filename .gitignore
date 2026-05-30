@@ -8,6 +8,7 @@ node_modules/
 dist/
 *.tsbuildinfo
 /bin/
+/brane
 
 # env
 .env
