@@ -5,6 +5,7 @@
 import { defineCommand } from "citty"
 import { sys } from "../../index.ts"
 import { auto_tag } from "../../lib/auto-tag.ts"
+import { open_memories, record_memory, tombstone_by_graph_id } from "../../lib/memories.ts"
 import { output, cli_error } from "../output.ts"
 
 const remember = defineCommand({
@@ -17,6 +18,7 @@ const remember = defineCommand({
     context:     { type: "string", alias: "c", description: "What was happening" },
     outcome:     { type: "string", alias: "o", description: "What happened as a result" },
     tags:        { type: "string", alias: "t", description: "Comma-separated tags (auto-detected if omitted)" },
+    from:        { type: "string", alias: "f", description: "Source: self (default), file path, URL, or stdin. Determines trust tier." },
     agent:       { type: "string", alias: "a", description: "Agent ID (default: cli)" },
     json:        { type: "boolean", alias: "j", description: "Output as JSON" },
   },
@@ -37,14 +39,36 @@ const remember = defineCommand({
       tags:        merged_tags,
     })
 
-    if (args.json) {
-      output(result, { json: true })
-    } else if (result.status === "success") {
+    if (result.status === "success") {
       const ep = result.result as { id: number; tags: string[] }
-      const tag_str = ep.tags.length > 0 ? ` [${ep.tags.join(", ")}]` : ""
-      console.log(`remembered (id: ${ep.id})${tag_str}`)
+
+      // Dual-write to memories.db audit trail (#107)
+      let audit_id: string | undefined
+      try {
+        const mdb = open_memories()
+        if (mdb) {
+          const from_source = args.from ? String(args.from) : "self"
+          const mem = record_memory(mdb, {
+            what:        observation,
+            from_source,
+            tags:        merged_tags,
+            agent:       args.agent ?? "cli",
+            graph_id:    ep.id,
+          })
+          audit_id = mem.id
+          mdb.close()
+        }
+      } catch { /* non-fatal */ }
+
+      if (args.json) {
+        output(result, { json: true })
+      } else {
+        const tag_str = ep.tags.length > 0 ? ` [${ep.tags.join(", ")}]` : ""
+        const audit_str = audit_id ? ` audit=${audit_id}` : ""
+        console.log(`remembered (id: ${ep.id}${audit_str})${tag_str}`)
+      }
     } else {
-      output(result, {})
+      output(result, { json: args.json })
     }
   },
 })
@@ -114,12 +138,25 @@ const forget = defineCommand({
 
     const result = await sys.call("/mind/episodes/delete", { id })
 
-    if (args.json) {
-      output(result, { json: true })
-    } else if (result.status === "success") {
-      console.log(`forgot episode #${id}`)
+    if (result.status === "success") {
+      // Dual-delete: tombstone in memories.db (#107)
+      let tombstoned: string | null = null
+      try {
+        const mdb = open_memories()
+        if (mdb) {
+          tombstoned = tombstone_by_graph_id(mdb, id)
+          mdb.close()
+        }
+      } catch { /* non-fatal */ }
+
+      if (args.json) {
+        output(result, { json: true })
+      } else {
+        const audit_str = tombstoned ? ` (audit ${tombstoned} tombstoned)` : ""
+        console.log(`forgot episode #${id}${audit_str}`)
+      }
     } else {
-      output(result, {})
+      output(result, { json: args.json })
     }
   },
 })
@@ -168,6 +205,9 @@ const list = defineCommand({
     }
   },
 })
+
+// Export individual commands for top-level CLI access (#107)
+export { remember, recall, forget }
 
 export const memory = defineCommand({
   meta: {

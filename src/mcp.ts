@@ -11,6 +11,7 @@ import { acquire_lock, auto_release_on_exit } from "./lib/lock.ts"
 import { reset_rate_limiter, get_session_stats } from "./lib/rate-limit.ts"
 import { auto_tag, STANDARD_TAGS } from "./lib/auto-tag.ts"
 import { maybe_flush, auto_flush_on_exit } from "./lib/access-log.ts"
+import { open_memories, record_memory, tombstone_by_graph_id, get_memory_by_graph_id, count_by_agent } from "./lib/memories.ts"
 import { resolve } from "node:path"
 
 //
@@ -19,7 +20,60 @@ import { resolve } from "node:path"
 
 const MCP_VERSION = "2024-11-05"
 const SERVER_NAME = "brane"
-const SERVER_VERSION = "0.2.0"
+const SERVER_VERSION = "0.3.0"
+
+//
+// MCP mode: "simple" (default) exposes only 3 hippocampus verbs.
+// "full" exposes all tools for power users / admin.
+//
+const MCP_MODE = process.env.BRANE_MCP_MODE ?? "simple"
+
+//
+// Hippocampus tools — the 3 verbs agents see by default
+//
+const HIPPOCAMPUS_TOOLS: McpTool[] = [
+  {
+    name: "remember",
+    description: "Store a memory. Auto-tags from text (decision, preference, fact, event, lesson, caveat). Dual-writes to graph + audit trail. Trust tier derived from `from` source.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        observation: { type: "string", description: "What you observed, learned, or decided" },
+        context:     { type: "string", description: "What you were doing when you learned this" },
+        outcome:     { type: "string", description: "What happened as a result" },
+        tags:        { type: "array", items: { type: "string" }, description: "Tags: decision, preference, fact, event, lesson, caveat. Auto-detected if omitted." },
+        from:        { type: "string", description: "Source of this knowledge: 'self' (default), file path, URL, or 'stdin'. Determines trust tier." },
+      },
+      required: ["observation"],
+    },
+  },
+  {
+    name: "recall",
+    description: "Search your memories by meaning. Returns relevant past experiences with trust tiers (self/file/external).",
+    inputSchema: {
+      type: "object",
+      properties: {
+        query:  { type: "string", description: "What you're trying to remember" },
+        limit:  { type: "number", description: "Max memories to return (default 5)" },
+        tag:    { type: "string", description: "Filter to memories with this tag" },
+        after:  { type: "string", description: "Only memories after this ISO timestamp" },
+        before: { type: "string", description: "Only memories before this ISO timestamp" },
+      },
+      required: ["query"],
+    },
+  },
+  {
+    name: "forget",
+    description: "Remove a memory that is no longer relevant or correct. Dual-deletes from graph + audit trail.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "number", description: "Episode ID to forget" },
+      },
+      required: ["id"],
+    },
+  },
+]
 
 //
 // JSON-RPC types
@@ -146,6 +200,254 @@ const TOOLS: McpTool[] = [
         weight:   { type: "number", description: "Relationship strength 0-1 (default 1.0)" },
       },
       required: ["source", "target", "relation"],
+    },
+  },
+  //
+  // Full CRUD for concepts, edges, annotations, provenance, rules
+  //
+  {
+    name: "concepts_get",
+    description: "Get a single concept by ID.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "number", description: "Concept ID" },
+      },
+      required: ["id"],
+    },
+  },
+  {
+    name: "concepts_update",
+    description: "Update an existing concept's name or type.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id:   { type: "number", description: "Concept ID to update" },
+        name: { type: "string", description: "New concept name" },
+        type: { type: "string", description: "New concept type" },
+      },
+      required: ["id"],
+    },
+  },
+  {
+    name: "concepts_delete",
+    description: "Delete a concept and cascade-remove its edges, annotations, and provenance.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "number", description: "Concept ID to delete" },
+      },
+      required: ["id"],
+    },
+  },
+  {
+    name: "edges_get",
+    description: "Get a single edge by ID.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "number", description: "Edge ID" },
+      },
+      required: ["id"],
+    },
+  },
+  {
+    name: "edges_update",
+    description: "Update an existing edge's relation or weight.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id:       { type: "number", description: "Edge ID to update" },
+        relation: { type: "string", description: "New relation type" },
+        weight:   { type: "number", description: "New weight (0-1)" },
+      },
+      required: ["id"],
+    },
+  },
+  {
+    name: "edges_delete",
+    description: "Delete an edge by ID.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "number", description: "Edge ID to delete" },
+      },
+      required: ["id"],
+    },
+  },
+  {
+    name: "annotations_create",
+    description: "Annotate a concept with a note, caveat, or todo.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        target: { type: "number", description: "Concept ID to annotate" },
+        text:   { type: "string", description: "Annotation text (max 4096 chars)" },
+        type:   { type: "string", enum: ["note", "caveat", "todo"], description: "Annotation type" },
+      },
+      required: ["target", "text", "type"],
+    },
+  },
+  {
+    name: "annotations_list",
+    description: "List annotations, optionally filtered by concept or type.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        target: { type: "number", description: "Filter by concept ID" },
+        type:   { type: "string", enum: ["note", "caveat", "todo"], description: "Filter by annotation type" },
+      },
+    },
+  },
+  {
+    name: "annotations_get",
+    description: "Get a single annotation by ID.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "number", description: "Annotation ID" },
+      },
+      required: ["id"],
+    },
+  },
+  {
+    name: "annotations_delete",
+    description: "Delete an annotation by ID.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "number", description: "Annotation ID to delete" },
+      },
+      required: ["id"],
+    },
+  },
+  {
+    name: "provenance_create",
+    description: "Link a concept to its source file for traceability.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        concept_id: { type: "number", description: "Concept ID" },
+        file_url:   { type: "string", description: "Source file path" },
+      },
+      required: ["concept_id", "file_url"],
+    },
+  },
+  {
+    name: "provenance_list",
+    description: "List provenance links, optionally filtered by concept or file.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        concept_id: { type: "number", description: "Filter by concept ID" },
+        file_url:   { type: "string", description: "Filter by file path" },
+      },
+    },
+  },
+  {
+    name: "provenance_delete",
+    description: "Delete a provenance link.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        concept_id: { type: "number", description: "Concept ID" },
+        file_url:   { type: "string", description: "File path" },
+      },
+      required: ["concept_id", "file_url"],
+    },
+  },
+  {
+    name: "rules_create",
+    description: "Create a Datalog integrity rule for the knowledge graph.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        name:        { type: "string", description: "Rule name (e.g., 'no_self_edges')" },
+        description: { type: "string", description: "Human-readable description" },
+        body:        { type: "string", description: "Datalog rule body" },
+      },
+      required: ["name", "description", "body"],
+    },
+  },
+  {
+    name: "rules_list",
+    description: "List all integrity rules.",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
+  {
+    name: "rules_get",
+    description: "Get a single rule by name.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        name: { type: "string", description: "Rule name" },
+      },
+      required: ["name"],
+    },
+  },
+  {
+    name: "rules_delete",
+    description: "Delete an integrity rule by name.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        name: { type: "string", description: "Rule name to delete" },
+      },
+      required: ["name"],
+    },
+  },
+  {
+    name: "prune",
+    description: "Remove orphaned concepts (no edges) and their provenance/annotations. Returns what was removed.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        dry_run: { type: "boolean", description: "Preview what would be pruned without deleting" },
+      },
+    },
+  },
+  {
+    name: "lens_create",
+    description: "Create a new lens (isolated knowledge graph).",
+    inputSchema: {
+      type: "object",
+      properties: {
+        name: { type: "string", description: "Lens name" },
+      },
+      required: ["name"],
+    },
+  },
+  {
+    name: "lens_use",
+    description: "Switch to a lens (activate it as the current knowledge graph).",
+    inputSchema: {
+      type: "object",
+      properties: {
+        name: { type: "string", description: "Lens name to activate" },
+      },
+      required: ["name"],
+    },
+  },
+  {
+    name: "lens_list",
+    description: "List all available lenses.",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
+  {
+    name: "lens_delete",
+    description: "Delete a lens and its databases.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        name: { type: "string", description: "Lens name to delete" },
+      },
+      required: ["name"],
     },
   },
   {
@@ -420,6 +722,7 @@ const TOOLS: McpTool[] = [
         context:     { type: "string", description: "What you were doing when you learned this" },
         outcome:     { type: "string", description: "What happened as a result" },
         tags:        { type: "array", items: { type: "string" }, description: "Standard tags: decision, preference, fact, event, lesson, caveat. Auto-detected if omitted." },
+        from:        { type: "string", description: "Source of this knowledge: 'self' (default), file path, URL, or 'stdin'. Determines trust tier." },
       },
       required: ["observation"],
     },
@@ -483,32 +786,54 @@ const TOOLS: McpTool[] = [
 //
 
 const TOOL_ROUTES: Record<string, string> = {
-  search:           "/mind/search",
-  graph_summary:    "/graph/summary",
-  graph_viz:        "/graph/viz",
-  graph_neighbors:  "/graph/neighbors",
-  concepts_list:    "/mind/concepts/list",
-  concepts_create:  "/mind/concepts/create",
-  edges_list:       "/mind/edges/list",
-  edges_create:     "/mind/edges/create",
-  verify:           "/mind/verify",
-  context_query:    "/context/query",
-  episodes_create:  "/mind/episodes/create",
-  episodes_list:    "/mind/episodes/list",
-  episodes_search:  "/mind/episodes/search",
-  relate:           "/mind/edges/create",
-  ingest_sessions:  "/calabi/ingest-sessions",
-  digest:           "/calabi/digest",
-  ask:              "/calabi/ask",
-  storm:            "/calabi/storm",
-  enhance:          "/calabi/enhance",
-  loop:             "/calabi/loop",
-  loop_list:        "/calabi/loop",
-  rebuild:          "/calabi/rebuild",
-  tldr:             "/calabi/tldr",
-  lens_prompt_set:  "/lens/prompt",
-  lens_prompt_on:   "/lens/prompt",
-  lens_prompt_off:  "/lens/prompt",
+  search:              "/mind/search",
+  graph_summary:       "/graph/summary",
+  graph_viz:           "/graph/viz",
+  graph_neighbors:     "/graph/neighbors",
+  concepts_list:       "/mind/concepts/list",
+  concepts_create:     "/mind/concepts/create",
+  concepts_get:        "/mind/concepts/get",
+  concepts_update:     "/mind/concepts/update",
+  concepts_delete:     "/mind/concepts/delete",
+  edges_list:          "/mind/edges/list",
+  edges_create:        "/mind/edges/create",
+  edges_get:           "/mind/edges/get",
+  edges_update:        "/mind/edges/update",
+  edges_delete:        "/mind/edges/delete",
+  annotations_create:  "/mind/annotations/create",
+  annotations_list:    "/mind/annotations/list",
+  annotations_get:     "/mind/annotations/get",
+  annotations_delete:  "/mind/annotations/delete",
+  provenance_create:   "/mind/provenance/create",
+  provenance_list:     "/mind/provenance/list",
+  provenance_delete:   "/mind/provenance/delete",
+  rules_create:        "/mind/rules/create",
+  rules_list:          "/mind/rules/list",
+  rules_get:           "/mind/rules/get",
+  rules_delete:        "/mind/rules/delete",
+  prune:               "/mind/prune",
+  lens_create:         "/lens/create",
+  lens_use:            "/lens/use",
+  lens_list:           "/lens/list",
+  lens_delete:         "/lens/delete",
+  verify:              "/mind/verify",
+  context_query:       "/context/query",
+  episodes_create:     "/mind/episodes/create",
+  episodes_list:       "/mind/episodes/list",
+  episodes_search:     "/mind/episodes/search",
+  relate:              "/mind/edges/create",
+  ingest_sessions:     "/calabi/ingest-sessions",
+  digest:              "/calabi/digest",
+  ask:                 "/calabi/ask",
+  storm:               "/calabi/storm",
+  enhance:             "/calabi/enhance",
+  loop:                "/calabi/loop",
+  loop_list:           "/calabi/loop",
+  rebuild:             "/calabi/rebuild",
+  tldr:                "/calabi/tldr",
+  lens_prompt_set:     "/lens/prompt",
+  lens_prompt_on:      "/lens/prompt",
+  lens_prompt_off:     "/lens/prompt",
 }
 
 //
@@ -530,6 +855,12 @@ interface McpResourceTemplate {
 }
 
 const RESOURCES: McpResource[] = [
+  {
+    uri:         "brane://context",
+    name:        "Context",
+    description: "Auto-recall: last 5 memories + project summary for the current agent. Read this on connect.",
+    mimeType:    "text/plain",
+  },
   {
     uri:         "brane://concepts",
     name:        "Concepts",
@@ -623,44 +954,28 @@ const PROMPT_CONTENT: Record<string, PromptRenderer> = {
     role: "user",
     content: {
       type: "text",
-      text: `You have access to brane, a deterministic subjective memory system.
+      text: `You have access to brane — 3 verbs, that's it.
 
-USE \`remember\` when:
-- You learn something surprising or non-obvious
-- A task succeeds or fails in an unexpected way
-- You discover a pattern across multiple files/interactions
-- The user shares context you'll need in future conversations
+## remember
+Store what you learned. Tags auto-detected (decision, preference, fact, event, lesson, caveat).
+- Something surprising or non-obvious happened
+- The user shared context you'll need later
+- A task succeeded or failed unexpectedly
 
-USE \`recall\` when:
-- Starting a new task (check for relevant past experience)
-- Encountering an error (have you seen this before?)
-- Making a design decision (what worked last time?)
-- The user references something from a previous session
+## recall
+Search by meaning. Results include trust tiers (high=self, medium=file, low=external).
+- Starting a task — check for relevant past experience
+- Hitting an error — have you seen this before?
+- Making a decision — what worked last time?
 
-USE \`digest\` when:
-- The user points you at new files, codebases, URLs, or documents
-- You need deep structural understanding of code or content
-- You want to build a knowledge graph of concepts and relationships
+## forget
+Remove a memory by ID. Use when a memory is wrong or stale.
 
-USE \`reflect\` when:
-- You want to check how much you know about a topic
-- Before making recommendations based on accumulated knowledge
-- You need a summary of what you've learned so far
-
-TAGGING MEMORIES:
-When using \`remember\`, tags are auto-detected from your observation text. You can also provide them explicitly:
-- "decision" — choices made ("we decided to...", "going with...")
-- "preference" — user preferences ("I prefer...", "always use...", "never...")
-- "fact" — concrete information ("runs on port 3000", "uses PostgreSQL")
-- "event" — things that happened ("deployed v2.3.0", "merged the PR")
-- "lesson" — things learned ("parallel tests cause flaky failures")
-- "caveat" — warnings discovered ("auth has a race condition")
-
-GENERAL PRINCIPLES:
-- Remember outcomes, not just actions
-- Be specific: "auth middleware timeout in CI" > "something broke"
-- Tags enable filtered recall: \`recall\` with tag="decision" finds only decisions
-- Reflect periodically to consolidate scattered episodes into knowledge`
+## Principles
+- Remember outcomes, not actions: "auth timeout in CI" > "something broke"
+- Be specific: one clear sentence per memory
+- Trust the tiers: high-trust memories can be acted on, low-trust should be verified
+- Tags enable filtered recall: recall with tag="decision" finds only decisions`
     }
   }],
 
@@ -825,7 +1140,11 @@ async function handle_initialize(params: Record<string, unknown>): Promise<unkno
 //
 
 function handle_tools_list(): unknown {
-  return { tools: TOOLS }
+  if (MCP_MODE === "full") {
+    return { tools: TOOLS }
+  }
+  // Default: only the 3 hippocampus verbs
+  return { tools: HIPPOCAMPUS_TOOLS }
 }
 
 //
@@ -856,6 +1175,81 @@ async function handle_resources_read(params: Record<string, unknown>): Promise<u
   }
 
   const path = uri.slice("brane://".length)
+
+  // Auto-recall context: last 5 memories + project summary (#104)
+  if (path === "context") {
+    const sections: string[] = []
+
+    // Recent memories for this agent
+    try {
+      const ep_result = await sys.call("/mind/episodes/list", {
+        agent_id: mcp_agent_id !== "unknown" ? mcp_agent_id : undefined,
+        limit: 5,
+      })
+      if (ep_result.status === "success") {
+        const data = ep_result.result as { episodes?: { id: number; observation: string; timestamp: string; tags?: string[] }[] } | null
+        const episodes = data?.episodes ?? []
+        if (episodes.length > 0) {
+          sections.push("## Recent memories")
+          for (const ep of episodes) {
+            const tag_str = ep.tags && ep.tags.length > 0 ? ` [${ep.tags.join(", ")}]` : ""
+            sections.push(`- (id=${ep.id}) ${ep.observation}${tag_str}`)
+          }
+        } else {
+          sections.push("## Recent memories\nNo memories yet. Use `remember` to start building context.")
+        }
+      }
+    } catch { /* non-fatal */ }
+
+    // Project summary from graph
+    try {
+      const summary_result = await sys.call("/graph/summary", {})
+      if (summary_result.status === "success") {
+        const summary = summary_result.result as {
+          total_concepts?: number
+          total_edges?: number
+          concepts_by_type?: Record<string, number>
+        } | null
+        if (summary && (summary.total_concepts ?? 0) > 0) {
+          sections.push("\n## Knowledge graph")
+          sections.push(`${summary.total_concepts} concepts, ${summary.total_edges} edges`)
+          if (summary.concepts_by_type) {
+            const types = Object.entries(summary.concepts_by_type)
+              .map(([t, c]) => `${t}: ${c}`)
+              .join(", ")
+            sections.push(`Types: ${types}`)
+          }
+        }
+      }
+    } catch { /* non-fatal */ }
+
+    // Audit trail stats from memories.db
+    try {
+      const mdb = open_memories()
+      if (mdb) {
+        const counts = count_by_agent(mdb)
+        if (counts.length > 0) {
+          sections.push("\n## Memory audit trail")
+          for (const { agent, count } of counts) {
+            sections.push(`- ${agent}: ${count} memories`)
+          }
+        }
+        mdb.close()
+      }
+    } catch { /* non-fatal */ }
+
+    const text = sections.length > 0
+      ? sections.join("\n")
+      : "No context available yet. Use `remember` to start building your memory."
+
+    return {
+      contents: [{
+        uri,
+        mimeType: "text/plain",
+        text,
+      }]
+    }
+  }
 
   // Static resources
   if (path === "concepts") {
@@ -1024,6 +1418,31 @@ function truncate_payload(text: string, max_bytes: number): string {
   const truncated = buf.subarray(0, max_bytes - 50)
   // toString replaces partial trailing bytes with U+FFFD; strip those
   return truncated.toString("utf8").replace(/\uFFFD+$/, "") + "\n...(truncated)"
+}
+
+//
+// Trust tier derivation from from_source (#106)
+//
+function derive_trust(from_source: string): "high" | "medium" | "low" {
+  if (from_source === "self") return "high"
+  if (from_source.startsWith("file://") || from_source.startsWith("/")) return "medium"
+  return "low"  // url, stdin, etc.
+}
+
+//
+// Derive from_source: explicit param > auto-detect from observation text > "self"
+//
+function derive_from_source(explicit?: string, observation?: string): string {
+  if (explicit && explicit.trim()) return explicit.trim()
+  if (observation) {
+    // Auto-detect URLs
+    const url_match = observation.match(/https?:\/\/\S+/)
+    if (url_match) return url_match[0]
+    // Auto-detect file paths
+    const file_match = observation.match(/(?:^|\s)(\/[\w./-]+|file:\/\/[\w./-]+)/)
+    if (file_match) return file_match[1]
+  }
+  return "self"
 }
 
 const CUSTOM_HANDLERS: Record<string, ToolHandler> = {
@@ -1195,15 +1614,17 @@ const CUSTOM_HANDLERS: Record<string, ToolHandler> = {
   },
 
   //
-  // remember — create an episode with auto-populated agent_id and auto-tags
+  // remember — dual-write: graph episode + memories.db audit trail (#103)
   //
   async remember(args) {
     const observation = String(args.observation ?? "")
     const outcome = String(args.outcome ?? "")
     const agent_tags = Array.isArray(args.tags) ? args.tags.map(String) : []
 
+    // Determine from_source: explicit `from` param, or auto-detect (#106)
+    const from_source = derive_from_source(args.from as string | undefined, observation)
+
     // Auto-tag: detect tags from observation + outcome text (#55)
-    // Auto-tags are additive — always merged with agent-provided tags
     const tag_text = [observation, outcome].filter(Boolean).join(" ")
     const detected_tags = auto_tag(tag_text)
     const merged_tags = [...new Set([...agent_tags, ...detected_tags])]
@@ -1216,6 +1637,7 @@ const CUSTOM_HANDLERS: Record<string, ToolHandler> = {
       tags:        merged_tags,
     }
 
+    // 1. Write to graph (episodes)
     const result = await sys.call("/mind/episodes/create", episode_args)
 
     if (result.status === "error") {
@@ -1226,9 +1648,50 @@ const CUSTOM_HANDLERS: Record<string, ToolHandler> = {
     }
 
     const ep = result.result as Record<string, unknown>
+    const ep_id = ep.id as number
+
+    // 2. Dual-write to memories.db audit trail with trust-relevant from_source
+    let memory_id: string | undefined
+    try {
+      const mdb = open_memories()
+      if (mdb) {
+        const mem = record_memory(mdb, {
+          what:        observation,
+          from_source,
+          tags:        merged_tags,
+          agent:       mcp_agent_id,
+          graph_id:    ep_id,
+        })
+        memory_id = mem.id
+        mdb.close()
+      }
+    } catch {
+      // Audit trail failure is non-fatal — graph write succeeded
+    }
+
+    // 3. Auto-connect: find related concepts in graph (#108)
+    let connections: string[] = []
+    try {
+      const search_result = await sys.call("/mind/search", { query: observation, limit: 3 })
+      if (search_result.status === "success") {
+        const raw = (search_result.result as Record<string, unknown> | null) ?? {}
+        const matches = Array.isArray((raw as { matches?: unknown }).matches)
+          ? (raw as { matches: { id: number; name: string; score: number }[] }).matches
+          : []
+        // Report connections with score > 0.3 (meaningful similarity)
+        connections = matches
+          .filter(m => m.score > 0.3)
+          .map(m => `${m.name} (score=${m.score})`)
+      }
+    } catch {
+      // Non-fatal — connections are informational
+    }
+
     const ep_tags = (ep.tags as string[]) ?? merged_tags
     const tag_info = ep_tags.length > 0 ? ` [${ep_tags.join(", ")}]` : ""
-    const summary = `Remembered (id=${ep.id})${tag_info}: ${ep.observation}`
+    const audit = memory_id ? ` audit=${memory_id}` : ""
+    const conn_info = connections.length > 0 ? `\n  related: ${connections.join(", ")}` : ""
+    const summary = `Remembered (id=${ep_id}${audit})${tag_info}: ${ep.observation}${conn_info}`
     return {
       content: [{ type: "text", text: summary }],
       isError: false,
@@ -1236,13 +1699,13 @@ const CUSTOM_HANDLERS: Record<string, ToolHandler> = {
   },
 
   //
-  // recall — semantic search with payload truncation
+  // recall — semantic search + trust tier enrichment from memories.db (#103)
   //
   async recall(args) {
     const search_args: Record<string, unknown> = {
       query: args.query,
       limit: args.limit ?? 5,
-      // Default to current agent's memories; explicit agent_id overrides
+      // Blood-brain barrier: always scoped to current agent (#105)
       agent_id: mcp_agent_id,
     }
 
@@ -1272,7 +1735,11 @@ const CUSTOM_HANDLERS: Record<string, ToolHandler> = {
       })
     }
 
-    // Format for agent consumption — concise, readable
+    // Enrich with trust tier from memories.db audit trail
+    let mdb: ReturnType<typeof open_memories> = null
+    try { mdb = open_memories() } catch { /* non-fatal */ }
+
+    // Format for agent consumption — concise, readable, trust-annotated
     const memories = matches.map((m, i) => {
       const parts = [`[${i + 1}] (id=${m.id}, score=${m.score})`]
       parts.push(`  ${m.observation}`)
@@ -1280,15 +1747,65 @@ const CUSTOM_HANDLERS: Record<string, ToolHandler> = {
       if (m.outcome) parts.push(`  outcome: ${m.outcome}`)
       const tags = m.tags as string[]
       if (tags && tags.length > 0) parts.push(`  tags: ${tags.join(", ")}`)
+
+      // Trust tier from memories.db cross-reference
+      if (mdb && typeof m.id === "number") {
+        const audit = get_memory_by_graph_id(mdb, m.id)
+        if (audit) {
+          const trust = derive_trust(audit.from_source)
+          parts.push(`  trust: ${trust} (from: ${audit.from_source})`)
+        }
+      }
+
       parts.push(`  when: ${m.timestamp}`)
       return parts.join("\n")
     })
+
+    if (mdb) try { mdb.close() } catch { /* ignore */ }
+
+    // Graph-backed recall: also search concepts for related knowledge (#108)
+    let concept_section = ""
+    try {
+      const concept_search = await sys.call("/mind/search", {
+        query: args.query as string,
+        limit: 3,
+      })
+      if (concept_search.status === "success") {
+        const craw = (concept_search.result as Record<string, unknown> | null) ?? {}
+        const cmatches = Array.isArray((craw as { matches?: unknown }).matches)
+          ? (craw as { matches: { id: number; name: string; type: string; score: number }[] }).matches
+          : []
+        // Only include meaningful matches
+        const relevant = cmatches.filter(c => c.score > 0.2)
+        if (relevant.length > 0) {
+          const concept_lines = relevant.map(c => `  - ${c.name} (${c.type}, score=${c.score})`)
+
+          // Get 1-hop neighbors for top concept
+          let neighbor_info = ""
+          try {
+            const nbr = await sys.call("/graph/neighbors", { id: relevant[0].id, depth: 1 })
+            if (nbr.status === "success") {
+              const nr = nbr.result as { edges?: { source_name: string; target_name: string; relation: string }[] }
+              if (nr.edges && nr.edges.length > 0) {
+                const edge_lines = nr.edges.slice(0, 3).map(e =>
+                  `    ${e.source_name} --${e.relation}--> ${e.target_name}`)
+                neighbor_info = "\n  graph context:\n" + edge_lines.join("\n")
+              }
+            }
+          } catch { /* non-fatal */ }
+
+          concept_section = "\n\nRelated concepts:\n" + concept_lines.join("\n") + neighbor_info
+        }
+      }
+    } catch {
+      // Non-fatal — concept search is supplementary
+    }
 
     const header = matches.length > 0
       ? `Found ${matches.length} relevant memories:`
       : "No relevant memories found."
 
-    let text = header + "\n\n" + memories.join("\n\n")
+    let text = header + "\n\n" + memories.join("\n\n") + concept_section
     text = truncate_payload(text, MAX_RECALL_PAYLOAD)
 
     return {
@@ -1298,10 +1815,13 @@ const CUSTOM_HANDLERS: Record<string, ToolHandler> = {
   },
 
   //
-  // forget — delete an episode by ID
+  // forget — dual-delete: graph episode + memories.db tombstone (#103)
   //
   async forget(args) {
-    const result = await sys.call("/mind/episodes/delete", { id: args.id })
+    const graph_id = args.id as number
+
+    // 1. Delete from graph
+    const result = await sys.call("/mind/episodes/delete", { id: graph_id })
 
     if (result.status === "error") {
       return {
@@ -1310,8 +1830,21 @@ const CUSTOM_HANDLERS: Record<string, ToolHandler> = {
       }
     }
 
+    // 2. Tombstone in memories.db audit trail
+    let tombstoned_id: string | null = null
+    try {
+      const mdb = open_memories()
+      if (mdb) {
+        tombstoned_id = tombstone_by_graph_id(mdb, graph_id)
+        mdb.close()
+      }
+    } catch {
+      // Audit trail failure is non-fatal — graph delete succeeded
+    }
+
+    const audit = tombstoned_id ? ` (audit ${tombstoned_id} tombstoned)` : ""
     return {
-      content: [{ type: "text", text: `Forgot memory id=${args.id}` }],
+      content: [{ type: "text", text: `Forgot memory id=${graph_id}${audit}` }],
       isError: false,
     }
   },
@@ -1431,15 +1964,16 @@ async function handle_tools_call(params: Record<string, unknown>): Promise<unkno
   const custom = CUSTOM_HANDLERS[name]
 
   if (!route && !custom) {
-    const available = TOOLS.map(t => t.name).join(", ")
+    const active_tools = MCP_MODE === "full" ? TOOLS : HIPPOCAMPUS_TOOLS
+    const available = active_tools.map(t => t.name).join(", ")
     return {
       content: [{ type: "text", text: `unknown tool: ${name}. Available: ${available}` }],
       isError: true,
     }
   }
 
-  // Validate required params from schema
-  const tool_def = TOOLS.find(t => t.name === name)
+  // Validate required params from schema (check both tool lists)
+  const tool_def = TOOLS.find(t => t.name === name) ?? HIPPOCAMPUS_TOOLS.find(t => t.name === name)
   if (tool_def) {
     const required = (tool_def.inputSchema as { required?: string[] }).required ?? []
     for (const param of required) {
@@ -1453,10 +1987,10 @@ async function handle_tools_call(params: Record<string, unknown>): Promise<unkno
   }
 
   // Auto-inject agent_id from MCP client info for tools that support it
-  const AGENT_ID_TOOLS = ["concepts_create", "edges_create", "concepts_list", "edges_list", "search", "relate", "ingest_sessions"]
+  const AGENT_ID_TOOLS = ["concepts_create", "concepts_update", "edges_create", "edges_update", "concepts_list", "edges_list", "search", "relate", "ingest_sessions"]
   if (AGENT_ID_TOOLS.includes(name) && !args.agent_id && mcp_agent_id !== "unknown") {
-    // For create tools, always inject. For list/search, don't inject (let them show all by default)
-    if (name === "concepts_create" || name === "edges_create" || name === "relate" || name === "ingest_sessions") {
+    // For create/update tools, always inject. For list/search, don't inject (let them show all by default)
+    if (name === "concepts_create" || name === "concepts_update" || name === "edges_create" || name === "edges_update" || name === "relate" || name === "ingest_sessions") {
       args.agent_id = mcp_agent_id
     }
   }
