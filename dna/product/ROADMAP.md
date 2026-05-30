@@ -78,6 +78,19 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 - [x] `065-rebuild` — Re-extract all sources through current lenses ([#88](https://github.com/ahoward/brane/issues/88))
 - [x] `066-tldr` — Knowledge outline with synopses ([#89](https://github.com/ahoward/brane/issues/89))
 
+### Hippocampus v2 — Done ✅ (PR [#110](https://github.com/ahoward/brane/pull/110))
+
+The hippocampus: 3 verbs, dual-write graph + audit trail, trust tiers. The agent's memory that survives the conversation.
+
+- [x] `102-memories-db` — SQLite audit trail alongside mind.db ([#102](https://github.com/ahoward/brane/issues/102))
+- [x] `103-mcp-3-verb-facade` — Default MCP surface is remember/recall/forget; `BRANE_MCP_MODE=full` for all ([#103](https://github.com/ahoward/brane/issues/103))
+- [x] `104-auto-recall-context` — `brane://context` resource: last 5 memories + summary on connect ([#104](https://github.com/ahoward/brane/issues/104))
+- [x] `105-per-agent-isolation` — Blood-brain barrier: recall scoped to calling agent ([#105](https://github.com/ahoward/brane/issues/105))
+- [x] `106-trust-tiers` — `from_source` drives high/medium/low trust ([#106](https://github.com/ahoward/brane/issues/106))
+- [x] `107-cli-3-command-surface` — Top-level remember/recall/forget + `brane admin` namespace ([#107](https://github.com/ahoward/brane/issues/107))
+- [x] `108-graph-backed-recall` — Auto-connect on remember, graph context in recall ([#108](https://github.com/ahoward/brane/issues/108))
+- [x] `109-append-only-consolidation` — New concepts + CAUSED_BY edges, never mutate sources ([#109](https://github.com/ahoward/brane/issues/109))
+
 ### Deferred
 
 - [ ] `028-verifier-node` — Headless verification node
@@ -91,6 +104,7 @@ If stuck → Human checkpoint     ← Cannot make tests pass
 
 | Feature | PR | Date |
 |---------|-----|------|
+| `102-109-hippocampus-v2` | #110 | 2026-05-30 |
 | `058-status-dashboard` | #81 | 2026-03-27 |
 | `057-cli-ingest-sessions` | #80 | 2026-03-27 |
 | `056-cli-memory` | #79 | 2026-03-27 |
