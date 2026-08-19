@@ -91,6 +91,15 @@ The hippocampus: 3 verbs, dual-write graph + audit trail, trust tiers. The agent
 - [x] `108-graph-backed-recall` — Auto-connect on remember, graph context in recall ([#108](https://github.com/ahoward/brane/issues/108))
 - [x] `109-append-only-consolidation` — New concepts + CAUSED_BY edges, never mutate sources ([#109](https://github.com/ahoward/brane/issues/109))
 
+### Spec Machine — brane as the regenerative specification substrate ([#112](https://github.com/ahoward/brane/issues/112))
+
+Vision: `dna/product/vision-spec-machine.md` (v4.0). Closing the 30% gap between "memory for agents" and Fowler's spec machine.
+
+- [ ] `067-claim-authority` — First-class claims carrying authority tier + source; contradiction as data ([#113](https://github.com/ahoward/brane/issues/113))
+- [ ] `068-promotion-gate` — Observation → requirement promotion with human ratification ([#114](https://github.com/ahoward/brane/issues/114))
+- [ ] `069-regeneration-spike` — **Keystone**: regenerate from graph → test → feed failures back ([#115](https://github.com/ahoward/brane/issues/115))
+- [ ] `070-production-teacher` — Ingest prod traces / incidents / evals as evidence ([#116](https://github.com/ahoward/brane/issues/116))
+
 ### Deferred
 
 - [ ] `028-verifier-node` — Headless verification node
