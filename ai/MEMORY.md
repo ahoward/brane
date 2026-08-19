@@ -314,6 +314,34 @@ const native = require('./native/6/cozo_node_prebuilt.node');  // static
 
 ---
 
+### Spec Machine Reframe (2026-08-19)
+
+**Decision:** brane is repositioned from "memory for agents" to **the regenerative specification
+substrate** (Chad Fowler, "The Specification Is Not a Document"). Vision doc:
+`dna/product/vision-spec-machine.md` (v4.0). Umbrella issue #112.
+
+The existing substrate — graph, provenance, Datalog rules, lenses, extraction pipeline — is ~70% of
+Fowler's spec machine. Four gaps close it: claims+authority (#113), promotion gate (#114), regeneration
+(#115, keystone + research risk), production-as-teacher (#116).
+
+**Invariants established in `067-claim-authority` that later work must not break:**
+
+- Authority tiers are registered and ranked (strict); predicates and assertions are free-form (loose).
+- Competing claims coexist. Resolution is a **read-time projection**, never a write-time deletion.
+- Authority rank is joined at read time — claims store the tier *name* only, so re-ranking never
+  rewrites history.
+- Ties at the top rank do **not** resolve. `resolution: null`, `unresolved: true`. No tiebreak by
+  recency or ID.
+- Claims are immutable. Correction = delete + re-assert.
+- Conflict comparison is trim-then-exact and **case-sensitive** — case folding would silently hide
+  conflicts, which is the failure this feature exists to prevent.
+
+**Gotcha:** the built-in `contradictions` Datalog rule positionally matches the 8-column `claims`
+arity. Any feature adding a claims column (e.g. #114's binding flag) must update the rule body in the
+same migration.
+
+---
+
 ## Version History
 
 | Date | Change |
@@ -322,3 +350,4 @@ const native = require('./native/6/cozo_node_prebuilt.node');  // static
 | 2026-01-26 | Added multi-agent system (Ali/Gemini). Development loop defined. |
 | 2026-01-28 | CozoDB decision: Keep it, fix bundler via PR to upstream. |
 | 2026-01-28 | Multi-platform compilation working. src/lib/cozo.ts + CI workflow. |
+| 2026-08-19 | Spec machine reframe (#112). vision-spec-machine.md v4.0. 067-claim-authority spec + plan (PR #117). |

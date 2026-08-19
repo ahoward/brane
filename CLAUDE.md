@@ -26,6 +26,7 @@ const result = await sys.call("/namespace/method", data)
 
 - `./dna/product/ROADMAP.md` - **START HERE** — Driving task list for all development
 - `./dna/product/prd.md` - Full PRD (Split-Brain architecture)
+- `./dna/product/vision-spec-machine.md` - **Vision v4.0** — brane as the regenerative specification substrate (#112)
 - `./.specify/memory/constitution.md` - Project principles (6 core rules)
 - `./dna/technical/development-loop.md` - Antagonistic Testing process
 - `./ai/MEMORY.md` - AI's long-term memory
@@ -126,6 +127,7 @@ ai/                   # AI agent resources
 - CozoDB mind.db (RocksDB backend) — new `episodes` relation + HNSW index (034-episodic-memory)
 
 ## Recent Changes
+- 067-claim-authority: Spec + plan for first-class claims carrying authority tier + source (#113) — in review, not implemented
 - 021-vector-search: Added semantic search via `/mind/search` endpoint with local embeddings (fastembed-js BGESmallEN, 384 dims)
 - 016-rules-define: Added TypeScript (Bun 1.x) + CozoDB (Datalog), existing mind.ts utilities
 
@@ -164,3 +166,28 @@ echo '{"query": "authentication", "limit": 5}' | bun run src/cli.ts /mind/search
   }
 }
 ```
+
+
+## Spec Machine Reframe (#112)
+
+**See:** `dna/product/vision-spec-machine.md` (v4.0)
+
+Brane is being repositioned from "memory for agents" to **the regenerative specification substrate** —
+the durable, queryable, provenance-backed graph that implementations are generated FROM and validated
+AGAINST. The existing graph, provenance, Datalog rules, lenses, and extraction pipeline are ~70% of it.
+
+Four gaps close the rest:
+
+| Gap | Feature | Issue | Status |
+|---|---|---|---|
+| Claim + authority model (contradiction as data) | `067-claim-authority` | [#113](https://github.com/ahoward/brane/issues/113) | Spec + plan in review (PR #117) |
+| Observation → requirement promotion gate | `068-promotion-gate` | [#114](https://github.com/ahoward/brane/issues/114) | Not started; depends on #113 |
+| Regeneration → test → feedback (**keystone**) | `069-regeneration-spike` | [#115](https://github.com/ahoward/brane/issues/115) | Not started; depends on #113 |
+| Production-as-teacher ingestion | `070-production-teacher` | [#116](https://github.com/ahoward/brane/issues/116) | Not started; depends on #113 |
+
+Two principles govern the claim work and should be preserved by anything built on it:
+
+1. **Strict about authority, loose about vocabulary.** Authority tiers are registered and ranked;
+   predicates and assertions are never validated against a vocabulary.
+2. **Contradiction is data, not a defect.** Competing claims coexist. Resolution is a read-time
+   projection by authority rank — never a write-time deletion. Ties do not resolve.
