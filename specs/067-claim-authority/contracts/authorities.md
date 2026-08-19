@@ -36,9 +36,9 @@ Register a tier, or update one that already exists (upsert — spec 5.3).
 
 | field | type | required | notes |
 |---|---|---|---|
-| `name` | string | yes | ≤ 64, non-empty after trim |
+| `name` | string | yes | trimmed then stored, ≤ 64, non-empty after trim |
 | `rank` | int | yes | non-negative integer |
-| `description` | string | no | defaults to `""` |
+| `description` | string | no | on create defaults to `""`; on update of an existing tier, **omitting it preserves the current description** — it is never blanked by a rank-only update |
 
 **Result**
 

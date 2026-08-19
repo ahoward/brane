@@ -30,15 +30,26 @@ the claim row would freeze the graph's precedence at write time and make re-rank
 
 **Cost**: one extra join per read. Cheap — `authorities` is a handful of rows.
 
-**Consequence for Datalog**: the built-in rule must join `*claims` → `*authorities` to reason about
-rank. Recorded in data-model.md.
+**Consequence for Datalog**: a rule that needs rank must join `*claims` → `*authorities` itself. The
+built-in `contradictions` rule deliberately does **not** — it reports that a concept disagrees with
+itself, independent of who wins (D7). User-defined rules are free to join for rank; the join is
+validated in data-model.md.
 
 ---
 
 ## D3 — Conflict comparison is trim-then-exact, case-sensitive *(resolves a spec deferral)*
 
-**Decision**: Two claims conflict when `subject_type`, `subject_id`, and `predicate` match exactly and
-the trimmed `assertion` strings differ. Comparison is **case-sensitive**.
+**Decision**: `predicate`, `assertion`, `authority`, and `source` are **trimmed at write time and
+stored trimmed** (FR-016b). Every comparison downstream — conflict grouping, idempotency, and Datalog —
+is then plain exact equality on stored values, **case-sensitive**.
+
+Two claims conflict when `subject_type`, `subject_id`, and `predicate` are equal and `assertion` differs.
+
+**Why trim at write, not at read**: the conflict endpoint compares in TypeScript and the built-in rule
+compares in Datalog (`a1 != a2`). Trimming in only one of them makes `"30 days"` and `"30 days "`
+agreement to one read path and a violation to the other — SC-004 fails and the two arms of the feature
+disagree about what a contradiction is. Normalizing once, at the boundary, removes the whole class of
+divergence. It also makes the D4 idempotency tuple unambiguous: it compares stored values.
 
 **Rationale**: "Loose about vocabulary" means brane does not decide that `30 Days` and `30 days` mean
 the same thing — that is a semantic judgment, and guessing it wrong silently *hides* a conflict, which
@@ -139,20 +150,46 @@ exact relation shapes from data-model.md. The rule returned only the contradicti
 a concept whose two claims agreed; the rank join ordered legal(40) > product(30) > implementation(20).
 Syntax and semantics confirmed before implementation.
 
+**Scope**: the rule flags every contradiction, including ones that resolve cleanly by rank (quickstart
+step 6 shows `verify` failing while `legal` wins). That is intended — the rule answers "does this graph
+disagree with itself", and rank-aware filtering is what `/mind/claims/conflicts` is for. A rank-aware
+rule variant is bigger, needs the authorities join, and has no requirement asking for it.
+
 **Coupling risk**: the rule body hardcodes the 8-column `claims` arity. #114 adding a column must update
-this rule body in the same migration. Rule syntax is validated at init, so a mismatch fails loudly.
+this rule body in the same migration.
+
+**Correction to an earlier assumption**: built-in rules are seeded by raw `:put` in `init.ts` and are
+**not** syntax-validated — `validate_rule_syntax` runs only in `/mind/rules/create`. A broken built-in
+surfaces at query time as a per-rule `error` string that `execute_rule` catches, which is quiet. The
+safety net is therefore a test, not a runtime check: the tc suite asserts `contradictions` executes
+without an `error` field, so an arity break fails the suite loudly. #114 inherits that test.
 
 ---
 
 ## D8 — Cascade on subject deletion, refuse on tier deletion
 
-**Decision**: Deleting a concept or edge deletes its claims (silent cascade, matching how
-`concepts/delete.ts` already cascades annotations). Deleting an authority tier that any claim references
-returns an error and changes nothing.
+**Decision**: Deleting a concept or edge deletes its claims. Deleting an authority tier that any claim
+references returns an error and changes nothing.
 
 **Rationale**: FR-015 and FR-006. Asymmetric on purpose — a claim about a deleted concept is meaningless
 and cannot be repaired, while a claim under a deleted tier is meaningful and *would* be corrupted by
 losing its standing. Refusing the tier deletion is the only option that never orphans a claim.
+
+**Two traps found while reviewing the existing deletion paths, both of which naive cascades miss:**
+
+1. **Concept deletion already cascades edges.** `concepts/delete.ts` removes every edge touching the
+   concept with a direct `:rm edges`. A cascade that only deletes `subject_type = "concept"` claims
+   leaves the claims on those removed edges dangling. Concept deletion must delete claims on the
+   cascaded edge IDs too.
+2. **`prune` and re-extraction delete concepts and edges without going through the delete handlers**
+   (`src/handlers/mind/prune.ts`, `src/handlers/calabi/extract.ts`). Annotations already dangle on those
+   paths — an existing bug this feature must not copy, because a claim store whose rows outlive their
+   subjects is exactly the integrity failure the feature exists to prevent.
+
+**Consequence**: cascade logic lives in one lib function, `cascade_claims(db, subject_type, ids)`, called
+from all four sites rather than reimplemented per handler. That is a deliberate small expansion of scope
+over "just the two delete handlers" — justified because the alternative ships a known dangling-data path
+on day one.
 
 ---
 
@@ -178,6 +215,38 @@ schemas. A fresh init and a migrated db must be indistinguishable — the existi
 **Rationale**: 4096 matches `ANNOTATION_MAX_TEXT_LENGTH` — same discipline, same reason (bound the row,
 reject the pathological input at the top of the handler per the guard-early convention). The other caps
 are sized to their role: a predicate is a label, a source is a URL or identifier.
+
+---
+
+## D11 — Existing fixtures must change, and that is not a test rewrite
+
+**Decision**: Adding a third built-in rule and bumping the schema version breaks locked fixtures that
+pin the old values. Those fixtures are updated as an explicit, human-approved task — not quietly.
+
+Affected (verified against the tree; tc's `deep_match` requires exact key sets and values):
+
+| fixture | pins |
+|---|---|
+| `tests/mind/verify/data/{00,01,02,03,06}-*/result.json` | `rules_passed: 2`, enumerates `cycles` + `orphans` |
+| `tests/mind/rules/list/data/{00,01}-*/result.json` | counts `2` and `3` |
+| `tests/mind/init/data/{00,01,02}-*/result.json` | `schema_version: "1.12.0"` |
+| `tests/mind/concepts/delete/data/00-success-delete/result.json` | cascade shape, gains `claims_removed` |
+
+**Rationale**: constitution IV forbids changing tests after review without human approval. These changes
+are mechanical consequences of a version bump and a new built-in, not adjustments to make a failing
+implementation pass — but the distinction has to be *stated and approved*, not assumed. SC-005 is worded
+to match.
+
+---
+
+## D12 — Cascade result shape
+
+**Decision**: `/mind/concepts/delete` gains `claims_removed` in its existing `cascade` object.
+`/mind/edges/delete` gains a `claims_removed` field alongside `deleted`.
+
+**Rationale**: the concept handler already reports `edges_removed`, `annotations_removed`, and
+`provenance_removed`; claims belong in the same place. Silence about a cascade the caller cannot
+otherwise observe is worse than a fixture update.
 
 ---
 

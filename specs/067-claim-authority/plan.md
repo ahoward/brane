@@ -68,7 +68,7 @@ specs/067-claim-authority/
 ```text
 src/
 ├── lib/
-│   ├── claims.ts                       # NEW — id allocation, validation, rank join, conflict grouping
+│   ├── claims.ts                       # NEW — id allocation, validation, rank join, conflict grouping, cascade_claims()
 │   ├── mind.ts                         # MODIFIED — BUILTIN_RULE_NAMES += "contradictions"
 │   └── migrate.ts                      # MODIFIED — v1.12.0 → v1.13.0 migration, LATEST_VERSION bump
 ├── handlers/mind/
@@ -83,17 +83,21 @@ src/
 │   │   ├── create.ts                   # NEW — /mind/authorities/create (upsert)
 │   │   ├── list.ts                     # NEW — /mind/authorities/list
 │   │   └── delete.ts                   # NEW — /mind/authorities/delete (refuses if referenced)
-│   ├── concepts/delete.ts              # MODIFIED — cascade claims
-│   └── edges/delete.ts                 # MODIFIED — cascade claims
+│   ├── concepts/delete.ts              # MODIFIED — cascade claims (incl. claims on cascaded edges)
+│   ├── edges/delete.ts                 # MODIFIED — cascade claims
+│   └── prune.ts                        # MODIFIED — cascade claims for pruned concepts/edges
 ├── cli/
 │   ├── commands/claim.ts               # NEW — brane claim create|list|get|delete|conflicts
 │   ├── commands/authority.ts           # NEW — brane authority list|create|delete
 │   └── main.ts                         # MODIFIED — register both under admin + backward-compat top level
 └── index.ts                            # MODIFIED — sys.register the 8 new paths
 
+src/handlers/calabi/extract.ts          # MODIFIED — cascade claims on re-extraction
+
 tests/mind/
 ├── claims/                             # NEW — run + data/NN-case/{params,result}.json
-└── authorities/                        # NEW — run + data/NN-case/{params,result}.json
+├── authorities/                        # NEW — run + data/NN-case/{params,result}.json
+├── verify/, rules/list/, init/, concepts/delete/   # MODIFIED fixtures — see research D11
 ```
 
 **Structure Decision**: Existing single-project brane layout. Handlers map to sys.call paths one-to-one
@@ -119,14 +123,17 @@ phase:
 
 ## Phase 2 — Tasks
 
-Generated into [tasks.md](./tasks.md). Ordering: migration + schema → lib → handlers → rule → CLI →
-tests, with tc test authoring pulled ahead of implementation per constitution IV.
+Generated into [tasks.md](./tasks.md). Ordering is **tests first**, per constitution IV: fixture
+reconciliation and tc authoring → Gemini antagonist review (lock) → schema/migration → lib → handlers →
+CLI → green. No implementation task, including the shared library, precedes the lock.
 
 ## Risks
 
 | Risk | Mitigation |
 |---|---|
-| Cozo arity coupling — the built-in `contradictions` rule hardcodes the 8-column `claims` shape; a later column addition (e.g. #114's `binding`) breaks it | Document the coupling in `data-model.md`; #114 must update the rule body in the same migration that adds the column. Rule syntax is validated at init, so breakage surfaces immediately, not at query time. |
+| Cozo arity coupling — the built-in `contradictions` rule hardcodes the 8-column `claims` shape; a later column addition (e.g. #114's `binding`) breaks it | Document the coupling in `data-model.md`; #114 must update the rule body in the same migration. **Built-in rules are seeded by raw `:put` and are not syntax-validated at init** — a break surfaces at query time as a caught per-rule `error` string, which is quiet. The real safety net is the tc case asserting `contradictions` executes with `error: null`. |
+| Claims dangling after `prune` or re-extraction, which delete concepts/edges without going through the delete handlers (annotations already dangle there) | One `cascade_claims()` lib function called from all four deletion sites, rather than per-handler cascade code. Costs one function; the alternative ships a known integrity hole in a feature about integrity. |
+| Locked fixtures break on the version bump and the third built-in rule | Enumerated in research D11 and given an explicit human-approved task (T003). Not folded silently into implementation. |
 | Migration on a live db | Reuse the existing backup/restore path in `migrate.ts` — no new machinery. New relations only; no data rewrite, so restore is cheap. |
 | Idempotency pre-insert lookup cost at scale | The 5-tuple lookup is a filtered scan; acceptable at the 10k target. Revisit with an index only if SC-007 fails. |
 | `resolve: true` and conflict grouping done in TypeScript rather than Datalog | Deliberate — grouping/tie logic in Datalog is opaque and hard to test. Rows come back from a single query; grouping is in-memory. Revisit if 10k claims breaches SC-007. |

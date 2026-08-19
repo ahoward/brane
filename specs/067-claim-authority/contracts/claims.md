@@ -21,10 +21,13 @@ Assert a claim. Idempotent on the full 5-tuple (D4).
 |---|---|---|---|
 | `subject_type` | string | yes | `"concept"` or `"edge"` |
 | `subject_id` | int | yes | must exist |
-| `predicate` | string | yes | free-form, ≤ 256 |
-| `assertion` | string | yes | free-form, ≤ 4096 |
-| `authority` | string | yes | must be a registered tier |
-| `source` | string | yes | opaque provenance, ≤ 1024 |
+| `predicate` | string | yes | free-form, trimmed then stored, ≤ 256 after trim |
+| `assertion` | string | yes | free-form, trimmed then stored, ≤ 4096 after trim |
+| `authority` | string | yes | trimmed; must be a registered tier |
+| `source` | string | yes | opaque provenance, trimmed then stored, ≤ 1024 after trim |
+
+All four are trimmed at the boundary (FR-016b) so every downstream comparison — idempotency, conflict
+grouping, and Datalog — sees identical strings.
 
 **Result**
 
@@ -76,7 +79,7 @@ row is returned unchanged, including its original `id` and `created_at`.
 | field | type | notes |
 |---|---|---|
 | `subject_type` | string | `"concept"` or `"edge"` |
-| `subject_id` | int | requires `subject_type` when ambiguous; accepted alone (matches either type) |
+| `subject_id` | int | matches claims on either subject type unless `subject_type` is also given |
 | `predicate` | string | exact match |
 | `authority` | string | tier name, exact match |
 | `resolve` | bool | default `false`. When `true`, returns only the highest-rank claim per `(subject_type, subject_id, predicate)` |
@@ -152,3 +155,20 @@ Groups are never truncated (spec edge case).
 **Result**: `{ "id": 1, "deleted": true }`
 
 **Errors**: `id` `required`; `id` `not_found`.
+
+**Implementation note**: `claims` is an all-key relation, so `:rm` needs the full 8-column row. Read the
+row by `id`, then remove it — the same read-then-remove shape as `annotations/delete.ts`.
+
+---
+
+## Cascade shape changes on existing paths
+
+Claims cascade wherever their subject is removed (D8), and the affected handlers report it:
+
+| path | change |
+|---|---|
+| `/mind/concepts/delete` | `cascade` object gains `claims_removed` — counts claims on the concept **and** on the edges that deletion cascades away |
+| `/mind/edges/delete` | result gains `claims_removed` alongside `deleted` |
+| `/mind/prune` | prunes claims for pruned concepts and edges |
+
+These change locked fixtures; see research D11.

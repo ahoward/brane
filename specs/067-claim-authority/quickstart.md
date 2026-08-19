@@ -81,7 +81,7 @@ brane claim list --concept 1
 ## 6. The validator arm sees it
 
 ```bash
-brane verify --rules contradictions
+brane verify --rule contradictions
 ```
 
 ```json
@@ -93,8 +93,10 @@ brane verify --rules contradictions
 }
 ```
 
-`pr-verify` consumes the same rule. A change that introduces an unresolved contradiction can now fail a
-PR.
+`pr-verify` consumes the same rule. A change that introduces a contradiction can now fail a PR.
+
+Note the rule fires even though `legal` wins cleanly — it reports that the graph disagrees with itself,
+not whether the disagreement has a winner. Use `/mind/claims/conflicts` when you care about resolution.
 
 ## 7. Re-ranking, without rewriting history
 
@@ -118,6 +120,7 @@ brane authority create --name legal_eu --rank 40 --description "EU legal constra
 brane claim create --concept 1 --predicate refund_window \
   --assertion "30 days" --authority legal_eu --source legal/eu.md
 brane authority create --name security --rank 20   # demote security below the tie
+                                                  # (description omitted → preserved, not blanked)
 
 brane claim conflicts
 # => "resolution": null, "unresolved": true

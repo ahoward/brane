@@ -256,9 +256,14 @@ without it.
 - **FR-013**: System MUST expose claims and authority rank to Datalog rules, and MUST ship a built-in
   `contradictions` rule matching concepts that carry competing claims.
 - **FR-014**: System MUST support getting a claim by ID and deleting a claim by ID.
-- **FR-015**: System MUST cascade claim deletion when the referenced concept or edge is deleted.
+- **FR-015**: System MUST cascade claim deletion when the referenced concept or edge is deleted, on
+  every path that deletes a concept or edge — the delete handlers, `prune`, and re-extraction. Deleting
+  a concept also cascades the claims on the edges that concept's deletion removes.
 - **FR-016**: System MUST upgrade existing mind.db databases via the migration system with no data loss,
   seeding default authority tiers during migration.
+- **FR-016b**: System MUST trim `predicate`, `assertion`, `authority`, and `source` at write time and
+  store the trimmed values, so every read path — list, conflicts, and Datalog rules alike — compares
+  identical strings.
 - **FR-017**: All new operations MUST follow the sys.call Result envelope, POD-only, snake_case
   conventions in the constitution.
 - **FR-018**: System MUST return an empty list with count 0 — not an error — for claim and conflict
@@ -287,9 +292,13 @@ without it.
 - **SC-003**: An unregistered authority tier is rejected 100% of the time; a novel predicate string is
   accepted 100% of the time.
 - **SC-004**: The built-in `contradictions` rule returns exactly the concepts carrying competing claims
-  — no false positives on concepts whose claims agree.
-- **SC-005**: All existing tests continue to pass — no regressions in concepts, edges, provenance,
-  annotations, episodes, rules, verify, or lenses.
+  — no false positives on concepts whose claims agree. Because assertions are stored trimmed
+  (FR-016b), the rule and `/mind/claims/conflicts` never disagree about what counts as agreement.
+- **SC-005**: All existing tests pass after the planned fixture updates — no behavioral regressions in
+  concepts, edges, provenance, annotations, episodes, rules, verify, or lenses. A third built-in rule
+  and a schema version bump necessarily change fixtures that pin the built-in rule count (`verify`,
+  `rules/list`), the schema version (`init`), and the concept-delete cascade shape. Those updates are an
+  expected, human-approved consequence of the feature — not a test rewrite to make failures go away.
 - **SC-006**: Migration from the current schema version preserves every existing concept, edge,
   provenance record, annotation, rule, and episode, and seeds the default authority tiers.
 - **SC-007**: Claim, conflict, and resolved queries complete in under 1 second on a database holding
@@ -309,6 +318,10 @@ Explicitly deferred so this feature stays foundational (constitution principle V
   embedding similarity. "30 days" vs "one month" is two claims, not a detected conflict. Noted as a
   known limitation for a later feature.
 - **Claim-to-claim edges** (supports/contradicts links between claims). Subject is a concept or edge only.
+- **Multi-subject claims.** Issue #113 phrases this as "a claim references concept(s)/edge(s)"; a claim
+  here has exactly one subject. A claim spanning several subjects is representable as several claims
+  sharing a predicate and source, and the single-subject shape keeps conflict grouping unambiguous.
+  Revisit if the promotion gate (#114) needs genuinely joint assertions.
 
 ## Assumptions
 
