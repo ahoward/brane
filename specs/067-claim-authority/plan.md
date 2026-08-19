@@ -36,7 +36,7 @@ must preserve all existing data and be backup/restore-safe.
 | I. POD only | Claims, tiers, conflict groups are interfaces over plain JSON. No classes. |
 | II. Result envelope | All 8 handlers return `success()` / `error()` from `lib/result.ts`. |
 | III. sys.call public API only | Handlers are thin; shared logic lands in `src/lib/claims.ts` as plain functions. |
-| IV. Antagonistic testing | tc suites written and Gemini-reviewed before implementation. Tests lock after review. |
+| IV. Antagonistic testing | tc suites written and Fable-reviewed before implementation. Tests lock after review. |
 | V. Unix-clean | `null` over `undefined`, JSON on stdout, non-zero exit on error, snake_case fields. |
 | VI. Simplicity (YAGNI) | No `binding` flag, no retraction audit, no semantic conflict detection, no claim→claim edges. All deferred to #114/#115/#116 and recorded in spec Out of Scope. |
 
@@ -124,7 +124,7 @@ phase:
 ## Phase 2 — Tasks
 
 Generated into [tasks.md](./tasks.md). Ordering is **tests first**, per constitution IV: fixture
-reconciliation and tc authoring → Gemini antagonist review (lock) → schema/migration → lib → handlers →
+reconciliation and tc authoring → Fable antagonist review (lock) → schema/migration → lib → handlers →
 CLI → green. No implementation task, including the shared library, precedes the lock.
 
 ## Risks

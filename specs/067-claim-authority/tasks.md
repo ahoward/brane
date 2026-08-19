@@ -7,8 +7,8 @@ description: "Task list for 067-claim-authority"
 **Input**: `/specs/067-claim-authority/` — spec.md, plan.md, research.md, data-model.md, contracts/
 **Issue**: [#113](https://github.com/ahoward/brane/issues/113)
 
-**Tests**: Required and **first**. Constitution IV — tc tests are authored and Gemini-reviewed before
-any implementation task, including the shared library, and locked after review.
+**Tests**: Required and **first**. Constitution IV — tc tests are authored and antagonist-reviewed
+(Fable) before any implementation task, including the shared library, and locked after review.
 
 ## Format: `[ID] [P?] [Story] Description`
 
@@ -49,7 +49,7 @@ any implementation task, including the shared library, and locked after review.
   concepts, edges, provenance, annotations, rules, and episodes survive and the five tiers appear.
 - [ ] **T008** SC-001 end-to-end: the refund 30/14/45 scenario from quickstart.md — three claims written,
   all three listed, one conflict group, `legal` as resolution, all three still present after `resolve`.
-- [ ] **T009** ⛔ **Gemini antagonist review** of T001–T008. Incorporate findings. **Tests LOCK here.**
+- [ ] **T009** ⛔ **Fable antagonist review** of T001–T008. Incorporate findings. **Tests LOCK here.**
   Blocks every task below.
 
 ---
@@ -154,7 +154,7 @@ T010–T013 are sequential: same file.
 ## Dependencies
 
 ```
-Phase 1 tests (T001–T008) ──> T009 Gemini review [LOCK]
+Phase 1 tests (T001–T008) ──> T009 Fable review [LOCK]
                                     │
                                     v
                           Phase 2 schema (T010–T016)
@@ -190,7 +190,7 @@ Sequential: T010–T013 (same file), T031 and T033 if prune reuses concept-delet
 Phases 1–4 plus T035 deliver the P1 stories (US1, US2, US3): claims can be asserted, contradiction is
 held, conflicts are queryable. Phases 5–7 complete the feature.
 
-## Blocked
+## Antagonist
 
-**T009 requires the `gemini` CLI, which is not installed on the current machine.** Install it or
-substitute a human antagonist. Do not skip — constitution IV.
+T009 runs **Fable** as a subagent (constitution 1.1.0). No external CLI, nothing to install — the
+earlier "blocked on Gemini" note is obsolete.

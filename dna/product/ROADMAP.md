@@ -12,7 +12,7 @@ specs/{NN-feature}/spec.md      ← /speckit.specify → PR for human review
 specs/{NN-feature}/plan.md      ← /speckit.plan
 specs/{NN-feature}/tasks.md     ← /speckit.tasks
     ↓
-Gemini review                   ← Antagonistic test review (tc tests)
+Fable review                    ← Antagonistic test review (tc tests)
     ↓
 Implementation                  ← /speckit.implement
     ↓
@@ -95,7 +95,7 @@ The hippocampus: 3 verbs, dual-write graph + audit trail, trust tiers. The agent
 
 Vision: `dna/product/vision-spec-machine.md` (v4.0). Closing the 30% gap between "memory for agents" and Fowler's spec machine.
 
-- [ ] `067-claim-authority` — First-class claims carrying authority tier + source; contradiction as data ([#113](https://github.com/ahoward/brane/issues/113)) — spec + plan + tasks in review ([PR #117](https://github.com/ahoward/brane/pull/117)); blocked on Gemini antagonist review before implementation
+- [ ] `067-claim-authority` — First-class claims carrying authority tier + source; contradiction as data ([#113](https://github.com/ahoward/brane/issues/113)) — spec + plan + tasks in review ([PR #117](https://github.com/ahoward/brane/pull/117)); antagonist review by Fable next
 - [ ] `068-promotion-gate` — Observation → requirement promotion with human ratification ([#114](https://github.com/ahoward/brane/issues/114))
 - [ ] `069-regeneration-spike` — **Keystone**: regenerate from graph → test → feed failures back ([#115](https://github.com/ahoward/brane/issues/115))
 - [ ] `070-production-teacher` — Ingest prod traces / incidents / evals as evidence ([#116](https://github.com/ahoward/brane/issues/116))

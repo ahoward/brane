@@ -8,12 +8,12 @@ This project uses **Antagonistic Testing** - a rigorous test-first process where
 
 ## Antagonistic Testing
 
-The primary agent (Claude) has the most context, so it designs the first pass of tests. The review agent (Gemini) plays **antagonist** - questioning assumptions, finding edge cases, suggesting harder tests.
+The primary agent (Claude) has the most context, so it designs the first pass of tests. The review agent (Fable) plays **antagonist** - questioning assumptions, finding edge cases, suggesting harder tests.
 
 This tension produces better specifications than either agent alone.
 
 ```
-Claude (context)  →  designs tests  →  Gemini (antagonist)  →  challenges  →  better tests
+Claude (context)  →  designs tests  →  Fable (antagonist)  →  challenges  →  better tests
 ```
 
 The antagonist asks:
@@ -44,8 +44,8 @@ Neither agent proceeds alone. Both must agree before the test boundary.
 └─────────────────────────────────────────────────────────────────┘
                               ↓
 ┌─────────────────────────────────────────────────────────────────┐
-│  3. REVIEW TESTS (Gemini)                                       │
-│     - Send tests to Gemini for antagonist review                │
+│  3. REVIEW TESTS (Fable)                                        │
+│     - Send tests to Fable for antagonist review                 │
 │     - Incorporate suggestions                                   │
 │     - Tests are now LOCKED (no changes without human approval)  │
 └─────────────────────────────────────────────────────────────────┘
@@ -87,7 +87,7 @@ Neither agent proceeds alone. Both must agree before the test boundary.
 
 The human checkpoint is for **failure resolution**, not pre-approval.
 
-After Gemini review, tests are LOCKED. Claude implements against them.
+After the antagonist review, tests are LOCKED. Claude implements against them.
 
 **Human intervenes ONLY when:**
 - Claude cannot make tests pass after good-faith effort
@@ -99,7 +99,7 @@ After Gemini review, tests are LOCKED. Claude implements against them.
 Every test suite goes through adversarial review:
 
 1. **Claude** (primary, has context) - Designs initial tests based on full project understanding
-2. **Gemini** (antagonist) - Challenges tests, finds blind spots, suggests harder cases
+2. **Fable** (antagonist) - Challenges tests, finds blind spots, suggests harder cases
 
 The antagonist's job is to **break** the tests - find what Claude missed. This tension produces robust specifications.
 
@@ -108,7 +108,7 @@ Neither agent proceeds alone. Both must agree on the test design.
 ### Never Skip the Loop
 
 - No implementing without tests
-- No tests without Gemini review
+- No tests without an antagonist review
 - No changing tests after review without human approval
 - No moving to next task until current tests pass
 
@@ -122,11 +122,12 @@ Neither agent proceeds alone. Both must agree on the test design.
 - Has full project context (dna/, ai/MEMORY.md, codebase)
 - Designs `sys.call` interface (public API only)
 - Writes **first pass** of tc tests
-- Implements after Gemini review (no pre-approval needed)
+- Implements after the antagonist review (no pre-approval needed)
 - Updates `ai/NOTES.md` and `ai/MEMORY.md`
 
-### Gemini (Antagonist)
+### Fable (Antagonist)
 
+- Run as a subagent (Agent tool, `model: fable`) - not an external CLI
 - Receives test designs from Claude
 - **Plays adversary** - tries to break the tests
 - Asks "what if?" questions
@@ -138,7 +139,7 @@ Neither agent proceeds alone. Both must agree on the test design.
 
 - Intervenes **only when Claude is stuck** (can't make tests pass)
 - Decides: fix tests OR fix code
-- Final authority on test changes after Gemini review
+- Final authority on test changes after the antagonist review
 - Does NOT need to pre-approve implementation
 
 ---
@@ -198,7 +199,7 @@ tests/body/files/hash/data/
     └── expected.json   # { "status": "error", "errors": { "path": [...] } }
 ```
 
-**Step 3: Review (Gemini)**
+**Step 3: Review (Fable)**
 - "Add test for permission denied"
 - "Add test for directory (not file)"
 - Claude incorporates feedback

@@ -36,10 +36,11 @@ const result = await sys.call("/namespace/method", data)
 
 **See:** `./dna/technical/development-loop.md` and `.specify/memory/constitution.md`
 
-1. Design interface → 2. Design tests (Claude) → 3. Review tests (Gemini)
+1. Design interface → 2. Design tests (Claude) → 3. Review tests (Fable)
 4. Implement → 5. Loop until green → 6. **⛔ HUMAN CHECKPOINT** (only if stuck)
 
-**Gemini** = antagonist agent. Reviews tests, finds blind spots.
+**Fable** = antagonist agent. Reviews tests, finds blind spots. Run as a subagent
+(Agent tool, `model: fable`), not an external CLI.
 Human checkpoint is for failure resolution, not pre-approval.
 
 ## Coding Conventions Summary
@@ -80,7 +81,7 @@ ai/                   # AI agent resources
 2. Run `/speckit.specify` — creates `specs/{feature}/spec.md`
 3. Open PR for human review
 4. After approval: `/speckit.plan` → `/speckit.tasks`
-5. Review tests with Gemini (antagonist)
+5. Review tests with Fable (antagonist)
 6. Implement via `/speckit.implement`
 7. If stuck (tests won't pass) → Human checkpoint
 8. On completion → Update ROADMAP.md, mark feature complete
@@ -92,7 +93,7 @@ ai/                   # AI agent resources
 - Return different shapes from handlers
 - Skip the Result envelope
 - Implement without tests
-- Skip Gemini review
+- Skip the antagonist review
 - Change tests after review without human approval
 
 ## Active Technologies
