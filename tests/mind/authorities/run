@@ -1,0 +1,95 @@
+#!/usr/bin/env bash
+#
+# Test runner for /mind/authorities/*
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+create_claim() {
+  echo "$1" | brane /mind/claims/create > /dev/null 2>&1
+}
+
+create_authority() {
+  echo "$1" | brane /mind/authorities/create > /dev/null 2>&1
+}
+
+case "$TC_CASE_NAME" in
+  # FR-005: the registry ships usable.
+  00-success-list-defaults)
+    init_mind
+    echo "$INPUT" | brane /mind/authorities/list
+    ;;
+
+  01-success-create)
+    init_mind
+    echo "$INPUT" | brane /mind/authorities/create
+    ;;
+
+  02-success-upsert-existing)
+    init_mind
+    echo "$INPUT" | brane /mind/authorities/create
+    ;;
+
+  # Rank-only update must not blank the description it did not mention.
+  03-success-upsert-preserves-description)
+    init_mind
+    create_authority '{"name":"security","rank":35,"description":"Security review finding"}'
+    echo "$INPUT" | brane /mind/authorities/create
+    ;;
+
+  04-success-delete-unreferenced)
+    init_mind
+    create_authority '{"name":"security","rank":35,"description":"Security review finding"}'
+    echo "$INPUT" | brane /mind/authorities/delete
+    ;;
+
+  # A referenced tier cannot be deleted: that would orphan a claim's standing.
+  05-error-delete-referenced)
+    init_mind
+    create_concept '{"name": "RefundWindow", "type": "Entity"}'
+    create_claim '{"subject_type":"concept","subject_id":1,"predicate":"refund_window","assertion":"14 days","authority":"legal","source":"legal/policy.md"}'
+    echo "$INPUT" | brane /mind/authorities/delete
+    ;;
+
+  06-error-delete-not-found)
+    init_mind
+    echo "$INPUT" | brane /mind/authorities/delete
+    ;;
+
+  07-error-rank-negative)
+    init_mind
+    echo "$INPUT" | brane /mind/authorities/create
+    ;;
+
+  08-error-rank-non-integer)
+    init_mind
+    echo "$INPUT" | brane /mind/authorities/create
+    ;;
+
+  09-error-name-required)
+    init_mind
+    echo "$INPUT" | brane /mind/authorities/create
+    ;;
+
+  10-error-not-initialized)
+    init_body
+    echo "$INPUT" | brane /mind/authorities/list
+    ;;
+
+  # FR-012 / research D2: rank is joined at read time. Re-ranking a tier changes
+  # resolution order with no claim row rewritten - same ids, same timestamps.
+  11-success-rerank-reorders-without-rewrite)
+    init_mind
+    create_concept '{"name": "RefundWindow", "type": "Entity"}'
+    create_claim '{"subject_type":"concept","subject_id":1,"predicate":"refund_window","assertion":"30 days","authority":"product","source":"dna/product/prd.md"}'
+    create_claim '{"subject_type":"concept","subject_id":1,"predicate":"refund_window","assertion":"14 days","authority":"legal","source":"legal/policy.md"}'
+    create_claim '{"subject_type":"concept","subject_id":1,"predicate":"refund_window","assertion":"45 days","authority":"implementation","source":"src/billing.ts"}'
+    create_authority '{"name":"implementation","rank":100}'
+    echo "$INPUT" | brane /mind/claims/list
+    ;;
+esac

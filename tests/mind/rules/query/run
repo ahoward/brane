@@ -10,6 +10,10 @@ source "$BRANE_ROOT/tests/lib.sh"
 INPUT=$(cat)
 workspace
 
+create_claim() {
+  echo "$1" | brane /mind/claims/create > /dev/null 2>&1
+}
+
 case "$TC_CASE_NAME" in
   00-success-cycles-found)
     init_mind
@@ -65,6 +69,28 @@ case "$TC_CASE_NAME" in
     # Concept with only self-edge (not an orphan)
     create_concepts '[{"name": "SelfOnly", "type": "Entity"}, {"name": "RealOrphan", "type": "Entity"}]'
     create_edges '[{"source": 1, "target": 1, "relation": "DEPENDS_ON"}]'
+    ;;
+  # Built-in contradictions rule: concept 1 carries competing refund claims.
+  10-success-contradictions-found)
+    init_mind
+    create_concepts '[{"name": "RefundWindow", "type": "Entity"}, {"name": "Quiet", "type": "Entity"}]'
+    create_claim '{"subject_type":"concept","subject_id":1,"predicate":"refund_window","assertion":"30 days","authority":"product","source":"prd.md"}'
+    create_claim '{"subject_type":"concept","subject_id":1,"predicate":"refund_window","assertion":"14 days","authority":"legal","source":"policy.md"}'
+    ;;
+  # Two authorities asserting the same thing is agreement, not contradiction.
+  11-success-contradictions-none)
+    init_mind
+    create_concepts '[{"name": "Palette", "type": "Entity"}]'
+    create_claim '{"subject_type":"concept","subject_id":1,"predicate":"color","assertion":"blue","authority":"product","source":"a.md"}'
+    create_claim '{"subject_type":"concept","subject_id":1,"predicate":"color","assertion":"blue","authority":"legal","source":"b.md"}'
+    ;;
+  # User-defined rules can join claims and authority rank.
+  12-success-custom-rule-joins-claims)
+    init_mind
+    create_concepts '[{"name": "RefundWindow", "type": "Entity"}, {"name": "Casual", "type": "Entity"}]'
+    create_claim '{"subject_type":"concept","subject_id":1,"predicate":"refund_window","assertion":"14 days","authority":"legal","source":"policy.md"}'
+    create_claim '{"subject_type":"concept","subject_id":2,"predicate":"note","assertion":"whatever","authority":"observation","source":"session"}'
+    echo '{"name": "high_authority", "description": "Concepts carrying a claim at rank 40 or above", "body": "high_authority[id, name] := *concepts[id, name, _, _, _], *claims[_, '"'"'concept'"'"', id, _, _, auth, _, _], *authorities[auth, rank, _], rank >= 40"}' | brane /mind/rules/create > /dev/null 2>&1
     ;;
 esac
 

@@ -1,0 +1,252 @@
+#!/usr/bin/env bash
+#
+# Test runner for /mind/claims/*
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+create_claim() {
+  echo "$1" | brane /mind/claims/create > /dev/null 2>&1
+}
+
+create_authority() {
+  echo "$1" | brane /mind/authorities/create > /dev/null 2>&1
+}
+
+# The refund scenario from the vision doc: product=30d, legal=14d, impl=45d
+seed_refund() {
+  create_concept '{"name": "RefundWindow", "type": "Entity"}'
+  create_claim '{"subject_type":"concept","subject_id":1,"predicate":"refund_window","assertion":"30 days","authority":"product","source":"dna/product/prd.md"}'
+  create_claim '{"subject_type":"concept","subject_id":1,"predicate":"refund_window","assertion":"14 days","authority":"legal","source":"legal/policy.md"}'
+  create_claim '{"subject_type":"concept","subject_id":1,"predicate":"refund_window","assertion":"45 days","authority":"implementation","source":"src/billing.ts"}'
+}
+
+case "$TC_CASE_NAME" in
+  00-success-create)
+    init_mind
+    create_concept '{"name": "RefundWindow", "type": "Entity"}'
+    echo "$INPUT" | brane /mind/claims/create
+    ;;
+
+  01-success-create-edge-subject)
+    init_mind
+    create_concept '{"name": "A", "type": "Entity"}'
+    create_concept '{"name": "B", "type": "Entity"}'
+    create_edge '{"source": 1, "target": 2, "relation": "DEPENDS_ON"}'
+    echo "$INPUT" | brane /mind/claims/create
+    ;;
+
+  02-error-not-initialized)
+    init_body
+    echo "$INPUT" | brane /mind/claims/create
+    ;;
+
+  03-error-subject-not-found)
+    init_mind
+    echo "$INPUT" | brane /mind/claims/create
+    ;;
+
+  04-error-authority-not-registered)
+    init_mind
+    create_concept '{"name": "RefundWindow", "type": "Entity"}'
+    echo "$INPUT" | brane /mind/claims/create
+    ;;
+
+  05-error-assertion-required)
+    init_mind
+    create_concept '{"name": "RefundWindow", "type": "Entity"}'
+    echo "$INPUT" | brane /mind/claims/create
+    ;;
+
+  06-error-source-required)
+    init_mind
+    create_concept '{"name": "RefundWindow", "type": "Entity"}'
+    echo "$INPUT" | brane /mind/claims/create
+    ;;
+
+  07-error-invalid-subject-type)
+    init_mind
+    create_concept '{"name": "RefundWindow", "type": "Entity"}'
+    echo "$INPUT" | brane /mind/claims/create
+    ;;
+
+  08-error-assertion-too-long)
+    init_mind
+    create_concept '{"name": "RefundWindow", "type": "Entity"}'
+    echo "$INPUT" | brane /mind/claims/create
+    ;;
+
+  # Loose about vocabulary: a predicate nobody registered is still valid.
+  09-success-freeform-predicate)
+    init_mind
+    create_concept '{"name": "RefundWindow", "type": "Entity"}'
+    echo "$INPUT" | brane /mind/claims/create
+    ;;
+
+  # FR-016b: trimmed at the boundary, stored trimmed.
+  10-success-trim-on-write)
+    init_mind
+    create_concept '{"name": "RefundWindow", "type": "Entity"}'
+    echo "$INPUT" | brane /mind/claims/create
+    ;;
+
+  11-success-idempotent-reassert)
+    init_mind
+    create_concept '{"name": "RefundWindow", "type": "Entity"}'
+    create_claim '{"subject_type":"concept","subject_id":1,"predicate":"refund_window","assertion":"30 days","authority":"product","source":"dna/product/prd.md"}'
+    echo "$INPUT" | brane /mind/claims/create
+    ;;
+
+  # The whitespace variant must collapse onto the same claim, not create a second.
+  12-success-idempotent-whitespace-variant)
+    init_mind
+    create_concept '{"name": "RefundWindow", "type": "Entity"}'
+    create_claim '{"subject_type":"concept","subject_id":1,"predicate":"refund_window","assertion":"30 days","authority":"product","source":"dna/product/prd.md"}'
+    echo "$INPUT" | brane /mind/claims/create
+    ;;
+
+  13-success-get)
+    init_mind
+    seed_refund
+    echo "$INPUT" | brane /mind/claims/get
+    ;;
+
+  14-error-get-not-found)
+    init_mind
+    echo "$INPUT" | brane /mind/claims/get
+    ;;
+
+  # Contradiction held: three claims, none overwritten.
+  15-success-list-all)
+    init_mind
+    seed_refund
+    echo "$INPUT" | brane /mind/claims/list
+    ;;
+
+  16-success-list-filter-predicate)
+    init_mind
+    seed_refund
+    create_claim '{"subject_type":"concept","subject_id":1,"predicate":"owner","assertion":"billing-team","authority":"product","source":"dna/product/prd.md"}'
+    echo "$INPUT" | brane /mind/claims/list
+    ;;
+
+  17-success-list-filter-authority)
+    init_mind
+    seed_refund
+    echo "$INPUT" | brane /mind/claims/list
+    ;;
+
+  18-success-list-empty)
+    init_mind
+    create_concept '{"name": "RefundWindow", "type": "Entity"}'
+    echo "$INPUT" | brane /mind/claims/list
+    ;;
+
+  19-success-list-resolve)
+    init_mind
+    seed_refund
+    echo "$INPUT" | brane /mind/claims/list
+    ;;
+
+  # SC-002: resolution is a projection. Asking for it must not delete the losers.
+  20-success-list-unchanged-after-resolve)
+    init_mind
+    seed_refund
+    echo '{"subject_id":1,"resolve":true}' | brane /mind/claims/list > /dev/null 2>&1
+    echo '{"subject_id":1,"resolve":true}' | brane /mind/claims/list > /dev/null 2>&1
+    echo "$INPUT" | brane /mind/claims/list
+    ;;
+
+  21-success-conflicts)
+    init_mind
+    seed_refund
+    echo "$INPUT" | brane /mind/claims/conflicts
+    ;;
+
+  # Same assertion from two authorities is agreement, not conflict.
+  22-success-conflicts-agreement-is-not-conflict)
+    init_mind
+    create_concept '{"name": "Palette", "type": "Entity"}'
+    create_claim '{"subject_type":"concept","subject_id":1,"predicate":"color","assertion":"blue","authority":"product","source":"a.md"}'
+    create_claim '{"subject_type":"concept","subject_id":1,"predicate":"color","assertion":"blue","authority":"legal","source":"b.md"}'
+    echo "$INPUT" | brane /mind/claims/conflicts
+    ;;
+
+  # Equal top rank, different assertions: brane does not pick a winner.
+  23-success-conflicts-tie-unresolved)
+    init_mind
+    create_concept '{"name": "RefundWindow", "type": "Entity"}'
+    create_authority '{"name":"legal_eu","rank":40,"description":"EU legal constraint"}'
+    create_claim '{"subject_type":"concept","subject_id":1,"predicate":"refund_window","assertion":"14 days","authority":"legal","source":"legal/us.md"}'
+    create_claim '{"subject_type":"concept","subject_id":1,"predicate":"refund_window","assertion":"30 days","authority":"legal_eu","source":"legal/eu.md"}'
+    echo "$INPUT" | brane /mind/claims/conflicts
+    ;;
+
+  24-success-conflicts-empty)
+    init_mind
+    create_concept '{"name": "RefundWindow", "type": "Entity"}'
+    echo "$INPUT" | brane /mind/claims/conflicts
+    ;;
+
+  25-success-delete)
+    init_mind
+    seed_refund
+    echo "$INPUT" | brane /mind/claims/delete
+    ;;
+
+  26-error-delete-not-found)
+    init_mind
+    echo "$INPUT" | brane /mind/claims/delete
+    ;;
+
+  # Deleting one of three leaves a two-claim group.
+  27-success-delete-recomputes-conflicts)
+    init_mind
+    seed_refund
+    echo '{"id":3}' | brane /mind/claims/delete > /dev/null 2>&1
+    echo "$INPUT" | brane /mind/claims/conflicts
+    ;;
+
+  28-success-cascade-concept-delete)
+    init_mind
+    seed_refund
+    echo '{"id":1}' | brane /mind/concepts/delete > /dev/null 2>&1
+    echo "$INPUT" | brane /mind/claims/list
+    ;;
+
+  # research D8 trap 1: concept deletion cascades edges, so it must cascade
+  # the claims on those edges too, or they dangle.
+  29-success-cascade-concept-delete-takes-edge-claims)
+    init_mind
+    create_concept '{"name": "A", "type": "Entity"}'
+    create_concept '{"name": "B", "type": "Entity"}'
+    create_edge '{"source": 1, "target": 2, "relation": "DEPENDS_ON"}'
+    create_claim '{"subject_type":"edge","subject_id":1,"predicate":"strength","assertion":"hard","authority":"implementation","source":"src/a.ts"}'
+    echo '{"id":1}' | brane /mind/concepts/delete > /dev/null 2>&1
+    echo "$INPUT" | brane /mind/claims/list
+    ;;
+
+  30-success-cascade-edge-delete)
+    init_mind
+    create_concept '{"name": "A", "type": "Entity"}'
+    create_concept '{"name": "B", "type": "Entity"}'
+    create_edge '{"source": 1, "target": 2, "relation": "DEPENDS_ON"}'
+    create_claim '{"subject_type":"edge","subject_id":1,"predicate":"strength","assertion":"hard","authority":"implementation","source":"src/a.ts"}'
+    echo '{"id":1}' | brane /mind/edges/delete > /dev/null 2>&1
+    echo "$INPUT" | brane /mind/claims/list
+    ;;
+
+  # research D8 trap 2: prune deletes concepts directly, bypassing the handler.
+  31-success-cascade-prune)
+    init_mind
+    create_concept '{"name": "Orphan", "type": "Entity"}'
+    create_claim '{"subject_type":"concept","subject_id":1,"predicate":"note","assertion":"unreferenced","authority":"observation","source":"session"}'
+    echo '{}' | brane /mind/prune > /dev/null 2>&1
+    echo "$INPUT" | brane /mind/claims/list
+    ;;
+esac

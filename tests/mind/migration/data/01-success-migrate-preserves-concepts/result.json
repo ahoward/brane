@@ -1,0 +1,13 @@
+{
+  "status": "success",
+  "result": {
+    "concepts": "<any>",
+    "total": 2
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/concepts/list",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "status": "success",
+  "result": {
+    "conflicts": [
+      {
+        "subject_type": "concept",
+        "subject_id": 1,
+        "predicate": "refund_window",
+        "claims": [
+          {
+            "id": 1,
+            "assertion": "14 days",
+            "authority": "legal",
+            "rank": 40,
+            "source": "legal/us.md",
+            "created_at": "<timestamp>"
+          },
+          {
+            "id": 2,
+            "assertion": "30 days",
+            "authority": "legal_eu",
+            "rank": 40,
+            "source": "legal/eu.md",
+            "created_at": "<timestamp>"
+          }
+        ],
+        "resolution": null,
+        "unresolved": true
+      }
+    ],
+    "count": 1
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/claims/conflicts",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

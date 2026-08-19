@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+#
+# Test runner for the v1.12.0 -> v1.13.0 schema migration (claims + authorities)
+#
+set -e
+
+BRANE_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+source "$BRANE_ROOT/tests/lib.sh"
+
+INPUT=$(cat)
+workspace
+
+# Build a populated current-version db, then walk it back to v1.12.0 so the
+# next open_mind() has a real migration to perform.
+seed_and_downgrade() {
+  init_mind
+  create_concept '{"name": "Survivor", "type": "Entity"}'
+  create_concept '{"name": "AlsoSurvivor", "type": "Entity"}'
+  create_edge '{"source": 1, "target": 2, "relation": "DEPENDS_ON"}'
+  echo '{"target": 1, "text": "keep me", "type": "note"}' | brane /mind/annotations/create > /dev/null 2>&1
+  echo '{"name": "custom_rule", "description": "Keep me", "body": "custom_rule[id, name] := *concepts[id, name, _, _, _]"}' | brane /mind/rules/create > /dev/null 2>&1
+  echo '{"agent_id": "test", "observation": "keep me too"}' | brane /mind/episodes/create > /dev/null 2>&1
+  bun run "$BRANE_ROOT/tests/mind/migration/downgrade.ts" "$PWD/.brane/mind.db" > /dev/null 2>&1
+}
+
+case "$TC_CASE_NAME" in
+  # Migration seeds the default authority tiers.
+  00-success-migrate-seeds-authorities)
+    seed_and_downgrade
+    echo "$INPUT" | brane /mind/authorities/list
+    ;;
+
+  # SC-006: nothing that existed before the migration is lost.
+  01-success-migrate-preserves-concepts)
+    seed_and_downgrade
+    echo "$INPUT" | brane /mind/concepts/list
+    ;;
+
+  # The migrated db reports the new version.
+  02-success-migrate-stamps-version)
+    seed_and_downgrade
+    echo '{}' | brane /mind/authorities/list > /dev/null 2>&1
+    echo "$INPUT" | brane /mind/init
+    ;;
+
+  # The contradictions built-in arrives with the migration, not just with init.
+  03-success-migrate-adds-builtin-rule)
+    seed_and_downgrade
+    echo "$INPUT" | brane /mind/rules/get
+    ;;
+esac

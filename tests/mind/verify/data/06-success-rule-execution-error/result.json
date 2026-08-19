@@ -3,7 +3,7 @@
   "result": {
     "passed": false,
     "summary": {
-      "rules_passed": 2,
+      "rules_passed": 3,
       "rules_failed": 1,
       "total_violations": 0
     },
@@ -13,6 +13,12 @@
         "passed": false,
         "violations": [],
         "error": "Cannot find requested stored relation 'nonexistent_relation'"
+      },
+      {
+        "name": "contradictions",
+        "passed": true,
+        "violations": [],
+        "error": null
       },
       {
         "name": "cycles",
