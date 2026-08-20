@@ -49,8 +49,13 @@ description: "Task list for 067-claim-authority"
   concepts, edges, provenance, annotations, rules, and episodes survive and the five tiers appear.
 - [ ] **T008** SC-001 end-to-end: the refund 30/14/45 scenario from quickstart.md — three claims written,
   all three listed, one conflict group, `legal` as resolution, all three still present after `resolve`.
-- [ ] **T009** ⛔ **Fable antagonist review** of T001–T008. Incorporate findings. **Tests LOCK here.**
-  Blocks every task below.
+- [x] **T009** ⛔ **Fable antagonist review** of T001–T008. Two rounds. Round 1 returned three blockers
+  (pr-verify and edges/delete fixtures missed in the sweep; the prune cascade case unpassable) plus 11
+  should-fixes; round 2 confirmed the fixture blockers fixed and caught that the prune fix was still
+  wrong — `/mind/provenance/create` validates against body.db, so the setup needs the prune suite's
+  add-then-delete pattern. All applied. **Tests LOCK here.** Blocks every task below.
+
+  Changing anything below this line now requires a human checkpoint (constitution IV).
 
 ---
 

@@ -10,6 +10,15 @@ source "$BRANE_ROOT/tests/lib.sh"
 INPUT=$(cat)
 workspace
 
+# Same shape as tests/mind/prune/run: provenance/create validates the file
+# against body.db, so the row has to exist first and be deleted afterwards.
+create_stale_provenance() {
+  local concept_id="$1" file_url="$2"
+  add_body_file "$file_url" "fakehash" 100 1000
+  create_provenance "{\"concept_id\": $concept_id, \"file_url\": \"$file_url\"}"
+  sqlite3 .brane/body.db "DELETE FROM files WHERE url = '$file_url';"
+}
+
 create_claim() {
   echo "$1" | brane /mind/claims/create > /dev/null 2>&1
 }
@@ -247,7 +256,7 @@ case "$TC_CASE_NAME" in
     create_concept '{"name": "Orphan", "type": "Entity"}'
     # prune only removes concepts whose provenance is ALL stale - a concept with
     # no provenance at all is never an orphan, so it needs a dead file link.
-    create_provenance '{"concept_id": 1, "file_url": "mind://gone.ts"}'
+    create_stale_provenance 1 "file:///project/gone.ts"
     create_claim '{"subject_type":"concept","subject_id":1,"predicate":"note","assertion":"unreferenced","authority":"observation","source":"session"}'
     echo '{}' | brane /mind/prune > /dev/null 2>&1
     echo "$INPUT" | brane /mind/claims/list
@@ -397,6 +406,19 @@ case "$TC_CASE_NAME" in
     create_edge '{"source": 1, "target": 2, "relation": "DEPENDS_ON"}'
     create_claim '{"subject_type":"edge","subject_id":1,"predicate":"strength","assertion":"hard","authority":"implementation","source":"src/a.ts"}'
     create_claim '{"subject_type":"edge","subject_id":1,"predicate":"strength","assertion":"soft","authority":"product","source":"prd.md"}'
+    echo "$INPUT" | brane /mind/claims/conflicts
+    ;;
+
+  # Group ordering across subject types: "concept" sorts before "edge".
+  51-success-conflicts-orders-concept-before-edge)
+    init_mind
+    create_concept '{"name": "A", "type": "Entity"}'
+    create_concept '{"name": "B", "type": "Entity"}'
+    create_edge '{"source": 1, "target": 2, "relation": "DEPENDS_ON"}'
+    create_claim '{"subject_type":"edge","subject_id":1,"predicate":"strength","assertion":"hard","authority":"implementation","source":"src/a.ts"}'
+    create_claim '{"subject_type":"edge","subject_id":1,"predicate":"strength","assertion":"soft","authority":"product","source":"prd.md"}'
+    create_claim '{"subject_type":"concept","subject_id":1,"predicate":"color","assertion":"blue","authority":"product","source":"a.md"}'
+    create_claim '{"subject_type":"concept","subject_id":1,"predicate":"color","assertion":"red","authority":"legal","source":"b.md"}'
     echo "$INPUT" | brane /mind/claims/conflicts
     ;;
 esac
