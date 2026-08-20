@@ -15,13 +15,29 @@
     },
     "verification": {
       "summary": {
-        "rules_passed": 2,
+        "rules_passed": 3,
         "rules_failed": 0,
         "total_violations": 0
       },
       "rules": [
-        { "name": "cycles", "passed": true, "violations": [], "error": null },
-        { "name": "orphans", "passed": true, "violations": [], "error": null }
+        {
+          "name": "contradictions",
+          "passed": true,
+          "violations": [],
+          "error": null
+        },
+        {
+          "name": "cycles",
+          "passed": true,
+          "violations": [],
+          "error": null
+        },
+        {
+          "name": "orphans",
+          "passed": true,
+          "violations": [],
+          "error": null
+        }
       ]
     }
   },

@@ -231,6 +231,11 @@ Affected (verified against the tree; tc's `deep_match` requires exact key sets a
 | `tests/mind/rules/list/data/{00,01}-*/result.json` | counts `2` and `3` |
 | `tests/mind/init/data/{00,01,02}-*/result.json` | `schema_version: "1.12.0"` |
 | `tests/mind/concepts/delete/data/00-success-delete/result.json` | cascade shape, gains `claims_removed` |
+| `tests/mind/edges/delete/data/00-success-delete/result.json` | result gains `claims_removed` |
+| `tests/calabi/pr-verify/data/{00,01,02}-*/result.json` | `rules_passed` and the enumerated rule list — pr-verify runs every rule through the same path as verify |
+
+`tests/mind/verify/data/02-*` and `tests/calabi/pr-verify/data/03-*` filter to `["cycles"]` and are
+correctly unaffected.
 
 **Rationale**: constitution IV forbids changing tests after review without human approval. These changes
 are mechanical consequences of a version bump and a new built-in, not adjustments to make a failing

@@ -101,8 +101,10 @@ row is returned unchanged, including its original `id` and `created_at`.
 
 Ordering: `rank` descending, then `id` ascending.
 
-With `resolve: true`, `resolved` is `true` and ties at the top rank return **all** tied claims for that
-group (spec 4.2). Resolution performs **no writes** (SC-002).
+With `resolve: true`, `resolved` is `true` and resolution is per `(subject_type, subject_id,
+predicate)` group — **not** a global maximum. Ties at the top rank return **all** tied claims for that
+group (spec 4.2); the list shape carries no per-group flag, so a caller who needs to know a group is
+unresolved asks `/mind/claims/conflicts`. Resolution performs **no writes** (SC-002).
 
 Empty match → `{"claims": [], "count": 0, "resolved": false}` with `status: "success"` (FR-018).
 
@@ -145,6 +147,10 @@ Groups where one subject+predicate carries two or more distinct assertions.
 Tie at top rank → `"resolution": null, "unresolved": true`.
 No conflicts → `{"conflicts": [], "count": 0}`, `status: "success"`.
 Groups are never truncated (spec edge case).
+
+Group ordering: `subject_type` ascending, then `subject_id` ascending, then `predicate` ascending.
+Claims within a group: `rank` descending, then `id` ascending. Edge subjects produce conflict groups
+here even though the built-in `contradictions` rule is concept-only (research D7).
 
 ---
 

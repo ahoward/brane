@@ -48,4 +48,26 @@ case "$TC_CASE_NAME" in
     seed_and_downgrade
     echo "$INPUT" | brane /mind/rules/get
     ;;
+
+  # SC-006, one relation per case: the seed creates all of these before the
+  # downgrade, so each must still be there after the migration runs.
+  04-success-migrate-preserves-custom-rule)
+    seed_and_downgrade
+    echo "$INPUT" | brane /mind/rules/get
+    ;;
+
+  05-success-migrate-preserves-annotations)
+    seed_and_downgrade
+    echo "$INPUT" | brane /mind/annotations/list
+    ;;
+
+  06-success-migrate-preserves-episodes)
+    seed_and_downgrade
+    echo "$INPUT" | brane /mind/episodes/list
+    ;;
+
+  07-success-migrate-preserves-edges)
+    seed_and_downgrade
+    echo "$INPUT" | brane /mind/edges/list
+    ;;
 esac

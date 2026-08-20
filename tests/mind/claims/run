@@ -245,8 +245,158 @@ case "$TC_CASE_NAME" in
   31-success-cascade-prune)
     init_mind
     create_concept '{"name": "Orphan", "type": "Entity"}'
+    # prune only removes concepts whose provenance is ALL stale - a concept with
+    # no provenance at all is never an orphan, so it needs a dead file link.
+    create_provenance '{"concept_id": 1, "file_url": "mind://gone.ts"}'
     create_claim '{"subject_type":"concept","subject_id":1,"predicate":"note","assertion":"unreferenced","authority":"observation","source":"session"}'
     echo '{}' | brane /mind/prune > /dev/null 2>&1
     echo "$INPUT" | brane /mind/claims/list
+    ;;
+  # spec 4.2: resolve must not break a top-rank tie.
+  32-success-list-resolve-tie)
+    init_mind
+    create_concept '{"name": "RefundWindow", "type": "Entity"}'
+    create_authority '{"name":"legal_eu","rank":40,"description":"EU legal constraint"}'
+    create_claim '{"subject_type":"concept","subject_id":1,"predicate":"refund_window","assertion":"14 days","authority":"legal","source":"legal/us.md"}'
+    create_claim '{"subject_type":"concept","subject_id":1,"predicate":"refund_window","assertion":"30 days","authority":"legal_eu","source":"legal/eu.md"}'
+    echo "$INPUT" | brane /mind/claims/list
+    ;;
+
+  # resolve is per subject+predicate, not a global max.
+  33-success-list-resolve-multiple-groups)
+    init_mind
+    seed_refund
+    create_claim '{"subject_type":"concept","subject_id":1,"predicate":"owner","assertion":"billing-team","authority":"product","source":"dna/product/prd.md"}'
+    echo "$INPUT" | brane /mind/claims/list
+    ;;
+
+  # spec 2.3: agreement from two authorities is two claims, not one.
+  34-success-list-agreement-retained)
+    init_mind
+    create_concept '{"name": "Palette", "type": "Entity"}'
+    create_claim '{"subject_type":"concept","subject_id":1,"predicate":"color","assertion":"blue","authority":"product","source":"a.md"}'
+    create_claim '{"subject_type":"concept","subject_id":1,"predicate":"color","assertion":"blue","authority":"legal","source":"b.md"}'
+    echo "$INPUT" | brane /mind/claims/list
+    ;;
+
+  # D4: source is part of the identity tuple. Same assertion, new source = new claim.
+  35-success-create-different-source-is-new-claim)
+    init_mind
+    create_concept '{"name": "RefundWindow", "type": "Entity"}'
+    create_claim '{"subject_type":"concept","subject_id":1,"predicate":"refund_window","assertion":"30 days","authority":"product","source":"dna/product/prd.md"}'
+    echo "$INPUT" | brane /mind/claims/create
+    ;;
+
+  36-success-conflicts-filter-subject)
+    init_mind
+    seed_refund
+    create_concept '{"name": "Palette", "type": "Entity"}'
+    create_claim '{"subject_type":"concept","subject_id":2,"predicate":"color","assertion":"blue","authority":"product","source":"a.md"}'
+    create_claim '{"subject_type":"concept","subject_id":2,"predicate":"color","assertion":"red","authority":"legal","source":"b.md"}'
+    echo "$INPUT" | brane /mind/claims/conflicts
+    ;;
+
+  # Two groups: ordering is subject_type asc, subject_id asc, predicate asc.
+  37-success-conflicts-two-groups)
+    init_mind
+    seed_refund
+    create_concept '{"name": "Palette", "type": "Entity"}'
+    create_claim '{"subject_type":"concept","subject_id":2,"predicate":"color","assertion":"blue","authority":"product","source":"a.md"}'
+    create_claim '{"subject_type":"concept","subject_id":2,"predicate":"color","assertion":"red","authority":"legal","source":"b.md"}'
+    echo "$INPUT" | brane /mind/claims/conflicts
+    ;;
+
+  38-error-predicate-required)
+    init_mind
+    create_concept '{"name": "RefundWindow", "type": "Entity"}'
+    echo "$INPUT" | brane /mind/claims/create
+    ;;
+
+  39-error-authority-required)
+    init_mind
+    create_concept '{"name": "RefundWindow", "type": "Entity"}'
+    echo "$INPUT" | brane /mind/claims/create
+    ;;
+
+  40-error-subject-type-required)
+    init_mind
+    create_concept '{"name": "RefundWindow", "type": "Entity"}'
+    echo "$INPUT" | brane /mind/claims/create
+    ;;
+
+  41-error-subject-id-required)
+    init_mind
+    create_concept '{"name": "RefundWindow", "type": "Entity"}'
+    echo "$INPUT" | brane /mind/claims/create
+    ;;
+
+  # FR-016b: trim runs BEFORE the empty check.
+  42-error-assertion-blank-after-trim)
+    init_mind
+    create_concept '{"name": "RefundWindow", "type": "Entity"}'
+    echo "$INPUT" | brane /mind/claims/create
+    ;;
+
+  # Subject validation must dispatch on subject_type, not always hit concepts.
+  43-error-edge-subject-not-found)
+    init_mind
+    create_concept '{"name": "RefundWindow", "type": "Entity"}'
+    echo "$INPUT" | brane /mind/claims/create
+    ;;
+
+  # D8 trap 1, pinned as a number: 2 concept claims + 1 claim on the cascaded edge.
+  44-success-concept-delete-reports-claims-removed)
+    init_mind
+    create_concept '{"name": "A", "type": "Entity"}'
+    create_concept '{"name": "B", "type": "Entity"}'
+    create_edge '{"source": 1, "target": 2, "relation": "DEPENDS_ON"}'
+    create_claim '{"subject_type":"concept","subject_id":1,"predicate":"refund_window","assertion":"30 days","authority":"product","source":"prd.md"}'
+    create_claim '{"subject_type":"concept","subject_id":1,"predicate":"refund_window","assertion":"14 days","authority":"legal","source":"policy.md"}'
+    create_claim '{"subject_type":"edge","subject_id":1,"predicate":"strength","assertion":"hard","authority":"implementation","source":"src/a.ts"}'
+    echo "$INPUT" | brane /mind/concepts/delete
+    ;;
+
+  45-success-list-filter-subject-type)
+    init_mind
+    create_concept '{"name": "A", "type": "Entity"}'
+    create_concept '{"name": "B", "type": "Entity"}'
+    create_edge '{"source": 1, "target": 2, "relation": "DEPENDS_ON"}'
+    create_claim '{"subject_type":"concept","subject_id":1,"predicate":"note","assertion":"on the concept","authority":"observation","source":"session"}'
+    create_claim '{"subject_type":"edge","subject_id":1,"predicate":"note","assertion":"on the edge","authority":"observation","source":"session"}'
+    echo "$INPUT" | brane /mind/claims/list
+    ;;
+
+  46-error-predicate-too-long)
+    init_mind
+    create_concept '{"name": "RefundWindow", "type": "Entity"}'
+    echo "$INPUT" | brane /mind/claims/create
+    ;;
+
+  47-error-source-too-long)
+    init_mind
+    create_concept '{"name": "RefundWindow", "type": "Entity"}'
+    echo "$INPUT" | brane /mind/claims/create
+    ;;
+
+  48-success-list-limit)
+    init_mind
+    seed_refund
+    echo "$INPUT" | brane /mind/claims/list
+    ;;
+
+  49-error-get-id-required)
+    init_mind
+    echo "$INPUT" | brane /mind/claims/get
+    ;;
+
+  # Conflicts are representable on edges even though the builtin rule is concept-only.
+  50-success-conflicts-edge-subject)
+    init_mind
+    create_concept '{"name": "A", "type": "Entity"}'
+    create_concept '{"name": "B", "type": "Entity"}'
+    create_edge '{"source": 1, "target": 2, "relation": "DEPENDS_ON"}'
+    create_claim '{"subject_type":"edge","subject_id":1,"predicate":"strength","assertion":"hard","authority":"implementation","source":"src/a.ts"}'
+    create_claim '{"subject_type":"edge","subject_id":1,"predicate":"strength","assertion":"soft","authority":"product","source":"prd.md"}'
+    echo "$INPUT" | brane /mind/claims/conflicts
     ;;
 esac

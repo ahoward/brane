@@ -1,0 +1,17 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "subject_id": [
+      {
+        "code": "not_found",
+        "message": "edge not found: 999"
+      }
+    ]
+  },
+  "meta": {
+    "path": "/mind/claims/create",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

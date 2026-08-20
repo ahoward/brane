@@ -92,6 +92,16 @@ case "$TC_CASE_NAME" in
     create_claim '{"subject_type":"concept","subject_id":2,"predicate":"note","assertion":"whatever","authority":"observation","source":"session"}'
     echo '{"name": "high_authority", "description": "Concepts carrying a claim at rank 40 or above", "body": "high_authority[id, name] := *concepts[id, name, _, _, _], *claims[_, '"'"'concept'"'"', id, _, _, auth, _, _], *authorities[auth, rank, _], rank >= 40"}' | brane /mind/rules/create > /dev/null 2>&1
     ;;
+  # D7 scope: the builtin is concept-only. Edge contradictions are real and
+  # visible through /mind/claims/conflicts, but must NOT surface here - an edge
+  # id would be indistinguishable from a concept id in the [id, name] contract.
+  13-success-contradictions-ignores-edge-claims)
+    init_mind
+    create_concepts '[{"name": "A", "type": "Entity"}, {"name": "B", "type": "Entity"}]'
+    create_edges '[{"source": 1, "target": 2, "relation": "DEPENDS_ON"}]'
+    create_claim '{"subject_type":"edge","subject_id":1,"predicate":"strength","assertion":"hard","authority":"implementation","source":"src/a.ts"}'
+    create_claim '{"subject_type":"edge","subject_id":1,"predicate":"strength","assertion":"soft","authority":"product","source":"prd.md"}'
+    ;;
 esac
 
 echo "$INPUT" | brane /mind/rules/query

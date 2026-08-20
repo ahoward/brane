@@ -92,4 +92,21 @@ case "$TC_CASE_NAME" in
     create_authority '{"name":"implementation","rank":100}'
     echo "$INPUT" | brane /mind/claims/list
     ;;
+
+  12-error-rank-required)
+    init_mind
+    echo "$INPUT" | brane /mind/authorities/create
+    ;;
+
+  # Ranks may tie; the list falls back to name ascending.
+  13-success-list-rank-tie-name-asc)
+    init_mind
+    create_authority '{"name":"legal_eu","rank":40,"description":"EU legal constraint"}'
+    echo "$INPUT" | brane /mind/authorities/list
+    ;;
+
+  14-error-name-too-long)
+    init_mind
+    echo "$INPUT" | brane /mind/authorities/create
+    ;;
 esac

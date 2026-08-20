@@ -1,0 +1,44 @@
+{
+  "status": "success",
+  "result": {
+    "authorities": [
+      {
+        "name": "manual",
+        "rank": 100,
+        "description": "Direct human assertion; highest standing"
+      },
+      {
+        "name": "legal",
+        "rank": 40,
+        "description": "Legal or regulatory constraint"
+      },
+      {
+        "name": "legal_eu",
+        "rank": 40,
+        "description": "EU legal constraint"
+      },
+      {
+        "name": "product",
+        "rank": 30,
+        "description": "Product intent"
+      },
+      {
+        "name": "implementation",
+        "rank": 20,
+        "description": "What the code actually does"
+      },
+      {
+        "name": "observation",
+        "rank": 10,
+        "description": "Recorded from experience; non-binding by default"
+      }
+    ],
+    "count": 6
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/authorities/list",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}
