@@ -5,6 +5,7 @@
 import type { Params, Result, Emit } from "../../../lib/types.ts"
 import { success, error } from "../../../lib/result.ts"
 import { open_mind, is_mind_error } from "../../../lib/mind.ts"
+import { cascade_claims } from "../../../lib/claims.ts"
 
 interface DeleteParams {
   id?: number
@@ -12,6 +13,7 @@ interface DeleteParams {
 
 interface DeleteResult {
   deleted: boolean
+  claims_removed: number
 }
 
 export async function handler(params: Params, emit?: Emit): Promise<Result<DeleteResult>> {
@@ -61,6 +63,9 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Delet
 
     const [id, source, target, relation, weight, agent_id] = rows[0]
 
+    // Cascade: claims about this edge go with it
+    const claims_removed = await cascade_claims(db, "edge", [id])
+
     // Delete edge
     await db.run(`
       ?[id, source, target, relation, weight, agent_id] <- [[${id}, ${source}, ${target}, '${relation}', ${weight}, '${agent_id}']]
@@ -70,7 +75,8 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Delet
     db.close()
 
     return success({
-      deleted: true
+      deleted: true,
+      claims_removed
     })
   } catch (err) {
     db.close()

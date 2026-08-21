@@ -1,0 +1,19 @@
+{
+  "status": "success",
+  "result": {
+    "rule": "contradictions",
+    "matches": [
+      {
+        "id": 1,
+        "name": "RefundWindow"
+      }
+    ],
+    "count": 1
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/rules/query",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

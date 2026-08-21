@@ -1,0 +1,15 @@
+{
+  "status": "success",
+  "result": {
+    "name": "custom_rule",
+    "description": "Keep me",
+    "body": "custom_rule[id, name] := *concepts[id, name, _, _, _]",
+    "builtin": false
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/rules/get",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

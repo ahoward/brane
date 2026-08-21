@@ -37,6 +37,14 @@ import { handler as mind_rules_list_handler } from "./handlers/mind/rules/list.t
 import { handler as mind_rules_get_handler } from "./handlers/mind/rules/get.ts"
 import { handler as mind_verify_handler } from "./handlers/mind/verify.ts"
 import { handler as mind_annotations_create_handler } from "./handlers/mind/annotations/create.ts"
+import { handler as mind_claims_create_handler } from "./handlers/mind/claims/create.ts"
+import { handler as mind_claims_get_handler } from "./handlers/mind/claims/get.ts"
+import { handler as mind_claims_list_handler } from "./handlers/mind/claims/list.ts"
+import { handler as mind_claims_delete_handler } from "./handlers/mind/claims/delete.ts"
+import { handler as mind_claims_conflicts_handler } from "./handlers/mind/claims/conflicts.ts"
+import { handler as mind_authorities_create_handler } from "./handlers/mind/authorities/create.ts"
+import { handler as mind_authorities_list_handler } from "./handlers/mind/authorities/list.ts"
+import { handler as mind_authorities_delete_handler } from "./handlers/mind/authorities/delete.ts"
 import { handler as mind_annotations_list_handler } from "./handlers/mind/annotations/list.ts"
 import { handler as mind_annotations_get_handler } from "./handlers/mind/annotations/get.ts"
 import { handler as mind_annotations_delete_handler } from "./handlers/mind/annotations/delete.ts"
@@ -113,6 +121,14 @@ sys.register("/mind/rules/list", mind_rules_list_handler)
 sys.register("/mind/rules/get", mind_rules_get_handler)
 sys.register("/mind/verify", mind_verify_handler)
 sys.register("/mind/annotations/create", mind_annotations_create_handler)
+sys.register("/mind/claims/create", mind_claims_create_handler)
+sys.register("/mind/claims/get", mind_claims_get_handler)
+sys.register("/mind/claims/list", mind_claims_list_handler)
+sys.register("/mind/claims/delete", mind_claims_delete_handler)
+sys.register("/mind/claims/conflicts", mind_claims_conflicts_handler)
+sys.register("/mind/authorities/create", mind_authorities_create_handler)
+sys.register("/mind/authorities/list", mind_authorities_list_handler)
+sys.register("/mind/authorities/delete", mind_authorities_delete_handler)
 sys.register("/mind/annotations/list", mind_annotations_list_handler)
 sys.register("/mind/annotations/get", mind_annotations_get_handler)
 sys.register("/mind/annotations/delete", mind_annotations_delete_handler)

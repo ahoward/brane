@@ -1,0 +1,20 @@
+{
+  "status": "success",
+  "result": {
+    "id": 2,
+    "subject_type": "concept",
+    "subject_id": 1,
+    "predicate": "refund_window",
+    "assertion": "14 days",
+    "authority": "legal",
+    "rank": 40,
+    "source": "legal/policy.md",
+    "created_at": "<timestamp>"
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/claims/get",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

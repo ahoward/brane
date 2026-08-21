@@ -1,7 +1,8 @@
 {
   "status": "success",
   "result": {
-    "deleted": true
+    "deleted": true,
+    "claims_removed": 0
   },
   "errors": null,
   "meta": {

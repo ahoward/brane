@@ -1,0 +1,8 @@
+{
+  "subject_type": "edge",
+  "subject_id": 1,
+  "predicate": "strength",
+  "assertion": "hard",
+  "authority": "implementation",
+  "source": "src/a.ts"
+}

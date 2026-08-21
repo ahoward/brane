@@ -1,0 +1,5 @@
+{
+  "name": "contradictions",
+  "description": "hijack",
+  "body": "contradictions[id, name] := *concepts[id, name, _, _, _]"
+}

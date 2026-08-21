@@ -1,0 +1,26 @@
+{
+  "status": "success",
+  "result": {
+    "claims": [
+      {
+        "id": 2,
+        "subject_type": "edge",
+        "subject_id": 1,
+        "predicate": "note",
+        "assertion": "on the edge",
+        "authority": "observation",
+        "rank": 10,
+        "source": "session",
+        "created_at": "<timestamp>"
+      }
+    ],
+    "count": 1,
+    "resolved": false
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/claims/list",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}
