@@ -8,6 +8,12 @@ import { resolve } from "node:path"
 import { existsSync, rmSync } from "node:fs"
 import { CozoDb } from "../../lib/cozo"
 import { EMBED_DIM } from "../../lib/embed.ts"
+import {
+  CLAIMS_RELATION,
+  AUTHORITIES_RELATION,
+  CONTRADICTIONS_RULE,
+  seed_authorities
+} from "../../lib/claims.ts"
 
 interface InitParams {
   force?:      boolean
@@ -20,7 +26,7 @@ interface InitResult {
   schema_version: string
 }
 
-const SCHEMA_VERSION = "1.12.0"
+const SCHEMA_VERSION = "1.13.0"
 
 //
 // Built-in rules for graph integrity checks
@@ -39,7 +45,8 @@ reachable[x, y] := *edges[_, x, z, 'DEPENDS_ON', _, _], reachable[z, y]`,
     description: "Detects concepts with no edges (disconnected)",
     body: `orphans[id, name] := *concepts[id, name, _, _, _], not *edges[_, id, _, _, _, _], not *edges[_, _, id, _, _, _]`,
     builtin: true
-  }
+  },
+  CONTRADICTIONS_RULE
 ]
 
 //
@@ -192,7 +199,16 @@ const SCHEMA_QUERIES = [
     =>
     access_count: Int default 0,
     last_accessed: String default ""
-  }`
+  }`,
+
+  // Claims - assertions about a concept or edge, made under an authority
+  // tier, from a source. Competing claims coexist; contradiction is data.
+  // All 8 columns are the key, so :rm needs the full row.
+  CLAIMS_RELATION,
+
+  // Authority registry - strict about authority, loose about vocabulary.
+  // rank is joined at read time, never copied onto a claim.
+  AUTHORITIES_RELATION
 ]
 
 //
@@ -263,6 +279,9 @@ async function create_schema(db: CozoDb): Promise<void> {
       :put rules { name, description, body, builtin }
     `)
   }
+
+  // Seed the default authority tiers
+  await seed_authorities(db)
 
   // Seed default lens
   await db.run(`

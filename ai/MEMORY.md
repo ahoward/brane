@@ -342,9 +342,20 @@ Fowler's spec machine. Four gaps close it: claims+authority (#113), promotion ga
 - Conflict comparison is trim-then-exact and **case-sensitive** — case folding would silently hide
   conflicts, which is the failure this feature exists to prevent.
 
-**Gotcha:** the built-in `contradictions` Datalog rule positionally matches the 8-column `claims`
-arity. Any feature adding a claims column (e.g. #114's binding flag) must update the rule body in the
-same migration.
+**Gotchas found while implementing #113:**
+
+- The built-in `contradictions` Datalog rule positionally matches the 8-column `claims` arity. Any
+  feature adding a claims column (e.g. #114's binding flag) must update the rule body in the same
+  migration.
+- **CozoDB string literals use backslash escapes, not SQL doubling.** `'it''s'` is a parse error;
+  `'it\\'s'` is correct. `src/handlers/mind/rules/create.ts` had been doing it the SQL way since it
+  was written — any rule body containing an apostrophe silently failed to save. Fixed via
+  `esc_cozo()` in `src/lib/mind.ts`; use it for every interpolated string. Query parameters (`$val`)
+  also work and avoid the question entirely.
+- `/mind/provenance/create` validates the file against body.db, so tests that need *stale* provenance
+  must add the body row, create the link, then delete the row (see `tests/mind/prune/run`).
+- `prune` only removes concepts whose provenance is **entirely** stale. A concept with no provenance
+  at all is never an orphan and is never pruned.
 
 ---
 
@@ -358,3 +369,4 @@ same migration.
 | 2026-01-28 | Multi-platform compilation working. src/lib/cozo.ts + CI workflow. |
 | 2026-08-19 | Spec machine reframe (#112). vision-spec-machine.md v4.0. 067-claim-authority spec + plan (PR #117). |
 | 2026-08-19 | Antagonist changed from Gemini CLI to Fable subagent. Constitution 1.0.0 → 1.1.0. |
+| 2026-08-21 | 067-claim-authority implemented. mind.db schema v1.13.0. Cozo escaping bug found and fixed. |

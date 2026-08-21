@@ -95,7 +95,7 @@ The hippocampus: 3 verbs, dual-write graph + audit trail, trust tiers. The agent
 
 Vision: `dna/product/vision-spec-machine.md` (v4.0). Closing the 30% gap between "memory for agents" and Fowler's spec machine.
 
-- [ ] `067-claim-authority` — First-class claims carrying authority tier + source; contradiction as data ([#113](https://github.com/ahoward/brane/issues/113)) — spec + plan + tasks in review ([PR #117](https://github.com/ahoward/brane/pull/117)); antagonist review by Fable next
+- [x] `067-claim-authority` — First-class claims carrying authority tier + source; contradiction as data ([#113](https://github.com/ahoward/brane/issues/113), [PR #117](https://github.com/ahoward/brane/pull/117))
 - [ ] `068-promotion-gate` — Observation → requirement promotion with human ratification ([#114](https://github.com/ahoward/brane/issues/114))
 - [ ] `069-regeneration-spike` — **Keystone**: regenerate from graph → test → feed failures back ([#115](https://github.com/ahoward/brane/issues/115))
 - [ ] `070-production-teacher` — Ingest prod traces / incidents / evals as evidence ([#116](https://github.com/ahoward/brane/issues/116))
@@ -113,6 +113,7 @@ Vision: `dna/product/vision-spec-machine.md` (v4.0). Closing the 30% gap between
 
 | Feature | PR | Date |
 |---------|-----|------|
+| `067-claim-authority` | #117 | 2026-08-21 |
 | `102-109-hippocampus-v2` | #110 | 2026-05-30 |
 | `058-status-dashboard` | #81 | 2026-03-27 |
 | `057-cli-ingest-sessions` | #80 | 2026-03-27 |
@@ -194,3 +195,4 @@ Vision: `dna/product/vision-spec-machine.md` (v4.0). Closing the 30% gap between
 - **032-corpus complete!** — Adversarial test material: surveillance, dark patterns, COPPA violations, alignment-washing
 - **049-schema-migrations complete!** — Versioned mind.db upgrades with backup/restore, Gemini-reviewed
 - **053-fuzzy-dedup complete!** — Length-scaled Levenshtein prevents false matches on short concept names
+- **067-claim-authority complete!** — Claims carry authority tier + source; contradiction is data. Schema v1.13.0, `contradictions` built-in rule, Fable-reviewed (2 rounds, 3 blockers), 432 tests
