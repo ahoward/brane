@@ -1,12 +1,14 @@
 # Brane: The Regenerative Specification Substrate
 
-**Version:** 4.0
-**Date:** 2026-08-19
+**Version:** 4.1
+**Date:** 2026-08-24 (v4.0: 2026-08-19)
 **Supersedes framing of:** `vision.md` (v3.0, "The Subjective Linter") — which is now
 understood as the *validation arm* of the system described here.
 **Origin:** Chad Fowler, "The Specification Is Not a Document"
 (https://aicoding.leaflet.pub/3mtgs36dnq22o); reframe tracked in
 [#112](https://github.com/ahoward/brane/issues/112).
+**Corrected by:** `series-review-phoenix-architecture.md` — v4.0 was written from that one article.
+It is #22 of 26 in a series whose thesis starts a year earlier. v4.1 folds in the correction.
 
 ---
 
@@ -113,7 +115,23 @@ observations become **intent**. Brane is the durable middle that survives all th
 
 ---
 
-## What Brane Already Is (the 70%)
+## Scored Against the Four Phoenix Primitives
+
+Fowler: *"The architecture of a regenerative system is defined entirely by what you can't delete."*
+He names four non-deletable primitives. v4.0 measured brane against one of them.
+
+| Primitive | brane | State |
+|---|---|---|
+| Behavioral specification (the *generative source*) | concepts, edges, claims (#113) | Partial, and inverted — brane's graph *describes* code that exists; Fowler's spec *drives* code that does not |
+| Evaluations (runnable contracts on the running system) | — | Missing (see the v4.1 correction above) |
+| Context boundary (contracts neighbors depend on) | — | Absent; unrepresented and untracked before this review |
+| Provenance record (causal: *which requirement demanded this*) | file→concept→edge, episodes, claims | Strongest, but attributive rather than causal |
+
+**Roughly 1.5 of 4 on primitives.** The "70%" below is real but it measures *infrastructure* — graph,
+storage, query, provenance plumbing. Infrastructure is genuinely there. It is not the same as holding
+the four things you cannot delete.
+
+## What Brane Already Is (the 70% — of infrastructure)
 
 | Spec-machine requirement | brane primitive |
 |---|---|
@@ -125,10 +143,31 @@ observations become **intent**. Brane is the durable middle that survives all th
 | observation accumulation | episodes → consolidate → concepts, auto-tagging |
 | queryable, not readable | `ask` / context-query / graph-explore (#015/#027) |
 
+## Brane's Own Deletion Test
+
+> *"If I deleted this codebase and regenerated it from scratch, what would I rely on to decide whether
+> the result was correct?" If your honest answer is "the old code," you have a problem.*
+> — The Deletion Test
+
+**Brane's honest answer today is the tc suite, not mind.db.** 432 language-agnostic cases bound to the
+sys.call boundary, written before the implementation and locked against it by antagonistic review.
+That is very close to what Fowler calls a durable evaluation, and brane has been practicing the
+discipline since `000-harness` without naming it.
+
+This is both the indictment and the opening: the asset exists, it just is not in the graph.
+
 ## The Gap (the 30% that makes it *the* spec machine)
 
+0. **Extraction emits the wrong kind of knowledge.** `AuthService DEPENDS_ON TokenStore` is
+   *descriptive* — regenerating from it yields nothing the code did not already say. Regeneration
+   needs *normative* content ("retries must be idempotent, because incident #4471"). #113 built the
+   container; nothing produces it yet. The "knowledge emerges from the work" advantage does not
+   currently extend to the only content that makes regeneration possible.
+
 1. **Claim + authority model** — claims carrying authority tier and source; contradiction
-   representable as data.
+   representable as data. ✅ Shipped (#113). Note: this implemented authority as *standing* (who
+   asserts, ranked). Fowler also uses authority as *jurisdiction* (which component is allowed to
+   decide what) — unmodelled, and it should inform #114.
 2. **Observation → requirement promotion** — the human-ratification gate.
 3. **Regeneration + consequences** — generate from the graph, test, feed failures back.
    The keystone. Also the research risk: this is where MDA/IP failed, and brane only
