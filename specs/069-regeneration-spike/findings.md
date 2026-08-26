@@ -2,7 +2,12 @@
 
 **Issue:** [#115](https://github.com/ahoward/brane/issues/115) — the keystone spike
 **Date:** 2026-08-25
-**Verdict:** The loop round-trips. **But the graph was not what made it work**, and that is the finding.
+**Verdict:** The loop round-trips — twice, under two difficulty settings. **But the graph was not the
+only thing making it work**, and the second run showed exactly what the graph does not carry.
+
+- **Round 1** — delete the module, keep everything that imports it. **430 / 432.**
+- **Round 2** — delete the module *and* every trace of its integration. **429 / 432**, three stable
+  failures, one of which is the scar-tissue bug round 1 got for free.
 
 ---
 
@@ -178,20 +183,147 @@ content that made this regeneration possible. That gap is the single most import
 
 ---
 
+---
+
+# Round 2: delete the importers too
+
+Round 1's biggest caveat was that seven surviving files still imported the deleted module, handing the
+regenerator the exact export surface for free. Round 2 removes that.
+
+## Setup
+
+Every file `067-claim-authority` touched was reverted to the pre-feature commit — `init.ts`,
+`migrate.ts`, `mind.ts`, `prune.ts`, `extract.ts`, both delete handlers, `index.ts`, `cli/main.ts`,
+`rules/create.ts` — and all eleven added files deleted. **Zero occurrences of "claim" remained in
+`src/`.** The codebase built clean at 156 modules: a coherent system with no trace of the feature.
+
+Two consequences worth noting up front:
+
+- `esc_cozo()` ceased to exist, and `rules/create.ts` went back to its SQL-doubling escaping bug. The
+  accident that saved round 1 was undone.
+- The oracle was sealed properly this time. Round 1 left 32 fixtures and run scripts visible that
+  mention the feature — including `rules/get/data/05`, which contains the exact multi-line rule body
+  the regenerator was supposed to derive. It reported not opening them, but they should not have been
+  reachable. Round 2 moved all of them out.
+
+Same 102-claim graph. Harder task: the regenerator now had to work out *where* things wire in.
+
+## Results
+
+**Build:** clean, 167 modules. **Oracle: 429 / 432** — three stable failures across three runs (a
+fourth, `mind/edges/get/01`, was flaky and appeared in one run of three).
+
+| Suite | Result |
+|---|---|
+| `mind/claims` (52) | 52 / 52 |
+| `mind/authorities` (15) | 15 / 15 |
+| `mind/migration` (8) | 7 / 8 |
+| `mind/rules/get` | 1 failure |
+| `mind/rules/query` | 1 failure |
+
+Two failures are the same rule-body whitespace as round 1.
+
+**The third is prediction #1, fired.** `mind/rules/query/12` — the case that creates a user-defined
+rule whose body contains `'concept'` — fails with a Cozo parse error, because `rules/create.ts` is
+back to `.replace(/'/g, "''")`.
+
+## What round 2 actually showed
+
+**1. The graph carried the integration.** This was the open question and the answer is yes. With
+nothing in the codebase referencing the feature, the regenerator located every wiring point:
+`SCHEMA_QUERIES` and `BUILTIN_RULES` in `init.ts`, the migration chain tail in `migrate.ts`,
+`BUILTIN_RULE_NAMES` in `mind.ts`, the four cascade sites, and all eight `sys.register` calls. It
+worked them out from the `path`, `SchemaMigration`, `ClaimCascade` and `ContradictionsRule` claims.
+
+It also derived two things the graph only gestured at: that built-in protection needed *only* the
+constant (because `rules/create` and `rules/delete` already consume it), and that `verify`,
+`rules/query` and `pr-verify` need no changes at all because they read the `rules` relation
+dynamically. Both correct.
+
+**2. The scar tissue was re-derivable — but its scope was not.** The regenerator independently
+discovered that the repo's escaping convention is broken. It tested Cozo's parser empirically, found
+`'it''s'` rejected, and switched its own module to bound query parameters (`$name`) — arguably a better
+fix than the original's `esc_cozo`.
+
+Then it deliberately left the pre-existing bug in `rules/create.ts` alone, "rather than widen the blast
+radius." Entirely reasonable, and the oracle failed anyway.
+
+So the knowledge was recoverable from first principles by experiment. What was *not* recoverable was
+that this bug and the claims feature are connected at all — that a user-defined rule joining `*claims`
+needs quoted literals, so shipping claims means fixing rules/create. Nothing in the graph links them,
+because that link exists only in the history of how the feature was built.
+
+That is a sharper version of the round-1 finding. Round 1: the knowledge survived by luck of factoring.
+Round 2: the knowledge was re-derivable, but the *obligation* was not.
+
+**3. Two runs, two different silent divergences.** Re-running the nine uncovered-behavior probes:
+
+| Probe | Original | Round 1 | Round 2 |
+|---|---|---|---|
+| `subject_type: " concept"` | accepted | **rejected** | accepted |
+| resolve, tie with identical assertions | 1 claim | 1 claim | **2 claims** |
+| other seven | — | match | match |
+
+Different regenerations of the same graph diverged in different places, and the 432-case oracle caught
+neither. The tie case is not even the regenerator's fault: the graph genuinely contradicts itself here.
+`ConflictGroup.tie_unresolved` says a top-rank tie means *no resolution*; `ClaimsList.resolve_tie` says
+it means *return all tied claims*. Both were implemented literally, and they disagree about what a tie
+is.
+
+**4. The graph has structural defects the regenerations exposed.**
+
+- `ClaimsGet`, `ClaimsDelete` and `AuthoritiesList` have **no edges at all**. They are unreachable by
+  traversal and were found only by reading the flat concept list. A graph whose nodes cannot be reached
+  from other nodes is a list with extra steps.
+- `AuthorityTier.missing_tier` specifies behavior — null rank, sorts last, never wins — that **no
+  supported sequence of API calls can produce**, because a claim can only be written under a registered
+  tier and a referenced tier cannot be deleted. Both regenerators implemented it; it is dead code.
+- Two claims are attached to the wrong subject (`ClaimsList.no_overwrite` is a property of the relation;
+  `ClaimsConflicts.empty_is_success` is a property of the envelope convention).
+
+**5. One leak I did not seal.** The regenerator got the CLI command names — `brane claim`,
+`brane authority` — from `CLAUDE.md`'s "Recent Changes" line, which I redacted the Claims section of
+but not the changelog entry. **The graph says nothing about a CLI surface.** Without that line the CLI
+would have been pure invention; the flag names were invented anyway. Recording it because the honest
+version of this experiment matters more than a clean number.
+
+## Round 2 by the numbers
+
+- 1,731 lines added across 21 files (vs. #113's original ~1,300 across 20).
+- 21 decisions the graph did not determine (round 1: 29 — fewer, because integration points were
+  *more* determined by the graph than the module internals were).
+- Every integration point found. One surface (CLI) came from a leak. One (`output.ts` formatting) was
+  a pure guess the regenerator flagged as such.
+
+---
+
 ## Recommendations
 
-1. **Do not close #115 as "proven."** It is proven under conditions that supplied three of the four
-   primitives from outside brane. Record the caveat in the issue.
+1. **Do not close #115 as "proven."** Round 2 removed the context-boundary crutch and the loop still
+   closed — that is a stronger result than round 1. But the oracle was still supplied from outside, and
+   both rounds diverged silently in places no test covers. The honest claim is: *regeneration from a
+   claim graph works, and the graph is not sufficient on its own.*
 2. **[#119](https://github.com/ahoward/brane/issues/119) (evaluations) is now the critical path**, not a nice-to-have. The oracle is what made this
    legible, and it lives in `tests/`, not in the graph.
 3. **[#118](https://github.com/ahoward/brane/issues/118) (context boundaries) is load-bearing**, not lower-priority. It was invisibly doing half the
    work here.
-4. **New: claims need a verbatim mode.** Assertions whose exact bytes matter — rule bodies, schemas,
-   regexes, format strings — cannot survive prose transcription. Both test failures came from this.
-5. **New: an extractor that emits claims.** Until something produces normative claims from the work,
+4. **Claims need a verbatim mode** ([#124](https://github.com/ahoward/brane/issues/124)). Assertions whose exact bytes matter — rule bodies, schemas,
+   regexes, format strings — cannot survive prose transcription. Two failures in both rounds.
+5. **An extractor that emits claims** ([#125](https://github.com/ahoward/brane/issues/125)). Until something produces normative claims from the work,
    the graph is hand-fed and the emergence advantage is theoretical.
-6. **Re-run this spike with the boundary removed** — delete the importers too, and make the graph
-   supply the export surface. That is the experiment that would actually test the graph.
+6. ~~Re-run with the boundary removed.~~ **Done — round 2 above.**
+7. **New: claims need to carry obligations that cross feature boundaries.** The escaping bug is the
+   case in point: shipping claims *requires* fixing `rules/create.ts`, and nothing in the graph could
+   say so. A claim can assert a fact about its own subject; it has no way to say "and therefore that
+   other thing must change too." That is the causal-provenance gap ([#121](https://github.com/ahoward/brane/issues/121)) with teeth.
+8. **New: the graph needs connectivity discipline.** Three of fifteen concepts had no edges and were
+   unreachable by traversal. `orphans` already detects this for concepts — it should be a quality gate
+   on any graph intended to drive regeneration.
+9. **New: a contradiction the graph held but nobody noticed.** `tie_unresolved` and `resolve_tie`
+   disagree about what a top-rank tie means. brane shipped `contradictions` in #113 and this pair sat in
+   the graph undetected, because they are claims on *different* subjects with *different* predicates —
+   exactly the shape #113's exact-match detector cannot see. Worth a follow-up on semantic conflict
+   detection, which #113 explicitly deferred.
 
 ---
 
