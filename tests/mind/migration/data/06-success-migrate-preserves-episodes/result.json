@@ -1,0 +1,13 @@
+{
+  "status": "success",
+  "result": {
+    "episodes": "<array:1>",
+    "total": 1
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/episodes/list",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "subject_type": "concept",
+  "subject_id": 999,
+  "predicate": "refund_window",
+  "assertion": "30 days",
+  "authority": "product",
+  "source": "prd.md"
+}

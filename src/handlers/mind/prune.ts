@@ -5,6 +5,7 @@
 import type { Params, Result, Emit } from "../../lib/types.ts"
 import { success, error } from "../../lib/result.ts"
 import { open_mind, is_mind_error } from "../../lib/mind.ts"
+import { cascade_claims } from "../../lib/claims.ts"
 import { resolve_lens_paths } from "../../lib/state.ts"
 import { existsSync } from "node:fs"
 import Database from "bun:sqlite"
@@ -146,6 +147,12 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Prune
 
     // Step 8: Delete (unless dry_run)
     if (!dry_run) {
+      // Claims go with their subjects. prune deletes concepts and edges
+      // directly rather than through the delete handlers, so it has to
+      // cascade claims itself or they outlive what they describe.
+      await cascade_claims(db, "edge", dangling_edges.map(e => e.id))
+      await cascade_claims(db, "concept", [...orphan_ids])
+
       // Delete edges (need all columns including agent_id for :rm)
       if (dangling_edges.length > 0) {
         const edge_data = dangling_edges.map(e => `[${e.id}, ${e.source}, ${e.target}, '${e.relation.replace(/'/g, "''")}', 1.0, '']`).join(", ")

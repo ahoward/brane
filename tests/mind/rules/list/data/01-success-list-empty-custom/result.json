@@ -3,6 +3,11 @@
   "result": {
     "rules": [
       {
+        "name": "contradictions",
+        "description": "Detects concepts carrying competing claims (contradiction)",
+        "builtin": true
+      },
+      {
         "name": "cycles",
         "description": "Detects circular dependencies via DEPENDS_ON edges",
         "builtin": true
@@ -13,7 +18,7 @@
         "builtin": true
       }
     ],
-    "count": 2
+    "count": 3
   },
   "errors": null,
   "meta": {

@@ -1,0 +1,17 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "predicate": [
+      {
+        "code": "required",
+        "message": "predicate is required"
+      }
+    ]
+  },
+  "meta": {
+    "path": "/mind/claims/create",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

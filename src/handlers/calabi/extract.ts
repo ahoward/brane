@@ -5,6 +5,7 @@
 import type { Params, Result, Emit } from "../../lib/types.ts"
 import { success, error } from "../../lib/result.ts"
 import { open_mind, is_mind_error, is_valid_concept_type, is_valid_edge_relation, get_next_concept_id, get_next_edge_id } from "../../lib/mind.ts"
+import { cascade_claims } from "../../lib/claims.ts"
 import { file_exists_in_body } from "../../lib/body.ts"
 
 interface ConceptInput {
@@ -325,6 +326,14 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Extra
       if (is_caveat) {
         continue
       }
+
+      // Claims about this concept and its edges go with them - re-extraction
+      // replaces the concept, so anything asserted about the old one is stale.
+      const claim_edge_ids = await db.run(`
+        ?[id] := *edges[id, source, target, _, _, _], source = ${old_id} or target = ${old_id}
+      `)
+      await cascade_claims(db, "edge", (claim_edge_ids.rows as number[][]).map(r => r[0]))
+      await cascade_claims(db, "concept", [old_id])
 
       // Remove edges where this concept is source
       const source_edges = await db.run(`

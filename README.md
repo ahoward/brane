@@ -229,6 +229,7 @@ bun run repl          # interactive mode
 ## more
 
 - [dna/product/ROADMAP.md](dna/product/ROADMAP.md) — what's next
+- [dna/product/vision-spec-machine.md](dna/product/vision-spec-machine.md) — where this is going: brane as the regenerative specification substrate
 - [dna/product/prd.md](dna/product/prd.md) — full PRD
 - [.specify/memory/constitution.md](.specify/memory/constitution.md) — project principles
 
