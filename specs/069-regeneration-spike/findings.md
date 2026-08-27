@@ -8,6 +8,9 @@ only thing making it work**, and the second run showed exactly what the graph do
 - **Round 1** — delete the module, keep everything that imports it. **430 / 432.**
 - **Round 2** — delete the module *and* every trace of its integration. **429 / 432**, three stable
   failures, one of which is the scar-tissue bug round 1 got for free.
+- **Round 3** — same as round 2, plus the scar-tissue *obligation* encoded as nine claims.
+  **430 / 432.** The targeted failure is gone. Encoding the obligation recovered exactly the test it
+  was aimed at.
 
 ---
 
@@ -294,6 +297,86 @@ version of this experiment matters more than a clean number.
   *more* determined by the graph than the module internals were).
 - Every integration point found. One surface (CLI) came from a leak. One (`output.ts` formatting) was
   a pure guess the regenerator flagged as such.
+
+---
+
+# Round 3: encode the obligation
+
+Round 2's third failure was `rules/query/12`: the regeneration could not know that shipping claims
+requires fixing an unrelated file's Cozo escaping. That became [#128](https://github.com/ahoward/brane/issues/128) — *claims cannot express
+cross-cutting obligations*. Round 3 is that issue's acceptance fixture.
+
+## Setup
+
+Identical to round 2, plus nine claims across two new concepts:
+
+- **`CozoStringEscaping`** (a `Caveat`) — the rule itself, the bound-parameter alternative, the blast
+  radius, how the failure presents, and why it went unnoticed. Authority `implementation`, sourced to
+  the incident.
+- **`RulesCreateHandler`** — the file, the defect, the **obligation** ("shipping the claims feature
+  REQUIRES correcting this handler… regenerating claims without fixing rules/create leaves a failing
+  system") at authority `manual` rank 100, and a verification criterion.
+
+Edges connect `CozoStringEscaping` into the feature's dependency closure. One leak from round 2 was also
+sealed: `CLAUDE.md`'s changelog line, which had named the CLI surface.
+
+## Result: 430 / 432
+
+Only the two rule-body whitespace failures remain (#124). **`rules/query/12` passes.**
+
+| | R1 | R2 | R3 |
+|---|---|---|---|
+| module deleted | yes | yes | yes |
+| importers deleted | no | yes | yes |
+| obligation encoded | no | no | **yes** |
+| rule-body whitespace (#124) | fail ×2 | fail ×2 | fail ×2 |
+| escaping (`rules/query/12`) | pass *by accident* | **fail** | **pass** |
+| total | 430/432 | 429/432 | **430/432** |
+
+That is a controlled result across three conditions: the failure appears when the accidental survivor is
+removed and disappears when the obligation is stated. **A claim graph can carry a cross-cutting
+obligation** — using nothing but #113's existing primitives.
+
+## What it actually took
+
+The regenerator found the obligation, verified it independently before trusting it (it reproduced
+`'it''s'` → *"The query parser has encountered unexpected input"* against a live database rather than
+taking the claim's word), fixed `rules/create.ts`, and satisfied the stated verification criterion end
+to end.
+
+It reported **very high confidence** that acting outside the feature's own files was in scope, and gave
+its reasons: the claim is rank 100 `manual`, it is phrased as a precondition of shipping, it names the
+exact file, it carries its own verification criterion, and `CozoStringEscaping` is edge-connected into
+the feature rather than merely adjacent to it.
+
+So authority did real work here. The rank-100 tier is what made an out-of-scope edit feel sanctioned
+rather than presumptuous — which is #113's model earning its keep in a way the spec never anticipated.
+
+## The finding nobody was looking for
+
+The same regenerator then read the *rank-20* `blast_radius` claim — "every code path that interpolates a
+user-supplied string into a Cozo query must be corrected" — and deliberately declined to act on it,
+noting it would mean a 20-file drive-by in the middle of a controlled experiment. Correct call. But it
+counted the remaining sites and flagged them.
+
+Checked against `main`: **54 SQL-doubling sites across 24 files, and it is a live bug.**
+
+```
+echo '{"name":"O'\''Reilly Auth","type":"Entity"}' | brane /mind/concepts/create
+→ error: failed to create concept
+```
+
+You cannot name a concept `O'Reilly`. Same for annotation text, episode observations, provenance URLs,
+lens descriptions. #113 found this class in `rules/create.ts`, added `esc_cozo()`, and fixed exactly one
+call site.
+
+**Not one of 432 test cases contains an apostrophe.** A bug that breaks most English prose passes a
+suite we consider a durable evaluation — in a system whose pitch is ingesting prose. Filed as
+[#131](https://github.com/ahoward/brane/issues/131).
+
+That is the round-3 lesson, and it is not about claims at all: **the oracle has a blind spot shaped like
+its own test data.** The Deletion Test measures what the graph does not know. It cannot measure what the
+oracle does not check.
 
 ---
 
