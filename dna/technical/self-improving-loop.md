@@ -1,13 +1,20 @@
 # The Self-Improving Loop
 
 **Date:** 2026-08-27
-**Status:** Design sketch, grounded in three completed runs of the Deletion Test (#115)
-**Short version:** the Deletion Test is not an experiment we ran. It is one step of a training loop we
-ran by hand, three times, and the loss went down when we expected it to.
+**Status:** v2. Written independently, then posed to grok as an independent design question; this
+version is the synthesis. Two of v1's central claims did not survive.
+**Short version:** the loop is buildable and worth testing, but **nothing in the three rounds is
+evidence that it compounds**, and v1's proposed optimisation target is gameable in one cycle. The
+honest state is: a promising mechanism with an untested core, and a cheap experiment that would kill it.
+
+**Where the two designs converged** (independent, so worth weighting): transfer is the decisive test;
+the oracle's blind spot is the top failure mode; probes must not be authored by the regenerator; #119
+(evaluations in the graph) is the hard prerequisite; #125 (an extractor that emits claims) is what makes
+"emerges from the work" true or false; do not close #115 as proven.
 
 ---
 
-## 1. The loop already happened
+## 1. The shape of it
 
 Look at what we actually did over the last two days, stripped of narrative:
 
@@ -21,16 +28,31 @@ Look at what we actually did over the last two days, stripped of narrative:
 | Delete and regenerate again | forward pass |
 | 429 → 430, targeted failure eliminated | loss decreased |
 
-That is a training loop. The graph is the parameter set, the oracle is the loss function, and a claim is
-the unit of update. We did three steps of it manually and got a clean causal result: remove the
-accidental survivor and the failure appears; state the obligation and it disappears.
+That has the *shape* of a training loop. The graph is the parameter set, the oracle is the loss
+function, and a claim is the unit of update.
 
-The self-improving system is not a new idea to invent. It is this, automated, with two things added
-that we did by hand and by luck.
+> **v1 called this "three steps of a training loop and the loss went down." That overstates it, and the
+> independent review was right to say so.**
+>
+> - **R1 and R2 used the same 102 claims.** The graph did not change between them. What changed was the
+>   surrounding code. And behaviour *diverged* silently between the two runs on two probes. Same
+>   parameters, different output — that is variance, not learning.
+> - **R3 added a claim and recovered the test that claim was aimed at.** Specifications have always done
+>   that. It demonstrates that a written requirement works, not that anything accumulated.
+> - **The 29 → 21 → 22 drop in undetermined decisions is not a learning curve.** The findings doc says
+>   why in its own text: fewer in R2 *because the integration points were more determined by the graph
+>   than the module internals were*. Different task, not a better graph.
+>
+> **The category error underneath v1:** the Deletion Test is a **diagnostic**. It finds holes. v1 turned
+> the hole it found into the training target and then reported that the target was hit. In ML terms that
+> is evaluating on the training set. A training signal has to be out-of-sample; R3's was not.
+
+So the loop is a thing you could build. It is not a thing we have evidence for. Everything below is
+written to find out which.
 
 ---
 
-## 2. The gradient is better than the loss
+## 2. The signal — and why v1's was the wrong one
 
 The obvious signal is test failures. It is also the weaker one.
 
@@ -49,8 +71,27 @@ Free variables matter more than failures because:
 - **They are the actual quantity of interest.** A specification's job is to determine the
   implementation. Free variables are precisely the extent to which it fails to.
 
-So the loop's objective function is not "make the tests pass." It is **minimise free variables subject
-to the tests passing.** Tests are a constraint; determinism is the objective.
+> **v1 proposed minimising free variables as the objective. That is wrong and the review dismantled it
+> cleanly:**
+>
+> - **The regenerator writes the list.** Minimise it by listing fewer items, guessing more confidently,
+>   or emitting a claim per guess and declaring it determined. Gameable in one cycle.
+> - **The oracle caught 0 of 29** (one surfaced only via a hand-written probe). So the count is
+>   uncorrelated with the thing we actually care about.
+> - **Some free variables should stay free.** First-error-wins vs. error accumulation is a
+>   constitution-level convention (Principle II), not a fact about claims. Encoding it as a claim
+>   pollutes the graph with global style. Helper names and factoring are design freedom; claiming them
+>   ossifies one run's arbitrary choice as law.
+>
+> **The replacement objective: cross-regenerator agreement on a held-out probe set.** Run N independent
+> regenerations from the same graph and measure pairwise behavioural agreement on probes the
+> regenerator never sees. That is not self-reported, not gameable by the writer, and it measures the
+> property we actually want — *does the graph determine the implementation?*
+>
+> The free-variable list survives as a **generator of candidate probes**, which is a genuinely good use
+> for it. It just cannot be the loss.
+
+So: **maximise cross-regenerator agreement on held-out probes, subject to the tests passing.**
 
 ---
 
@@ -108,7 +149,18 @@ Round 2 and round 3 used the same model, the same prompt, and the same task. One
 the outcome. **The improvement was in the environment, not the agent.**
 
 What the graph provides is not reasoning. It is *retrieved constraint*: knowledge the model would
-otherwise have to rediscover, guess, or get wrong. That is a weaker claim than "self-improving AI" and
+otherwise have to rediscover, guess, or get wrong.
+
+The review sharpened this in a way worth keeping. In round 2, **the regenerator re-derived the Cozo
+escaping rule on its own** — tested the parser against a live database, found the doubling broken,
+switched its own module to bound parameters — and then declined to fix `rules/create.ts`. In round 3 the
+same knowledge, written as a rank-100 claim, made it act.
+
+So the graph did not supply the *knowledge*. The agent already had it. The graph supplied the **duty**.
+That is a narrower and much more interesting function than "memory for agents": the substrate's job is
+less to tell the model things it cannot work out, and more to tell it **which of the things it can work
+out it is obliged to act on.** Authority is the mechanism, which is why #113's tier model did real work
+here. That is a weaker claim than "self-improving AI" and
 a much more defensible one — and it is also the more useful one commercially, because retrieved
 constraint transfers across model versions while fine-tuned reasoning does not.
 
@@ -124,92 +176,151 @@ its own module, the graph is a pile of per-module notes with extra ceremony.
 
 ## 5. How to test it
 
-Six experiments, ordered by cost. Each has a prediction and a falsifier, because a loop you cannot
-falsify is a belief system.
+Eight experiments. The first two are cheap and either of them can kill the idea; run those before
+building anything. Ordering matters more than completeness here.
 
-### E1 — Convergence
+### A — Flat-markdown control: is the *graph* doing anything?
 
-Run the loop N times on one module, writing claims from the free-variable list each round.
+**The cheapest possible falsifier, and v1 missed it entirely.**
 
-- **Measure:** free variables per round; test failures per round; claims added per round.
-- **Predict:** free variables fall steeply, then plateau at *irreducible* ambiguity — genuine design
-  freedom the spec should not remove (field ordering, internal factoring).
-- **The interesting number is the plateau height,** not the slope. It is the floor of how determined a
-  specification can make an implementation, and nobody knows what it is.
-- **Falsified if:** the plateau is immediate, or free variables do not fall at all.
+Take the same 102 assertions as a numbered markdown list — no concepts, no edges, no authority tiers, no
+database. Run the identical R2 protocol.
 
-### E2 — Ablation (claim yield)
+- **Predict, if structure matters:** the graph wins on integration discovery and on obligation-following;
+  authority rank changes how willing the regenerator is to act out of scope.
+- **Predict, if boring:** the numbers match. There is already evidence for this — three of fifteen
+  concepts had no edges at all and were found by reading the flat concept list, which means the dump was
+  functioning as a list for at least part of the run.
+- **Falsifier for "substrate, not document":** markdown ≈ graph dump.
 
-For each claim in the graph, remove it and regenerate.
+Costs one regeneration run. If it fails, everything downstream is about writing better specs, not about
+building a substrate — which is still a real result, just a different product.
 
-- **Measure:** which tests break, which free variables reappear. That is the claim's *yield*.
-- We ran one of these by accident: R2 vs R3 is a single-claim-cluster ablation with a clean result.
-- **Use:** yield ranks claims. Zero-yield claims are candidates for deletion — this is the compaction
-  discipline (#122) applied to the graph itself, with a number attached.
-- **Falsified if:** yields are uniformly near zero, meaning the graph is decorative.
+### B — Transfer: the compounding test
 
-### E3 — Transfer (**the important one**)
+Both designs independently landed on this as decisive.
 
-Learn on module A, evaluate on module B.
+The escaping knowledge was learned while regenerating **claims**. It applies to 24 files. So: delete
+`concepts/create.ts` (a writer that interpolates, unrelated to claims) and regenerate.
 
-- Train the graph by looping on `claims`. Then, *without adding anything module-specific*, regenerate
-  `episodes` or `annotations`.
-- **Measure:** free variables and failures on B, versus a control run against a graph that never saw A.
-- **Predict:** convention-level and engine-level claims (escaping, id allocation, envelope shape,
-  all-key `:rm`) transfer strongly; domain claims do not transfer at all.
-- **This is the test of the "heterogeneous tasks" hypothesis.** If transfer is zero, the whole
-  compounding story collapses and brane is a documentation tool.
-- **Falsified if:** B's numbers are indistinguishable from control.
+- **Conditions:** G2 (102 claims, no escaping obligation) · G3 (with it) · **G3-ablated** (escaping
+  concepts kept, all claims-feature concepts removed — this is the one that separates portable
+  constraint from feature documentation).
+- **Probe:** can you create a concept named `O'Reilly`?
+- **Predict, if compounding is real:** G3 and G3-ablated produce a correct writer; G2 does not.
+- **Predict, if boring:** the regenerator treats blast-radius as out of scope again and `O'Reilly` still
+  fails — which is *exactly what round 3 actually did* when it read the rank-20 blast-radius claim and
+  declined to act.
+- **Falsifier:** G3 does not beat G2 on a held-out writer. Then a claim is documentation of its own
+  feature and the graph does not compound.
 
-### E4 — Held-out oracle (anti-Goodhart)
+Run A and B before writing any loop infrastructure.
 
-Split the 432 cases. Loop against half. Score on the other half, never shown to the loop.
+### C — Stability, not pass rate
 
-- **Measure:** the gap between training-half and held-out failures.
-- **Predict:** a gap opens, because the loop learns the oracle as well as the domain. The size of the
-  gap is how much of the "improvement" is overfitting.
-- **This is the control that #131 proves we need.** Without it, 430/432 looks like success.
-- **Falsified if:** held-out tracks training exactly — which would be a *good* result and would mean the
-  claims are genuinely general.
+N ≥ 5 independent regenerations from the same graph; measure pairwise behavioural agreement on probes
+the regenerator never sees.
 
-### E5 — Adversarial yield
+- **Baseline already exists and is bad:** R1 and R2 used the same 102 claims and split on two probes.
+- **Predict, if the graph determines behaviour:** agreement rises as claims are added, for the specific
+  behaviours claimed.
+- **Falsifier:** agreement stays flat after adding claims. Then the graph is a hint, not a specification,
+  and accumulation will not tighten implementations.
 
-Run the antagonist each round, rewarded only for defects **outside** the current oracle.
+This replaces v1's free-variable count as the primary metric.
 
-- **Measure:** novel defects per round, and whether they are graph gaps or oracle gaps.
-- Baseline exists: two rounds of Fable produced 3 blockers + 11 should-fixes; one grok pass produced two
-  live bugs (#129, #131).
-- **Predict:** yield decays but does not reach zero, because the antagonist is attacking a moving target.
-- **Falsified if:** yield hits zero early — meaning the antagonist has learned the same blind spots and
-  the loop is now closed in the bad sense.
+### D — Auto-promote vs. human R3
 
-### E6 — The floor test (cheapest, most commercially interesting)
+**The test of whether the *loop* works, as opposed to whether *a person writing a good claim* works.**
 
-Regenerate the same module with a small model and a rich graph, versus a large model and an empty graph.
+Give an automated promoter only the R2 failure (`rules/query/12`) and let it write claims. Regenerate.
+Compare against human-authored R3.
 
-- **Measure:** failures and free variables for {Haiku, Sonnet, Opus} × {no graph, trained graph}.
-- **Predict:** the graph buys more than a model tier does, on tasks where the knowledge is
-  project-specific rather than general.
-- **If true, that is the product.** "Your cheap model plus your graph beats an expensive model without
-  it" is a claim you can put a number on, and it is the strongest possible argument for the substrate.
-- **Falsified if:** model capability dominates and the graph adds noise.
+- **Predict:** the promoter encodes the eval — "query/12 must pass" — or the local handler, rather than
+  a portable caveat about interpolation. It recovers the target and nothing else.
+- **Falsifier for self-improvement:** auto-promoted claims only ever recover the failure that generated
+  them. That is the boring loop, and it is MDA with a robot doing the documenting.
+
+### E — Can the loop find what the oracle cannot?
+
+Hold #129 and #131 out of both graph and oracle. Run detect → propose → gate → regenerate.
+
+- **Predict:** never finds them. The signal is oracle-shaped and both bugs live in its blind spot.
+- **Fairer variant:** add two production-shaped probes (create `O'Reilly`; update then list and assert
+  one row) *without* writing the explanatory claims. If the loop then produces a **portable** caveat that
+  also fixes `edges/update` and `annotations`, that is the first genuine accumulation observed.
+- **Falsifier:** after k cycles both bugs are still live and no claim mentions apostrophes or all-key
+  `:put`. Currently true at k = 0.
+
+### F — Emergence prerequisite
+
+Run the existing extraction pipeline over `specs/067` plus the implementation. Count claims emitted.
+
+- **Predict: zero.** No extractor emits a claim (#125).
+- Not a compounding test. It is the test of whether the structural advantage over MDA exists *at all*.
+  Every other experiment runs on a hand-fed graph and therefore overstates the product.
+
+### G — Loop dynamics: terminate or diverge
+
+M cycles of regenerate → measure → propose at `observation` → human gate → repeat. Per cycle record:
+probe agreement (vs. original and vs. t−1), transfer score, `|claims|`, orphan and dead-claim counts,
+verbatim failures, **fraction of claims at rank 100**, and fraction of new claims that are eval-overfit
+("test N must pass").
+
+- **Terminating well:** agreement ↑, transfer ↑, claim count grows more slowly than determined
+  behaviours, rank distribution stays spread.
+- **Diverging:** targeted evals pass, agreement and transfer flat, **rank inflation** (everything becomes
+  `manual` 100), paraphrase failures persist, dead and orphan claims accumulate.
+- **Kill criterion: if transfer has not moved after three cycles, stop the program.** Early enough to
+  matter.
+
+### H — Heterogeneous reasoning, not regeneration
+
+The user's actual hypothesis is about reasoning across *heterogeneous* tasks, and A–G are all
+regeneration. So: a set of questions that are not "reimplement 067."
+
+> *Can I name a concept `O'Reilly`?* · *Product says 30 days, legal says 14 — who wins, and is the loser
+> still stored?* · *Which files must change to ship claims?* · *What does a top-rank tie mean?*
+
+Conditions: graph retrieval · `CLAUDE.md` · the raw spec files · nothing.
+
+- **Predict, if the substrate improves reasoning:** the graph wins on authority and contradiction
+  questions, and may *lose* on code-local questions until claims exist for them.
+- **Falsifier:** the graph never beats the spec files it was transcribed from. Then it is an index.
+
+### I — The floor test
+
+{Haiku, Sonnet, Opus} × {no graph, trained graph}, same regeneration target.
+
+- **Predict:** on project-specific knowledge, the graph buys more than a model tier does.
+- **If true, that is the product** — "your cheap model plus your graph beats an expensive model without
+  it" is a number you can put on a page. Kept from v1; the review did not propose it and it is cheap.
 
 ---
 
 ## 6. The metric that keeps it honest
 
-One number, tracked every round:
+One ratio, tracked every round:
 
 ```
-compression = free variables eliminated / claims added
+compression = behaviours newly determined (by C's agreement measure) / claims added
 ```
 
-If this stays above ~1, the graph is *learning* — each claim removes more ambiguity than it introduces
-surface. If it falls below 1 and stays there, the graph is *transcribing*: growing into a verbose
-restatement of the implementation, which is the cache-of-a-cache failure and exactly how MDA died.
+v1 used *free variables eliminated* as the numerator; since the regenerator authors that count, it is
+gameable, so the denominator-side concern survives but the numerator must come from cross-regenerator
+agreement on held-out probes instead.
 
-Pair it with total claim count. A loop that drives free variables to zero by writing 10,000 claims has
-not built a specification; it has built an obfuscated copy of the code.
+Above ~1, the graph is learning: each claim pins down more behaviour than it adds surface. Below 1 and
+staying there, the graph is *transcribing* — growing into a verbose restatement of the implementation,
+which is the cache-of-a-cache failure and exactly how MDA died.
+
+**Secondary divergence indicators**, all cheap to compute and all suggested by the review:
+
+- **rank inflation** — the fraction of claims at `manual` 100. If everything becomes maximum authority,
+  authority has stopped carrying information and the promotion gate has failed.
+- **eval-overfit fraction** — new claims that name a test rather than a behaviour.
+- **dead and orphan claims** — unreachable by traversal, or specifying states no API can produce. Both
+  already present in the 102 (`missing_tier` is unreachable; three concepts have no edges).
 
 ---
 
@@ -240,6 +351,11 @@ reason.**
 
 Stated plainly, because the boundary is the most useful part of the design.
 
+- **The most likely killer, and it is detectable today without running anything:** the signal has the
+  same shape as the oracle's test data. `grep -rl "'" tests/` finds no apostrophe in 432 cases;
+  `concepts/update` is never re-read after a write. If the loop's update step is "promote oracle
+  failures into claims," #129 and #131 can never enter the graph. Experiment E measures this; the
+  `grep` predicts it for free.
 - **No mechanical oracle, no loop.** Everything above depends on judging a regenerated artifact without
   a human. Code with tests is the easy case. Prose, design, strategy — no oracle, no gradient, and you
   are back to a wiki. This is precisely Fowler's "consequences" argument and it is the boundary
@@ -253,3 +369,37 @@ Stated plainly, because the boundary is the most useful part of the design.
   freedom. A specification that determines field ordering has stopped being a specification and become
   an implementation, which is the "when does a spec become a program" line. The plateau in E1 is a
   feature.
+
+---
+
+## 9. What the independent design changed
+
+I wrote v1, then posed the same question to grok with the same evidence and no sight of v1. The
+synthesis is above. Recording the delta, because the disagreements are more useful than the overlap.
+
+**Independent convergence** — both designs, unprompted, landed on: transfer as the decisive test; the
+oracle's blind spot as the top failure mode; probes must not be authored by the regenerator; #119 as the
+hard prerequisite; #125 as what makes "emerges from the work" true or false; and do not close #115.
+
+**Where v1 was wrong:**
+
+| v1 claimed | Corrected |
+|---|---|
+| "Three steps of a training loop and the loss went down" | R1 and R2 used the *same* graph and diverged. R3 recovered the test its own claim targeted. No evidence of accumulation. |
+| Minimise free variables | The regenerator authors that list, so it is gameable in one cycle; the oracle caught 0 of 29; and some free variables *should* stay free. Replaced by cross-regenerator agreement on held-out probes. |
+| 29 → 21 was a learning curve | Different task. The findings doc says so in its own text. |
+| The Deletion Test is a training step | It is a **diagnostic**. v1 turned the hole it found into the training target — evaluating on the training set. |
+
+**What v1 missed entirely:** the flat-markdown control (A) — the cheapest experiment available and one
+that could invalidate the whole substrate premise; auto-promote vs. human authorship (D) — which
+separates "the loop works" from "a person wrote a good claim"; rank inflation as a divergence
+indicator; and the observation that in R2 the agent **already knew** the escaping rule and simply did
+not act, which reframes the graph's job from supplying knowledge to supplying obligation.
+
+**What v1 contributed that the review did not:** the floor test (I), the two-player framing of the
+antagonist as an attacker of the *oracle* rather than the graph, and the environment-not-agent framing
+that the review then sharpened.
+
+**Verdict, held jointly:** run A and B first. Either can kill it, both are one regeneration run each,
+and neither requires building anything. If A shows markdown ≈ graph, this is a spec-writing practice
+rather than a substrate. If B shows no transfer, it is documentation with a regeneration script.
