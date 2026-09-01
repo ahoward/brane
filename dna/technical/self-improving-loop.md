@@ -1,8 +1,8 @@
 # The Self-Improving Loop
 
 **Date:** 2026-08-27
-**Status:** v2. Written independently, then posed to grok as an independent design question; this
-version is the synthesis. Two of v1's central claims did not survive.
+**Status:** v3. **A and B have been run. Both returned nulls.** The design below stands; the hypothesis
+it was built to test does not, in the form it was stated. See §0.
 **Short version:** the loop is buildable and worth testing, but **nothing in the three rounds is
 evidence that it compounds**, and v1's proposed optimisation target is gameable in one cycle. The
 honest state is: a promising mechanism with an untested core, and a cheap experiment that would kill it.
@@ -11,6 +11,51 @@ honest state is: a promising mechanism with an untested core, and a cheap experi
 the oracle's blind spot is the top failure mode; probes must not be authored by the regenerator; #119
 (evaluations in the graph) is the hard prerequisite; #125 (an extractor that emits claims) is what makes
 "emerges from the work" true or false; do not close #115 as proven.
+
+---
+
+## 0. Results: A and B came back null
+
+Both were chosen because either could kill the premise without building anything. Both did damage.
+
+**A — flat-markdown control.** The same 102 assertions as a bare numbered list, no graph at all, same
+R2 protocol. **429/432 — identical score, identical failures.** Same integration points found, same
+structural conclusions reached independently, 22 undetermined decisions against R2's 21. Grouping,
+edges, authority tiers, ranks and provenance contributed nothing measurable to specification-following.
+
+**B — transfer.** Delete an interpolating writer unrelated to claims; vary only whether the graph holds
+the portable escaping caveat. Both arms passed. Re-run with the tree neutralised — `esc_cozo` rewritten
+to be wrong, its explanatory comment deleted, no correct example anywhere — and **both arms passed
+again**. The control tested CozoDB directly and derived the rule from the engine's behaviour.
+
+**What survives, and it is one thing.** Five independent regenerations acquired the escaping knowledge
+unaided. **Zero of five acted on it beyond their own file.** The single run that fixed the shared defect
+was R3, where the graph carried a rank-100 obligation naming the component. The b1x control put it
+plainly:
+
+> "I did not touch `lib/mind.ts` — fixing it there would change 22 call sites and is beyond restoring
+> one file, **but it is the real fix**."
+
+It knew, it knew it was the fix, and it did not do it.
+
+**So: the substrate's only effect that has survived a control is obligation, not memory.** A capable
+model rediscovers verifiable facts on demand. What it cannot derive is the scope of its own mandate —
+which of the things it knows it is responsible for acting on. That is what authority encodes.
+
+This reframes the whole programme. "Accumulate knowledge so the model needs to rediscover less" is not
+supported. "Accumulate *duties* so the model acts on what it already knows" is the surviving hypothesis,
+it is narrower, and it is the only one with an experiment behind it.
+
+**Consequences for the rest of this document:**
+
+- §2's objective (agreement on held-out probes) is still right, but the thing to maximise agreement
+  *about* is now action-taking, not fact-recall.
+- Experiment I (the floor test) becomes less interesting: if the graph does not supply facts, a small
+  model plus a graph will not beat a large model without one.
+- **The next experiment is A-with-obligation:** flat list + the R3 obligation, no ranks, versus graph +
+  obligation with ranks. A tested specification-following and found structure irrelevant. Nobody has
+  tested whether *authority* survives flattening. If a numbered list saying "you must fix
+  rules/create.ts" works as well as a rank-100 claim, there is nothing left.
 
 ---
 
