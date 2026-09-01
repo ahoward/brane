@@ -380,6 +380,105 @@ oracle does not check.
 
 ---
 
+# Experiments A and B: the two cheapest falsifiers
+
+Both were proposed as tests that could kill the substrate premise without building anything. **Both
+returned nulls.**
+
+## A — is the *graph* doing anything a list would not?
+
+Same R2 protocol exactly — module and all integration deleted, oracle and prose caches sealed. The only
+change: the specification handed to the regenerator was the same 102 assertions as a **bare numbered
+markdown list**. No concepts, no edges, no authority tiers, no ranks, no sources, no database.
+
+**Result: 429 / 432 — identical score, identical three failures to R2.**
+
+Qualitatively identical too. The flat list found every integration point unaided (`SCHEMA_QUERIES`,
+`BUILTIN_RULES`, the migration chain tail, `BUILTIN_RULE_NAMES`, all four cascade sites, all eight
+registrations). It independently reached the same two structural conclusions R2 did — that
+`verify`/`rules-query`/`pr-verify` need no changes because they read the rules relation dynamically, and
+that `missing_tier` is unreachable through the API. It reported 22 undetermined decisions against R2's
+21.
+
+**Everything brane's graph adds over a text file — grouping, edges, authority, rank, provenance —
+contributed nothing measurable to this task.**
+
+The probe table is worse than the score:
+
+| probe | original | R1 (graph) | R2 (graph) | A (flat list) |
+|---|---|---|---|---|
+| resolve, tie with identical assertions | 1 | 1 | 2 | 2 |
+| `subject_type: " concept"` | accepted | rejected | accepted | rejected |
+
+Four independent implementations, four distinct behavioural profiles on two underdetermined probes.
+Structure does not help determine behaviour either.
+
+**Scope of the null.** A tested specification-*following*. Its flat spec had no ranks, so it did not test
+obligation-following, which is where R3's rank-100 claim did visible work. The finding is therefore
+narrow and precise: **structure buys nothing for conveying a specification.** Whether it buys anything
+for conveying a duty is a separate question that A did not touch.
+
+## B — does a claim learned on one feature transfer to another?
+
+The escaping caveat was learned while regenerating **claims**. It applies to 24 files. So: delete
+`src/handlers/mind/concepts/create.ts` — an interpolating writer with no connection to the claims
+feature — and regenerate under two conditions differing only in whether the graph carries the portable
+caveat. `RulesCreateHandler` was stripped from the treatment arm so it could not be read as "fix this
+named file"; only the general `blast_radius` claim remained. Probe: can you create a concept named
+`O'Reilly Auth`?
+
+**First run — null, and confounded.** Both arms passed. The control found the rule in the surviving
+`src/lib/mind.ts`, whose `esc_cozo()` carries an explanatory comment, and cited it by line number. A
+ceiling effect: the answer was reachable both ways.
+
+**Second run, tree neutralised.** `esc_cozo` was rewritten in both arms to exhibit the *same wrong
+pattern* as the other 22 files, and its explanatory comment deleted. No correct example and no
+explanation left anywhere in the tree — the graph became the only possible source of the rule.
+
+**Result: both arms passed again.**
+
+The control, with no caveat in its graph and no correct example in the codebase, **tested CozoDB
+directly** and derived the rule from the engine's behaviour:
+
+> "I verified directly against CozoDB: `'O''Reilly'` → parse error, `'O\'Reilly'` → OK."
+
+The treatment arm reached the same place by a different route, switching to bound query parameters and
+crediting the graph caveat.
+
+**Transfer of knowledge: not supported.** For knowledge that is mechanically verifiable and cheap to
+test, the model does not need the graph. It runs the experiment.
+
+## What the two nulls actually sharpen
+
+Five independent regenerations now bear on the escaping question — R2, B1, B2, B1x, B2x.
+
+| | derived/used correct escaping in its own file | fixed the shared helper or the other 22 sites |
+|---|---|---|
+| R2 (no obligation) | yes | **no** |
+| B1, B2, B1x, B2x (no obligation) | yes, all four | **no, none** |
+| **R3 (rank-100 obligation naming the file)** | yes | **yes** |
+
+Five of five acquired the *knowledge* without help. Zero of five acted on it beyond their own file. The
+one run that did was the one where the graph carried an explicit high-authority obligation naming the
+component.
+
+b1x stated the boundary itself, unprompted:
+
+> "I did not touch `lib/mind.ts` — fixing it there would change 22 call sites and is beyond restoring
+> one file, **but it is the real fix**."
+
+It knew. It knew it was the real fix. It did not do it.
+
+**So the substrate's demonstrated function is not memory. It is obligation.** The model can rediscover
+facts; what it cannot derive is which of the things it knows it is *responsible for acting on*, and how
+far its mandate extends. That is what authority encodes, and it is the only effect that has survived a
+control so far.
+
+That is a much narrower claim than "brane improves reasoning over time." It is also the first one with
+an experiment behind it and two nulls ruling out the obvious alternative explanation.
+
+---
+
 ## Recommendations
 
 1. **Do not close #115 as "proven."** Round 2 removed the context-boundary crutch and the loop still
