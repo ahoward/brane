@@ -479,6 +479,84 @@ an experiment behind it and two nulls ruling out the obvious alternative explana
 
 ---
 
+# Experiment C: what part of the obligation actually worked?
+
+R3 showed that encoding an obligation recovered the failure it targeted. R3 confounded four things at
+once: the obligation *text*, its **authority tier** (`manual`, rank 100), its position in a **graph**,
+and a sentence in the prompt telling the agent to take out-of-feature obligations seriously.
+
+Three arms, each removing exactly one, all measured on the same binary outcome — does the arm fix
+`src/handlers/mind/rules/create.ts`, and does `rules/query/12` pass?
+
+| arm | structure | rank | prompt hint | score | fixed it? |
+|---|---|---|---|---|---|
+| **R3** (baseline) | graph | manual / 100 | yes | 430/432 | **yes** |
+| **C1** — structure removed | flat numbered list | none | yes | 430/432 | **yes** |
+| **C3** — rank removed | graph | observation / 10 | yes | 430/432 | **yes** |
+| **C2n** — prompt hint removed | graph | manual / 100 | no | 430/432 | **yes** |
+| **R2** — obligation absent | graph | — | yes | 429/432 | **no** |
+
+**All three variables are null.** Every arm scored 430/432 with the identical two remaining failures.
+
+Two arms went *further* than R3 unprompted: C3 and C1 both also fixed `rules/delete.ts` and
+`get_rule_by_name()`, reasoning from the `blast_radius` claim. C1 did this from a bare numbered list
+with no tiers at all.
+
+**The only thing that separates the arms that acted from the one that did not is whether the sentence
+was present.** Not its tier. Not its rank. Not its position in a graph. Not being told to care about it.
+
+That is the third null in a row, and it takes the last structural feature with it. #113 built authority
+as ranked metadata; **the ranking is not what carries the obligation.** An imperative sentence in a text
+file did the same work.
+
+What survives is small, real, and worth stating precisely: **writing the duty down is what mattered.**
+Five regenerations without the sentence never acted beyond their own file; four with it always did,
+regardless of how it was formatted. That is a claim about specification content, not about substrate
+architecture.
+
+---
+
+# Two flaws in my own experimental design
+
+Both were found by the agents, not by me. Recording them because they bound what any of the above can
+claim.
+
+## 1. The sealing procedure was itself a specification
+
+C2n explained how it located the integration points, and it was not the graph:
+
+> "The removal left a precise negative image in `tests/`: fixtures whose *expected output* changes with
+> the feature had `result.json` deleted while `params.json` survived."
+
+It then tabulated that mapping and worked from it. Checked: **19 fixture directories** were left with
+`params.json` present and `result.json` removed, naming exactly `init`, `verify`, `pr-verify`,
+`rules/list`, `rules/get`, `rules/query`, `concepts/delete` and `edges/delete` — precisely the set of
+handlers the feature touches.
+
+**So "the graph carried the integration" — claimed for R2, R3, and repeated for A — is contaminated.**
+The one arm that spelled out its reasoning credited my leak, not the specification. Any future run must
+remove whole fixture *directories*, never one file from a pair.
+
+## 2. The arms shared a scratchpad and cross-contaminated
+
+C1 reported finding relations, tiers (`teamA`/`teamB`) and a rule (`legal_claims`) it had never created,
+in workspaces it had made itself — another arm's runtime data, because all arms wrote under the same
+`/tmp` root. It moved to a private directory and re-ran everything, but also `rm -rf`'d three shared
+workspaces that may have belonged to a concurrent arm.
+
+Nothing spec-revealing crossed over that C1 had not already derived, and the outcome measure
+(`rules/create.ts`) is unaffected. But parallel arms must get isolated workspace roots.
+
+Two other arms (C3, C1) also ran `git status --porcelain` once and saw deleted *filenames* — including
+that `cli/commands/authority.ts` had existed. Both disclosed it unprompted, and both had already made
+the decisions it bore on. C1's "no CLI" decision specifically predates its disclosure and was left
+standing.
+
+**Three agents have now caught errors in experiments I designed and did not catch.** That is the
+antagonist discipline working, and it is the strongest thing in this write-up.
+
+---
+
 ## Recommendations
 
 1. **Do not close #115 as "proven."** Round 2 removed the context-boundary crutch and the loop still
