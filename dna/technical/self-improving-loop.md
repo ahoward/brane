@@ -1,8 +1,9 @@
 # The Self-Improving Loop
 
 **Date:** 2026-08-27
-**Status:** v3. **A and B have been run. Both returned nulls.** The design below stands; the hypothesis
-it was built to test does not, in the form it was stated. See §0.
+**Status:** v4. **A, B and C have been run. All returned nulls.** Every structural feature tested has
+now failed a control. What remains is a claim about writing things down, not about substrate
+architecture. See §0.
 **Short version:** the loop is buildable and worth testing, but **nothing in the three rounds is
 evidence that it compounds**, and v1's proposed optimisation target is gameable in one cycle. The
 honest state is: a promising mechanism with an untested core, and a cheap experiment that would kill it.
@@ -38,13 +39,45 @@ plainly:
 
 It knew, it knew it was the fix, and it did not do it.
 
-**So: the substrate's only effect that has survived a control is obligation, not memory.** A capable
-model rediscovers verifiable facts on demand. What it cannot derive is the scope of its own mandate —
-which of the things it knows it is responsible for acting on. That is what authority encodes.
+**C then tested the obligation finding itself, and it did not survive intact either.**
+
+R3 confounded four things: the obligation text, its `manual` rank-100 tier, its position in a graph, and
+a prompt sentence telling the agent to take out-of-feature obligations seriously. Three arms removed one
+each:
+
+| arm | removed | fixed the out-of-feature defect? |
+|---|---|---|
+| C1 | structure (flat numbered list, no tiers) | **yes** |
+| C3 | rank (demoted to `observation`/10) | **yes** |
+| C2n | the prompt sentence | **yes** |
+| R2 | the obligation text itself | **no** |
+
+All four scored 430/432 with identical failures. Two arms went *further* than R3 unprompted, also
+fixing `rules/delete.ts` and `get_rule_by_name()` — C1 did that from a bare numbered list.
+
+**So the substrate's only surviving effect is that the duty was written down at all.** Not its tier, not
+its rank, not its graph position, not an instruction to heed it. #113 built authority as ranked
+metadata; the ranking is not what carries the obligation.
+
+A capable model rediscovers verifiable facts on demand. What it does not do is act beyond its assigned
+file unless something tells it to — and *any* clear statement suffices. That is a finding about
+specification content. It is not a finding about brane.
 
 This reframes the whole programme. "Accumulate knowledge so the model needs to rediscover less" is not
 supported. "Accumulate *duties* so the model acts on what it already knows" is the surviving hypothesis,
 it is narrower, and it is the only one with an experiment behind it.
+
+**And two flaws in the experiments themselves, both found by the agents rather than by me:**
+
+- **My sealing procedure was a specification.** Removing `result.json` while leaving `params.json`
+  produced a 19-directory negative image naming every handler the feature touches. C2n found it, said
+  so, and used it as its integration map. So "the graph carried the integration" — claimed for R2, R3
+  and repeated for A — is contaminated.
+- **Parallel arms shared a scratchpad root** and cross-contaminated; C1 found another arm's data in its
+  own workspace.
+
+Three agents have now caught errors in experiments I designed. Any future run needs whole-directory
+sealing and isolated workspace roots.
 
 **Consequences for the rest of this document:**
 
@@ -52,10 +85,13 @@ it is narrower, and it is the only one with an experiment behind it.
   *about* is now action-taking, not fact-recall.
 - Experiment I (the floor test) becomes less interesting: if the graph does not supply facts, a small
   model plus a graph will not beat a large model without one.
-- **The next experiment is A-with-obligation:** flat list + the R3 obligation, no ranks, versus graph +
-  obligation with ranks. A tested specification-following and found structure irrelevant. Nobody has
-  tested whether *authority* survives flattening. If a numbered list saying "you must fix
-  rules/create.ts" works as well as a rank-100 claim, there is nothing left.
+- ~~The next experiment is A-with-obligation.~~ **Run — that is C.** A numbered list works as well as a
+  rank-100 claim. There is nothing structural left.
+- **What is actually left to test** is whether any of this beats the obvious baseline: a `CONVENTIONS.md`
+  that a human maintains by hand. Every effect measured so far is reproducible by appending a sentence
+  to a text file. Before building loop infrastructure, someone should demonstrate a claim that a text
+  file cannot carry — retrieval at scale is the only candidate left standing, since none of these
+  experiments exceeded ~111 statements, which fits in a prompt.
 
 ---
 
