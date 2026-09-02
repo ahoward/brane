@@ -1,0 +1,15 @@
+{
+  "status": "success",
+  "result": {
+    "name": "product",
+    "rank": 35,
+    "description": "Product intent, re-ranked",
+    "created": false
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/authorities/create",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

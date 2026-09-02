@@ -26,6 +26,7 @@ const result = await sys.call("/namespace/method", data)
 
 - `./dna/product/ROADMAP.md` - **START HERE** — Driving task list for all development
 - `./dna/product/prd.md` - Full PRD (Split-Brain architecture)
+- `./dna/product/vision-spec-machine.md` - **Vision v4.0** — brane as the regenerative specification substrate (#112)
 - `./.specify/memory/constitution.md` - Project principles (6 core rules)
 - `./dna/technical/development-loop.md` - Antagonistic Testing process
 - `./ai/MEMORY.md` - AI's long-term memory
@@ -35,10 +36,11 @@ const result = await sys.call("/namespace/method", data)
 
 **See:** `./dna/technical/development-loop.md` and `.specify/memory/constitution.md`
 
-1. Design interface → 2. Design tests (Claude) → 3. Review tests (Gemini)
+1. Design interface → 2. Design tests (Claude) → 3. Review tests (Fable)
 4. Implement → 5. Loop until green → 6. **⛔ HUMAN CHECKPOINT** (only if stuck)
 
-**Gemini** = antagonist agent. Reviews tests, finds blind spots.
+**Fable** = antagonist agent. Reviews tests, finds blind spots. Run as a subagent
+(Agent tool, `model: fable`), not an external CLI.
 Human checkpoint is for failure resolution, not pre-approval.
 
 ## Coding Conventions Summary
@@ -79,7 +81,7 @@ ai/                   # AI agent resources
 2. Run `/speckit.specify` — creates `specs/{feature}/spec.md`
 3. Open PR for human review
 4. After approval: `/speckit.plan` → `/speckit.tasks`
-5. Review tests with Gemini (antagonist)
+5. Review tests with Fable (antagonist)
 6. Implement via `/speckit.implement`
 7. If stuck (tests won't pass) → Human checkpoint
 8. On completion → Update ROADMAP.md, mark feature complete
@@ -91,7 +93,7 @@ ai/                   # AI agent resources
 - Return different shapes from handlers
 - Skip the Result envelope
 - Implement without tests
-- Skip Gemini review
+- Skip the antagonist review
 - Change tests after review without human approval
 
 ## Active Technologies
@@ -126,6 +128,7 @@ ai/                   # AI agent resources
 - CozoDB mind.db (RocksDB backend) — new `episodes` relation + HNSW index (034-episodic-memory)
 
 ## Recent Changes
+- 067-claim-authority: First-class claims carrying authority tier + source; contradiction representable as data (#113). Schema v1.13.0, 8 sys.call paths, `contradictions` built-in rule, `brane claim` / `brane authority` CLI
 - 021-vector-search: Added semantic search via `/mind/search` endpoint with local embeddings (fastembed-js BGESmallEN, 384 dims)
 - 016-rules-define: Added TypeScript (Bun 1.x) + CozoDB (Datalog), existing mind.ts utilities
 
@@ -164,3 +167,54 @@ echo '{"query": "authentication", "limit": 5}' | bun run src/cli.ts /mind/search
   }
 }
 ```
+
+
+## Spec Machine Reframe (#112)
+
+**See:** `dna/product/vision-spec-machine.md` (v4.0)
+
+Brane is being repositioned from "memory for agents" to **the regenerative specification substrate** —
+the durable, queryable, provenance-backed graph that implementations are generated FROM and validated
+AGAINST. The existing graph, provenance, Datalog rules, lenses, and extraction pipeline are ~70% of it.
+
+Four gaps close the rest:
+
+| Gap | Feature | Issue | Status |
+|---|---|---|---|
+| Claim + authority model (contradiction as data) | `067-claim-authority` | [#113](https://github.com/ahoward/brane/issues/113) | ✅ Done (PR #117) |
+| Observation → requirement promotion gate | `068-promotion-gate` | [#114](https://github.com/ahoward/brane/issues/114) | Next — #113 is done, so it is unblocked |
+| Regeneration → test → feedback (**keystone**) | `069-regeneration-spike` | [#115](https://github.com/ahoward/brane/issues/115) | Unblocked; not started |
+| Production-as-teacher ingestion | `070-production-teacher` | [#116](https://github.com/ahoward/brane/issues/116) | Unblocked; not started |
+
+Two principles govern the claim work and should be preserved by anything built on it:
+
+1. **Strict about authority, loose about vocabulary.** Authority tiers are registered and ranked;
+   predicates and assertions are never validated against a vocabulary.
+2. **Contradiction is data, not a defect.** Competing claims coexist. Resolution is a read-time
+   projection by authority rank — never a write-time deletion. Ties do not resolve.
+
+### Claims (067-claim-authority)
+
+```bash
+brane claim create --concept 1 --predicate refund_window \
+  --assertion "30 days" --authority product --source dna/product/prd.md
+brane claim conflicts          # where the graph contradicts itself
+brane claim list --concept 1 --resolve   # one answer, losers still stored
+brane authority list           # observation < implementation < product < legal < manual
+brane verify --rule contradictions
+```
+
+Invariants anything built on claims must preserve:
+
+- Authority tiers are registered and ranked (**strict**); predicates and assertions are never
+  validated against a vocabulary (**loose**).
+- Rank is joined at read time; claims store the tier *name* only, so re-ranking never rewrites history.
+- Resolution is a read-time projection. Ties at the top rank do **not** resolve.
+- Claims are immutable — correction is delete + re-assert.
+- `cascade_claims()` in `src/lib/claims.ts` is the single deletion seam. Every path that removes a
+  concept or edge (delete handlers, `prune`, re-extraction) calls it.
+- The `contradictions` rule body positionally matches the 8-column `claims` relation. Adding a column
+  (#114's binding flag) means updating that body in the same migration.
+
+**Cozo gotcha:** string literals use backslash escapes, not SQL doubling. Use `esc_cozo()` from
+`src/lib/mind.ts`. `'it''s'` is a parse error.

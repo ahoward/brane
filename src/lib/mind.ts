@@ -158,6 +158,14 @@ export async function get_next_edge_id(db: CozoDb): Promise<number> {
 // Check if concept exists
 //
 
+export async function edge_exists(db: CozoDb, id: number): Promise<boolean> {
+  const result = await db.run(`
+    ?[id] := *edges[id, _, _, _, _, _], id = ${id}
+  `)
+  const rows = result.rows as unknown[][]
+  return rows.length > 0
+}
+
 export async function concept_exists(db: CozoDb, id: number): Promise<boolean> {
   const result = await db.run(`
     ?[id] := *concepts[id, _, _, _, _], id = ${id}
@@ -181,7 +189,7 @@ export interface Rule {
 // Built-in rule names (cannot be deleted or overwritten)
 //
 
-export const BUILTIN_RULE_NAMES = ["cycles", "orphans"] as const
+export const BUILTIN_RULE_NAMES = ["cycles", "orphans", "contradictions"] as const
 
 export function is_builtin_rule(name: string): boolean {
   return BUILTIN_RULE_NAMES.includes(name as typeof BUILTIN_RULE_NAMES[number])
@@ -209,6 +217,17 @@ export async function get_rule_by_name(db: CozoDb, name: string): Promise<Rule |
   } catch {
     return null
   }
+}
+
+//
+// Escape a string for a single-quoted CozoDB literal.
+//
+// Cozo uses backslash escapes, NOT SQL-style doubling: 'it''s' is a parse
+// error, 'it\'s' is correct. Getting this wrong silently rejects any value
+// containing an apostrophe.
+//
+export function esc_cozo(s: string): string {
+  return s.replace(/\\/g, "\\\\").replace(/'/g, "\\'")
 }
 
 //

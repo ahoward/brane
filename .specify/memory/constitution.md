@@ -1,8 +1,10 @@
 <!--
 Sync Impact Report
 ==================
-Version change: 0.0.0 → 1.0.0
-Modified principles: N/A (initial constitution)
+Version change: 1.0.0 → 1.1.0
+Modified principles:
+  - IV. Antagonistic Testing — antagonist agent changed from Gemini (external CLI)
+    to Fable (Claude model, run as a subagent). Role and rules unchanged.
 Added sections:
   - Core Principles (6 principles)
   - Architecture Constraints
@@ -65,11 +67,11 @@ Every `sys.call` MUST return the same shape:
 
 ### IV. Antagonistic Testing
 
-Tests are specifications. Claude designs, Gemini challenges, then implement.
+Tests are specifications. Claude designs, Fable challenges, then implement.
 
 - Claude (primary agent) designs first pass of tc tests
-- Gemini (antagonist) reviews tests, finds blind spots, suggests harder cases
-- After Gemini review, tests are LOCKED
+- Fable (antagonist) reviews tests, finds blind spots, suggests harder cases
+- After the antagonist review, tests are LOCKED
 - Human checkpoint ONLY when stuck (cannot make tests pass)
 - Tests MUST exist before implementation
 
@@ -130,7 +132,7 @@ Brane uses two databases, each optimized for its domain:
 
 1. **Design Interface** — Define sys.call paths (public API only)
 2. **Design Tests (Claude)** — Write tc test cases with input.json/expected.json
-3. **Review Tests (Gemini)** — Antagonist review, incorporate suggestions
+3. **Review Tests (Fable)** — Antagonist review, incorporate suggestions
 4. **Implement** — Write code (handlers thin, logic functional)
 5. **Loop Until Green** — Fix failures, re-run tests
 6. **If Stuck → Human Checkpoint** — Only when tests cannot pass
@@ -152,7 +154,7 @@ tests/{handler}/
 ### Never
 
 - Implement without tests
-- Skip Gemini review
+- Skip the antagonist review
 - Change tests after review without human approval
 - Move to next task with failing tests
 - Use classes for data structures
@@ -181,4 +183,4 @@ Constitution follows semantic versioning:
 - Complexity MUST be justified against Principle VI
 - Violations require explicit justification and human approval
 
-**Version**: 1.0.0 | **Ratified**: 2026-01-27 | **Last Amended**: 2026-01-27
+**Version**: 1.1.0 | **Ratified**: 2026-01-27 | **Last Amended**: 2026-08-19

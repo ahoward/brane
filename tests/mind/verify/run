@@ -10,6 +10,10 @@ source "$BRANE_ROOT/tests/lib.sh"
 INPUT=$(cat)
 workspace
 
+create_claim() {
+  echo "$1" | brane /mind/claims/create > /dev/null 2>&1
+}
+
 case "$TC_CASE_NAME" in
   00-success-no-violations)
     init_mind
@@ -52,6 +56,14 @@ case "$TC_CASE_NAME" in
     init_mind
     # Create a custom rule with invalid body that will fail at execution
     echo '{"name": "bad_rule", "description": "Bad rule", "body": "bad_rule[id, name] := *nonexistent_relation[id, name]"}' | brane /mind/rules/create > /dev/null 2>&1
+    ;;
+  # The rule fires even though legal outranks product: it reports that the
+  # graph disagrees with itself, not whether the disagreement has a winner.
+  07-success-contradictions-fires-when-resolved)
+    init_mind
+    create_concepts '[{"name": "RefundWindow", "type": "Entity"}]'
+    create_claim '{"subject_type":"concept","subject_id":1,"predicate":"refund_window","assertion":"30 days","authority":"product","source":"prd.md"}'
+    create_claim '{"subject_type":"concept","subject_id":1,"predicate":"refund_window","assertion":"14 days","authority":"legal","source":"policy.md"}'
     ;;
 esac
 

@@ -1,0 +1,15 @@
+{
+  "status": "success",
+  "result": {
+    "name": "security",
+    "rank": 45,
+    "description": "Security review finding",
+    "created": false
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/authorities/create",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}
