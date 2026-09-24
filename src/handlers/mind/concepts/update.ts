@@ -90,11 +90,21 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Conce
     const new_name = p.name !== undefined && p.name !== null && p.name !== "" ? p.name : current.name
     const new_type = p.type !== undefined && p.type !== null && p.type !== "" ? p.type : current.type
 
-    // Regenerate embedding if name changed
+    // Regenerate embedding if the name changed.
+    //
+    // Never replace a stored vector with null. concepts is keyed on id, so a
+    // :put with a null vector REPLACES the indexed one, and the HNSW index
+    // then errors "Cannot interpret null as vector" on every subsequent search
+    // (#129). An embedding backend failure must degrade to "keep the old
+    // vector", not "destroy semantic search".
     let vector_str: string
     if (new_name !== current.name) {
       const embedding = await generate_embedding(new_name)
-      vector_str = embedding !== null ? `vec(${JSON.stringify(embedding)})` : "null"
+      if (embedding !== null) {
+        vector_str = `vec(${JSON.stringify(embedding)})`
+      } else {
+        vector_str = current.vector !== null ? `vec(${JSON.stringify(current.vector)})` : "null"
+      }
     } else {
       // Preserve existing vector
       vector_str = current.vector !== null ? `vec(${JSON.stringify(current.vector)})` : "null"

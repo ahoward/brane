@@ -23,6 +23,22 @@ seed_and_downgrade() {
   bun run "$BRANE_ROOT/tests/mind/migration/downgrade.ts" "$PWD/.brane/mind.db" > /dev/null 2>&1
 }
 
+# Build a current-version db, then walk concepts/edges back to their pre-#129
+# all-key shape and stamp 1.13.0, so opening it performs a real migration.
+seed_113() {
+  init_mind
+  create_concept '{"name": "AuthService", "type": "Entity"}'
+  create_concept '{"name": "TokenStore", "type": "Entity"}'
+  create_edge '{"source": 1, "target": 2, "relation": "DEPENDS_ON", "weight": 0.5}'
+  bun run "$BRANE_ROOT/tests/mind/migration/downgrade-113.ts" "$PWD/.brane/mind.db" > /dev/null 2>&1
+}
+
+seed_113_with_duplicates() {
+  init_mind
+  create_concept '{"name": "AuthService", "type": "Entity"}'
+  bun run "$BRANE_ROOT/tests/mind/migration/downgrade-113.ts" "$PWD/.brane/mind.db" --with-duplicates > /dev/null 2>&1
+}
+
 case "$TC_CASE_NAME" in
   # Migration seeds the default authority tiers.
   00-success-migrate-seeds-authorities)
@@ -69,5 +85,36 @@ case "$TC_CASE_NAME" in
   07-success-migrate-preserves-edges)
     seed_and_downgrade
     echo "$INPUT" | brane /mind/edges/list
+    ;;
+  # --- #129: the 1.13.0 -> 1.14.0 rekeying migration ---
+
+  # Concepts and edges survive the rebuild with their exact values.
+  08-success-rekey-preserves-concepts)
+    seed_113
+    echo "$INPUT" | brane /mind/concepts/list
+    ;;
+
+  09-success-rekey-preserves-edges)
+    seed_113
+    echo "$INPUT" | brane /mind/edges/list
+    ;;
+
+  # The HNSW index is rebuilt, so semantic search still works after migrating.
+  10-success-rekey-preserves-search)
+    seed_113
+    echo "$INPUT" | brane /mind/search
+    ;;
+
+  # A database that already carries duplicate ids from the defect collapses to
+  # one row per id rather than carrying the corruption forward.
+  11-success-rekey-collapses-duplicates)
+    seed_113_with_duplicates
+    echo "$INPUT" | brane /mind/concepts/list
+    ;;
+
+  12-success-rekey-stamps-version)
+    seed_113
+    echo '{}' | brane /mind/concepts/list > /dev/null 2>&1
+    echo "$INPUT" | brane /mind/init
     ;;
 esac

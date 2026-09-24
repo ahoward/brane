@@ -1,0 +1,20 @@
+{
+  "status": "success",
+  "result": {
+    "concepts": [
+      {
+        "id": 1,
+        "name": "IdentityService",
+        "type": "Entity",
+        "agent_id": "claude-code"
+      }
+    ],
+    "total": 1
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/concepts/list",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}
