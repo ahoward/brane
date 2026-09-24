@@ -1,0 +1,21 @@
+{
+  "status": "success",
+  "result": {
+    "id": 1,
+    "subject_type": "concept",
+    "subject_id": 1,
+    "predicate": "whatever_nobody_registered",
+    "assertion": "anything at all",
+    "authority": "observation",
+    "rank": 10,
+    "source": "session",
+    "created_at": "<timestamp>",
+    "created": true
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/claims/create",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

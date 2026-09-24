@@ -3,18 +3,33 @@
   "result": {
     "passed": false,
     "summary": {
-      "rules_passed": 0,
+      "rules_passed": 1,
       "rules_failed": 2,
       "total_violations": 4
     },
     "rules": [
       {
+        "name": "contradictions",
+        "passed": true,
+        "violations": [],
+        "error": null
+      },
+      {
         "name": "cycles",
         "passed": false,
         "violations": [
-          {"id": 1, "name": "A"},
-          {"id": 2, "name": "B"},
-          {"id": 3, "name": "C"}
+          {
+            "id": 1,
+            "name": "A"
+          },
+          {
+            "id": 2,
+            "name": "B"
+          },
+          {
+            "id": 3,
+            "name": "C"
+          }
         ],
         "error": null
       },
@@ -22,7 +37,10 @@
         "name": "orphans",
         "passed": false,
         "violations": [
-          {"id": 4, "name": "Orphan"}
+          {
+            "id": 4,
+            "name": "Orphan"
+          }
         ],
         "error": null
       }

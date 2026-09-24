@@ -1,0 +1,17 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "assertion": [
+      {
+        "code": "invalid",
+        "message": "assertion must not be empty"
+      }
+    ]
+  },
+  "meta": {
+    "path": "/mind/claims/create",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

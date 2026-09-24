@@ -1,0 +1,15 @@
+{
+  "status": "success",
+  "result": {
+    "name": "contradictions",
+    "description": "Detects concepts carrying competing claims (contradiction)",
+    "body": "contradictions[id, name] :=\n  *concepts[id, name, _, _, _],\n  *claims[c1, 'concept', id, pred, a1, _, _, _],\n  *claims[c2, 'concept', id, pred, a2, _, _, _],\n  c1 < c2,\n  a1 != a2",
+    "builtin": true
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/rules/get",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

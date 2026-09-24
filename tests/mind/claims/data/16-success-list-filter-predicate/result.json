@@ -1,0 +1,48 @@
+{
+  "status": "success",
+  "result": {
+    "claims": [
+      {
+        "id": 2,
+        "subject_type": "concept",
+        "subject_id": 1,
+        "predicate": "refund_window",
+        "assertion": "14 days",
+        "authority": "legal",
+        "rank": 40,
+        "source": "legal/policy.md",
+        "created_at": "<timestamp>"
+      },
+      {
+        "id": 1,
+        "subject_type": "concept",
+        "subject_id": 1,
+        "predicate": "refund_window",
+        "assertion": "30 days",
+        "authority": "product",
+        "rank": 30,
+        "source": "dna/product/prd.md",
+        "created_at": "<timestamp>"
+      },
+      {
+        "id": 3,
+        "subject_type": "concept",
+        "subject_id": 1,
+        "predicate": "refund_window",
+        "assertion": "45 days",
+        "authority": "implementation",
+        "rank": 20,
+        "source": "src/billing.ts",
+        "created_at": "<timestamp>"
+      }
+    ],
+    "count": 3,
+    "resolved": false
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/claims/list",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

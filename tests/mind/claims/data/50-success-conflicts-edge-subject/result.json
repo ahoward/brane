@@ -1,0 +1,44 @@
+{
+  "status": "success",
+  "result": {
+    "conflicts": [
+      {
+        "subject_type": "edge",
+        "subject_id": 1,
+        "predicate": "strength",
+        "claims": [
+          {
+            "id": 2,
+            "assertion": "soft",
+            "authority": "product",
+            "rank": 30,
+            "source": "prd.md",
+            "created_at": "<timestamp>"
+          },
+          {
+            "id": 1,
+            "assertion": "hard",
+            "authority": "implementation",
+            "rank": 20,
+            "source": "src/a.ts",
+            "created_at": "<timestamp>"
+          }
+        ],
+        "resolution": {
+          "id": 2,
+          "assertion": "soft",
+          "authority": "product",
+          "rank": 30
+        },
+        "unresolved": false
+      }
+    ],
+    "count": 1
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/claims/conflicts",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

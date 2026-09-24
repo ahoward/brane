@@ -1,0 +1,21 @@
+{
+  "status": "success",
+  "result": {
+    "id": 1,
+    "subject_type": "edge",
+    "subject_id": 1,
+    "predicate": "strength",
+    "assertion": "hard",
+    "authority": "implementation",
+    "rank": 20,
+    "source": "src/a.ts",
+    "created_at": "<timestamp>",
+    "created": true
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/claims/create",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

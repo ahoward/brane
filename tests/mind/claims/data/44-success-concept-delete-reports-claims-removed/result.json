@@ -1,0 +1,18 @@
+{
+  "status": "success",
+  "result": {
+    "deleted": true,
+    "cascade": {
+      "edges_removed": 1,
+      "annotations_removed": 0,
+      "provenance_removed": 0,
+      "claims_removed": 3
+    }
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/concepts/delete",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

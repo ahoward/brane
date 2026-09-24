@@ -24,6 +24,8 @@ import { rule } from "./commands/rule.ts"
 import { body } from "./commands/body.ts"
 import { fts } from "./commands/fts.ts"
 import { annotation } from "./commands/annotation.ts"
+import { claim } from "./commands/claim.ts"
+import { authority } from "./commands/authority.ts"
 import { provenance } from "./commands/provenance.ts"
 import { context } from "./commands/context.ts"
 import { prVerify } from "./commands/pr-verify.ts"
@@ -68,6 +70,8 @@ const admin = defineCommand({
     rule,
     annotation,
     provenance,
+    claim,
+    authority,
 
     // Subsystem commands
     body,
@@ -126,6 +130,8 @@ export const main = defineCommand({
     rule,
     annotation,
     provenance,
+    claim,
+    authority,
     body,
     fts,
     context,

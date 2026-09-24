@@ -1,0 +1,14 @@
+{
+  "status": "success",
+  "result": {
+    "claims": [],
+    "count": 0,
+    "resolved": false
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/claims/list",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

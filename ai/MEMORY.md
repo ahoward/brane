@@ -133,7 +133,7 @@ We aim for Unix-clean, not JS-clean:
 
 **Antagonistic Testing** - Having one agent suggest tests for the other to find blind spots.
 
-The primary agent (Claude) has the most context, so it designs the first pass. The review agent (Gemini) plays adversary - finding edge cases, questioning assumptions, suggesting harder tests.
+The primary agent (Claude) has the most context, so it designs the first pass. The review agent (Fable) plays adversary - finding edge cases, questioning assumptions, suggesting harder tests.
 
 This creates tension that produces better specifications.
 
@@ -142,38 +142,44 @@ This creates tension that produces better specifications.
 | Agent | Platform | Role |
 |-------|----------|------|
 | **Claude** | Claude Code | Primary. Has context. Designs first pass of tests. Implements. |
-| **Gemini** | Google Gemini CLI | Antagonist. Reviews tests. Suggests harder cases. Finds blind spots. |
+| **Fable** | Claude Code subagent (`model: fable`) | Antagonist. Reviews tests. Suggests harder cases. Finds blind spots. |
 | **Human** | - | Checkpoint authority. Final say on test boundaries. |
 
-### Running Gemini
+### Running the Antagonist (Fable)
 
-Claude runs Gemini directly via CLI with `--resume` for session continuity:
+**Changed 2026-08-19.** The antagonist was Google Gemini via CLI. It is now **Fable**, run as a
+Claude Code subagent. Constitution 1.1.0 records the amendment. `gemini` is not installed and is no
+longer part of the loop.
 
-```bash
-gemini --resume latest "review prompt here"
+```
+Agent tool → subagent_type: "general-purpose", model: "fable"
 ```
 
-**Context to include in review prompts:**
-- Relevant conventions from `ai/MEMORY.md`
-- The specific test files being reviewed
-- What kind of feedback is wanted (edge cases, consistency, etc.)
+**What to put in the review prompt:**
+- Point it at the actual files (spec, tests, fixtures) - it reads the repo itself
+- Name the conventions it should check against (`.specify/memory/constitution.md`, `ai/MEMORY.md`)
+- Name the existing code it should check the design *fits* (handlers, migrations, tc fixtures)
+- Say what kind of feedback is wanted, and tell it to be genuinely adversarial rather than agreeable
+- Ask for severity-ranked findings with concrete fixes, and a ready/not-ready verdict
 
-This allows Gemini to build memory of project conventions across reviews.
+**Always verify its findings against the tree before acting.** It is a reviewer, not an oracle. In
+practice its blockers have been real, but the cost of checking is one grep.
 
-### Gemini (Antagonist) - IMPORTANT
+### Fable (Antagonist) - IMPORTANT
 
-- **Platform:** Google Gemini CLI
+- **Platform:** Claude Code subagent, `model: fable`
 - **Role:** Test reviewer, antagonist
 - **When to use:** After designing tc tests, BEFORE implementing
-- **How to run:** `gemini --continue` (Claude runs this directly)
+- **Also useful:** reviewing a spec/plan package before implementation starts
 
-Gemini reviews test designs and suggests:
+Fable reviews test designs and suggests:
 - Missing edge cases
 - Interface inconsistencies
 - Better error scenarios
 - Clearer expected outputs
+- Fixtures the change breaks that nobody listed
 
-**Never proceed past test boundary without Gemini's review.**
+**Never proceed past the test boundary without the antagonist review.**
 
 ---
 
@@ -182,7 +188,7 @@ Gemini reviews test designs and suggests:
 See: `dna/technical/development-loop.md`
 
 ```
-Design Interface → Design Tests (Claude) → Review Tests (Gemini)
+Design Interface → Design Tests (Claude) → Review Tests (Fable)
     → Implement → Loop Until Green → ⛔ HUMAN CHECKPOINT (only if stuck)
 ```
 
@@ -191,7 +197,7 @@ Design Interface → Design Tests (Claude) → Review Tests (Gemini)
 The human checkpoint is for **failure resolution**, not pre-approval:
 
 1. Design tests (Claude)
-2. Review tests (Gemini antagonist)
+2. Review tests (Fable antagonist)
 3. Implement code
 4. Run tests, loop until green
 5. **ONLY IF STUCK** (can't make tests pass) → Human decides: fix tests or fix code
@@ -200,8 +206,8 @@ Tests are the spec. Claude implements against them. Human intervenes only when t
 
 ### Never
 
-- Alter tests after Gemini review without human approval
-- Skip Gemini review
+- Alter tests after the antagonist review without human approval
+- Skip the antagonist review
 - Move to next task with failing tests
 - Treat test failure as "change the tests" (ask human first)
 
@@ -228,7 +234,7 @@ Tests are the spec. Claude implements against them. Human intervenes only when t
 
 1. Design sys.call interface
 2. Write tc tests (input.json, expected.json)
-3. Send to Ali (Gemini) for review
+3. Send to the antagonist (Fable) for review
 4. Incorporate feedback
 5. Create skip tests
 6. **STOP** - Wait for human
@@ -314,6 +320,45 @@ const native = require('./native/6/cozo_node_prebuilt.node');  // static
 
 ---
 
+### Spec Machine Reframe (2026-08-19)
+
+**Decision:** brane is repositioned from "memory for agents" to **the regenerative specification
+substrate** (Chad Fowler, "The Specification Is Not a Document"). Vision doc:
+`dna/product/vision-spec-machine.md` (v4.0). Umbrella issue #112.
+
+The existing substrate — graph, provenance, Datalog rules, lenses, extraction pipeline — is ~70% of
+Fowler's spec machine. Four gaps close it: claims+authority (#113), promotion gate (#114), regeneration
+(#115, keystone + research risk), production-as-teacher (#116).
+
+**Invariants established in `067-claim-authority` that later work must not break:**
+
+- Authority tiers are registered and ranked (strict); predicates and assertions are free-form (loose).
+- Competing claims coexist. Resolution is a **read-time projection**, never a write-time deletion.
+- Authority rank is joined at read time — claims store the tier *name* only, so re-ranking never
+  rewrites history.
+- Ties at the top rank do **not** resolve. `resolution: null`, `unresolved: true`. No tiebreak by
+  recency or ID.
+- Claims are immutable. Correction = delete + re-assert.
+- Conflict comparison is trim-then-exact and **case-sensitive** — case folding would silently hide
+  conflicts, which is the failure this feature exists to prevent.
+
+**Gotchas found while implementing #113:**
+
+- The built-in `contradictions` Datalog rule positionally matches the 8-column `claims` arity. Any
+  feature adding a claims column (e.g. #114's binding flag) must update the rule body in the same
+  migration.
+- **CozoDB string literals use backslash escapes, not SQL doubling.** `'it''s'` is a parse error;
+  `'it\\'s'` is correct. `src/handlers/mind/rules/create.ts` had been doing it the SQL way since it
+  was written — any rule body containing an apostrophe silently failed to save. Fixed via
+  `esc_cozo()` in `src/lib/mind.ts`; use it for every interpolated string. Query parameters (`$val`)
+  also work and avoid the question entirely.
+- `/mind/provenance/create` validates the file against body.db, so tests that need *stale* provenance
+  must add the body row, create the link, then delete the row (see `tests/mind/prune/run`).
+- `prune` only removes concepts whose provenance is **entirely** stale. A concept with no provenance
+  at all is never an orphan and is never pruned.
+
+---
+
 ## Version History
 
 | Date | Change |
@@ -322,3 +367,6 @@ const native = require('./native/6/cozo_node_prebuilt.node');  // static
 | 2026-01-26 | Added multi-agent system (Ali/Gemini). Development loop defined. |
 | 2026-01-28 | CozoDB decision: Keep it, fix bundler via PR to upstream. |
 | 2026-01-28 | Multi-platform compilation working. src/lib/cozo.ts + CI workflow. |
+| 2026-08-19 | Spec machine reframe (#112). vision-spec-machine.md v4.0. 067-claim-authority spec + plan (PR #117). |
+| 2026-08-19 | Antagonist changed from Gemini CLI to Fable subagent. Constitution 1.0.0 → 1.1.0. |
+| 2026-08-21 | 067-claim-authority implemented. mind.db schema v1.13.0. Cozo escaping bug found and fixed. |

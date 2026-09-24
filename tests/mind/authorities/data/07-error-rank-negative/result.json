@@ -1,0 +1,17 @@
+{
+  "status": "error",
+  "result": null,
+  "errors": {
+    "rank": [
+      {
+        "code": "invalid",
+        "message": "rank must be a non-negative integer"
+      }
+    ]
+  },
+  "meta": {
+    "path": "/mind/authorities/create",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

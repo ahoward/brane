@@ -9,12 +9,18 @@
 import type { CozoDb } from "./cozo"
 import { dirname, resolve } from "node:path"
 import { EMBED_DIM } from "./embed.ts"
+import {
+  CLAIMS_RELATION,
+  AUTHORITIES_RELATION,
+  seed_authorities,
+  seed_contradictions_rule
+} from "./claims.ts"
 
 //
 // The latest schema version this binary supports.
 // Bump this when adding a new migration.
 //
-export const LATEST_VERSION = "1.12.0"
+export const LATEST_VERSION = "1.13.0"
 
 //
 // A single migration step: transforms schema from one version to the next.
@@ -297,6 +303,20 @@ const MIGRATIONS: Migration[] = [
           last_accessed: String default ""
         }
       `)
+    }
+  },
+
+  // v1.12.0 -> v1.13.0: claims + authority registry (#113)
+  // Additive only: two new relations, the seeded tiers, and one built-in rule.
+  // Definitions are shared with init.ts so a fresh db and a migrated db match.
+  {
+    from: "1.12.0",
+    to:   "1.13.0",
+    apply: async (db: CozoDb) => {
+      await db.run(CLAIMS_RELATION)
+      await db.run(AUTHORITIES_RELATION)
+      await seed_authorities(db)
+      await seed_contradictions_rule(db)
     }
   },
 ]

@@ -1,0 +1,8 @@
+{
+  "subject_type": "concept",
+  "subject_id": 1,
+  "predicate": "whatever_nobody_registered",
+  "assertion": "anything at all",
+  "authority": "observation",
+  "source": "session"
+}

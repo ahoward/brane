@@ -29,6 +29,10 @@ case "$TC_CASE_NAME" in
     # Initialize body but not mind
     init_body
     ;;
+  # The new builtin must be registered in BUILTIN_RULE_NAMES, not just seeded.
+  05-error-contradictions-protected)
+    init_mind
+    ;;
 esac
 
 echo "$INPUT" | brane /mind/rules/delete

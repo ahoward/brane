@@ -1,0 +1,13 @@
+{
+  "status": "success",
+  "result": {
+    "id": 3,
+    "deleted": true
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/claims/delete",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

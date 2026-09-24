@@ -1,0 +1,37 @@
+{
+  "status": "success",
+  "result": {
+    "claims": [
+      {
+        "id": 2,
+        "subject_type": "concept",
+        "subject_id": 1,
+        "predicate": "color",
+        "assertion": "blue",
+        "authority": "legal",
+        "rank": 40,
+        "source": "b.md",
+        "created_at": "<timestamp>"
+      },
+      {
+        "id": 1,
+        "subject_type": "concept",
+        "subject_id": 1,
+        "predicate": "color",
+        "assertion": "blue",
+        "authority": "product",
+        "rank": 30,
+        "source": "a.md",
+        "created_at": "<timestamp>"
+      }
+    ],
+    "count": 2,
+    "resolved": false
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/claims/list",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

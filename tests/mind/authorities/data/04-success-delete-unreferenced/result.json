@@ -1,0 +1,13 @@
+{
+  "status": "success",
+  "result": {
+    "name": "security",
+    "deleted": true
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/authorities/delete",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

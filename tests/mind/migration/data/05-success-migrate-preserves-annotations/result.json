@@ -1,0 +1,13 @@
+{
+  "status": "success",
+  "result": {
+    "annotations": "<array:1>",
+    "count": 1
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/annotations/list",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

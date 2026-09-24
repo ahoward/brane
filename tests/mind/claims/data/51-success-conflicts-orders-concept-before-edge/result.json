@@ -1,0 +1,74 @@
+{
+  "status": "success",
+  "result": {
+    "conflicts": [
+      {
+        "subject_type": "concept",
+        "subject_id": 1,
+        "predicate": "color",
+        "claims": [
+          {
+            "id": 4,
+            "assertion": "red",
+            "authority": "legal",
+            "rank": 40,
+            "source": "b.md",
+            "created_at": "<timestamp>"
+          },
+          {
+            "id": 3,
+            "assertion": "blue",
+            "authority": "product",
+            "rank": 30,
+            "source": "a.md",
+            "created_at": "<timestamp>"
+          }
+        ],
+        "resolution": {
+          "id": 4,
+          "assertion": "red",
+          "authority": "legal",
+          "rank": 40
+        },
+        "unresolved": false
+      },
+      {
+        "subject_type": "edge",
+        "subject_id": 1,
+        "predicate": "strength",
+        "claims": [
+          {
+            "id": 2,
+            "assertion": "soft",
+            "authority": "product",
+            "rank": 30,
+            "source": "prd.md",
+            "created_at": "<timestamp>"
+          },
+          {
+            "id": 1,
+            "assertion": "hard",
+            "authority": "implementation",
+            "rank": 20,
+            "source": "src/a.ts",
+            "created_at": "<timestamp>"
+          }
+        ],
+        "resolution": {
+          "id": 2,
+          "assertion": "soft",
+          "authority": "product",
+          "rank": 30
+        },
+        "unresolved": false
+      }
+    ],
+    "count": 2
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/claims/conflicts",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

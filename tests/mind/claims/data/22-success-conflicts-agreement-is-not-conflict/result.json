@@ -1,0 +1,13 @@
+{
+  "status": "success",
+  "result": {
+    "conflicts": [],
+    "count": 0
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/claims/conflicts",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

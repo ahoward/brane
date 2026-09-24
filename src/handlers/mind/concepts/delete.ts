@@ -5,6 +5,7 @@
 import type { Params, Result, Emit } from "../../../lib/types.ts"
 import { success, error } from "../../../lib/result.ts"
 import { open_mind, is_mind_error } from "../../../lib/mind.ts"
+import { cascade_claims } from "../../../lib/claims.ts"
 
 interface DeleteParams {
   id?: number
@@ -16,6 +17,7 @@ interface DeleteResult {
     edges_removed: number
     annotations_removed: number
     provenance_removed: number
+    claims_removed: number
   }
 }
 
@@ -64,11 +66,15 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Delet
       })
     }
 
-    // Cascade: remove edges where this concept is source or target
+    // Cascade: remove edges where this concept is source or target.
+    // Collect their ids first - the claims on those edges have to go too, or
+    // they outlive their subject.
     let edges_removed = 0
+    let cascaded_edge_ids: number[] = []
     try {
-      const edge_count = await db.run(`?[count(id)] := *edges[id, source, target, _, _, _], source = ${p.id} or target = ${p.id}`)
-      edges_removed = (edge_count.rows[0]?.[0] as number) ?? 0
+      const edge_ids = await db.run(`?[id] := *edges[id, source, target, _, _, _], source = ${p.id} or target = ${p.id}`)
+      cascaded_edge_ids = (edge_ids.rows as number[][]).map(r => r[0])
+      edges_removed = cascaded_edge_ids.length
       if (edges_removed > 0) {
         await db.run(`
           ?[id, source, target, relation, weight, agent_id] := *edges[id, source, target, relation, weight, agent_id], source = ${p.id} or target = ${p.id}
@@ -89,6 +95,11 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Delet
         `)
       }
     } catch { /* annotations relation may not exist */ }
+
+    // Cascade: remove claims on this concept and on the edges just removed
+    let claims_removed = 0
+    claims_removed += await cascade_claims(db, "concept", [p.id])
+    claims_removed += await cascade_claims(db, "edge", cascaded_edge_ids)
 
     // Cascade: remove provenance links for this concept
     let provenance_removed = 0
@@ -117,6 +128,7 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Delet
         edges_removed,
         annotations_removed,
         provenance_removed,
+        claims_removed,
       },
     })
   } catch (err) {

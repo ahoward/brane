@@ -1,0 +1,7 @@
+{
+  "subject_id": 1,
+  "predicate": "refund_window",
+  "assertion": "30 days",
+  "authority": "product",
+  "source": "prd.md"
+}

@@ -1,0 +1,21 @@
+{
+  "status": "success",
+  "result": {
+    "id": 2,
+    "subject_type": "concept",
+    "subject_id": 1,
+    "predicate": "refund_window",
+    "assertion": "30 days",
+    "authority": "product",
+    "rank": 30,
+    "source": "docs/handbook.md",
+    "created_at": "<timestamp>",
+    "created": true
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/claims/create",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}

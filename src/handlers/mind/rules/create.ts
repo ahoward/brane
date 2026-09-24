@@ -4,7 +4,7 @@
 
 import type { Params, Result, Emit } from "../../../lib/types.ts"
 import { success, error } from "../../../lib/result.ts"
-import { open_mind, is_mind_error, get_rule_by_name, is_builtin_rule, validate_rule_syntax, type Rule } from "../../../lib/mind.ts"
+import { open_mind, is_mind_error, get_rule_by_name, is_builtin_rule, validate_rule_syntax, esc_cozo, type Rule } from "../../../lib/mind.ts"
 
 interface CreateParams {
   name?:        string
@@ -95,9 +95,9 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Rule>
     }
 
     // Insert rule
-    const escapedName = p.name.replace(/'/g, "''")
-    const escapedDesc = p.description.replace(/'/g, "''")
-    const escapedBody = p.body.replace(/'/g, "''")
+    const escapedName = esc_cozo(p.name)
+    const escapedDesc = esc_cozo(p.description)
+    const escapedBody = esc_cozo(p.body)
     await db.run(`
       ?[name, description, body, builtin] <- [['${escapedName}', '${escapedDesc}', '${escapedBody}', false]]
       :put rules { name, description, body, builtin }

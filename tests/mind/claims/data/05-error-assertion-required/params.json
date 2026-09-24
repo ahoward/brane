@@ -1,0 +1,7 @@
+{
+  "subject_type": "concept",
+  "subject_id": 1,
+  "predicate": "refund_window",
+  "authority": "product",
+  "source": "prd.md"
+}

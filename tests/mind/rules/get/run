@@ -29,6 +29,11 @@ case "$TC_CASE_NAME" in
     # Initialize body but not mind
     init_body
     ;;
+  # D9: a fresh v1.13.0 db and a migrated one must be indistinguishable. The
+  # migration suite pins this same body; init.ts and migrate.ts must not drift.
+  05-success-get-contradictions)
+    init_mind
+    ;;
 esac
 
 echo "$INPUT" | brane /mind/rules/get

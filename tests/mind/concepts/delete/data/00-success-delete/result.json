@@ -5,7 +5,8 @@
     "cascade": {
       "edges_removed": "<number>",
       "annotations_removed": "<number>",
-      "provenance_removed": "<number>"
+      "provenance_removed": "<number>",
+      "claims_removed": "<number>"
     }
   },
   "errors": null,

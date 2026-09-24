@@ -38,6 +38,9 @@ case "$TC_CASE_NAME" in
     # Initialize body but not mind
     init_body
     ;;
+  08-error-overwrite-contradictions)
+    init_mind
+    ;;
 esac
 
 echo "$INPUT" | brane /mind/rules/create
