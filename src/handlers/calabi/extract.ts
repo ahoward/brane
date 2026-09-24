@@ -261,8 +261,8 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Extra
       if (!name_to_id.has(c.name!)) {
         const id = await get_next_concept_id(db)
         await db.run(`
-          ?[id, name, type, vector] <- [[${id}, '${escape_string(c.name!)}', '${c.type}', null]]
-          :put concepts { id, name, type, vector }
+          ?[id, name, type, vector, agent_id] <- [[${id}, '${escape_string(c.name!)}', '${c.type}', null, '']]
+          :put concepts { id, name, type, vector, agent_id }
         `)
         name_to_id.set(c.name!, id)
         concepts_created++
@@ -299,8 +299,8 @@ export async function handler(params: Params, emit?: Emit): Promise<Result<Extra
       const edge_id = await get_next_edge_id(db)
 
       await db.run(`
-        ?[id, source, target, relation, weight] <- [[${edge_id}, ${source_id}, ${target_id}, '${e.relation}', ${weight}]]
-        :put edges { id, source, target, relation, weight }
+        ?[id, source, target, relation, weight, agent_id] <- [[${edge_id}, ${source_id}, ${target_id}, '${e.relation}', ${weight}, '']]
+        :put edges { id, source, target, relation, weight, agent_id }
       `)
       edges_created++
     }

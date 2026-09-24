@@ -7,6 +7,7 @@ import { success, error } from "../../lib/result.ts"
 import { resolve } from "node:path"
 import { existsSync, rmSync } from "node:fs"
 import { CozoDb } from "../../lib/cozo"
+import { CONCEPTS_RELATION, EDGES_RELATION } from "../../lib/mind.ts"
 import { EMBED_DIM } from "../../lib/embed.ts"
 import {
   CLAIMS_RELATION,
@@ -26,7 +27,7 @@ interface InitResult {
   schema_version: string
 }
 
-const SCHEMA_VERSION = "1.13.0"
+const SCHEMA_VERSION = "1.14.0"
 
 //
 // Built-in rules for graph integrity checks
@@ -57,32 +58,11 @@ const SCHEMA_QUERIES = [
   // Schema metadata relation
   `:create schema_meta { key: String => value: String }`,
 
-  // Core concepts relation
-  // id: unique identifier
-  // name: human-readable name
-  // type: Entity, Caveat, Rule
-  // vector: embedding for semantic search (nullable for graceful degradation)
-  `:create concepts {
-    id: Int,
-    name: String,
-    type: String,
-    vector: <F32; ${EMBED_DIM}>?,
-    agent_id: String default ""
-  }`,
+  // Core concepts relation. `id` is the key - see CONCEPTS_RELATION (#129).
+  CONCEPTS_RELATION(EMBED_DIM),
 
-  // Edges between concepts
-  // id: unique identifier
-  // source/target: concept IDs
-  // relation: DEPENDS_ON, CONFLICTS_WITH, DEFINED_IN, etc.
-  // weight: relationship strength (default 1.0)
-  `:create edges {
-    id: Int,
-    source: Int,
-    target: Int,
-    relation: String,
-    weight: Float default 1.0,
-    agent_id: String default ""
-  }`,
+  // Edges between concepts. `id` is the key - see EDGES_RELATION (#129).
+  EDGES_RELATION,
 
   // Provenance linking concepts to body files
   // concept_id: which concept

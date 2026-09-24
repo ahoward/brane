@@ -1,13 +1,12 @@
 {
   "status": "success",
   "result": {
-    "path": "<string>",
-    "created": false,
-    "schema_version": "1.14.0"
+    "concepts": "<array:1>",
+    "total": 1
   },
   "errors": null,
   "meta": {
-    "path": "/mind/init",
+    "path": "/mind/concepts/list",
     "timestamp": "<timestamp>",
     "duration_ms": "<number>"
   }

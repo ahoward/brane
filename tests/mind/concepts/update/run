@@ -25,6 +25,54 @@ case "$TC_CASE_NAME" in
   03-error-missing-id)
     init_mind
     ;;
+  # #129: concepts is an all-key relation, so a bare :put INSERTS rather than
+  # upserts. These cases re-read the relation after the update - the existing
+  # cases only check the returned envelope, which is why the bug survived.
+  04-success-update-name-does-not-duplicate)
+    init_mind
+    create_concept '{"name": "AuthService", "type": "Entity"}'
+    echo '{"id": 1, "name": "IdentityService"}' | brane /mind/concepts/update > /dev/null 2>&1
+    echo "$INPUT" | brane /mind/concepts/list
+    exit 0
+    ;;
+
+  05-success-update-type-does-not-duplicate)
+    init_mind
+    create_concept '{"name": "Warning", "type": "Entity"}'
+    echo '{"id": 1, "type": "Caveat"}' | brane /mind/concepts/update > /dev/null 2>&1
+    # filtering on the OLD type must find nothing - a surviving stale row would match
+    echo "$INPUT" | brane /mind/concepts/list
+    exit 0
+    ;;
+
+  # Repeated updates must not accumulate rows either.
+  06-success-repeated-updates-do-not-accumulate)
+    init_mind
+    create_concept '{"name": "V1", "type": "Entity"}'
+    for n in V2 V3 V4; do
+      echo "{\"id\": 1, \"name\": \"$n\"}" | brane /mind/concepts/update > /dev/null 2>&1
+    done
+    echo "$INPUT" | brane /mind/concepts/list
+    exit 0
+    ;;
+  # P1-6: an upsert that nulls the vector would poison the HNSW index and pass
+  # every count-based check. Search must still work after an update.
+  07-success-update-preserves-searchability)
+    init_mind
+    create_concept '{"name": "AuthService", "type": "Entity"}'
+    echo '{"id": 1, "type": "Caveat"}' | brane /mind/concepts/update > /dev/null 2>&1
+    echo "$INPUT" | brane /mind/search
+    exit 0
+    ;;
+
+  # agent_id must survive an update, not be reset by the upsert.
+  08-success-update-preserves-agent-id)
+    init_mind
+    echo '{"name": "AuthService", "type": "Entity", "agent_id": "claude-code"}' | brane /mind/concepts/create > /dev/null 2>&1
+    echo '{"id": 1, "name": "IdentityService"}' | brane /mind/concepts/update > /dev/null 2>&1
+    echo "$INPUT" | brane /mind/concepts/list
+    exit 0
+    ;;
 esac
 
 echo "$INPUT" | brane /mind/concepts/update

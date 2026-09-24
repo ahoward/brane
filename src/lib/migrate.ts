@@ -9,6 +9,7 @@
 import type { CozoDb } from "./cozo"
 import { dirname, resolve } from "node:path"
 import { EMBED_DIM } from "./embed.ts"
+import { CONCEPTS_RELATION, EDGES_RELATION } from "./mind.ts"
 import {
   CLAIMS_RELATION,
   AUTHORITIES_RELATION,
@@ -20,7 +21,7 @@ import {
 // The latest schema version this binary supports.
 // Bump this when adding a new migration.
 //
-export const LATEST_VERSION = "1.13.0"
+export const LATEST_VERSION = "1.14.0"
 
 //
 // A single migration step: transforms schema from one version to the next.
@@ -317,6 +318,84 @@ const MIGRATIONS: Migration[] = [
       await db.run(AUTHORITIES_RELATION)
       await seed_authorities(db)
       await seed_contradictions_rule(db)
+    }
+  },
+
+  // v1.13.0 -> v1.14.0: key concepts and edges on `id` (#129)
+  //
+  // Both were declared with every column in the key, so `:put` was an INSERT
+  // and /mind/concepts/update left two rows with the same id. Keying on id
+  // makes `:put` a real upsert.
+  //
+  // COLLAPSE POLICY. Any database that ever ran an update already holds
+  // duplicates, and nothing distinguishes them - there is no per-row
+  // timestamp, so "the newest" is not recoverable. The rebuild collapses them
+  // the way CozoDB does, which is deterministic but arbitrary. We count the
+  // affected ids and warn on stderr so the damage is visible and repairable
+  // rather than silent.
+  {
+    from: "1.13.0",
+    to:   "1.14.0",
+    apply: async (db: CozoDb) => {
+      const warn_duplicates = async (relation: string, arity: number) => {
+        const blanks = Array(arity - 1).fill("_").join(", ")
+        const result = await db.run(`
+          ?[id, count(id)] := *${relation}[id, ${blanks}]
+        `)
+        const dupes = (result.rows as [number, number][]).filter(r => r[1] > 1)
+        if (dupes.length > 0) {
+          const ids = dupes.map(d => d[0]).join(", ")
+          console.error(
+            `brane: WARNING: ${dupes.length} ${relation} row(s) had duplicate ids from the ` +
+            `pre-1.14.0 update defect (#129) and have been collapsed to one row each. ` +
+            `Affected ids: ${ids}. Review them - the surviving values may be stale.`
+          )
+        }
+      }
+
+      await warn_duplicates("concepts", 5)
+      await warn_duplicates("edges", 6)
+
+      // --- concepts: the HNSW index must be dropped before ::remove ---
+      await db.run(`::hnsw drop concepts:semantic`)
+
+      await db.run(`:create concepts_tmp { id: Int => name: String, type: String, vector: <F32; ${EMBED_DIM}>?, agent_id: String default "" }`)
+      await db.run(`
+        ?[id, name, type, vector, agent_id] := *concepts[id, name, type, vector, agent_id]
+        :put concepts_tmp { id => name, type, vector, agent_id }
+      `)
+      await db.run(`::remove concepts`)
+      await db.run(CONCEPTS_RELATION(EMBED_DIM))
+      await db.run(`
+        ?[id, name, type, vector, agent_id] := *concepts_tmp[id, name, type, vector, agent_id]
+        :put concepts { id => name, type, vector, agent_id }
+      `)
+      await db.run(`::remove concepts_tmp`)
+
+      await db.run(`
+        ::hnsw create concepts:semantic {
+          dim: ${EMBED_DIM},
+          m: 50,
+          dtype: F32,
+          fields: [vector],
+          distance: Cosine,
+          ef_construction: 100
+        }
+      `)
+
+      // --- edges: no index to worry about ---
+      await db.run(`:create edges_tmp { id: Int => source: Int, target: Int, relation: String, weight: Float default 1.0, agent_id: String default "" }`)
+      await db.run(`
+        ?[id, source, target, relation, weight, agent_id] := *edges[id, source, target, relation, weight, agent_id]
+        :put edges_tmp { id => source, target, relation, weight, agent_id }
+      `)
+      await db.run(`::remove edges`)
+      await db.run(EDGES_RELATION)
+      await db.run(`
+        ?[id, source, target, relation, weight, agent_id] := *edges_tmp[id, source, target, relation, weight, agent_id]
+        :put edges { id => source, target, relation, weight, agent_id }
+      `)
+      await db.run(`::remove edges_tmp`)
     }
   },
 ]

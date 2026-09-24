@@ -220,6 +220,33 @@ export async function get_rule_by_name(db: CozoDb, name: string): Promise<Rule |
 }
 
 //
+// Relation DDL shared by init.ts and migrate.ts so the two cannot drift.
+//
+// `id` is the KEY, not just a column. On an all-key relation (no `=>`) a bare
+// `:put` is an INSERT, so updating a row left two rows with the same id (#129).
+// Keying on id makes `:put` a real upsert. Positional matching is unchanged, so
+// stored rule bodies like *concepts[id, name, _, _, _] still work.
+//
+export const CONCEPTS_RELATION = (dim: number) => `:create concepts {
+    id: Int
+    =>
+    name: String,
+    type: String,
+    vector: <F32; ${dim}>?,
+    agent_id: String default ""
+  }`
+
+export const EDGES_RELATION = `:create edges {
+    id: Int
+    =>
+    source: Int,
+    target: Int,
+    relation: String,
+    weight: Float default 1.0,
+    agent_id: String default ""
+  }`
+
+//
 // Escape a string for a single-quoted CozoDB literal.
 //
 // Cozo uses backslash escapes, NOT SQL-style doubling: 'it''s' is a parse

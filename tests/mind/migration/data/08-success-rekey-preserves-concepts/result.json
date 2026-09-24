@@ -1,0 +1,26 @@
+{
+  "status": "success",
+  "result": {
+    "concepts": [
+      {
+        "id": 1,
+        "name": "AuthService",
+        "type": "Entity",
+        "agent_id": null
+      },
+      {
+        "id": 2,
+        "name": "TokenStore",
+        "type": "Entity",
+        "agent_id": null
+      }
+    ],
+    "total": 2
+  },
+  "errors": null,
+  "meta": {
+    "path": "/mind/concepts/list",
+    "timestamp": "<timestamp>",
+    "duration_ms": "<number>"
+  }
+}
